@@ -1,0 +1,14 @@
+Package: phenotypeprocessing
+Title: Process audited phenotype datasets and report
+Version: 0.0.1
+Authors@R: 
+    person(given = "Bari",
+           family = "Ballew",
+           role = c("aut", "cre"),
+           email = "bari.ballew@54gene.com")
+Description: TBD.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1

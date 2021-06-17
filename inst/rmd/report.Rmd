@@ -1,0 +1,10 @@
+---
+title: "Report Template for Audited Phenotype Files"
+output:
+  html_document:
+    code_folding: hide
+params:
+  input.path: ""
+  output.path: ""
+  project.id: ""
+---
