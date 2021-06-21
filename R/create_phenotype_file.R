@@ -39,6 +39,13 @@ create.phenotype.report <- function(in.filename,
     sep = "\t", stringsAsFactors = FALSE,
     comment.char = "", quote = ""
   )
+
+  ## sanitize headers
+  variable.summary <- phenotypeprocessing::map.header(phenotype.data, dataset.tag)
+  phenotype.data <- phenotypeprocessing::sanitize.header(phenotype.data, variable.summary)
+
+  ## list(new.varname = list(new.name = "", mean.value = 0.0, unique.values = count,
+
   ## TODO(lightning.auriga): make this real
   file.create(out.filename)
 }
