@@ -3,8 +3,72 @@ title: "Report Template for Audited Phenotype Files"
 output:
   html_document:
     code_folding: hide
-params:
-  input.path: ""
-  output.path: ""
-  project.id: ""
+  highlight: tango
+  number_sections: no
+  theme: default
+  toc: yes
+  toc_depth: 3
+  toc_float:
+    collapsed: no
+    smooth_scroll: yes
+  params:
+    dataset.name: ""
+    variable.summary: NULL
 ---
+
+## Load required R packages
+
+```{r load.packages, eval=TRUE, echo=FALSE}
+library(ggplot2, quietly = TRUE)
+library(knitr, quietly = TRUE)
+library(kableExtra, quietly = TRUE)
+```
+
+***
+<br>
+
+## Report linking between input and standardized variable names
+
+```{r report.variable.mappings, eval=TRUE, echo=FALSE, results="asis"}
+variable.mapping.df <- data.frame(
+  names(variable.summary),
+  sapply(variable.summary, function(i) {
+    i$original.name
+  })
+)
+rownames(variable.mapping.df) <- NULL
+colnames(variable.mapping.df) <- c("Standardized", "Original")
+knitr::kable(variable.mapping.df, caption = "Phenotype Variable Names")
+```
+
+***
+<br>
+
+## Report all unique values for string variables
+
+```{r report.unique.values.string, eval=TRUE, echo=TRUE}
+print("stuff goes here")
+```
+
+***
+<br>
+
+## Report distribution of numeric-cast variables
+
+```{r report.distribution.numeric, eval=TRUE, echo=TRUE}
+print("I'm sure it's normal right?")
+```
+
+
+***
+<br>
+
+## Session Information
+
+<br>
+
+The following summarizes the loaded R configuration for the run that created this report.
+
+```{r session.info, eval=TRUE, echo=TRUE}
+sessionInfo()
+```

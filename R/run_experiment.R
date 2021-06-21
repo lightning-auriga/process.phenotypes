@@ -41,7 +41,7 @@ run.experiment <- function(phenotype.path,
   ## sanity check on phenotype.files param
   stopifnot(is.vector(phenotype.files, mode = "character"))
   ## create output directory if needed
-  dir.create(output.path, recursive = TRUE)
+  dir.create(output.path, recursive = TRUE, showWarnings = FALSE)
   ## dispatch report creation for each input file
   for (file in phenotype.files) {
     dataset.tag <- strsplit(file, "_")[[1]][1]

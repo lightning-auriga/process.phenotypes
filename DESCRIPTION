@@ -8,6 +8,10 @@ Authors@R:
            email = "bari.ballew@54gene.com")
 Description: TBD.
 License: MIT + file LICENSE
+Imports:
+    kableExtra,
+    knitr,
+    rmarkdown
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

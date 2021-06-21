@@ -37,15 +37,28 @@ create.phenotype.report <- function(in.filename,
   phenotype.data <- read.table(in.filename,
     header = TRUE,
     sep = "\t", stringsAsFactors = FALSE,
-    comment.char = "", quote = ""
+    comment.char = "", quote = "",
+    check.names = FALSE
   )
 
   ## sanitize headers
   variable.summary <- phenotypeprocessing::map.header(phenotype.data, dataset.tag)
   phenotype.data <- phenotypeprocessing::sanitize.header(phenotype.data, variable.summary)
 
-  ## list(new.varname = list(new.name = "", mean.value = 0.0, unique.values = count,
+  ## TODO(lightning.auriga): modify phenotype data based on previous observations
 
-  ## TODO(lightning.auriga): make this real
-  file.create(out.filename)
+  ## TODO(lightning.auriga): add things to summary list
+
+  ## find Rmd file from system installation
+  rmarkdown.template <- system.file("rmd", "report.Rmd",
+    package = "phenotypeprocessing"
+  )
+  ## render output html report for this phenotype dataset
+  rmarkdown::render(rmarkdown.template,
+    output_file = out.filename,
+    params = list(
+      dataset.name = in.filename,
+      variable.summary = variable.summary
+    )
+  )
 }
