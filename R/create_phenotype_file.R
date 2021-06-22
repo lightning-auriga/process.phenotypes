@@ -41,11 +41,21 @@ create.phenotype.report <- function(in.filename,
     check.names = FALSE
   )
 
+  ## drop columns with NA column names
+  phenotype.data[, which(colnames(phenotype.data) == "" | is.na(colnames(phenotype.data)))] <- NULL
+
   ## sanitize headers
   variable.summary <- phenotypeprocessing::map.header(phenotype.data, dataset.tag)
   phenotype.data <- phenotypeprocessing::sanitize.header(phenotype.data, variable.summary)
 
   ## TODO(lightning.auriga): modify phenotype data based on previous observations
+  for (name in names(variable.summary)) {
+    if (is.vector(phenotype.data[, name], mode = "numeric")) {
+      variable.summary[[name]]$summary <- summary(phenotype.data[, name])
+    } else {
+      variable.summary[[name]]$summary <- table(phenotype.data[, name])
+    }
+  }
 
   ## TODO(lightning.auriga): add things to summary list
 

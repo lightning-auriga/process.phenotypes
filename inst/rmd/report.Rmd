@@ -46,19 +46,16 @@ knitr::kable(variable.mapping.df, caption = "Phenotype Variable Names")
 
 ## Report all unique values for string variables
 
-```{r report.unique.values.string, eval=TRUE, echo=TRUE}
-print("stuff goes here")
+```{r report.value.summary, eval=TRUE, echo=FALSE, results="asis"}
+for (name in names(variable.summary)) {
+  variable.summary.df <- data.frame(
+    names(variable.summary[[name]]$summary), as.vector(variable.summary[[name]]$summary)
+  )
+  rownames(variable.summary.df) <- NULL
+  colnames(variable.summary.df) <- c("Value", "Summary statistics")
+  knitr::kable(variable.summary.df, caption = paste("Summary of ", name, " (", variable.summary[[name]]$original.name, ")", sep = ""))
+}
 ```
-
-***
-<br>
-
-## Report distribution of numeric-cast variables
-
-```{r report.distribution.numeric, eval=TRUE, echo=TRUE}
-print("I'm sure it's normal right?")
-```
-
 
 ***
 <br>
