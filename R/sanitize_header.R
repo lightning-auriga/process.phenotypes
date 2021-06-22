@@ -37,6 +37,10 @@ map.header <- function(df, dataset.tag) {
 #' This function takes a data frame and the output of `map.header`, and applies
 #' the variable name transformation to the data frame.
 #'
+#' Note that this must be run after `map.header`, and without any column ordering
+#' changes on the input phenotype data. If the order is changed, this sanitization
+#' will fail silently.
+#'
 #' @description
 #'
 #' @param df data frame, phenotype dataframe with untransformed headers
@@ -52,8 +56,7 @@ map.header <- function(df, dataset.tag) {
 #' df.transformed <- sanitize.header(df, mapped.values)
 sanitize.header <- function(df, var.map) {
   name.lookup <- names(var.map)
-  names(name.lookup) <- unlist(var.map)
   res <- df
-  colnames(res) <- name.lookup[colnames(res)]
+  colnames(res) <- name.lookup
   res
 }

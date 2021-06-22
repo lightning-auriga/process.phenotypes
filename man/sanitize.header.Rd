@@ -20,6 +20,10 @@ input data frame with variable name transformation applied
 \details{
 This function takes a data frame and the output of \code{map.header}, and applies
 the variable name transformation to the data frame.
+
+Note that this must be run after \code{map.header}, and without any column ordering
+changes on the input phenotype data. If the order is changed, this sanitization
+will fail silently.
 }
 \examples{
 df <- data.frame(rnorm(100), runif(100))
