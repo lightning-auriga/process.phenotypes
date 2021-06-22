@@ -2,5 +2,6 @@
 
 export(create.phenotype.report)
 export(map.header)
+export(remove.invalid.columns)
 export(run.experiment)
 export(sanitize.header)
