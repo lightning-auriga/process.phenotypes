@@ -14,6 +14,7 @@ output:
   params:
     dataset.name: ""
     variable.summary: NULL
+    phenotype.data: ""
 ---
 
 ## Load required R packages
@@ -48,12 +49,15 @@ knitr::kable(variable.mapping.df, caption = "Phenotype Variable Names")
 
 ```{r report.value.summary, eval=TRUE, echo=FALSE, results="asis"}
 for (name in names(variable.summary)) {
-  variable.summary.df <- data.frame(
-    names(variable.summary[[name]]$summary), as.vector(variable.summary[[name]]$summary)
-  )
-  rownames(variable.summary.df) <- NULL
-  colnames(variable.summary.df) <- c("Value", "Summary statistics")
-  knitr::kable(variable.summary.df, caption = paste("Summary of ", name, " (", variable.summary[[name]]$original.name, ")", sep = ""))
+  my.summ <- variable.summary[[name]]$summary
+  if (length(my.summ) < nrow(phenotype.data) / 10) {
+    variable.summary.df <- data.frame(
+      names(my.summ), as.vector(my.summ)
+    )
+    rownames(variable.summary.df) <- NULL
+    colnames(variable.summary.df) <- c("Value", "Summary statistics")
+    print(knitr::kable(variable.summary.df, caption = paste("Summary of ", name, " (", variable.summary[[name]]$original.name, ")", sep = "")))
+  }
 }
 ```
 
