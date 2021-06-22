@@ -41,8 +41,8 @@ create.phenotype.report <- function(in.filename,
     check.names = FALSE
   )
 
-  ## drop columns with NA column names
-  phenotype.data[, which(colnames(phenotype.data) == "" | is.na(colnames(phenotype.data)))] <- NULL
+  ## drop columns with NA or empty column names
+  phenotype.data <- phenotypeprocessing::remove.invalid.columns(phenotype.data)
 
   ## sanitize headers
   variable.summary <- phenotypeprocessing::map.header(phenotype.data, dataset.tag)
@@ -66,6 +66,7 @@ create.phenotype.report <- function(in.filename,
   ## render output html report for this phenotype dataset
   rmarkdown::render(rmarkdown.template,
     output_file = out.filename,
+    output_dir = dirname(out.filename),
     params = list(
       dataset.name = in.filename,
       variable.summary = variable.summary
