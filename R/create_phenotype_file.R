@@ -38,7 +38,8 @@ create.phenotype.report <- function(in.filename,
     header = TRUE,
     sep = "\t", stringsAsFactors = FALSE,
     comment.char = "", quote = "",
-    check.names = FALSE
+    check.names = FALSE,
+    colClasses = "character"
   )
 
   ## drop columns with NA or empty column names
@@ -52,7 +53,18 @@ create.phenotype.report <- function(in.filename,
   phenotype.data <- phenotypeprocessing::make.lowercase(phenotype.data)
   phenotype.data <- phenotypeprocessing::remove.whitespace(phenotype.data)
   phenotype.data <- phenotypeprocessing::remove.nonword.chars(phenotype.data)
-  phenotype.data <- phenotypeprocessing::normalize.missing.values(phenotype.data)
+
+  ## attempt type conversion on post-cleaning string vectors
+  phenotype.data <- type.convert(phenotype.data,
+    na.strings = c(
+      "na",
+      "not applicable",
+      "nil",
+      "nan",
+      ""
+    ),
+    as.is = TRUE
+  )
 
   ## TODO(lightning.auriga): modify phenotype data based on previous observations
   for (name in names(variable.summary)) {
