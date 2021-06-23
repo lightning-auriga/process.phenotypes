@@ -67,7 +67,7 @@ remove.whitespace <- function(df) {
 #' phenotype.data <- remove.nonword.chars(phenotype.data)
 remove.nonword.chars <- function(df) {
   df <- data.frame(lapply(df, stringr::str_replace_all, "^\\.([0-9]+)$", "0.\\1"))
-  data.frame(lapply(df, stringr::str_replace_all, "^\\W+|\\W+$", ""))
+  data.frame(lapply(df, stringr::str_replace_all, "^\\W+|\\W?[^[\\w)}\\]]]$", ""))
 }
 #' Basic global cleanup of entries in a phenotype data frame
 #'

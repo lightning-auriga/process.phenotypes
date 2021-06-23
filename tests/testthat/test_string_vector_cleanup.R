@@ -56,6 +56,22 @@ test_that("remove.nonword.chars preserves decimal values with leading '.'", {
   )
 })
 
+test_that("remove.nonword.chars preserves trailing ')' ']' '}'", {
+  in.df <- data.frame(
+    A = c("[thing1", "thing2]"),
+    B = c("thing3(", "thing4}"),
+    C = c("(thing5", "thing6])"),
+    D = c("thing9]", "[]thing8")
+  )
+  out.df <- data.frame(
+    A = c("thing1", "thing2]"),
+    B = c("thing3", "thing4}"),
+    C = c("thing5", "thing6])"),
+    D = c("thing9]", "thing8")
+  )
+  expect_identical(remove.nonword.chars(in.df), out.df)
+})
+
 # this test now depends on make.lowercase - how do we feel about that?
 test_that("all missing values are normalized", {
   out.df <- make.lowercase(data.frame(
