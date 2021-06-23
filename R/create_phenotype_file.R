@@ -48,6 +48,12 @@ create.phenotype.report <- function(in.filename,
   variable.summary <- phenotypeprocessing::map.header(phenotype.data, dataset.tag)
   phenotype.data <- phenotypeprocessing::sanitize.header(phenotype.data, variable.summary)
 
+  ## clean up strings
+  phenotype.data <- phenotypeprocessing::make.lowercase(phenotype.data)
+  phenotype.data <- phenotypeprocessing::remove.whitespace(phenotype.data)
+  phenotype.data <- phenotypeprocessing::remove.nonword.chars(phenotype.data)
+  phenotype.data <- phenotypeprocessing::normalize.missing.values(phenotype.data)
+
   ## TODO(lightning.auriga): modify phenotype data based on previous observations
   for (name in names(variable.summary)) {
     if (is.vector(phenotype.data[, name], mode = "numeric")) {
