@@ -28,6 +28,44 @@ test_that("all leading, trailing, and multiple whitespaces are removed", {
   )
 })
 
+test_that("whitespace surrounding dashes is removed", {
+  in.df <- data.frame(
+    A = c(" - ", " -", "- ", "-"),
+    B = c(" -- ", " --", "-- ", "--"),
+    C = c("A - B", "A --B", "A-- B", "A--B"),
+    D = c(
+      " - -", "- -",
+      " - - - --- -- -- -- ----",
+      " -- -- -- - - A--- ---   - - - "
+    )
+  )
+  out.df <- data.frame(
+    A = c("-", "-", "-", "-"),
+    B = c("-", "-", "-", "-"),
+    C = c("A-B", "A-B", "A-B", "A-B"),
+    D = c("-", "-", "-", "-A-")
+  )
+  expect_identical(
+    remove.whitespace(in.df),
+    out.df
+  )
+})
+
+test_that("collapse consecutive characters into a single replacement", {
+  in.df <- data.frame(
+    A = c("\\/", "0..112"),
+    B = c("//////", "0..\\//\\..01")
+  )
+  out.df <- data.frame(
+    A = c("/", "0.112"),
+    B = c("/", "0./.01")
+  )
+  expect_identical(
+    collapse.repeats(in.df, c("\\\\/", "\\."), c("/", ".")),
+    out.df
+  )
+})
+
 # note that this one is partially redundant with remove.whitespace!
 test_that("all leading and trailing non-word characters are removed", {
   out.df <- data.frame(

@@ -43,8 +43,46 @@ make.lowercase <- function(df) {
 #' colnames(phenotype.data) <- c("col1", "col2")
 #' phenotype.data <- remove.whitespace(phenotype.data)
 remove.whitespace <- function(df) {
-  data.frame(lapply(df, stringr::str_squish))
+  df <- data.frame(lapply(df, stringr::str_squish))
+  data.frame(lapply(df, stringr::str_replace_all, "[ \\-]*-[ \\-]*", "-"))
 }
+
+#' Basic global cleanup of entries in a phenotype data frame
+#'
+#' @details
+#' Performs the following data modifications to non-numeric values:
+#'
+#' - collapses multiple instances of specified character to a single replacement
+#'
+#' @description
+#'
+#' @param df data frame, input phenotype content
+#' @param targets character vector, input character(s) to replace duplicates of
+#' @param replacements character vector, character to replace target duplicates with
+#' @return modified version of input with values cleaned as described
+#' @export collapse.repeats
+#' @examples
+#' phenotype.data <- data.frame(
+#'   A = c("\\/", "0..112"),
+#'   B = c("//////", "0..\\//\\..01")
+#' )
+#' phenotype.data <- collapse.repeats(df)
+collapse.repeats <- function(df, targets = c("\\\\/", "\\."), replacements = c("/", ".")) {
+  stopifnot(
+    is.vector(targets, mode = "character"),
+    is.vector(replacements, mode = "character")
+  )
+  stopifnot(length(targets) == length(replacements))
+  res <- df
+  for (i in seq_len(length(targets))) {
+    target <- targets[i]
+    replacement <- replacements[i]
+    pattern <- paste("[", target, "]", "+", sep = "")
+    res <- data.frame(lapply(res, stringr::str_replace_all, pattern, replacement))
+  }
+  res
+}
+
 #' Basic global cleanup of entries in a phenotype data frame
 #'
 #' @details

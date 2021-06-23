@@ -52,6 +52,7 @@ create.phenotype.report <- function(in.filename,
   ## clean up strings
   phenotype.data <- phenotypeprocessing::make.lowercase(phenotype.data)
   phenotype.data <- phenotypeprocessing::remove.whitespace(phenotype.data)
+  phenotype.data <- phenotypeprocessing::collapse.repeats(phenotype.data)
   phenotype.data <- phenotypeprocessing::remove.nonword.chars(phenotype.data)
 
   ## attempt type conversion on post-cleaning string vectors
