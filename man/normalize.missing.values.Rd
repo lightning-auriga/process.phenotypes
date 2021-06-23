@@ -14,7 +14,7 @@ modified version of input with values cleaned as described
 above
 }
 \description{
-
+Assumes input content has already had \code{make.lowercase} applied.
 }
 \details{
 Performs the following data modifications to non-numeric values:

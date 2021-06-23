@@ -19,9 +19,7 @@
 #' colnames(phenotype.data) <- c("col1", "col2")
 #' phenotype.data <- make.lowercase(phenotype.data)
 make.lowercase <- function(df) {
-  df <- data.frame(lapply(df, function(val) {
-    tolower(val)
-  }))
+  data.frame(lapply(df, tolower))
 }
 #' Basic global cleanup of entries in a phenotype data frame
 #'
@@ -45,9 +43,7 @@ make.lowercase <- function(df) {
 #' colnames(phenotype.data) <- c("col1", "col2")
 #' phenotype.data <- remove.whitespace(phenotype.data)
 remove.whitespace <- function(df) {
-  df <- data.frame(lapply(df, function(val) {
-    stringr::str_squish(val)
-  }))
+  data.frame(lapply(df, stringr::str_squish))
 }
 #' Basic global cleanup of entries in a phenotype data frame
 #'
@@ -70,9 +66,8 @@ remove.whitespace <- function(df) {
 #' colnames(phenotype.data) <- c("col1", "col2")
 #' phenotype.data <- remove.nonword.chars(phenotype.data)
 remove.nonword.chars <- function(df) {
-  df <- data.frame(lapply(df, function(val) {
-    stringr::str_replace_all(val, "^\\W+|\\W+$", "")
-  }))
+  df <- data.frame(lapply(df, stringr::str_replace_all, "^\\.([0-9]+)$", "0.\\1"))
+  data.frame(lapply(df, stringr::str_replace_all, "^\\W+|\\W+$", ""))
 }
 #' Basic global cleanup of entries in a phenotype data frame
 #'
@@ -82,6 +77,8 @@ remove.nonword.chars <- function(df) {
 #' - harmonize na, nan, not applicable values (unknowns?  blanks?)
 #'
 #' @description
+#'
+#' Assumes input content has already had `make.lowercase` applied.
 #'
 #' @param df data frame, input phenotype content
 #' @return modified version of input with values cleaned as described
@@ -95,10 +92,8 @@ remove.nonword.chars <- function(df) {
 #' colnames(phenotype.data) <- c("col1", "col2")
 #' phenotype.data <- normalize.missing.values(phenotype.data)
 normalize.missing.values <- function(df) {
-  df <- data.frame(lapply(df, function(val) {
-    stringr::str_replace_all(val,
-      "^na$|^not applicable$|^nil$|^nan$|^$",
-      replacement = NA_character_
-    )
-  }))
+  data.frame(lapply(df, stringr::str_replace_all,
+    "^na$|^not applicable$|^nil$|^nan$|^$",
+    replacement = NA_character_
+  ))
 }
