@@ -72,7 +72,9 @@ create.phenotype.report <- function(in.filename,
     if (is.vector(phenotype.data[, name], mode = "numeric")) {
       variable.summary[[name]]$summary <- summary(phenotype.data[, name])
     } else {
-      variable.summary[[name]]$summary <- table(phenotype.data[, name])
+      variable.summary[[name]]$summary <- table(phenotype.data[, name],
+        useNA = "ifany"
+      )
     }
   }
 
