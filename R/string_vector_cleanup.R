@@ -145,16 +145,20 @@ normalize.missing.values <- function(df) {
 #' @description
 #'
 #' @param vec character vector, input candidate values
-#' @param allow.trailing.text logical, whether a blood pressure-like
+#' @param allow.trailing logical, whether a blood pressure-like
 #' entry with arbitrary trailing text should be considered possibly
 #' a good result
 #' @return logical vector, one per input value, whether the input
 #' matches blood pressure format
 #' @examples
 #' is.blood.pressure(c("100/80", "100/", "100/80."))
-is.blood.pressure <- function(vec, allow.trailing.text = FALSE) {
+is.blood.pressure <- function(vec, allow.trailing = FALSE) {
+  # TODO: Note that this currently will massage values like
+  # 100/80.98181818 to 100/80, for example.  What is the desired
+  # behavior in this case?  Also, this won't allow decimals in
+  # systolic.
   pattern <- "^\\d+ */ *\\d+"
-  if (allow.trailing.text) {
+  if (allow.trailing) {
     pattern <- paste(pattern, ".*$", sep = "")
   } else {
     pattern <- paste(pattern, "$", sep = "")
@@ -174,20 +178,58 @@ is.blood.pressure <- function(vec, allow.trailing.text = FALSE) {
 #' @param accept.proportion numeric, proportion of data to match a type
 #' required to enforce the match
 #' @return modified version of input with values cleaned as described above
-#' @export detect.numerics
+#' @export reformat.numerics
 #' @examples
 #' phenotype.data <- data.frame(
 #'   A = c("yes", "yes", "no", NA),
 #'   B = c("1.0", "100/80", "4g", "sparse wrong value")
 #' )
-#' phenotype.data <- detect.numerics(phenotype.data)
-detect.numerics <- function(df, accept.proportion = 0.75) {
+#' phenotype.data <- reformat.numerics(phenotype.data)
+reformat.numerics <- function(df, accept.proportion = 0.75) {
+  data.frame(lapply(df, function(vec) {
+    ## high percentage of values begin with numeric values
+    n.numeric <- length(which(!is.na(suppressWarnings(as.vector(vec, mode = "numeric")))))
+    if (n.numeric / nrow(df) >= accept.proportion) {
+      ## treat this as arbitrary numeric data
+      ## if the prefix of a value looks like a numeric, strip its suffix
+      possible.numeric <- stringr::str_detect(vec, "^-?\\d+\\.?\\d*[^/]?.*$")
+      res <- rep(NA, length(vec))
+      res[possible.numeric] <- stringr::str_replace(vec[possible.numeric],
+                                                   "^(-?\\d+\\.?\\d*)[^/]?.*$", "\\1")
+      as.numeric(res)
+    } else {
+      vec
+    }
+  }))
+}
+
+#' Detect and reformat blood pressure measures
+#'
+#' @details
+#' Given string vectors with potentially malformed blood pressure
+#' entries, attempt to standardize to SBP/DBP by stripping
+#' common problems.
+#'
+#' @description
+#'
+#' @param df data frame, input phenotype content
+#' @param accept.proportion numeric, proportion of data to match a type
+#' required to enforce the match
+#' @return modified version of input with values cleaned as described above
+#' @export reformat.blood.pressure
+#' @examples
+#' phenotype.data <- data.frame(
+#'   A = c("a", "100/80", "100/80.", NA),
+#'   B = c("1.0", "100/80mmhg", "other", ".")
+#' )
+#' phenotype.data <- reformat.blood.pressure(phenotype.data)
+reformat.blood.pressure <- function(df, accept.proportion = 0.75) {
   data.frame(lapply(df, function(vec) {
     n.blood.pressure <- length(which(is.blood.pressure(vec)))
     if (n.blood.pressure / nrow(df) >= accept.proportion) {
       ## treat this as BP, eliminate anything else
       ## if the prefix of a value looks like BP, strip its suffix
-      possible.blood.pressure <- is.blood.pressure(vec, allow.trailing.text = TRUE)
+      possible.blood.pressure <- is.blood.pressure(vec, allow.trailing = TRUE)
       res <- rep(NA, length(vec))
       res[possible.blood.pressure] <- stringr::str_replace(
         vec[possible.blood.pressure],
@@ -196,12 +238,7 @@ detect.numerics <- function(df, accept.proportion = 0.75) {
       )
       res
     } else {
-      n.numeric <- length(which(!is.na(suppressWarnings(as.vector(vec, mode = "numeric")))))
-      if (n.numeric / nrow(df) >= accept.proportion) {
-        ## treat this as arbitrary numeric data
-        ## if the prefix of a value looks like a numeric, strip its suffix
-      }
+      vec
     }
-    ## high percentage of values begin with numeric values
   }))
 }

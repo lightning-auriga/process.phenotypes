@@ -4,12 +4,12 @@
 \alias{is.blood.pressure}
 \title{Detect whether strings look like SBP/DBP measurements}
 \usage{
-is.blood.pressure(vec, allow.trailing.text = FALSE)
+is.blood.pressure(vec, allow.trailing = FALSE)
 }
 \arguments{
 \item{vec}{character vector, input candidate values}
 
-\item{allow.trailing.text}{logical, whether a blood pressure-like
+\item{allow.trailing}{logical, whether a blood pressure-like
 entry with arbitrary trailing text should be considered possibly
 a good result}
 }

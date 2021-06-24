@@ -54,6 +54,8 @@ create.phenotype.report <- function(in.filename,
   phenotype.data <- phenotypeprocessing::remove.whitespace(phenotype.data)
   phenotype.data <- phenotypeprocessing::collapse.repeats(phenotype.data)
   phenotype.data <- phenotypeprocessing::remove.nonword.chars(phenotype.data)
+  phenotype.data <- phenotypeprocessing::reformat.numerics(phenotype.data)
+  phenotype.data <- phenotypeprocessing::reformat.blood.pressure(phenotype.data)
 
   ## attempt type conversion on post-cleaning string vectors
   phenotype.data <- type.convert(phenotype.data,

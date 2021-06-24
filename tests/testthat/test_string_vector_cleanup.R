@@ -6,10 +6,9 @@ colnames(df) <- c("A", "B")
 
 test_that("all characters are converted to lowercase", {
   out.df <- data.frame(
-    c("weird caps", "trailing ", "na", "nil"),
-    c(";.something+", "not applicable", "too   muchspace", "")
+    A = c("weird caps", "trailing ", "na", "nil"),
+    B = c(";.something+", "not applicable", "too   muchspace", "")
   )
-  colnames(out.df) <- c("A", "B")
   expect_identical(
     make.lowercase(df),
     out.df
@@ -18,10 +17,9 @@ test_that("all characters are converted to lowercase", {
 
 test_that("all leading, trailing, and multiple whitespaces are removed", {
   out.df <- data.frame(
-    c("WeiRd CaPs", "Trailing", "NA", "Nil"),
-    c(";.something+", "Not Applicable", "Too muchspace", "")
+    A = c("WeiRd CaPs", "Trailing", "NA", "Nil"),
+    B = c(";.something+", "Not Applicable", "Too muchspace", "")
   )
-  colnames(out.df) <- c("A", "B")
   expect_identical(
     remove.whitespace(df),
     out.df
@@ -69,10 +67,9 @@ test_that("collapse consecutive characters into a single replacement", {
 # note that this one is partially redundant with remove.whitespace!
 test_that("all leading and trailing non-word characters are removed", {
   out.df <- data.frame(
-    c("WeiRd CaPs", "Trailing", "NA", "Nil"),
-    c("something", "Not Applicable", "Too   muchspace", "")
+    A = c("WeiRd CaPs", "Trailing", "NA", "Nil"),
+    B = c("something", "Not Applicable", "Too   muchspace", "")
   )
-  colnames(out.df) <- c("A", "B")
   expect_identical(
     remove.nonword.chars(df),
     out.df
@@ -111,12 +108,11 @@ test_that("remove.nonword.chars preserves trailing ')' ']' '}'", {
 })
 
 # this test now depends on make.lowercase - how do we feel about that?
-test_that("all missing values are normalized", {
+test_that("make.lowercase normalizes all missing values", {
   out.df <- make.lowercase(data.frame(
-    c("WeiRd CaPs", "Trailing ", NA, NA),
-    c(";.something+", NA, "Too   muchspace", NA)
+    A = c("WeiRd CaPs", "Trailing ", NA, NA),
+    B = c(";.something+", NA, "Too   muchspace", NA)
   ))
-  colnames(out.df) <- c("A", "B")
   expect_identical(
     normalize.missing.values(make.lowercase(df)),
     out.df
@@ -139,4 +135,28 @@ test_that("is.blood.pressure can understand suffixes when requested", {
     is.blood.pressure(in.vec, TRUE),
     out.vec
   )
+})
+
+test_that("reformat.numerics casts all numbers and number-like values to numeric", {
+  in.df <- data.frame(A = c("1", "2.3", "a", "."),
+        B = c("1cm", "-4.0mmhg", "1", "1"),
+        C = c("not", "a", "numeric", "100/80"),
+        D = c("100/80", "120/90", "130/85", "110/80"))
+  out.df <- data.frame(A = c(1, 2.3, NA, NA),
+                      B = c(1, -4.0, 1, 1),
+                      C = c("not", "a", "numeric", "100/80"),
+                      D = c("100/80", "120/90", "130/85", "110/80"))
+  expect_identical(reformat.numerics(in.df, accept.proportion = 0.5), out.df)
+})
+
+test_that("reformat.blood.pressure identifies and reformats SBP/DBP measures", {
+  in.df <- data.frame(A = c("1", "2.3", "a", "."),
+                      B = c("1cm", "-4.0mmhg", "1", "1"),
+                      C = c("not", "a", "numeric", "100/80"),
+                      D = c("100/80mmhg", "120/ 90", "130/85", "110/80"))
+  out.df <- data.frame(A = c("1", "2.3", "a", "."),
+                      B = c("1cm", "-4.0mmhg", "1", "1"),
+                      C = c("not", "a", "numeric", "100/80"),
+                      D = c("100/80", "120/90", "130/85", "110/80"))
+  expect_identical(reformat.blood.pressure(in.df, accept.proportion = 0.5), out.df)
 })
