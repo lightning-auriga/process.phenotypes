@@ -189,10 +189,11 @@ reformat.numerics <- function(df, accept.proportion = 0.75) {
   data.frame(lapply(df, function(vec) {
     ## high percentage of values begin with numeric values
     n.numeric <- length(which(!is.na(suppressWarnings(as.vector(vec, mode = "numeric")))))
-    if (n.numeric / nrow(df) >= accept.proportion) {
+    n.valid <- length(which(!is.na(vec)))
+    if (n.valid > 0  & n.numeric / n.valid >= accept.proportion) {
       ## treat this as arbitrary numeric data
       ## if the prefix of a value looks like a numeric, strip its suffix
-      possible.numeric <- stringr::str_detect(vec, "^-?\\d+\\.?\\d*[^/]?.*$")
+      possible.numeric <- stringr::str_detect(vec, "^-?\\d+\\.?\\d*[^/]?.*$") & !is.na(vec)
       res <- rep(NA, length(vec))
       res[possible.numeric] <- stringr::str_replace(vec[possible.numeric],
                                                    "^(-?\\d+\\.?\\d*)[^/]?.*$", "\\1")
@@ -226,10 +227,12 @@ reformat.numerics <- function(df, accept.proportion = 0.75) {
 reformat.blood.pressure <- function(df, accept.proportion = 0.75) {
   data.frame(lapply(df, function(vec) {
     n.blood.pressure <- length(which(is.blood.pressure(vec)))
-    if (n.blood.pressure / nrow(df) >= accept.proportion) {
+    n.valid <- length(which(!is.na(vec)))
+    print(paste("blood pressure values:", n.blood.pressure, "total non-NA values:", n.valid, sep = " "))
+    if (n.valid > 0 & n.blood.pressure / n.valid >= accept.proportion) {
       ## treat this as BP, eliminate anything else
       ## if the prefix of a value looks like BP, strip its suffix
-      possible.blood.pressure <- is.blood.pressure(vec, allow.trailing = TRUE)
+      possible.blood.pressure <- is.blood.pressure(vec, allow.trailing = TRUE) & !is.na(vec)
       res <- rep(NA, length(vec))
       res[possible.blood.pressure] <- stringr::str_replace(
         vec[possible.blood.pressure],
