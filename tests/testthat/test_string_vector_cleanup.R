@@ -138,25 +138,33 @@ test_that("is.blood.pressure can understand suffixes when requested", {
 })
 
 test_that("reformat.numerics casts all numbers and number-like values to numeric", {
-  in.df <- data.frame(A = c("1", "2.3", "a", "."),
-        B = c("1cm", "-4.0mmhg", "1", "1"),
-        C = c("not", "a", "numeric", "100/80"),
-        D = c("100/80", "120/90", "130/85", "110/80"))
-  out.df <- data.frame(A = c(1, 2.3, NA, NA),
-                      B = c(1, -4.0, 1, 1),
-                      C = c("not", "a", "numeric", "100/80"),
-                      D = c("100/80", "120/90", "130/85", "110/80"))
+  in.df <- data.frame(
+    A = c("1", "2.3", "a", "."),
+    B = c("1cm", "-4.0mmhg", "1", "1"),
+    C = c("not", "a", "numeric", "100/80"),
+    D = c("100/80", "120/90", "130/85", "110/80")
+  )
+  out.df <- data.frame(
+    A = c(1, 2.3, NA, NA),
+    B = c(1, -4.0, 1, 1),
+    C = c("not", "a", "numeric", "100/80"),
+    D = c("100/80", "120/90", "130/85", "110/80")
+  )
   expect_identical(reformat.numerics(in.df, accept.proportion = 0.5), out.df)
 })
 
 test_that("reformat.blood.pressure identifies and reformats SBP/DBP measures", {
-  in.df <- data.frame(A = c("1", "2.3", "a", "."),
-                      B = c("1cm", "-4.0mmhg", "1", "1"),
-                      C = c("not", "a", "numeric", "100/80"),
-                      D = c("100/80mmhg", "120/ 90", "130/85", "110/80"))
-  out.df <- data.frame(A = c("1", "2.3", "a", "."),
-                      B = c("1cm", "-4.0mmhg", "1", "1"),
-                      C = c("not", "a", "numeric", "100/80"),
-                      D = c("100/80", "120/90", "130/85", "110/80"))
+  in.df <- data.frame(
+    A = c("1", "2.3", "a", "."),
+    B = c("1cm", "-4.0mmhg", "1", "1"),
+    C = c("not", "a", "numeric", "100/80"),
+    D = c("100/80mmhg", "120/ 90", "130/85", "110/80")
+  )
+  out.df <- data.frame(
+    A = c("1", "2.3", "a", "."),
+    B = c("1cm", "-4.0mmhg", "1", "1"),
+    C = c("not", "a", "numeric", "100/80"),
+    D = c("100/80", "120/90", "130/85", "110/80")
+  )
   expect_identical(reformat.blood.pressure(in.df, accept.proportion = 0.5), out.df)
 })
