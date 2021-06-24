@@ -175,6 +175,7 @@ is.blood.pressure <- function(vec, allow.trailing = FALSE) {
 #' @description
 #'
 #' @param df data frame, input phenotype content
+#' @param var.summary list of lists, per-variable information (TBD)
 #' @param accept.proportion numeric, proportion of data to match a type
 #' required to enforce the match
 #' @return modified version of input with values cleaned as described above
@@ -185,12 +186,14 @@ is.blood.pressure <- function(vec, allow.trailing = FALSE) {
 #'   B = c("1.0", "100/80", "4g", "sparse wrong value")
 #' )
 #' phenotype.data <- reformat.numerics(phenotype.data)
-reformat.numerics <- function(df, accept.proportion = 0.75) {
-  data.frame(lapply(df, function(vec) {
+reformat.numerics <- function(df, var.summary, accept.proportion = 0.75) {
+  for (i in seq_len(ncol(df))) {
+    vec <- df[, i]
+    name <- colnames(df)[i]
     ## high percentage of values begin with numeric values
     n.numeric <- length(which(!is.na(suppressWarnings(as.vector(vec, mode = "numeric")))))
     n.valid <- length(which(!is.na(vec)))
-    if (n.valid > 0  & n.numeric / n.valid >= accept.proportion) {
+    if (n.valid > 0 & n.numeric / n.valid >= accept.proportion) {
       ## treat this as arbitrary numeric data
       ## if the prefix of a value looks like a numeric, strip its suffix
       possible.numeric <- stringr::str_detect(vec, "^-?\\d+\\.?\\d*[^/]?.*$") & !is.na(vec)
@@ -199,11 +202,14 @@ reformat.numerics <- function(df, accept.proportion = 0.75) {
         vec[possible.numeric],
         "^(-?\\d+\\.?\\d*)[^/]?.*$", "\\1"
       )
-      as.numeric(res)
+      df[, i] <- as.numeric(res)
+      var.summary[[name]]$numeric.detected <- TRUE
+      var.summary[[name]]$invalid.numeric.entries <- vec[!possible.numeric & !is.na(vec)]
     } else {
-      vec
+      var.summary[[name]]$numeric.detected <- FALSE
     }
-  }))
+  }
+  list(phenotype.data = df, variable.summary = var.summary)
 }
 
 #' Detect and reformat blood pressure measures
@@ -216,6 +222,7 @@ reformat.numerics <- function(df, accept.proportion = 0.75) {
 #' @description
 #'
 #' @param df data frame, input phenotype content
+#' @param var.summary list of lists, per-variable information (TBD)
 #' @param accept.proportion numeric, proportion of data to match a type
 #' required to enforce the match
 #' @return modified version of input with values cleaned as described above
@@ -226,8 +233,10 @@ reformat.numerics <- function(df, accept.proportion = 0.75) {
 #'   B = c("1.0", "100/80mmhg", "other", ".")
 #' )
 #' phenotype.data <- reformat.blood.pressure(phenotype.data)
-reformat.blood.pressure <- function(df, accept.proportion = 0.75) {
-  data.frame(lapply(df, function(vec) {
+reformat.blood.pressure <- function(df, var.summary, accept.proportion = 0.75) {
+  for (i in seq_len(ncol(df))) {
+    vec <- df[, i]
+    name <- colnames(df)[i]
     n.blood.pressure <- length(which(is.blood.pressure(vec)))
     n.valid <- length(which(!is.na(vec)))
     print(paste("blood pressure values:", n.blood.pressure, "total non-NA values:", n.valid, sep = " "))
@@ -241,9 +250,12 @@ reformat.blood.pressure <- function(df, accept.proportion = 0.75) {
         "^(\\d+) */ *(\\d+).*$",
         "\\1/\\2"
       )
-      res
+      df[, i] <- res
+      var.summary[[name]]$blood.pressure.detected <- TRUE
+      var.summary[[name]]$invalid.blood.pressure.entries <- vec[!possible.blood.pressure & !is.na(vec)]
     } else {
-      vec
+      var.summary[[name]]$blood.pressure.detected <- FALSE
     }
-  }))
+  }
+  list(phenotype.data = df, variable.summary = var.summary)
 }

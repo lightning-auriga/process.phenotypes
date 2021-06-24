@@ -4,10 +4,12 @@
 \alias{reformat.numerics}
 \title{Aggressively convert malformed numeric vectors}
 \usage{
-reformat.numerics(df, accept.proportion = 0.75)
+reformat.numerics(df, var.summary, accept.proportion = 0.75)
 }
 \arguments{
 \item{df}{data frame, input phenotype content}
+
+\item{var.summary}{list of lists, per-variable information (TBD)}
 
 \item{accept.proportion}{numeric, proportion of data to match a type
 required to enforce the match}

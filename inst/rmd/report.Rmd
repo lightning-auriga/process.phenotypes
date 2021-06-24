@@ -58,6 +58,17 @@ for (name in names(variable.summary)) {
     colnames(variable.summary.df) <- c("Value", "Summary statistics")
     print(knitr::kable(variable.summary.df, caption = paste("Summary of ", name, " (", variable.summary[[name]]$original.name, ")", sep = "")))
   }
+  if (variable.summary[[name]]$blood.pressure.detected) {
+    print("This variable was automatically detected as blood pressure measurements (SBP/DBP).")
+    if (length(variable.summary[[name]]$invalid.blood.pressure.entries) > 0) {
+      df <- data.frame(table(variable.summary[[name]]$invalid.blood.pressure.entries, useNA = "ifany"))
+      rownames(df) <- NULL
+      colnames(df) <- c(name, "Count")
+      print(knitr::kable(df, caption = "Values that were not consistent with blood pressure measurement format."))
+    } else {
+      print("All values were consistent with blood pressure measurement format.")
+    }
+  }
 }
 ```
 

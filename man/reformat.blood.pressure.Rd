@@ -4,10 +4,12 @@
 \alias{reformat.blood.pressure}
 \title{Detect and reformat blood pressure measures}
 \usage{
-reformat.blood.pressure(df, accept.proportion = 0.75)
+reformat.blood.pressure(df, var.summary, accept.proportion = 0.75)
 }
 \arguments{
 \item{df}{data frame, input phenotype content}
+
+\item{var.summary}{list of lists, per-variable information (TBD)}
 
 \item{accept.proportion}{numeric, proportion of data to match a type
 required to enforce the match}

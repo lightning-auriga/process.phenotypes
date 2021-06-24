@@ -65,14 +65,22 @@ create.phenotype.report <- function(in.filename,
       "",
       "unavailable",
       "none",
-      "unknown"
+      "unknown",
+      "not available",
+      "not done"
     ),
     as.is = TRUE
   )
 
   ## clean up and reformat numerics
-  phenotype.data <- phenotypeprocessing::reformat.numerics(phenotype.data)
-  phenotype.data <- phenotypeprocessing::reformat.blood.pressure(phenotype.data)
+  reformatted.list <- phenotypeprocessing::reformat.numerics(phenotype.data, variable.summary)
+  ## list that contains two things - phenotype.data and variable.summary
+  reformatted.list <- phenotypeprocessing::reformat.blood.pressure(
+    reformatted.list$phenotype.data,
+    reformatted.list$variable.summary
+  )
+  phenotype.data <- reformatted.list$phenotype.data
+  variable.summary <- reformatted.list$variable.summary
 
   ## TODO(lightning.auriga): modify phenotype data based on previous observations
   for (name in names(variable.summary)) {
