@@ -195,8 +195,10 @@ reformat.numerics <- function(df, accept.proportion = 0.75) {
       ## if the prefix of a value looks like a numeric, strip its suffix
       possible.numeric <- stringr::str_detect(vec, "^-?\\d+\\.?\\d*[^/]?.*$") & !is.na(vec)
       res <- rep(NA, length(vec))
-      res[possible.numeric] <- stringr::str_replace(vec[possible.numeric],
-                                                   "^(-?\\d+\\.?\\d*)[^/]?.*$", "\\1")
+      res[possible.numeric] <- stringr::str_replace(
+        vec[possible.numeric],
+        "^(-?\\d+\\.?\\d*)[^/]?.*$", "\\1"
+      )
       as.numeric(res)
     } else {
       vec
