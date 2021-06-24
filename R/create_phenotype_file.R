@@ -62,7 +62,10 @@ create.phenotype.report <- function(in.filename,
       "not applicable",
       "nil",
       "nan",
-      ""
+      "",
+      "unavailable",
+      "none",
+      "unknown"
     ),
     as.is = TRUE
   )

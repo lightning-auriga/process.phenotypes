@@ -135,3 +135,73 @@ normalize.missing.values <- function(df) {
     replacement = NA_character_
   ))
 }
+
+#' Detect whether strings look like SBP/DBP measurements
+#'
+#' @details
+#' Blood pressure measurements may be reported as ###/###
+#' entries in a single vector, complicating numeric casts.
+#'
+#' @description
+#'
+#' @param vec character vector, input candidate values
+#' @param allow.trailing.text logical, whether a blood pressure-like
+#' entry with arbitrary trailing text should be considered possibly
+#' a good result
+#' @return logical vector, one per input value, whether the input
+#' matches blood pressure format
+#' @examples
+#' is.blood.pressure(c("100/80", "100/", "100/80."))
+is.blood.pressure <- function(vec, allow.trailing.text = FALSE) {
+  pattern <- "^\\d+ */ *\\d+"
+  if (allow.trailing.text) {
+    pattern <- paste(pattern, ".*$", sep = "")
+  } else {
+    pattern <- paste(pattern, "$", sep = "")
+  }
+  stringr::str_detect(vec, pattern)
+}
+
+#' Aggressively convert malformed numeric vectors
+#'
+#' @details
+#' Given string vectors with malformed numeric entries, attempt
+#' to force conversion to numerics by stripping common problems.
+#'
+#' @description
+#'
+#' @param df data frame, input phenotype content
+#' @param accept.proportion numeric, proportion of data to match a type
+#' required to enforce the match
+#' @return modified version of input with values cleaned as described above
+#' @export detect.numerics
+#' @examples
+#' phenotype.data <- data.frame(
+#'   A = c("yes", "yes", "no", NA),
+#'   B = c("1.0", "100/80", "4g", "sparse wrong value")
+#' )
+#' phenotype.data <- detect.numerics(phenotype.data)
+detect.numerics <- function(df, accept.proportion = 0.75) {
+  data.frame(lapply(df, function(vec) {
+    n.blood.pressure <- length(which(is.blood.pressure(vec)))
+    if (n.blood.pressure / nrow(df) >= accept.proportion) {
+      ## treat this as BP, eliminate anything else
+      ## if the prefix of a value looks like BP, strip its suffix
+      possible.blood.pressure <- is.blood.pressure(vec, allow.trailing.text = TRUE)
+      res <- rep(NA, length(vec))
+      res[possible.blood.pressure] <- stringr::str_replace(
+        vec[possible.blood.pressure],
+        "^(\\d+) */ *(\\d+).*$",
+        "\\1/\\2"
+      )
+      res
+    } else {
+      n.numeric <- length(which(!is.na(suppressWarnings(as.vector(vec, mode = "numeric")))))
+      if (n.numeric / nrow(df) >= accept.proportion) {
+        ## treat this as arbitrary numeric data
+        ## if the prefix of a value looks like a numeric, strip its suffix
+      }
+    }
+    ## high percentage of values begin with numeric values
+  }))
+}

@@ -122,3 +122,21 @@ test_that("all missing values are normalized", {
     out.df
   )
 })
+
+test_that("is.blood.pressure successfully discerns SBP/DBP-style data", {
+  in.vec <- c("100/80", "1.0/20", "100    /    40", "100/", "/40", "100/40mmhg")
+  out.vec <- c(TRUE, FALSE, TRUE, FALSE, FALSE, FALSE)
+  expect_identical(
+    is.blood.pressure(in.vec, FALSE),
+    out.vec
+  )
+})
+
+test_that("is.blood.pressure can understand suffixes when requested", {
+  in.vec <- c("100/80", "1.0/20", "100    /    40", "100/", "/40", "100/40mmhg")
+  out.vec <- c(TRUE, FALSE, TRUE, FALSE, FALSE, TRUE)
+  expect_identical(
+    is.blood.pressure(in.vec, TRUE),
+    out.vec
+  )
+})
