@@ -85,7 +85,20 @@ create.phenotype.report <- function(in.filename,
   ## TODO(lightning.auriga): modify phenotype data based on previous observations
   for (name in names(variable.summary)) {
     if (is.vector(phenotype.data[, name], mode = "numeric")) {
-      variable.summary[[name]]$summary <- summary(phenotype.data[, name])
+      variable.summary[[name]]$summary <- c(
+        mean(phenotype.data[, name], na.rm = TRUE),
+        quantile(phenotype.data[, name], probs = seq(0, 1, 0.1), na.rm = TRUE),
+        length(which(is.na(phenotype.data[, name])))
+      )
+      names(variable.summary[[name]]$summary) <- c(
+        "Mean",
+        "Min",
+        names(variable.summary[[name]]$summary)[3:6],
+        "Median",
+        names(variable.summary[[name]]$summary)[8:11],
+        "Max",
+        "NAs"
+      )
     } else {
       variable.summary[[name]]$summary <- table(phenotype.data[, name],
         useNA = "ifany"
