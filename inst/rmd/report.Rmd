@@ -28,6 +28,23 @@ library(kableExtra, quietly = TRUE)
 ***
 <br>
 
+## Configure default ggplot2 theme for plotting
+
+```{r configure.ggplot2.theme, eval=TRUE, echo=FALSE}
+my.theme <- theme_light() + theme(
+  plot.title = element_text(size = 16, hjust = 0.5),
+  axis.title = element_text(size = 14),
+  axis.text = element_text(size = 12),
+  strip.background = element_blank(),
+  strip.text = element_text(size = 14, colour = "black"),
+  legend.title = element_text(size = 14),
+  legend.text = element_text(size = 13)
+)
+```
+
+***
+<br>
+
 ## Report linking between input and standardized variable names
 
 ```{r report.variable.mappings, eval=TRUE, echo=FALSE, results="asis"}
@@ -50,6 +67,24 @@ knitr::kable(variable.mapping.df, caption = "Phenotype Variable Names")
 ```{r report.value.summary, eval=TRUE, echo=FALSE, results="asis"}
 for (name in names(variable.summary)) {
   my.summ <- variable.summary[[name]]$summary
+  ## if the source data type is numeric
+  if (is.vector(phenotype.data[, name], mode = "numeric")) {
+    ## create data histogram for numeric data
+    plot.data <- data.frame(x = phenotype.data[, name])
+    hist.plot <- ggplot(data = plot.data) + my.theme
+    binwidth <- diff(quantile(plot.data$x, probs = c(0.5, 0.75), na.rm = TRUE)) / 12.5
+    hist.plot <- hist.plot + geom_histogram(
+      aes(x = x, y = ..count.. / sum(..count..)),
+      binwidth = binwidth
+    )
+    hist.plot <- hist.plot + xlab(name) + ylab("proportion of data")
+    hist.plot <- hist.plot + ggtitle(paste("Histogram of ", name, " (",
+      variable.summary[[name]]$original.name,
+      ") Distribution",
+      sep = ""
+    ))
+    print(hist.plot)
+  }
   if (length(my.summ) < nrow(phenotype.data) / 10) {
     variable.summary.df <- data.frame(
       names(my.summ), as.vector(my.summ)
