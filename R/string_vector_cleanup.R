@@ -21,6 +21,7 @@
 make.lowercase <- function(df) {
   data.frame(lapply(df, tolower))
 }
+
 #' Basic global cleanup of entries in a phenotype data frame
 #'
 #' @details
@@ -107,6 +108,7 @@ remove.nonword.chars <- function(df) {
   df <- data.frame(lapply(df, stringr::str_replace_all, "^\\.([0-9]+)$", "0.\\1"))
   data.frame(lapply(df, stringr::str_replace_all, "^\\W+|\\W*[^[\\w)}\\]]]$", ""))
 }
+
 #' Basic global cleanup of entries in a phenotype data frame
 #'
 #' @details
@@ -131,7 +133,21 @@ remove.nonword.chars <- function(df) {
 #' phenotype.data <- normalize.missing.values(phenotype.data)
 normalize.missing.values <- function(df) {
   data.frame(lapply(df, stringr::str_replace_all,
-    "^na$|^not applicable$|^nil$|^nan$|^$",
+    paste(
+      "^na$",
+      "^not a[pl]+ica[ble]+$",
+      "^nil$",
+      "^$",
+      "^not sure$",
+      "^nan$",
+      "^not a[s]+e[s]+ed$",
+      "^unav[ai]+la[bl]+e$",
+      "^none$",
+      "^u[nk]+own$",
+      "^not av[ai]+la[bl]+e$",
+      "^not done$",
+      sep = "|"
+    ),
     replacement = NA_character_
   ))
 }
@@ -239,7 +255,6 @@ reformat.blood.pressure <- function(df, var.summary, accept.proportion = 0.75) {
     name <- colnames(df)[i]
     n.blood.pressure <- length(which(is.blood.pressure(vec)))
     n.valid <- length(which(!is.na(vec)))
-    print(paste("blood pressure values:", n.blood.pressure, "total non-NA values:", n.valid, sep = " "))
     if (n.valid > 0 & n.blood.pressure / n.valid >= accept.proportion) {
       ## treat this as BP, eliminate anything else
       ## if the prefix of a value looks like BP, strip its suffix

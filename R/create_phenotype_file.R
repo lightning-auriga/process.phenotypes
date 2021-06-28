@@ -54,23 +54,10 @@ create.phenotype.report <- function(in.filename,
   phenotype.data <- phenotypeprocessing::remove.whitespace(phenotype.data)
   phenotype.data <- phenotypeprocessing::collapse.repeats(phenotype.data)
   phenotype.data <- phenotypeprocessing::remove.nonword.chars(phenotype.data)
+  phenotype.data <- phenotypeprocessing::normalize.missing.values(phenotype.data)
 
   ## attempt type conversion on post-cleaning string vectors
-  phenotype.data <- type.convert(phenotype.data,
-    na.strings = c(
-      "na",
-      "not applicable",
-      "nil",
-      "nan",
-      "",
-      "unavailable",
-      "none",
-      "unknown",
-      "not available",
-      "not done"
-    ),
-    as.is = TRUE
-  )
+  phenotype.data <- type.convert(phenotype.data, as.is = TRUE)
 
   ## clean up and reformat numerics
   reformatted.list <- phenotypeprocessing::reformat.numerics(phenotype.data, variable.summary)
