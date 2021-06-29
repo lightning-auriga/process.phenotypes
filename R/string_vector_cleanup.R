@@ -182,95 +182,97 @@ is.blood.pressure <- function(vec, allow.trailing = FALSE) {
   stringr::str_detect(vec, pattern)
 }
 
-#' Aggressively convert malformed numeric vectors
+#' Aggressively convert malformed numeric vector
 #'
 #' @details
-#' Given string vectors with malformed numeric entries, attempt
+#' Given string vector with malformed numeric entries, attempt
 #' to force conversion to numerics by stripping common problems.
 #'
 #' @description
 #'
-#' @param df data frame, input phenotype content
-#' @param var.summary list of lists, per-variable information (TBD)
-#' @param accept.proportion numeric, proportion of data to match a type
-#' required to enforce the match
+#' @param vec character vector, input phenotype content
+#' @param var.summary list, variable summary entry for this particular variable
 #' @return modified version of input with values cleaned as described above
 #' @export reformat.numerics
-#' @examples
-#' phenotype.data <- data.frame(
-#'   A = c("yes", "yes", "no", NA),
-#'   B = c("1.0", "100/80", "4g", "sparse wrong value")
-#' )
-#' phenotype.data <- reformat.numerics(phenotype.data)
-reformat.numerics <- function(df, var.summary, accept.proportion = 0.75) {
-  for (i in seq_len(ncol(df))) {
-    vec <- df[, i]
-    name <- colnames(df)[i]
-    ## high percentage of values begin with numeric values
-    n.numeric <- length(which(!is.na(suppressWarnings(as.vector(vec, mode = "numeric")))))
-    n.valid <- length(which(!is.na(vec)))
-    if (n.valid > 0 & n.numeric / n.valid >= accept.proportion) {
-      ## treat this as arbitrary numeric data
-      ## if the prefix of a value looks like a numeric, strip its suffix
-      possible.numeric <- stringr::str_detect(vec, "^-?\\d+\\.?\\d*[^/]?.*$") & !is.na(vec)
-      res <- rep(NA, length(vec))
-      res[possible.numeric] <- stringr::str_replace(
-        vec[possible.numeric],
-        "^(-?\\d+\\.?\\d*)[^/]?.*$", "\\1"
-      )
-      df[, i] <- as.numeric(res)
-      var.summary[[name]]$numeric.detected <- TRUE
-      var.summary[[name]]$invalid.numeric.entries <- vec[!possible.numeric & !is.na(vec)]
-    } else {
-      var.summary[[name]]$numeric.detected <- FALSE
-    }
-  }
-  list(phenotype.data = df, variable.summary = var.summary)
+reformat.numerics <- function(vec, var.summary) {
+  ## treat this as arbitrary numeric data
+  ## if the prefix of a value looks like a numeric, strip its suffix
+  possible.numeric <- stringr::str_detect(vec, "^-?\\d+\\.?\\d*($|[^ \\d/].*$)") & !is.na(vec)
+  res <- rep(NA, length(vec))
+  res[possible.numeric] <- stringr::str_replace(
+    vec[possible.numeric],
+    "^(-?\\d+\\.?\\d*)($|[^ \\d/].*$)", "\\1"
+  )
+  res <- as.numeric(res)
+  var.summary$invalid.numeric.entries <- vec[!possible.numeric & !is.na(vec)]
+  list(phenotype.data = res, variable.summary = var.summary)
 }
 
 #' Detect and reformat blood pressure measures
 #'
 #' @details
-#' Given string vectors with potentially malformed blood pressure
+#' Given string vector with potentially malformed blood pressure
 #' entries, attempt to standardize to SBP/DBP by stripping
 #' common problems.
 #'
 #' @description
 #'
-#' @param df data frame, input phenotype content
-#' @param var.summary list of lists, per-variable information (TBD)
-#' @param accept.proportion numeric, proportion of data to match a type
-#' required to enforce the match
+#' @param vec character vector, input phenotype content
+#' @param var.summary list, variable summary information for this particular variable
 #' @return modified version of input with values cleaned as described above
 #' @export reformat.blood.pressure
-#' @examples
-#' phenotype.data <- data.frame(
-#'   A = c("a", "100/80", "100/80.", NA),
-#'   B = c("1.0", "100/80mmhg", "other", ".")
-#' )
-#' phenotype.data <- reformat.blood.pressure(phenotype.data)
-reformat.blood.pressure <- function(df, var.summary, accept.proportion = 0.75) {
-  for (i in seq_len(ncol(df))) {
-    vec <- df[, i]
-    name <- colnames(df)[i]
-    n.blood.pressure <- length(which(is.blood.pressure(vec)))
-    n.valid <- length(which(!is.na(vec)))
-    if (n.valid > 0 & n.blood.pressure / n.valid >= accept.proportion) {
-      ## treat this as BP, eliminate anything else
-      ## if the prefix of a value looks like BP, strip its suffix
-      possible.blood.pressure <- is.blood.pressure(vec, allow.trailing = TRUE) & !is.na(vec)
-      res <- rep(NA, length(vec))
-      res[possible.blood.pressure] <- stringr::str_replace(
-        vec[possible.blood.pressure],
-        "^(\\d+) */ *(\\d+).*$",
-        "\\1/\\2"
+reformat.blood.pressure <- function(vec, var.summary) {
+  ## treat this as BP, eliminate anything else
+  ## if the prefix of a value looks like BP, strip its suffix
+  possible.blood.pressure <- is.blood.pressure(vec, allow.trailing = TRUE) & !is.na(vec)
+  res <- rep(NA, length(vec))
+  res[possible.blood.pressure] <- stringr::str_replace(
+    vec[possible.blood.pressure],
+    "^(\\d+) */ *(\\d+).*$",
+    "\\1/\\2"
+  )
+  var.summary$invalid.blood.pressure.entries <- vec[!possible.blood.pressure & !is.na(vec)]
+  list(phenotype.data = res, variable.summary = var.summary)
+}
+
+
+
+#' Convert character vector to factor, collapsing certain levels
+#'
+#' @details
+#' Converts character vector to factor based on level specification in yaml config.
+#' This will report entries that are converted to NA without first being set to NA intentionally.
+#'
+#' @description
+#'
+#' @param vec character vector, input string phenotype data
+#' @param variable.summary list, summary information for a given variable
+#' @return list, 'phenotype.data' contains converted phenotype information,
+#' 'variable.summary' contains input variable summary and possibly information
+#' about invalid factor levels converted to NA.
+#' @export reformat.factor
+reformat.factor <- function(vec, variable.summary) {
+  stopifnot(!is.null(variable.summary$params$levels))
+  ordered.levels <- c()
+  for (level in variable.summary$params$levels) {
+    stopifnot(!is.null(level$name))
+    alternates <- level$alternates
+    if (!is.null(alternates)) {
+      ## replace alternates
+      vec <- stringr::str_replace(
+        vec,
+        paste(paste("^", alternates, "$", sep = ""),
+          collapse = "|"
+        ),
+        level$name
       )
-      df[, i] <- res
-      var.summary[[name]]$blood.pressure.detected <- TRUE
-      var.summary[[name]]$invalid.blood.pressure.entries <- vec[!possible.blood.pressure & !is.na(vec)]
-    } else {
-      var.summary[[name]]$blood.pressure.detected <- FALSE
     }
+    ordered.levels <- c(ordered.levels, level$name)
   }
-  list(phenotype.data = df, variable.summary = var.summary)
+  res <- factor(vec, levels = ordered.levels)
+  variable.summary$invalid.factor.entries <- unique(vec[!is.na(vec) & is.na(res)])
+  list(
+    phenotype.data = res,
+    variable.summary = variable.summary
+  )
 }

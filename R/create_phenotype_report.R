@@ -77,7 +77,9 @@ create.phenotype.report <- function(in.filename,
 
   ## attempt type conversion on post-cleaning string vectors
   ## TODO: replace with iterative application of yaml config type specification
-  phenotype.data <- type.convert(phenotype.data, as.is = TRUE)
+  reformatted.list <- phenotypeprocessing::apply.type.conversions(phenotype.data, variable.summary)
+  phenotype.data <- reformatted.list$phenotype.data
+  variable.summary <- reformatted.list$variable.summary
 
   ## clean up and reformat numerics
   reformatted.list <- phenotypeprocessing::reformat.numerics(phenotype.data, variable.summary)

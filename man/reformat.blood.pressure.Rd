@@ -4,15 +4,12 @@
 \alias{reformat.blood.pressure}
 \title{Detect and reformat blood pressure measures}
 \usage{
-reformat.blood.pressure(df, var.summary, accept.proportion = 0.75)
+reformat.blood.pressure(vec, var.summary)
 }
 \arguments{
-\item{df}{data frame, input phenotype content}
+\item{vec}{character vector, input phenotype content}
 
-\item{var.summary}{list of lists, per-variable information (TBD)}
-
-\item{accept.proportion}{numeric, proportion of data to match a type
-required to enforce the match}
+\item{var.summary}{list, variable summary information for this particular variable}
 }
 \value{
 modified version of input with values cleaned as described above
@@ -21,14 +18,7 @@ modified version of input with values cleaned as described above
 
 }
 \details{
-Given string vectors with potentially malformed blood pressure
+Given string vector with potentially malformed blood pressure
 entries, attempt to standardize to SBP/DBP by stripping
 common problems.
-}
-\examples{
-phenotype.data <- data.frame(
-  A = c("a", "100/80", "100/80.", NA),
-  B = c("1.0", "100/80mmhg", "other", ".")
-)
-phenotype.data <- reformat.blood.pressure(phenotype.data)
 }

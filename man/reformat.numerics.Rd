@@ -2,17 +2,14 @@
 % Please edit documentation in R/string_vector_cleanup.R
 \name{reformat.numerics}
 \alias{reformat.numerics}
-\title{Aggressively convert malformed numeric vectors}
+\title{Aggressively convert malformed numeric vector}
 \usage{
-reformat.numerics(df, var.summary, accept.proportion = 0.75)
+reformat.numerics(vec, var.summary)
 }
 \arguments{
-\item{df}{data frame, input phenotype content}
+\item{vec}{character vector, input phenotype content}
 
-\item{var.summary}{list of lists, per-variable information (TBD)}
-
-\item{accept.proportion}{numeric, proportion of data to match a type
-required to enforce the match}
+\item{var.summary}{list, variable summary entry for this particular variable}
 }
 \value{
 modified version of input with values cleaned as described above
@@ -21,13 +18,6 @@ modified version of input with values cleaned as described above
 
 }
 \details{
-Given string vectors with malformed numeric entries, attempt
+Given string vector with malformed numeric entries, attempt
 to force conversion to numerics by stripping common problems.
-}
-\examples{
-phenotype.data <- data.frame(
-  A = c("yes", "yes", "no", NA),
-  B = c("1.0", "100/80", "4g", "sparse wrong value")
-)
-phenotype.data <- reformat.numerics(phenotype.data)
 }

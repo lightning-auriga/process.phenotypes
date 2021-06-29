@@ -144,87 +144,128 @@ test_that("is.blood.pressure can understand suffixes when requested", {
 })
 
 test_that("reformat.numerics casts all numbers and number-like values to numeric", {
-  in.df <- data.frame(
-    "CV0001" = c("1", "2.3", "a", NA),
-    "CV0002" = c("1cm", "-4.0mmhg", "1", "1"),
-    "CV0003" = c("not", "a", "numeric", "100/80"),
-    "CV0004" = c("100/80", "120/90", "130/85", "110/80")
+  in.vec <- c(
+    "1", "2.3", "a", NA,
+    "1cm", "-4.0mmhg", "1", "1",
+    "not", "a", "numeric", "100/80",
+    "100/80", "120/90", "130/85", "110/80"
   )
-
-  s1 <- c("quantile1" = 0.2, "quantile2" = 0.5, "mean" = 0.3)
-  s2 <- c("quantile1" = 0.1, "quantile2" = 0.5, "mean" = 0.6)
-  s3 <- c("not" = 1, "a" = 1, "numeric" = 1, "100/80" = 1)
-  s4 <- c("100/80" = 1, "120/90" = 1, "130/85" = 1, "110/80" = 1)
-  n1 <- TRUE
-  n2 <- TRUE
-  n3 <- FALSE
-  n4 <- FALSE
-  i1 <- c("a")
-  i2 <- character()
-
-  in1 <- list("summary" = s1)
-  in2 <- list("summary" = s2)
-  in3 <- list("summary" = s3)
-  in4 <- list("summary" = s4)
-  in.var.summary <- list("CV0001" = in1, "CV0002" = in2, "CV0003" = in3, "CV0004" = in4)
-
-  out1 <- list("summary" = s1, "numeric.detected" = n1, "invalid.numeric.entries" = i1)
-  out2 <- list("summary" = s2, "numeric.detected" = n2, "invalid.numeric.entries" = i2)
-  out3 <- list("summary" = s3, "numeric.detected" = n3)
-  out4 <- list("summary" = s4, "numeric.detected" = n4)
-  out.var.summary <- list("CV0001" = out1, "CV0002" = out2, "CV0003" = out3, "CV0004" = out4)
-
-  out.df <- data.frame(
-    "CV0001" = c(1, 2.3, NA, NA),
-    "CV0002" = c(1, -4.0, 1, 1),
-    "CV0003" = c("not", "a", "numeric", "100/80"),
-    "CV0004" = c("100/80", "120/90", "130/85", "110/80")
+  out.vec <- c(
+    1, 2.3, NA, NA,
+    1, -4.0, 1, 1,
+    NA, NA, NA, NA,
+    NA, NA, NA, NA
   )
-
+  in.summary <- list(
+    original.name = "testname",
+    summary = c(q1 = 0.2, q2 = 0.5, mean = 0.3)
+  )
+  out.summary <- list(
+    original.name = "testname",
+    summary = c(q1 = 0.2, q2 = 0.5, mean = 0.3),
+    invalid.numeric.entries = c(
+      "a", "not", "a", "numeric", "100/80",
+      "100/80", "120/90", "130/85", "110/80"
+    )
+  )
   expect_identical(
-    reformat.numerics(in.df, in.var.summary, accept.proportion = 0.5),
-    list(phenotype.data = out.df, variable.summary = out.var.summary)
+    reformat.numerics(in.vec, in.summary),
+    list(phenotype.data = out.vec, variable.summary = out.summary)
   )
 })
 
 test_that("reformat.blood.pressure identifies and reformats SBP/DBP measures", {
-  in.df <- data.frame(
-    "CV0001" = c("1", "2.3", "a", NA),
-    "CV0002" = c("1cm", "-4.0mmhg", "1", "1"),
-    "CV0003" = c("not", "a", "numeric", "100/80"),
-    "CV0004" = c("100/80mmhg", "120/90", "130/85", "110/80")
+  in.vec <- c(
+    "1", "2.3", "a", NA,
+    "1cm", "-4.0mmhg", "1", "1",
+    "not", "a", "numeric", "100/80",
+    "100/80", "120/90", "130/85", "110 / 80"
   )
-
-  s1 <- c("quantile1" = 0.2, "quantile2" = 0.5, "mean" = 0.3)
-  s2 <- c("quantile1" = 0.1, "quantile2" = 0.5, "mean" = 0.6)
-  s3 <- c("not" = 1, "a" = 1, "numeric" = 1, "100/80" = 1)
-  s4 <- c("100/80" = 1, "120/90" = 1, "130/85" = 1, "110/80" = 1)
-  n1 <- FALSE
-  n2 <- FALSE
-  n3 <- FALSE
-  n4 <- TRUE
-  i4 <- character()
-
-  in1 <- list("summary" = s1)
-  in2 <- list("summary" = s2)
-  in3 <- list("summary" = s3)
-  in4 <- list("summary" = s4)
-  in.var.summary <- list("CV0001" = in1, "CV0002" = in2, "CV0003" = in3, "CV0004" = in4)
-
-  out1 <- list("summary" = s1, "blood.pressure.detected" = n1)
-  out2 <- list("summary" = s2, "blood.pressure.detected" = n2)
-  out3 <- list("summary" = s3, "blood.pressure.detected" = n3)
-  out4 <- list("summary" = s4, "blood.pressure.detected" = n4, "invalid.blood.pressure.entries" = i4)
-  out.var.summary <- list("CV0001" = out1, "CV0002" = out2, "CV0003" = out3, "CV0004" = out4)
-
-  out.df <- data.frame(
-    "CV0001" = c("1", "2.3", "a", NA),
-    "CV0002" = c("1cm", "-4.0mmhg", "1", "1"),
-    "CV0003" = c("not", "a", "numeric", "100/80"),
-    "CV0004" = c("100/80", "120/90", "130/85", "110/80")
+  out.vec <- c(
+    NA, NA, NA, NA,
+    NA, NA, NA, NA,
+    NA, NA, NA, "100/80",
+    "100/80", "120/90", "130/85", "110/80"
+  )
+  in.summary <- list(
+    original.name = "testname",
+    summary = c(q1 = 0.2, q2 = 0.5, mean = 0.3)
+  )
+  out.summary <- list(
+    original.name = "testname",
+    summary = c(q1 = 0.2, q2 = 0.5, mean = 0.3),
+    invalid.blood.pressure.entries = c(
+      "1", "2.3", "a", "1cm",
+      "-4.0mmhg", "1", "1",
+      "not", "a", "numeric"
+    )
   )
   expect_identical(
-    reformat.blood.pressure(in.df, in.var.summary, accept.proportion = 0.5),
-    list(phenotype.data = out.df, variable.summary = out.var.summary)
+    reformat.blood.pressure(in.vec, in.summary),
+    list(phenotype.data = out.vec, variable.summary = out.summary)
+  )
+})
+
+test_that("reformat.factor converts character vectors to factors with a level order", {
+  in.vec <- c("pineapple", "orange", "lemon", "lemon", "cucumber")
+  in.summary <- list(
+    original.name = "testname",
+    type = "categorical",
+    params = list(levels = list(
+      "0" = list(name = "orange"),
+      "1" = list(name = "lemon"),
+      "2" = list(name = "pineapple"),
+      "3" = list(name = "cucumber")
+    ))
+  )
+  out.vec <- factor(in.vec, levels = c("orange", "lemon", "pineapple", "cucumber"))
+  out.summary <- in.summary
+  out.summary$invalid.factor.entries <- character()
+  out.list <- list(
+    phenotype.data = out.vec,
+    variable.summary = out.summary
+  )
+  expect_identical(
+    reformat.factor(in.vec, in.summary),
+    out.list
+  )
+})
+
+test_that("reformat.factor reassigns alternate levels to the correct primary before conversion", {
+  in.vec <- c("pineapple", "orange", "lemon", "lemon", "Pineapple", "cucumber", "pointy yellow thing")
+  in.summary <- list(
+    original.name = "testname",
+    type = "categorical",
+    params = list(levels = list(
+      "0" = list(name = "orange"),
+      "1" = list(name = "lemon"),
+      "2" = list(
+        name = "pineapple",
+        alternates = c(
+          "Pineapple",
+          "pointy yellow thing"
+        )
+      ),
+      "3" = list(name = "cucumber")
+    ))
+  )
+  out.vec <- factor(c(
+    "pineapple",
+    "orange",
+    "lemon",
+    "lemon",
+    "pineapple",
+    "cucumber",
+    "pineapple"
+  ), levels = c("orange", "lemon", "pineapple", "cucumber"))
+  out.summary <- in.summary
+  out.summary$invalid.factor.entries <- character()
+  out.list <- list(
+    phenotype.data = out.vec,
+    variable.summary = out.summary
+  )
+  expect_identical(
+    reformat.factor(in.vec, in.summary),
+    out.list
   )
 })
