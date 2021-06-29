@@ -7,10 +7,13 @@
 #' corresponding to those names are reported as result${newname}$original.name.
 #'
 #' @description
-#'
+#' Since the addition of yaml configuration, this function additionally grabs
+#' any available configuration information for each variable and stores it as
+#' a "params" list entry per variable.
 #'
 #' @param df data.frame, phenotype dataframe with untransformed headers
 #' @param dataset.tag character vector, unique string tag for this dataset
+#' @param config.data list, yaml configuration data per variable
 #' @return list, mapping new variable names to lists; eventually meant to have
 #' more entries but will for now just have a original.name entry for mapping back
 #' to the raw variable names
@@ -21,12 +24,22 @@
 #' df <- data.frame(rnorm(100), runif(100))
 #' colnames(df) <- c("Human height lol", "y")
 #' map.header(df, "mytag")
-map.header <- function(df, dataset.tag) {
+map.header <- function(df, dataset.tag, config.data) {
   new.names <- sprintf("%s%05d", dataset.tag, seq_len(ncol(df)))
   res <- lapply(colnames(df), function(i) {
     list(original.name = i)
   })
   names(res) <- new.names
+  ## for now, to handle duplicate identical header descriptors
+  ## in raw input files, enforce identical ordering of variables
+  ## in phenotype data and in configuration yaml file
+  config.names <- lapply(config.data$variables, function(i) {
+    i[["name"]]
+  })
+  stopifnot(identical(colnames(df), unname(unlist(config.names))))
+  for (i in seq_len(length(config.data$variables))) {
+    res[[i]]$params <- config.data$variables[[i]]
+  }
   res
 }
 

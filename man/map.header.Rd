@@ -4,12 +4,14 @@
 \alias{map.header}
 \title{Create and map structured variable names to replace arbitrary input variable names}
 \usage{
-map.header(df, dataset.tag)
+map.header(df, dataset.tag, config.data)
 }
 \arguments{
 \item{df}{data.frame, phenotype dataframe with untransformed headers}
 
 \item{dataset.tag}{character vector, unique string tag for this dataset}
+
+\item{config.data}{list, yaml configuration data per variable}
 }
 \value{
 list, mapping new variable names to lists; eventually meant to have
@@ -17,7 +19,9 @@ more entries but will for now just have a original.name entry for mapping back
 to the raw variable names
 }
 \description{
-
+Since the addition of yaml configuration, this function additionally grabs
+any available configuration information for each variable and stores it as
+a "params" list entry per variable.
 }
 \details{
 Input data frame may have any format variable names stored as column

@@ -7,14 +7,41 @@ colnames(phenotype.data) <- c(
   "weird phenotype name 1",
   "weird ** ////!! name __2"
 )
+
+config.data <- list(
+  tag = "testtag",
+  variables = list(
+    var001 = list(
+      name = "weird phenotype name 1",
+      type = "string"
+    ),
+    var002 = list(
+      name = "weird ** ////!! name __2",
+      type = "string"
+    )
+  )
+)
+
 map.header.expected.output <- list(
-  DF00001 = list(original.name = "weird phenotype name 1"),
-  DF00002 = list(original.name = "weird ** ////!! name __2")
+  DF00001 = list(
+    original.name = "weird phenotype name 1",
+    params = list(
+      name = "weird phenotype name 1",
+      type = "string"
+    )
+  ),
+  DF00002 = list(
+    original.name = "weird ** ////!! name __2",
+    params = list(
+      name = "weird ** ////!! name __2",
+      type = "string"
+    )
+  )
 )
 
 test_that("variable names are mapped correctly in order", {
   expect_identical(
-    map.header(phenotype.data, tag.name),
+    map.header(phenotype.data, tag.name, config.data),
     map.header.expected.output
   )
 })
@@ -27,14 +54,23 @@ test_that("duplicate header names don't ruin mapping", {
     10:12
   )
   colnames(test.data) <- c("a", "b", "c", "b")
+  config.data <- list(
+    tag = "testtag",
+    variables = list(
+      var001 = list(name = "a", type = "string"),
+      var002 = list(name = "b", type = "string"),
+      var003 = list(name = "c", type = "string"),
+      var004 = list(name = "b", type = "string")
+    )
+  )
   expected.output <- list(
-    DF00001 = list(original.name = "a"),
-    DF00002 = list(original.name = "b"),
-    DF00003 = list(original.name = "c"),
-    DF00004 = list(original.name = "b")
+    DF00001 = list(original.name = "a", params = list(name = "a", type = "string")),
+    DF00002 = list(original.name = "b", params = list(name = "b", type = "string")),
+    DF00003 = list(original.name = "c", params = list(name = "c", type = "string")),
+    DF00004 = list(original.name = "b", params = list(name = "b", type = "string"))
   )
   expect_identical(
-    map.header(test.data, tag.name),
+    map.header(test.data, tag.name, config.data),
     expected.output
   )
 })
@@ -54,10 +90,10 @@ test_that("duplicate header names are handled correctly in sanitization", {
   )
   colnames(test.data) <- c("a", "b", "c", "b")
   mapped.variables <- list(
-    DF00001 = list(original.name = "a"),
-    DF00002 = list(original.name = "b"),
-    DF00003 = list(original.name = "c"),
-    DF00004 = list(original.name = "b")
+    DF00001 = list(original.name = "a", params = list(name = "a", type = "string")),
+    DF00002 = list(original.name = "b", params = list(name = "b", type = "string")),
+    DF00003 = list(original.name = "c", params = list(name = "c", type = "string")),
+    DF00004 = list(original.name = "b", params = list(name = "b", type = "string"))
   )
   expected.df <- test.data
   colnames(expected.df) <- c("DF00001", "DF00002", "DF00003", "DF00004")

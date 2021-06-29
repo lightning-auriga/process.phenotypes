@@ -65,10 +65,8 @@ create.phenotype.report <- function(in.filename,
 
   ## sanitize headers
   ## TODO: eventually feed dataset tag from yaml
-  variable.summary <- phenotypeprocessing::map.header(phenotype.data, dataset.tag)
+  variable.summary <- phenotypeprocessing::map.header(phenotype.data, dataset.tag, config.data)
   phenotype.data <- phenotypeprocessing::sanitize.header(phenotype.data, variable.summary)
-  ## TODO: inject yaml configuration data into variable.summary
-  ## urgent
 
   ## clean up strings (global functions across all variables)
   phenotype.data <- phenotypeprocessing::make.lowercase(phenotype.data)
