@@ -17,20 +17,20 @@
 #' project-specific and shared model yaml configuration files
 #' @seealso create.phenotype.report
 #' @keywords phenotypes
-#' @export run.experiment
+#' @export process.phenotypes
 #' @examples
-#' phenotypeprocessing::run.experiment()
-run.experiment <- function(phenotype.path,
-                           output.path,
-                           phenotype.files = c(
-                             "CV_FINAL_STORE.tsv",
-                             "ET_Final_Store.tsv",
-                             "HO_FINAL_STORE.tsv",
-                             "MM_FINAl_store.tsv",
-                             "Neuro_final_store.tsv",
-                             "SC_final_store.tsv"
-                           ),
-                           yaml.dir = "yaml-configuration") {
+#' phenotypeprocessing::process.phenotypes()
+process.phenotypes <- function(phenotype.path,
+                               output.path,
+                               phenotype.files = c(
+                                 "CV_FINAL_STORE.tsv",
+                                 "ET_Final_Store.tsv",
+                                 "HO_FINAL_STORE.tsv",
+                                 "MM_FINAl_store.tsv",
+                                 "Neuro_final_store.tsv",
+                                 "SC_final_store.tsv"
+                               ),
+                               yaml.dir = "yaml-configuration") {
   ## sanity check on phenotype.path param
   stopifnot(
     is.vector(phenotype.path, mode = "character"),
