@@ -64,10 +64,13 @@ create.phenotype.report <- function(in.filename,
   phenotype.data <- phenotypeprocessing::remove.invalid.columns(phenotype.data)
 
   ## sanitize headers
+  ## TODO: eventually feed dataset tag from yaml
   variable.summary <- phenotypeprocessing::map.header(phenotype.data, dataset.tag)
   phenotype.data <- phenotypeprocessing::sanitize.header(phenotype.data, variable.summary)
+  ## TODO: inject yaml configuration data into variable.summary
+  ## urgent
 
-  ## clean up strings
+  ## clean up strings (global functions across all variables)
   phenotype.data <- phenotypeprocessing::make.lowercase(phenotype.data)
   phenotype.data <- phenotypeprocessing::remove.whitespace(phenotype.data)
   phenotype.data <- phenotypeprocessing::collapse.repeats(phenotype.data)
@@ -75,6 +78,7 @@ create.phenotype.report <- function(in.filename,
   phenotype.data <- phenotypeprocessing::normalize.missing.values(phenotype.data)
 
   ## attempt type conversion on post-cleaning string vectors
+  ## TODO: replace with iterative application of yaml config type specification
   phenotype.data <- type.convert(phenotype.data, as.is = TRUE)
 
   ## clean up and reformat numerics
@@ -86,6 +90,10 @@ create.phenotype.report <- function(in.filename,
   )
   phenotype.data <- reformatted.list$phenotype.data
   variable.summary <- reformatted.list$variable.summary
+
+  ## TODO: apply variable-specific NA values
+  ## TODO: apply variable-specific range restrictions
+  ## TODO: enforce yaml-specified variable relationships
 
   ## TODO(lightning.auriga): modify phenotype data based on previous observations
   for (name in names(variable.summary)) {
