@@ -13,6 +13,8 @@
 #' path to directory for output report html files
 #' @param phenotype.files character vector, one or more phenotype
 #' files to be processed. all files expected to be .tsv
+#' @param yaml.dir character vector, directory containing
+#' project-specific and shared model yaml configuration files
 #' @seealso create.phenotype.report
 #' @keywords phenotypes
 #' @export run.experiment
@@ -27,7 +29,8 @@ run.experiment <- function(phenotype.path,
                              "MM_FINAl_store.tsv",
                              "Neuro_final_store.tsv",
                              "SC_final_store.tsv"
-                           )) {
+                           ),
+                           yaml.dir = "yaml-configuration") {
   ## sanity check on phenotype.path param
   stopifnot(
     is.vector(phenotype.path, mode = "character"),
@@ -40,14 +43,27 @@ run.experiment <- function(phenotype.path,
   )
   ## sanity check on phenotype.files param
   stopifnot(is.vector(phenotype.files, mode = "character"))
+  ## sanity check on yaml.dir param
+  stopifnot(
+    is.vector(yaml.dir, mode = "character"),
+    length(yaml.dir) == 1,
+    dir.exists(yaml.dir)
+  )
   ## create output directory if needed
   dir.create(output.path, recursive = TRUE, showWarnings = FALSE)
+  ## temporary: assume shared model yaml is in a fixed name under yaml.dir
+  shared.model.yaml <- paste(yaml.dir, "shared-models.yaml", sep = "/")
   ## dispatch report creation for each input file
   for (file in phenotype.files) {
+    ## TODO: replace this tag assumption with configurable tag from yaml file
     dataset.tag <- strsplit(file, "_")[[1]][1]
+    ## temporary: assume dataset-specific yaml is in a fixed name under yaml.dir
+    dataset.yaml <- paste(yaml.dir, paste(dataset.tag, "yaml", sep = "."), sep = "/")
     output.filename <- paste(output.path, paste(dataset.tag, "report.html", sep = "_"), sep = "/")
     create.phenotype.report(
       paste(phenotype.path, file, sep = "/"),
+      dataset.yaml,
+      shared.model.yaml,
       dataset.tag,
       output.filename
     )

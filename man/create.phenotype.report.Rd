@@ -4,12 +4,22 @@
 \alias{create.phenotype.report}
 \title{Create markdown report summarizing phenotype data in file}
 \usage{
-create.phenotype.report(in.filename, dataset.tag, out.filename)
+create.phenotype.report(
+  in.filename,
+  dataset.tag,
+  dataset.yaml,
+  shared.model.yaml,
+  out.filename
+)
 }
 \arguments{
 \item{in.filename}{character vector, name of input phenotype tsv file}
 
 \item{dataset.tag}{character vector, dataset-specific tag to prefix variable names}
+
+\item{dataset.yaml}{character vector, yaml configuration for project}
+
+\item{shared.model.yaml}{character vector, yaml configuration for shared model specifications}
 
 \item{out.filename}{character vector, name of output report html file}
 }

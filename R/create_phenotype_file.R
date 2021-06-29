@@ -8,6 +8,8 @@
 #'
 #' @param in.filename character vector, name of input phenotype tsv file
 #' @param dataset.tag character vector, dataset-specific tag to prefix variable names
+#' @param dataset.yaml character vector, yaml configuration for project
+#' @param shared.model.yaml character vector, yaml configuration for shared model specifications
 #' @param out.filename character vector, name of output report html file
 #' @seealso run.experiment
 #' @keywords phenotypes
@@ -16,6 +18,8 @@
 #' create.phenotype.report("/path/to/directory/MM_FINAl_store.tsv", "MM", "/output/path/MM_report.html")
 create.phenotype.report <- function(in.filename,
                                     dataset.tag,
+                                    dataset.yaml,
+                                    shared.model.yaml,
                                     out.filename) {
   ## sanity check for in.filename param
   stopifnot(
@@ -27,6 +31,16 @@ create.phenotype.report <- function(in.filename,
   stopifnot(
     is.vector(dataset.tag, mode = "character"),
     length(dataset.tag) == 1
+  )
+  ## sanity check for dataset.yaml param
+  stopifnot(
+    is.vector(dataset.yaml, mode = "character"),
+    length(dataset.yaml) == 1
+  )
+  ## sanity check for shared.model.yaml param
+  stopifnot(
+    is.vector(shared.model.yaml, mode = "character"),
+    length(shared.model.yaml) == 1
   )
   ## sanity check for out.filename param
   stopifnot(
@@ -41,6 +55,10 @@ create.phenotype.report <- function(in.filename,
     check.names = FALSE,
     colClasses = "character"
   )
+
+  ## load project yaml configuration data
+  config.data <- phenotypeprocessing::load.configuration(dataset.yaml, shared.model.yaml)
+  print(config.data)
 
   ## drop columns with NA or empty column names
   phenotype.data <- phenotypeprocessing::remove.invalid.columns(phenotype.data)

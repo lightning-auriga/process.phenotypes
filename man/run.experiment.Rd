@@ -8,7 +8,8 @@ run.experiment(
   phenotype.path,
   output.path,
   phenotype.files = c("CV_FINAL_STORE.tsv", "ET_Final_Store.tsv", "HO_FINAL_STORE.tsv",
-    "MM_FINAl_store.tsv", "Neuro_final_store.tsv", "SC_final_store.tsv")
+    "MM_FINAl_store.tsv", "Neuro_final_store.tsv", "SC_final_store.tsv"),
+  yaml.dir = "yaml-configuration"
 )
 }
 \arguments{
@@ -20,6 +21,9 @@ path to directory for output report html files}
 
 \item{phenotype.files}{character vector, one or more phenotype
 files to be processed. all files expected to be .tsv}
+
+\item{yaml.dir}{character vector, directory containing
+project-specific and shared model yaml configuration files}
 }
 \description{
 Single entry point function to deploy markdown reports
