@@ -1,0 +1,10 @@
+---
+tag: testset
+variables:
+  var001:
+    name: "PID"
+    type: string
+    subject_id: true
+  var013:
+    name: "Any associated goitre (neck swelling):"
+    shared_model: yes_no

@@ -16,7 +16,8 @@ Imports:
     kableExtra,
     knitr,
     rmarkdown,
-    stringr
+    stringr,
+    yaml
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

@@ -2,6 +2,7 @@
 
 export(collapse.repeats)
 export(create.phenotype.report)
+export(load.configuration)
 export(make.lowercase)
 export(map.header)
 export(normalize.missing.values)
