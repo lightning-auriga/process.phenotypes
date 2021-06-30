@@ -96,8 +96,7 @@ for (name in names(variable.summary)) {
     colnames(variable.summary.df) <- c("Value", "Summary statistics")
     print(knitr::kable(variable.summary.df, caption = paste("Summary of ", name, " (", variable.summary[[name]]$original.name, ")", sep = "")))
   }
-  if (variable.summary[[name]]$blood.pressure.detected) {
-    print("This variable was automatically detected as blood pressure measurements (SBP/DBP).")
+  if (!is.null(variable.summary[[name]]$invalid.blood.pressure.entries)) {
     if (length(variable.summary[[name]]$invalid.blood.pressure.entries) > 0) {
       df <- data.frame(table(variable.summary[[name]]$invalid.blood.pressure.entries, useNA = "ifany"))
       rownames(df) <- NULL

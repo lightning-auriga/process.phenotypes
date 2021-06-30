@@ -36,7 +36,27 @@ map.header <- function(df, dataset.tag, config.data) {
   config.names <- lapply(config.data$variables, function(i) {
     i[["name"]]
   })
-  stopifnot(identical(colnames(df), unname(unlist(config.names))))
+
+  if (!identical(colnames(df), unname(unlist(config.names)))) {
+    if (ncol(df) != length(config.names)) {
+      stop(
+        "for dataset tag ", dataset.tag, ", variable count ",
+        "in phenotypes does not match count in yaml config (",
+        "found ", ncol(df), " in phenotypes but ",
+        length(config.names), " in config)"
+      )
+    } else {
+      error.data <- cbind(
+        colnames(df),
+        unname(unlist(config.names))
+      )
+      print(error.data[error.data[, 1] != error.data[, 2], ])
+      stop(
+        "for dataset tag ", dataset.tag, ", column names ",
+        "in phenotypes do not match yaml config values"
+      )
+    }
+  }
   for (i in seq_len(length(config.data$variables))) {
     res[[i]]$params <- config.data$variables[[i]]
   }

@@ -24,16 +24,17 @@
 apply.type.conversions <- function(phenotype.data, variable.summary) {
   stopifnot(ncol(phenotype.data) == length(variable.summary))
   for (i in seq_len(length(variable.summary))) {
-    target.type <- variable.summary$variables[[i]]$type
+    target.type <- variable.summary[[i]]$params$type
     if (is.null(target.type) || grepl("string", target.type, ignore.case = TRUE)) {
       ## string
       next
     } else if (grepl("^categorical$|^ordinal$|^binary$", target.type, ignore.case = TRUE)) {
       ## categorical or ordinal or binary
       result.list <- phenotypeprocessing::reformat.factor(phenotype.data[, i], variable.summary[[i]])
-      ## TODO: fix binary handling
       if (grepl("ordinal", target.type, ignore.case = TRUE)) {
-        result.list$phenotype.data <- ordered(result.list$phenotype.data)
+        result.list$phenotype.data <- ordered(result.list$phenotype.data,
+          levels = levels(result.list$phenotype.data)
+        )
       }
       phenotype.data[, i] <- result.list$phenotype.data
       variable.summary[[i]] <- result.list$variable.summary

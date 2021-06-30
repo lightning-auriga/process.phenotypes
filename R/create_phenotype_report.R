@@ -58,7 +58,6 @@ create.phenotype.report <- function(in.filename,
 
   ## load project yaml configuration data
   config.data <- phenotypeprocessing::load.configuration(dataset.yaml, shared.model.yaml)
-  print(config.data)
 
   ## drop columns with NA or empty column names
   phenotype.data <- phenotypeprocessing::remove.invalid.columns(phenotype.data)
@@ -76,20 +75,11 @@ create.phenotype.report <- function(in.filename,
   phenotype.data <- phenotypeprocessing::normalize.missing.values(phenotype.data)
 
   ## attempt type conversion on post-cleaning string vectors
-  ## TODO: replace with iterative application of yaml config type specification
+  print("applying type conversions")
   reformatted.list <- phenotypeprocessing::apply.type.conversions(phenotype.data, variable.summary)
   phenotype.data <- reformatted.list$phenotype.data
   variable.summary <- reformatted.list$variable.summary
-
-  ## clean up and reformat numerics
-  reformatted.list <- phenotypeprocessing::reformat.numerics(phenotype.data, variable.summary)
-  ## list that contains two things - phenotype.data and variable.summary
-  reformatted.list <- phenotypeprocessing::reformat.blood.pressure(
-    reformatted.list$phenotype.data,
-    reformatted.list$variable.summary
-  )
-  phenotype.data <- reformatted.list$phenotype.data
-  variable.summary <- reformatted.list$variable.summary
+  print("finished type conversions")
 
   ## TODO: apply variable-specific NA values
   ## TODO: apply variable-specific range restrictions
