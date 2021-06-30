@@ -148,7 +148,7 @@ test_that("reformat.numerics casts all numbers and number-like values to numeric
     "1", "2.3", "a", NA,
     "1cm", "-4.0mmhg", "1", "1",
     "not", "a", "numeric", "100/80",
-    "100/80", "120/90", "130/85", "110/80"
+    "100/80", "120/90", "130/85", "110 / 80"
   )
   out.vec <- c(
     1, 2.3, NA, NA,
@@ -165,7 +165,7 @@ test_that("reformat.numerics casts all numbers and number-like values to numeric
     summary = c(q1 = 0.2, q2 = 0.5, mean = 0.3),
     invalid.numeric.entries = c(
       "a", "not", "a", "numeric", "100/80",
-      "100/80", "120/90", "130/85", "110/80"
+      "100/80", "120/90", "130/85", "110 / 80"
     )
   )
   expect_identical(
