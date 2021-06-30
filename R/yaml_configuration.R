@@ -32,6 +32,7 @@ load.configuration <- function(dataset.parameter.filename,
   ## input format testing for project-specific variable parameters
   stopifnot(
     !is.null(dataset.parameters$tag),
+    !is.null(dataset.parameters$globals),
     !is.null(dataset.parameters$variables)
   )
   ## apply shared model data when requested

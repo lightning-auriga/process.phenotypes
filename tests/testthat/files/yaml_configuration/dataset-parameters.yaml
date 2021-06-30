@@ -1,5 +1,7 @@
 ---
 tag: testset
+globals:
+  min_age_for_inclusion: 16
 variables:
   var001:
     name: "PID"

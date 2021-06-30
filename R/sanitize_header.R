@@ -26,10 +26,10 @@
 #' map.header(df, "mytag")
 map.header <- function(df, dataset.tag, config.data) {
   new.names <- sprintf("%s%05d", dataset.tag, seq_len(ncol(df)))
-  res <- lapply(colnames(df), function(i) {
+  res <- list(variables = lapply(colnames(df), function(i) {
     list(original.name = i)
-  })
-  names(res) <- new.names
+  }))
+  names(res$variables) <- new.names
   ## for now, to handle duplicate identical header descriptors
   ## in raw input files, enforce identical ordering of variables
   ## in phenotype data and in configuration yaml file
@@ -58,8 +58,9 @@ map.header <- function(df, dataset.tag, config.data) {
     }
   }
   for (i in seq_len(length(config.data$variables))) {
-    res[[i]]$params <- config.data$variables[[i]]
+    res$variables[[i]]$params <- config.data$variables[[i]]
   }
+  res$globals <- config.data$globals
   res
 }
 
@@ -88,7 +89,7 @@ map.header <- function(df, dataset.tag, config.data) {
 #' mapped.values <- map.header(df, "mytag")
 #' df.transformed <- sanitize.header(df, mapped.values)
 sanitize.header <- function(df, var.map) {
-  name.lookup <- names(var.map)
+  name.lookup <- names(var.map$variables)
   res <- df
   colnames(res) <- name.lookup
   res

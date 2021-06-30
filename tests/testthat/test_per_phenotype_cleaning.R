@@ -27,72 +27,74 @@ test_that("apply.type.conversions minimally functions for all types", {
     TN006 = c("100/90", "100/80", "200/100", NA)
   )
   in.var.summary <- list(
-    TN001 = list(
-      original.name = "random thoughts",
-      params = list(
-        name = "random thoughts",
-        type = "string"
-      )
-    ),
-    TN002 = list(
-      original.name = "has panda bear",
-      params = list(
-        name = "has panda bear",
-        type = "binary",
-        levels = list(
-          "0" = list(name = "yes"),
-          "1" = list(name = "no")
+    variables = list(
+      TN001 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts",
+          type = "string"
         )
-      )
-    ),
-    TN003 = list(
-      original.name = "age exploded",
-      params = list(
-        name = "age exploded",
-        type = "ordinal",
-        levels = list(
-          "0" = list(name = "1-10"),
-          "1" = list(name = "11-20"),
-          "2" = list(name = "21-30"),
-          "3" = list(name = "31-40"),
-          "4" = list(name = "41-50"),
-          "5" = list(name = "51-60")
+      ),
+      TN002 = list(
+        original.name = "has panda bear",
+        params = list(
+          name = "has panda bear",
+          type = "binary",
+          levels = list(
+            "0" = list(name = "yes"),
+            "1" = list(name = "no")
+          )
         )
-      )
-    ),
-    TN004 = list(
-      original.name = "popsicle type",
-      params = list(
-        name = "popsicle type",
-        type = "categorical",
-        levels = list(
-          "0" = list(name = "pineapple"),
-          "1" = list(name = "banana"),
-          "2" = list(name = "orange")
+      ),
+      TN003 = list(
+        original.name = "age exploded",
+        params = list(
+          name = "age exploded",
+          type = "ordinal",
+          levels = list(
+            "0" = list(name = "1-10"),
+            "1" = list(name = "11-20"),
+            "2" = list(name = "21-30"),
+            "3" = list(name = "31-40"),
+            "4" = list(name = "41-50"),
+            "5" = list(name = "51-60")
+          )
         )
-      )
-    ),
-    TN005 = list(
-      original.name = "spider leg height",
-      params = list(
-        name = "spider leg height",
-        type = "numeric"
-      )
-    ),
-    TN006 = list(
-      original.name = "sleepwalking blood pressure",
-      params = list(
-        name = "sleepwalking blood pressure",
-        type = "blood pressure"
+      ),
+      TN004 = list(
+        original.name = "popsicle type",
+        params = list(
+          name = "popsicle type",
+          type = "categorical",
+          levels = list(
+            "0" = list(name = "pineapple"),
+            "1" = list(name = "banana"),
+            "2" = list(name = "orange")
+          )
+        )
+      ),
+      TN005 = list(
+        original.name = "spider leg height",
+        params = list(
+          name = "spider leg height",
+          type = "numeric"
+        )
+      ),
+      TN006 = list(
+        original.name = "sleepwalking blood pressure",
+        params = list(
+          name = "sleepwalking blood pressure",
+          type = "blood pressure"
+        )
       )
     )
   )
   out.var.summary <- in.var.summary
-  out.var.summary$TN002$invalid.factor.entries <- character()
-  out.var.summary$TN003$invalid.factor.entries <- character()
-  out.var.summary$TN004$invalid.factor.entries <- character()
-  out.var.summary$TN005$invalid.numeric.entries <- c("169 / 100")
-  out.var.summary$TN006$invalid.blood.pressure.entries <- c("40")
+  out.var.summary$variables$TN002$invalid.factor.entries <- character()
+  out.var.summary$variables$TN003$invalid.factor.entries <- character()
+  out.var.summary$variables$TN004$invalid.factor.entries <- character()
+  out.var.summary$variables$TN005$invalid.numeric.entries <- c("169 / 100")
+  out.var.summary$variables$TN006$invalid.blood.pressure.entries <- c("40")
   expect_identical(
     apply.type.conversions(in.phenotype.data, in.var.summary),
     list(
@@ -100,4 +102,63 @@ test_that("apply.type.conversions minimally functions for all types", {
       variable.summary = out.var.summary
     )
   )
+})
+
+test_that("apply.bounds changes values below/above the provided min/max to NA", {
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts",
+          type = "numeric",
+          bounds = list(
+            min = 5,
+            max = 10
+          )
+        )
+      )
+    )
+  )
+  in.phenotype.data <- data.frame(TN001 = c(1, 2, 3, 5, 6, 8, 10, 11, 12, NA))
+  out.var.summary <- in.var.summary
+  out.var.summary$variables$TN001$num.below.min <- as.integer(3)
+  out.var.summary$variables$TN001$num.above.max <- as.integer(2)
+  out.phenotype.data <- data.frame(TN001 = c(NA, NA, NA, 5, 6, 8, 10, NA, NA, NA))
+  expect_identical(apply.bounds(in.phenotype.data, in.var.summary), list(
+    phenotype.data = out.phenotype.data,
+    variable.summary = out.var.summary
+  ))
+})
+
+test_that("apply.bounds handles missing min or max correctly", {
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts",
+          type = "numeric",
+          bounds = list(min = 5)
+        )
+      ),
+      TN002 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts",
+          type = "numeric",
+          bounds = list(max = 5)
+        )
+      )
+    )
+  )
+  in.phenotype.data <- data.frame(TN001 = c(1, 2, 3, 5, 6, 8, 10, 11, 12), TN002 = 1:9)
+  out.var.summary <- in.var.summary
+  out.var.summary$variables$TN001$num.below.min <- as.integer(3)
+  out.var.summary$variables$TN002$num.above.max <- as.integer(4)
+  out.phenotype.data <- data.frame(TN001 = c(NA, NA, NA, 5, 6, 8, 10, 11, 12), TN002 = c(1:5, rep(NA, 4)))
+  expect_identical(apply.bounds(in.phenotype.data, in.var.summary), list(
+    phenotype.data = out.phenotype.data,
+    variable.summary = out.var.summary
+  ))
 })

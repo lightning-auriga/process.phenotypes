@@ -235,8 +235,6 @@ reformat.blood.pressure <- function(vec, var.summary) {
   list(phenotype.data = res, variable.summary = var.summary)
 }
 
-
-
 #' Convert character vector to factor, collapsing certain levels
 #'
 #' @details
@@ -254,7 +252,6 @@ reformat.blood.pressure <- function(vec, var.summary) {
 reformat.factor <- function(vec, variable.summary) {
   stopifnot(!is.null(variable.summary$params$levels))
   ordered.levels <- c()
-  print(variable.summary$params$levels)
   for (level in variable.summary$params$levels) {
     stopifnot(!is.null(level$name))
     alternates <- level$alternates

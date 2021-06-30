@@ -23,18 +23,20 @@ config.data <- list(
 )
 
 map.header.expected.output <- list(
-  DF00001 = list(
-    original.name = "weird phenotype name 1",
-    params = list(
-      name = "weird phenotype name 1",
-      type = "string"
-    )
-  ),
-  DF00002 = list(
-    original.name = "weird ** ////!! name __2",
-    params = list(
-      name = "weird ** ////!! name __2",
-      type = "string"
+  variables = list(
+    DF00001 = list(
+      original.name = "weird phenotype name 1",
+      params = list(
+        name = "weird phenotype name 1",
+        type = "string"
+      )
+    ),
+    DF00002 = list(
+      original.name = "weird ** ////!! name __2",
+      params = list(
+        name = "weird ** ////!! name __2",
+        type = "string"
+      )
     )
   )
 )
@@ -64,10 +66,12 @@ test_that("duplicate header names don't ruin mapping", {
     )
   )
   expected.output <- list(
-    DF00001 = list(original.name = "a", params = list(name = "a", type = "string")),
-    DF00002 = list(original.name = "b", params = list(name = "b", type = "string")),
-    DF00003 = list(original.name = "c", params = list(name = "c", type = "string")),
-    DF00004 = list(original.name = "b", params = list(name = "b", type = "string"))
+    variables = list(
+      DF00001 = list(original.name = "a", params = list(name = "a", type = "string")),
+      DF00002 = list(original.name = "b", params = list(name = "b", type = "string")),
+      DF00003 = list(original.name = "c", params = list(name = "c", type = "string")),
+      DF00004 = list(original.name = "b", params = list(name = "b", type = "string"))
+    )
   )
   expect_identical(
     map.header(test.data, tag.name, config.data),
@@ -90,10 +94,12 @@ test_that("duplicate header names are handled correctly in sanitization", {
   )
   colnames(test.data) <- c("a", "b", "c", "b")
   mapped.variables <- list(
-    DF00001 = list(original.name = "a", params = list(name = "a", type = "string")),
-    DF00002 = list(original.name = "b", params = list(name = "b", type = "string")),
-    DF00003 = list(original.name = "c", params = list(name = "c", type = "string")),
-    DF00004 = list(original.name = "b", params = list(name = "b", type = "string"))
+    variables = list(
+      DF00001 = list(original.name = "a", params = list(name = "a", type = "string")),
+      DF00002 = list(original.name = "b", params = list(name = "b", type = "string")),
+      DF00003 = list(original.name = "c", params = list(name = "c", type = "string")),
+      DF00004 = list(original.name = "b", params = list(name = "b", type = "string"))
+    )
   )
   expected.df <- test.data
   colnames(expected.df) <- c("DF00001", "DF00002", "DF00003", "DF00004")

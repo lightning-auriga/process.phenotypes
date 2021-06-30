@@ -4,6 +4,7 @@ test_that("dataset parameters loaded from yaml and updated with shared models", 
 
   out.list <- list(
     tag = "testset",
+    globals = list(min_age_for_inclusion = as.integer(16)),
     variables = list(
       var001 = list(
         name = "PID",

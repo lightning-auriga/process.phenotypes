@@ -75,35 +75,36 @@ create.phenotype.report <- function(in.filename,
   phenotype.data <- phenotypeprocessing::normalize.missing.values(phenotype.data)
 
   ## attempt type conversion on post-cleaning string vectors
-  print("applying type conversions")
   reformatted.list <- phenotypeprocessing::apply.type.conversions(phenotype.data, variable.summary)
   phenotype.data <- reformatted.list$phenotype.data
   variable.summary <- reformatted.list$variable.summary
-  print("finished type conversions")
+
+  ## exclude minors from the dataset
+  phenotype.data <- phenotypeprocessing::exclude.minors(phenotype.data, variable.summary)
 
   ## TODO: apply variable-specific NA values
   ## TODO: apply variable-specific range restrictions
   ## TODO: enforce yaml-specified variable relationships
 
   ## TODO(lightning.auriga): modify phenotype data based on previous observations
-  for (name in names(variable.summary)) {
+  for (name in names(variable.summary$variables)) {
     if (is.vector(phenotype.data[, name], mode = "numeric")) {
-      variable.summary[[name]]$summary <- c(
+      variable.summary$variables[[name]]$summary <- c(
         mean(phenotype.data[, name], na.rm = TRUE),
         quantile(phenotype.data[, name], probs = seq(0, 1, 0.1), na.rm = TRUE),
         length(which(is.na(phenotype.data[, name])))
       )
-      names(variable.summary[[name]]$summary) <- c(
+      names(variable.summary$variables[[name]]$summary) <- c(
         "Mean",
         "Min",
-        names(variable.summary[[name]]$summary)[3:6],
+        names(variable.summary$variables[[name]]$summary)[3:6],
         "Median",
-        names(variable.summary[[name]]$summary)[8:11],
+        names(variable.summary$variables[[name]]$summary)[8:11],
         "Max",
         "NAs"
       )
     } else {
-      variable.summary[[name]]$summary <- table(phenotype.data[, name],
+      variable.summary$variables[[name]]$summary <- table(phenotype.data[, name],
         useNA = "ifany"
       )
     }

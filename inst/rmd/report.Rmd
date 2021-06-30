@@ -49,8 +49,8 @@ my.theme <- theme_light() + theme(
 
 ```{r report.variable.mappings, eval=TRUE, echo=FALSE, results="asis"}
 variable.mapping.df <- data.frame(
-  names(variable.summary),
-  sapply(variable.summary, function(i) {
+  names(variable.summary$variables),
+  sapply(variable.summary$variables, function(i) {
     i$original.name
   })
 )
@@ -65,8 +65,8 @@ knitr::kable(variable.mapping.df, caption = "Phenotype Variable Names")
 ## Report all unique values for string variables
 
 ```{r report.value.summary, eval=TRUE, echo=FALSE, results="asis"}
-for (name in names(variable.summary)) {
-  my.summ <- variable.summary[[name]]$summary
+for (name in names(variable.summary$variables)) {
+  my.summ <- variable.summary$variables[[name]]$summary
   ## if the source data type is numeric
   if (is.vector(phenotype.data[, name], mode = "numeric")) {
     ## create data histogram for numeric data
@@ -79,7 +79,7 @@ for (name in names(variable.summary)) {
     )
     hist.plot <- hist.plot + xlab(name) + ylab("proportion of data")
     hist.plot <- hist.plot + ggtitle(paste("Histogram of ", name, " (",
-      variable.summary[[name]]$original.name,
+      variable.summary$variables[[name]]$original.name,
       ") Distribution",
       sep = ""
     ))
@@ -94,11 +94,11 @@ for (name in names(variable.summary)) {
     )
     rownames(variable.summary.df) <- NULL
     colnames(variable.summary.df) <- c("Value", "Summary statistics")
-    print(knitr::kable(variable.summary.df, caption = paste("Summary of ", name, " (", variable.summary[[name]]$original.name, ")", sep = "")))
+    print(knitr::kable(variable.summary.df, caption = paste("Summary of ", name, " (", variable.summary$variables[[name]]$original.name, ")", sep = "")))
   }
-  if (!is.null(variable.summary[[name]]$invalid.blood.pressure.entries)) {
-    if (length(variable.summary[[name]]$invalid.blood.pressure.entries) > 0) {
-      df <- data.frame(table(variable.summary[[name]]$invalid.blood.pressure.entries, useNA = "ifany"))
+  if (!is.null(variable.summary$variables[[name]]$invalid.blood.pressure.entries)) {
+    if (length(variable.summary$variables[[name]]$invalid.blood.pressure.entries) > 0) {
+      df <- data.frame(table(variable.summary$variables[[name]]$invalid.blood.pressure.entries, useNA = "ifany"))
       rownames(df) <- NULL
       colnames(df) <- c(name, "Count")
       print(knitr::kable(df, caption = "Values that were not consistent with blood pressure measurement format."))
