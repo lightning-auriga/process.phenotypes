@@ -75,9 +75,9 @@ create.phenotype.report <- function(in.filename,
   phenotype.data <- phenotypeprocessing::normalize.missing.values(phenotype.data)
 
   ## apply variable-specific NA values
-  reformatted.list$phenotype.data <- phenotypeprocessing::convert.variable.specific.na(
-    reformatted.list$phenotype.data,
-    reformatted.list$variable.summary
+  phenotype.data <- phenotypeprocessing::convert.variable.specific.na(
+    phenotype.data,
+    variable.summary
   )
 
   ## attempt type conversion on post-cleaning string vectors

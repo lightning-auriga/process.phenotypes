@@ -145,6 +145,7 @@ apply.bounds <- function(phenotype.data, variable.summary) {
 #' and parameters from yaml input
 #' @return data frame containing phenotype information with
 #' subjects containing specified values set to NA
+#' @export convert.variable.specific.na
 convert.variable.specific.na <- function(phenotype.data, variable.summary) {
   for (i in seq_len(length(variable.summary$variables))) {
     na.values <- variable.summary$variables[[i]]$params[["na-values"]]

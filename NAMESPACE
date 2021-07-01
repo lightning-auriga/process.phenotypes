@@ -3,6 +3,7 @@
 export(apply.bounds)
 export(apply.type.conversions)
 export(collapse.repeats)
+export(convert.variable.specific.na)
 export(create.phenotype.report)
 export(exclude.by.age)
 export(load.configuration)
