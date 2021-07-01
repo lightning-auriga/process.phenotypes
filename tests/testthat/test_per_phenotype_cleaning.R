@@ -167,18 +167,53 @@ test_that("convert.variable.specific.na sets instances of strings to NA", {
   in.phenotype.data <- data.frame(TN001 = c("apple", "banana", "river", "cranberry"))
   in.variable.summary <- list(variables = list(TN001 = list(
     original.name = "something",
-    type = "categorical",
-    levels = list(
-      "1" = list(name = "apple"),
-      "2" = list(name = "banana"),
-      "3" = list(name = "cranberry")
-    ),
-    "na-values" = c("window", "river", "Austria")
+    params = list(
+      type = "categorical",
+      levels = list(
+        "1" = list(name = "apple"),
+        "2" = list(name = "banana"),
+        "3" = list(name = "cranberry")
+      ),
+      "na-values" = c("window", "river", "Austria")
+    )
   )))
   out.phenotype.data <- data.frame(TN001 = c("apple", "banana", NA, "cranberry"))
   out.variable.summary <- in.variable.summary
   expect_identical(
     convert.variable.specific.na(in.phenotype.data, in.variable.summary),
-    list(phenotype.data = phenotype.data, variable.summary = variable.summary)
+    out.phenotype.data
   )
+})
+
+test_that("exclude.by.age correctly removes subjects with ages below the given threshold", {
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "age",
+        params = list(
+          name = "age",
+          type = "numeric",
+          subject_age = TRUE
+        )
+      ),
+      TN002 = list(
+        original.name = "not age",
+        params = list(
+          name = "not age",
+          type = "numeric"
+        )
+      )
+    ),
+    globals = list(
+      min_age_for_inclusion = 16
+    )
+  )
+  in.phenotype.data <- data.frame(TN001 = c(15:20), TN002 = 12:17)
+  out.var.summary <- in.var.summary
+  out.var.summary$subjects.excluded.for.age <- as.integer(1)
+  out.phenotype.data <- data.frame(TN001 = c(16:20), TN002 = 13:17, row.names = 2:6)
+  expect_identical(exclude.by.age(in.phenotype.data, in.var.summary), list(
+    phenotype.data = out.phenotype.data,
+    variable.summary = out.var.summary
+  ))
 })

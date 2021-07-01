@@ -241,7 +241,7 @@ test_that("reformat.factor reassigns alternate levels to the correct primary bef
       "1" = list(name = "lemon"),
       "2" = list(
         name = "pineapple",
-        alternates = c(
+        alternate_patterns = c(
           "Pineapple",
           "pointy yellow thing"
         )

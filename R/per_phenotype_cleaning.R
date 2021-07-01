@@ -147,7 +147,7 @@ apply.bounds <- function(phenotype.data, variable.summary) {
 #' subjects containing specified values set to NA
 convert.variable.specific.na <- function(phenotype.data, variable.summary) {
   for (i in seq_len(length(variable.summary$variables))) {
-    na.values <- variable.summary$variables[[i]]$params$na.values
+    na.values <- variable.summary$variables[[i]]$params[["na-values"]]
     if (!is.null(na.values)) {
       if (is.vector(na.values)) {
         phenotype.data[phenotype.data[, i] %in% as.character(na.values), i] <- NA
