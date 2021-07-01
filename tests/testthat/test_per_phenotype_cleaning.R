@@ -162,3 +162,36 @@ test_that("apply.bounds handles missing min or max correctly", {
     variable.summary = out.var.summary
   ))
 })
+
+test_that("exclude.by.age correctly removes subjects with ages below the given threshold", {
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "age",
+        params = list(
+          name = "age",
+          type = "numeric",
+          subject_age = TRUE
+        )
+      ),
+      TN002 = list(
+        original.name = "not age",
+        params = list(
+          name = "not age",
+          type = "numeric"
+        )
+      )
+    ),
+    globals = list(
+      min_age_for_inclusion = 16
+    )
+  )
+  in.phenotype.data <- data.frame(TN001 = c(15:20), TN002 = 12:17)
+  out.var.summary <- in.var.summary
+  out.var.summary$subjects.excluded.for.age <- as.integer(1)
+  out.phenotype.data <- data.frame(TN001 = c(16:20), TN002 = 13:17, row.names = 2:6)
+  expect_identical(exclude.by.age(in.phenotype.data, in.var.summary), list(
+    phenotype.data = out.phenotype.data,
+    variable.summary = out.var.summary
+  ))
+})
