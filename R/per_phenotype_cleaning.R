@@ -128,6 +128,41 @@ apply.bounds <- function(phenotype.data, variable.summary) {
   )
 }
 
+#' Find additional NA aliases in user config and apply them to
+#' particular variables
+#'
+#' @details
+#' User config can optionally contain an 'na-values' sequence
+#' containing entries that should be mapped to NA. This functionality
+#' is only really reliable for factors and strings; numerics may
+#' not match exactly as desired in some cases.
+#'
+#' @description
+#'
+#' @param phenotype.data data frame, loaded phenotype data with
+#' standardized headers
+#' @param variable.summary list, per-column summary information
+#' and parameters from yaml input
+#' @return data frame containing phenotype information with
+#' subjects containing specified values set to NA
+convert.variable.specific.na <- function(phenotype.data, variable.summary) {
+  for (i in seq_len(length(variable.summary$variables))) {
+    na.values <- variable.summary$variables[[i]]$params$na.values
+    if (!is.null(na.values)) {
+      if (is.vector(na.values)) {
+        phenotype.data[phenotype.data[, i] %in% as.character(na.values), i] <- NA
+      } else {
+        stop(
+          "for variable \"",
+          variable.summary[[i]]$original.name,
+          "\", na-values configuration option has ",
+          "unrecognized type ", typeof(na.values)
+        )
+      }
+    }
+  }
+  phenotype.data
+}
 
 #' Exclude subjects below a certain user-defined age threshold
 #'

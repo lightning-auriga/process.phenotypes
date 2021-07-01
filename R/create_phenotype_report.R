@@ -74,6 +74,12 @@ create.phenotype.report <- function(in.filename,
   phenotype.data <- phenotypeprocessing::remove.nonword.chars(phenotype.data)
   phenotype.data <- phenotypeprocessing::normalize.missing.values(phenotype.data)
 
+  ## apply variable-specific NA values
+  reformatted.list$phenotype.data <- phenotypeprocessing::convert.variable.specific.na(
+    reformatted.list$phenotype.data,
+    reformatted.list$variable.summary
+  )
+
   ## attempt type conversion on post-cleaning string vectors
   reformatted.list <- phenotypeprocessing::apply.type.conversions(phenotype.data, variable.summary)
 
@@ -82,8 +88,7 @@ create.phenotype.report <- function(in.filename,
     reformatted.list$phenotype.data, reformatted.list$variable.summary
   )
 
-  ## TODO: apply variable-specific NA values
-  ## TODO: apply variable-specific range restrictions
+  ## apply variable-specific range restrictions
   reformatted.list <- phenotypeprocessing::apply.bounds(
     reformatted.list$phenotype.data,
     reformatted.list$variable.summary
