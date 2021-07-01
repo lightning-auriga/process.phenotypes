@@ -81,14 +81,18 @@ create.phenotype.report <- function(in.filename,
   reformatted.list <- phenotypeprocessing::exclude.by.age(
     reformatted.list$phenotype.data, reformatted.list$variable.summary
   )
-  phenotype.data <- reformatted.list$phenotype.data
-  variable.summary <- reformatted.list$variable.summary
 
   ## TODO: apply variable-specific NA values
   ## TODO: apply variable-specific range restrictions
+  reformatted.list <- phenotypeprocessing::apply.bounds(
+    reformatted.list$phenotype.data,
+    reformatted.list$variable.summary
+  )
   ## TODO: enforce yaml-specified variable relationships
 
-  ## TODO(lightning.auriga): modify phenotype data based on previous observations
+  phenotype.data <- reformatted.list$phenotype.data
+  variable.summary <- reformatted.list$variable.summary
+
   for (name in names(variable.summary$variables)) {
     if (is.vector(phenotype.data[, name], mode = "numeric")) {
       variable.summary$variables[[name]]$summary <- c(
