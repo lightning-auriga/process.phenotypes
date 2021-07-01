@@ -254,7 +254,7 @@ reformat.factor <- function(vec, variable.summary) {
   ordered.levels <- c()
   for (level in variable.summary$params$levels) {
     stopifnot(!is.null(level$name))
-    alternates <- level$alternates
+    alternates <- level$alternate_patterns
     if (!is.null(alternates)) {
       ## replace alternates
       vec <- stringr::str_replace(

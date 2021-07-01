@@ -42,6 +42,12 @@ my.theme <- theme_light() + theme(
 )
 ```
 
+At some point, there should be introductory content here.
+`r variable.summary$subjects.excluded.for.age` subjects were
+removed for being below the minimum permissible age of
+`r variable.summary$globals$min_age_for_inclusion`.
+
+
 ***
 <br>
 
@@ -62,7 +68,10 @@ knitr::kable(variable.mapping.df, caption = "Phenotype Variable Names")
 ***
 <br>
 
-## Report all unique values for string variables
+## Report variable distribution summaries
+
+In this section, each variable in turn is summarized according
+to the variable's configured type.
 
 ```{r report.value.summary, eval=TRUE, echo=FALSE, results="asis"}
 for (name in names(variable.summary$variables)) {
@@ -70,7 +79,7 @@ for (name in names(variable.summary$variables)) {
   ## if the source data type is numeric
   if (is.vector(phenotype.data[, name], mode = "numeric")) {
     ## create data histogram for numeric data
-    plot.data <- data.frame(x = phenotype.data[, name])
+    plot.data <- data.frame(x = phenotype.data[!is.na(phenotype.data[, name]), name])
     hist.plot <- ggplot(data = plot.data) + my.theme
     binwidth <- diff(quantile(plot.data$x, probs = c(0.5, 0.75), na.rm = TRUE)) / 12.5
     hist.plot <- hist.plot + geom_histogram(
@@ -104,6 +113,26 @@ for (name in names(variable.summary$variables)) {
       print(knitr::kable(df, caption = "Values that were not consistent with blood pressure measurement format."))
     } else {
       print("All values were consistent with blood pressure measurement format.")
+    }
+  }
+  if (!is.null(variable.summary$variables[[name]]$invalid.numeric.entries)) {
+    if (length(variable.summary$variables[[name]]$invalid.numeric.entries) > 0) {
+      df <- data.frame(table(variable.summary$variables[[name]]$invalid.numeric.entries, useNA = "ifany"))
+      rownames(df) <- NULL
+      colnames(df) <- c(name, "Count")
+      print(knitr::kable(df, caption = "Values that were not consistent with numeric format."))
+    } else {
+      print("All values were consistent with numeric format.")
+    }
+  }
+  if (!is.null(variable.summary$variables[[name]]$invalid.factor.entries)) {
+    if (length(variable.summary$variables[[name]]$invalid.factor.entries) > 0) {
+      df <- data.frame(table(variable.summary$variables[[name]]$invalid.factor.entries, useNA = "ifany"))
+      rownames(df) <- NULL
+      colnames(df) <- c(name, "Count")
+      print(knitr::kable(df, caption = "Values that were not consistent with categorical format."))
+    } else {
+      print("All values were consistent with categorical format.")
     }
   }
 }
