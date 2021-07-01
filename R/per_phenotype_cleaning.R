@@ -148,9 +148,29 @@ apply.bounds <- function(phenotype.data, variable.summary) {
 #' @export exclude.by.age
 exclude.by.age <- function(phenotype.data, variable.summary) {
   min.age <- as.numeric(variable.summary$globals$min_age_for_inclusion)
-  stopifnot(!is.null(min.age), !is.na(min.age))
+  stopifnot(!is.null(variable.summary$globals$min_age_for_inclusion), !is.na(min.age))
+  flag <- 0
   for (i in seq_len(length(variable.summary$variables))) {
     # TODO look for variable marked as subject age
+    if (!is.null(variable.summary$variables[[i]]$params$subject_age)) {
+      if (variable.summary$variables[[i]]$params$subject_age) {
+        flag <- i
+        break
+      }
+    }
   }
-  variable.summary
+  if (flag) {
+    subjects.dropped <- length(which(phenotype.data[, flag] < min.age))
+    variable.summary$subjects.excluded.for.age <- subjects.dropped
+    phenotype.data <- phenotype.data[phenotype.data[, flag] >= min.age, ]
+  } else {
+    stop(
+      "Please indicate which variable should be used as the subject age ",
+      "by adding `subject_age: true` to the appropriate section of the configuration."
+    )
+  }
+  list(
+    phenotype.data = phenotype.data,
+    variable.summary = variable.summary
+  )
 }

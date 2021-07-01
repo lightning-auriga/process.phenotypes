@@ -76,11 +76,13 @@ create.phenotype.report <- function(in.filename,
 
   ## attempt type conversion on post-cleaning string vectors
   reformatted.list <- phenotypeprocessing::apply.type.conversions(phenotype.data, variable.summary)
+
+  ## exclude subjects below a given age from the dataset
+  reformatted.list <- phenotypeprocessing::exclude.by.age(
+    reformatted.list$phenotype.data, reformatted.list$variable.summary
+  )
   phenotype.data <- reformatted.list$phenotype.data
   variable.summary <- reformatted.list$variable.summary
-
-  ## exclude minors from the dataset
-  phenotype.data <- phenotypeprocessing::exclude.minors(phenotype.data, variable.summary)
 
   ## TODO: apply variable-specific NA values
   ## TODO: apply variable-specific range restrictions
