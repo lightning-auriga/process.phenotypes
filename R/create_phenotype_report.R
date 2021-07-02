@@ -20,7 +20,8 @@ create.phenotype.report <- function(in.filename,
                                     dataset.tag,
                                     dataset.yaml,
                                     shared.model.yaml,
-                                    out.filename) {
+                                    out.filename,
+                                    magic.fix = TRUE) {
   ## sanity check for in.filename param
   stopifnot(
     is.vector(in.filename, mode = "character"),
@@ -69,34 +70,48 @@ create.phenotype.report <- function(in.filename,
 
   ## clean up strings (global functions across all variables)
   phenotype.data <- phenotypeprocessing::make.lowercase(phenotype.data)
-  phenotype.data <- phenotypeprocessing::remove.whitespace(phenotype.data)
-  phenotype.data <- phenotypeprocessing::collapse.repeats(phenotype.data)
-  phenotype.data <- phenotypeprocessing::remove.nonword.chars(phenotype.data)
-  phenotype.data <- phenotypeprocessing::normalize.missing.values(phenotype.data)
+  if (magic.fix) {
+    phenotype.data <- phenotypeprocessing::remove.whitespace(phenotype.data)
+    phenotype.data <- phenotypeprocessing::collapse.repeats(phenotype.data)
+    phenotype.data <- phenotypeprocessing::remove.nonword.chars(phenotype.data)
+    phenotype.data <- phenotypeprocessing::normalize.missing.values(phenotype.data)
+  }
 
   ## apply variable-specific NA values
-  phenotype.data <- phenotypeprocessing::convert.variable.specific.na(
-    phenotype.data,
-    variable.summary
-  )
+  if (magic.fix) {
+    phenotype.data <- phenotypeprocessing::convert.variable.specific.na(
+      phenotype.data,
+      variable.summary
+    )
+  }
 
   ## attempt type conversion on post-cleaning string vectors
-  reformatted.list <- phenotypeprocessing::apply.type.conversions(phenotype.data, variable.summary)
+  if (magic.fix) {
+    reformatted.list <- phenotypeprocessing::apply.type.conversions(phenotype.data, variable.summary)
+  } else {
+    phenotype.data <- type.convert(phenotype.data)
+  }
 
   ## exclude subjects below a given age from the dataset
-  reformatted.list <- phenotypeprocessing::exclude.by.age(
-    reformatted.list$phenotype.data, reformatted.list$variable.summary
-  )
+  if (magic.fix) {
+    reformatted.list <- phenotypeprocessing::exclude.by.age(
+      reformatted.list$phenotype.data, reformatted.list$variable.summary
+    )
+  }
 
   ## apply variable-specific range restrictions
-  reformatted.list <- phenotypeprocessing::apply.bounds(
-    reformatted.list$phenotype.data,
-    reformatted.list$variable.summary
-  )
+  if (magic.fix) {
+    reformatted.list <- phenotypeprocessing::apply.bounds(
+      reformatted.list$phenotype.data,
+      reformatted.list$variable.summary
+    )
+  }
   ## TODO: enforce yaml-specified variable relationships
 
-  phenotype.data <- reformatted.list$phenotype.data
-  variable.summary <- reformatted.list$variable.summary
+  if (magic.fix) {
+    phenotype.data <- reformatted.list$phenotype.data
+    variable.summary <- reformatted.list$variable.summary
+  }
 
   for (name in names(variable.summary$variables)) {
     if (is.vector(phenotype.data[, name], mode = "numeric")) {
