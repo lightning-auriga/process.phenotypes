@@ -70,8 +70,12 @@ test_that("all leading and trailing non-word characters are removed", {
     A = c("WeiRd CaPs", "Trailing", "NA", "Nil"),
     B = c("something", "Not Applicable", "Too   muchspace", "")
   )
+  var.summary <- list(variables = list(
+    A = list(params = list(type = "categorical")),
+    B = list(params = list(type = "categorical"))
+  ))
   expect_identical(
-    remove.nonword.chars(df),
+    remove.nonword.chars(df, var.summary),
     out.df
   )
 })
@@ -81,12 +85,16 @@ test_that("remove.nonword.chars preserves decimal values with leading '.'", {
     A = c(".1", "other"),
     B = c(".AAB", ";thing:")
   )
+  var.summary <- list(variables = list(
+    A = list(params = list(type = "categorical")),
+    B = list(params = list(type = "categorical"))
+  ))
   out.df <- data.frame(
     A = c("0.1", "other"),
     B = c("AAB", "thing")
   )
   expect_identical(
-    remove.nonword.chars(in.df),
+    remove.nonword.chars(in.df, var.summary),
     out.df
   )
 })
@@ -98,13 +106,19 @@ test_that("remove.nonword.chars preserves trailing ')' ']' '}'", {
     C = c("(thing5", "thing6])"),
     D = c("thing9]", "[]thing8")
   )
+  var.summary <- list(variables = list(
+    A = list(params = list(type = "categorical")),
+    B = list(params = list(type = "categorical")),
+    C = list(params = list(type = "categorical")),
+    D = list(params = list(type = "categorical"))
+  ))
   out.df <- data.frame(
     A = c("thing1", "thing2]"),
     B = c("thing3", "thing4}"),
     C = c("thing5", "thing6])"),
     D = c("thing9]", "thing8")
   )
-  expect_identical(remove.nonword.chars(in.df), out.df)
+  expect_identical(remove.nonword.chars(in.df, var.summary), out.df)
 })
 
 test_that("normalize.missing.values normalizes all missing values", {

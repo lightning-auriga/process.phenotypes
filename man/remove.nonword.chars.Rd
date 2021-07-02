@@ -4,10 +4,12 @@
 \alias{remove.nonword.chars}
 \title{Basic global cleanup of entries in a phenotype data frame}
 \usage{
-remove.nonword.chars(df)
+remove.nonword.chars(df, variable.summary)
 }
 \arguments{
 \item{df}{data frame, input phenotype content}
+
+\item{variable.summary}{list, variable-specific configuration data}
 }
 \value{
 modified version of input with values cleaned as described

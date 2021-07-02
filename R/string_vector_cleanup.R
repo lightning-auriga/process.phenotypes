@@ -94,6 +94,7 @@ collapse.repeats <- function(df, targets = c("\\\\/", "\\."), replacements = c("
 #' @description
 #'
 #' @param df data frame, input phenotype content
+#' @param variable.summary list, variable-specific configuration data
 #' @return modified version of input with values cleaned as described
 #' above
 #' @export remove.nonword.chars
@@ -104,14 +105,24 @@ collapse.repeats <- function(df, targets = c("\\\\/", "\\."), replacements = c("
 #' )
 #' colnames(phenotype.data) <- c("col1", "col2")
 #' phenotype.data <- remove.nonword.chars(phenotype.data)
-remove.nonword.chars <- function(df) {
-  df.orig <- df
-  df <- data.frame(lapply(df, stringr::str_replace_all, "^\\.([0-9]+)$", "0.\\1"))
-  df <- data.frame(lapply(df, stringr::str_replace_all, "^\\W+|\\W*[^[\\w)}\\]]]$", ""))
+remove.nonword.chars <- function(df, variable.summary) {
   for (i in seq_len(ncol(df))) {
+    if (is.null(variable.summary$variables[[i]]$params$type)) next
+    if (grepl("string", variable.summary$variables[[i]]$params$type)) next
+    ## prefix entries starting with decimal places with the placeholder 0
+    df[, i] <- stringr::str_replace_all(df[, i], "^\\.([0-9]+)$", "0.\\1")
+    ## replace leading ">/<" characters meaning "greater/less than" with words
+    df[, i] <- stringr::str_replace_all(df[, i], "^ *> *(\\w+)", "greater than \\1")
+    df[, i] <- stringr::str_replace_all(df[, i], "^ *< *(\\w+)", "less than \\1")
+    ## take anything that looks like a negative number and cast it into the void
+    df[, i] <- stringr::str_replace_all(df[, i], "^ *- *[0-9]+.*$", "na")
+    ## strip nonword characters from extremes
+    df.orig <- df[, i]
+    df[, i] <- stringr::str_replace_all(df[, i], "^\\W+|\\W*[^[\\w)}\\]]]$", "")
+    ## TODO: remove crappy logging
     diff.data <- cbind(
-      df.orig[df[, i] != df.orig[, i], i],
-      df[df[, i] != df.orig[, i], i]
+      df.orig[df[, i] != df.orig],
+      df[df[, i] != df.orig, i]
     )
     if (nrow(diff.data) > 0) {
       print(diff.data)

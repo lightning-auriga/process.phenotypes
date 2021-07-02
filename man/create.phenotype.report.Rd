@@ -9,7 +9,8 @@ create.phenotype.report(
   dataset.tag,
   dataset.yaml,
   shared.model.yaml,
-  out.filename
+  out.filename,
+  magic.fix = TRUE
 )
 }
 \arguments{

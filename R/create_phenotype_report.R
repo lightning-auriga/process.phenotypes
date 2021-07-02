@@ -73,7 +73,7 @@ create.phenotype.report <- function(in.filename,
   if (magic.fix) {
     phenotype.data <- phenotypeprocessing::remove.whitespace(phenotype.data)
     phenotype.data <- phenotypeprocessing::collapse.repeats(phenotype.data)
-    phenotype.data <- phenotypeprocessing::remove.nonword.chars(phenotype.data)
+    phenotype.data <- phenotypeprocessing::remove.nonword.chars(phenotype.data, variable.summary)
     phenotype.data <- phenotypeprocessing::normalize.missing.values(phenotype.data)
   }
 
