@@ -105,8 +105,19 @@ collapse.repeats <- function(df, targets = c("\\\\/", "\\."), replacements = c("
 #' colnames(phenotype.data) <- c("col1", "col2")
 #' phenotype.data <- remove.nonword.chars(phenotype.data)
 remove.nonword.chars <- function(df) {
+  df.orig <- df
   df <- data.frame(lapply(df, stringr::str_replace_all, "^\\.([0-9]+)$", "0.\\1"))
-  data.frame(lapply(df, stringr::str_replace_all, "^\\W+|\\W*[^[\\w)}\\]]]$", ""))
+  df <- data.frame(lapply(df, stringr::str_replace_all, "^\\W+|\\W*[^[\\w)}\\]]]$", ""))
+  for (i in seq_len(ncol(df))) {
+    diff.data <- cbind(
+      df.orig[df[, i] != df.orig[, i], i],
+      df[df[, i] != df.orig[, i], i]
+    )
+    if (nrow(diff.data) > 0) {
+      print(diff.data)
+    }
+  }
+  df
 }
 
 #' Basic global cleanup of entries in a phenotype data frame
