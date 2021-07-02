@@ -134,7 +134,7 @@ remove.nonword.chars <- function(df) {
 normalize.missing.values <- function(df) {
   data.frame(lapply(df, stringr::str_replace_all,
     paste(
-      "^na$",
+      "^n[/]?a$",
       "^not a[pl]+ica[ble]+$",
       "^nil$",
       "^$",
