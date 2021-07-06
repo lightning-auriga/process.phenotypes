@@ -296,3 +296,93 @@ reformat.factor <- function(vec, variable.summary) {
     variable.summary = variable.summary
   )
 }
+
+#' Convert sporadic Unicode-only characters into lesser equivalents
+#'
+#' @details
+#' Sporadic Unicode characters are being inserted into the dataset by
+#' upstream text editors. This function attempts to take them right
+#' back out again. Note that the replacements should be lowercase
+#' to be consistent with other string processing functions.
+#'
+#' @description
+#' Note that there's something particularly strange going on with
+#' Excel's "=#ERROR!" code, as in one instance it's getting converted
+#' into, of all things, an emoji.
+#'
+#' @param phenotype.data data.frame, input phenotype data
+#' @return data.frame input data with Unicode characters converted
+#' into more manageable equivalents.
+#' @export process.unicode.characters
+process.unicode.characters <- function(phenotype.data) {
+  for (i in seq_len(ncol(phenotype.data))) {
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B1", "+/-")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2192", "->")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U1F645", "#error!")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B0", "degrees")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2018|\U2019", "'")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U201C|\U201D", "\"")
+  }
+  phenotype.data
+}
+
+#' Set Excel error messages to NA and flag them as special problems
+#'
+#' @details
+#' This function removes "#error!" and "#value!" Excel error codes and reports
+#' the count of any such removals to the per-variable summary list, for inclusion
+#' in the downstream report.
+#'
+#' @description
+#' The function `remove.nonword.chars` will remove the leading and trailing characters
+#' from default Excel error codes, so for the least ambiguity, it should be called
+#' after Excel errors are already removed.
+#'
+#' @param phenotype.data data.frame, input phenotype data
+#' @param variable.summary list, per-variable summary information and configuration data
+#' @return list, first entry the input phenotype data with Excel error codes set to NA;
+#' second entry the variable summary list with injected reporting information about
+#' any Excel errors found for each variable
+#' @export exclude.excel.failures
+exclude.excel.failures <- function(phenotype.data, variable.summary) {
+  excel.problem.regex <- "^=?#error!$|^=?#value!$|^=?#ERROR!$|^=?#VALUE!$"
+  for (i in seq_len(ncol(phenotype.data))) {
+    excel.problems <- stringr::str_detect(phenotype.data[, i], excel.problem.regex)
+    if (length(which(excel.problems))) {
+      phenotype.data[excel.problems, i] <- NA
+      variable.summary$variables[[i]]$excel.problem.count <- sum(excel.problems)
+    }
+  }
+  list(
+    phenotype.data = phenotype.data,
+    variable.summary = variable.summary
+  )
+}
+
+#' Detects and reports residual Unicode characters
+#'
+#' @details
+#' Unicode characters should be removed when detected, as they are typically
+#' only sporadically injected by upstream text processors and will interfere
+#' with any downstream attempts at standardization. `process.unicode.characters`
+#' attempts to replace an existing set of these nefarious characters with their
+#' ASCII-style equivalents, but others may be introduced later, and can
+#' be flagged here.
+#'
+#' @description
+#' TBD
+#'
+#' @param phenotype.data data.frame, input phenotype data
+#' @param variable.summary list, per-variable summary information and config data
+#' @return list, input variable summary with updated logging information
+#' if any residual Unicode characters are detected.
+#' @export detect.unicode.characters
+detect.unicode.characters <- function(phenotype.data, variable.summary) {
+  for (i in seq_len(ncol(phenotype.data))) {
+    unicode.detected <- stringr::str_detect(phenotype.data[, i], "[^\001-\177]")
+    if (length(which(unicode.detected))) {
+      variable.summary$variables[[i]]$unicode.entries <- table(phenotype.data[unicode.detected, i])
+    }
+  }
+  variable.summary
+}

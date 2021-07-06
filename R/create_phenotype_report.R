@@ -73,6 +73,11 @@ create.phenotype.report <- function(in.filename,
   if (magic.fix) {
     phenotype.data <- phenotypeprocessing::remove.whitespace(phenotype.data)
     phenotype.data <- phenotypeprocessing::collapse.repeats(phenotype.data)
+    phenotype.data <- phenotypeprocessing::process.unicode.characters(phenotype.data)
+    reformatted.list <- phenotypeprocessing::exclude.excel.failures(phenotype.data, variable.summary)
+    phenotype.data <- reformatted.list$phenotype.data
+    variable.summary <- reformatted.list$variable.summary
+    variable.summary <- phenotypeprocessing::detect.unicode.characters(phenotype.data, variable.summary)
     phenotype.data <- phenotypeprocessing::remove.nonword.chars(phenotype.data, variable.summary)
     phenotype.data <- phenotypeprocessing::normalize.missing.values(phenotype.data)
   }

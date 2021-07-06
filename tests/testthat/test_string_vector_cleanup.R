@@ -283,3 +283,68 @@ test_that("reformat.factor reassigns alternate levels to the correct primary bef
     out.list
   )
 })
+
+test_that("Recognized Unicode characters are replaced", {
+  in.phenotype.data <- data.frame(TN001 = c(
+    "some text (\U00B1 1)",
+    "thing\U2192otherthing",
+    "\U1F645",
+    "98.6\U00B0",
+    "\U2018thing\U2019",
+    "\U201Cthing\U201D"
+  ))
+  in.variable.summary <- list(variables = list(TN001 = list(
+    original.name = "Header",
+    params = list(
+      name = "Header",
+      type = "string"
+    )
+  )))
+  out.phenotype.data <- data.frame(TN001 = c(
+    "some text (+/- 1)",
+    "thing->otherthing",
+    "#error!",
+    "98.6degrees",
+    "'thing'",
+    "\"thing\""
+  ))
+  expect_identical(
+    process.unicode.characters(in.phenotype.data),
+    out.phenotype.data
+  )
+})
+
+test_that("Excel error codes are detected and reported", {
+  in.phenotype.data <- data.frame(TN001 = c("ok thing!", "#ERROR!", "#VALUE!", "#error!", "puppies#error!", "=#value!"))
+  in.variable.summary <- list(variables = list(TN001 = list(
+    original.name = "Header",
+    params = list(
+      name = "Header",
+      type = "string"
+    )
+  )))
+  out.phenotype.data <- data.frame(TN001 = c("ok thing!", NA, NA, NA, "puppies#error!", NA))
+  out.variable.summary <- in.variable.summary
+  out.variable.summary$variables$TN001$excel.problem.count <- as.integer(4)
+  expect_identical(
+    exclude.excel.failures(in.phenotype.data, in.variable.summary),
+    list(phenotype.data = out.phenotype.data, variable.summary = out.variable.summary)
+  )
+})
+
+test_that("Unhandled Unicode characters are detected and reported", {
+  in.phenotype.data <- data.frame(TN001 = c("ok thing!", "puppies!", "\U1F436", "\U1F436", "\U1F436"))
+  in.variable.summary <- list(variables = list(TN001 = list(
+    original.name = "Header",
+    params = list(
+      name = "Header",
+      type = "string"
+    )
+  )))
+  out.variable.summary <- in.variable.summary
+  out.variable.summary$variables$TN001$unicode.entries <- table(rep("\U1F436", 3))
+  expect_identical(
+    detect.unicode.characters(in.phenotype.data, in.variable.summary),
+    out.variable.summary
+  )
+})

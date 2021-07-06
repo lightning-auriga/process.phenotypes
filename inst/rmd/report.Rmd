@@ -150,6 +150,25 @@ for (name in names(variable.summary$variables)) {
       cat("\nAll values consistent with categorical format or missing data.\n")
     }
   }
+  if (!is.null(variable.summary$variables[[name]]$excel.problem.count)) {
+    if (variable.summary$variables[[name]]$excel.problem.count == 1) {
+      cat("\nWARNING: 1 Excel error code detected in this variable.\n")
+    } else {
+      cat("\nWARNING: ", variable.summary$variables[[name]]$excel.problem.count,
+        " Excel error codes detected in this variable.\n",
+        sep = ""
+      )
+    }
+  }
+  if (!is.null(variable.summary$variables[[name]]$unicode.entries)) {
+    unicode.df <- data.frame(
+      names(variable.summary$variables[[name]]$unicode.entries),
+      as.vector(variable.summary$variables[[name]]$unicode.entries)
+    )
+    rownames(unicode.df) <- NULL
+    colnames(unicode.df) <- c("Unicode String", "Observations")
+    print(knitr::kable(unicode.df, caption = "String entries containing unresolved Unicode characters."))
+  }
   cat("\n***\n<br>\n")
 }
 ```
