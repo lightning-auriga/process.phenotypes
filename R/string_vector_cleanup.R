@@ -322,6 +322,11 @@ process.unicode.characters <- function(phenotype.data) {
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B0", "degrees")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2018|\U2019", "'")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U201C|\U201D", "\"")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B2", "2")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B9", "1")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2715", "x")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00E7", "c")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2022", "*")
   }
   phenotype.data
 }
