@@ -17,9 +17,8 @@
 #' project-specific and shared model yaml configuration files
 #' @seealso create.phenotype.report
 #' @keywords phenotypes
-#' @export process.phenotypes
 #' @examples
-#' process.phenotypes()
+#' process.phenotypes("/path/to/phenotypes/audit_jun2021", "my_results")
 process.phenotypes <- function(phenotype.path,
                                output.path,
                                phenotype.files = c(
@@ -62,9 +61,9 @@ process.phenotypes <- function(phenotype.path,
     output.filename <- paste(output.path, paste(dataset.tag, "report.html", sep = "_"), sep = "/")
     create.phenotype.report(
       paste(phenotype.path, file, sep = "/"),
+      dataset.tag,
       dataset.yaml,
       shared.model.yaml,
-      dataset.tag,
       output.filename
     )
   }

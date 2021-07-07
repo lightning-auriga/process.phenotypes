@@ -35,7 +35,7 @@ and should probably be named to reflect that if this
 is ever used in other contexts lol.
 }
 \examples{
-process.phenotypes()
+process.phenotypes("/path/to/phenotypes/audit_jun2021", "my_results")
 }
 \seealso{
 create.phenotype.report

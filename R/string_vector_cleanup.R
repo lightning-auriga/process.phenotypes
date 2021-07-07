@@ -159,7 +159,6 @@ normalize.missing.values <- function(df) {
       "^nan$",
       "^not a[s]+e[s]+ed$",
       "^unav[ai]+la[bl]+e$",
-      "^none$",
       "^u[nk]+[ow]+n$",
       "^not av[ai]+la[bl]+e$",
       "^not done$",
