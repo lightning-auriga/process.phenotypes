@@ -14,7 +14,6 @@
 #' @param df data frame, input phenotype content
 #' @return modified version of input with certain bad columns
 #' removed
-#' @export remove.invalid.columns
 #' @examples
 #' phenotype.data <- data.frame(1:3, 4:6, 7:9)
 #' colnames(phenotype.data) <- c("", NA, "ok name")

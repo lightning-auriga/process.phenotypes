@@ -19,7 +19,6 @@
 #' to the raw variable names
 #' @seealso sanitize.header
 #' @keywords phenotypes
-#' @export map.header
 #' @examples
 #' df <- data.frame(rnorm(100), runif(100))
 #' colnames(df) <- c("Human height lol", "y")
@@ -82,7 +81,6 @@ map.header <- function(df, dataset.tag, config.data) {
 #' @return input data frame with variable name transformation applied
 #' @seealso map.header
 #' @keywords phenotypes
-#' @export sanitize.header
 #' @examples
 #' df <- data.frame(rnorm(100), runif(100))
 #' colnames(df) <- c("Human height lol", "y")

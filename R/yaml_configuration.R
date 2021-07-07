@@ -11,7 +11,6 @@
 #' @return list of lists, containing parsed yaml configuration
 #' information
 #' @keywords yaml
-#' @export load.configuration
 load.configuration <- function(dataset.parameter.filename,
                                global.parameter.filename) {
   ## input parameter testing

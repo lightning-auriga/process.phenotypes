@@ -58,33 +58,33 @@ create.phenotype.report <- function(in.filename,
   )
 
   ## load project yaml configuration data
-  config.data <- phenotypeprocessing::load.configuration(dataset.yaml, shared.model.yaml)
+  config.data <- load.configuration(dataset.yaml, shared.model.yaml)
 
   ## drop columns with NA or empty column names
-  phenotype.data <- phenotypeprocessing::remove.invalid.columns(phenotype.data)
+  phenotype.data <- remove.invalid.columns(phenotype.data)
 
   ## sanitize headers
   ## TODO: eventually feed dataset tag from yaml
-  variable.summary <- phenotypeprocessing::map.header(phenotype.data, dataset.tag, config.data)
-  phenotype.data <- phenotypeprocessing::sanitize.header(phenotype.data, variable.summary)
+  variable.summary <- map.header(phenotype.data, dataset.tag, config.data)
+  phenotype.data <- sanitize.header(phenotype.data, variable.summary)
 
   ## clean up strings (global functions across all variables)
-  phenotype.data <- phenotypeprocessing::make.lowercase(phenotype.data)
+  phenotype.data <- make.lowercase(phenotype.data)
   if (magic.fix) {
-    phenotype.data <- phenotypeprocessing::remove.whitespace(phenotype.data)
-    phenotype.data <- phenotypeprocessing::collapse.repeats(phenotype.data)
-    phenotype.data <- phenotypeprocessing::process.unicode.characters(phenotype.data)
-    reformatted.list <- phenotypeprocessing::exclude.excel.failures(phenotype.data, variable.summary)
+    phenotype.data <- remove.whitespace(phenotype.data)
+    phenotype.data <- collapse.repeats(phenotype.data)
+    phenotype.data <- process.unicode.characters(phenotype.data)
+    reformatted.list <- exclude.excel.failures(phenotype.data, variable.summary)
     phenotype.data <- reformatted.list$phenotype.data
     variable.summary <- reformatted.list$variable.summary
-    variable.summary <- phenotypeprocessing::detect.unicode.characters(phenotype.data, variable.summary)
-    phenotype.data <- phenotypeprocessing::remove.nonword.chars(phenotype.data, variable.summary)
-    phenotype.data <- phenotypeprocessing::normalize.missing.values(phenotype.data)
+    variable.summary <- detect.unicode.characters(phenotype.data, variable.summary)
+    phenotype.data <- remove.nonword.chars(phenotype.data, variable.summary)
+    phenotype.data <- normalize.missing.values(phenotype.data)
   }
 
   ## apply variable-specific NA values
   if (magic.fix) {
-    phenotype.data <- phenotypeprocessing::convert.variable.specific.na(
+    phenotype.data <- convert.variable.specific.na(
       phenotype.data,
       variable.summary
     )
@@ -92,21 +92,21 @@ create.phenotype.report <- function(in.filename,
 
   ## attempt type conversion on post-cleaning string vectors
   if (magic.fix) {
-    reformatted.list <- phenotypeprocessing::apply.type.conversions(phenotype.data, variable.summary)
+    reformatted.list <- apply.type.conversions(phenotype.data, variable.summary)
   } else {
     phenotype.data <- type.convert(phenotype.data)
   }
 
   ## exclude subjects below a given age from the dataset
   if (magic.fix) {
-    reformatted.list <- phenotypeprocessing::exclude.by.age(
+    reformatted.list <- exclude.by.age(
       reformatted.list$phenotype.data, reformatted.list$variable.summary
     )
   }
 
   ## apply variable-specific range restrictions
   if (magic.fix) {
-    reformatted.list <- phenotypeprocessing::apply.bounds(
+    reformatted.list <- apply.bounds(
       reformatted.list$phenotype.data,
       reformatted.list$variable.summary
     )

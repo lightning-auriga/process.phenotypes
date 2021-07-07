@@ -10,7 +10,6 @@
 #' @param df data frame, input phenotype content
 #' @return modified version of input with values cleaned as described
 #' above
-#' @export make.lowercase
 #' @examples
 #' phenotype.data <- data.frame(
 #'   c("WeiRd CaPs", "Trailing ", "NA"),
@@ -35,7 +34,6 @@ make.lowercase <- function(df) {
 #' @param df data frame, input phenotype content
 #' @return modified version of input with values cleaned as described
 #' above
-#' @export remove.whitespace
 #' @examples
 #' phenotype.data <- data.frame(
 #'   c("WeiRd CaPs", "Trailing ", "NA"),
@@ -61,7 +59,6 @@ remove.whitespace <- function(df) {
 #' @param targets character vector, input character(s) to replace duplicates of
 #' @param replacements character vector, character to replace target duplicates with
 #' @return modified version of input with values cleaned as described
-#' @export collapse.repeats
 #' @examples
 #' phenotype.data <- data.frame(
 #'   A = c("\\/", "0..112"),
@@ -97,7 +94,6 @@ collapse.repeats <- function(df, targets = c("\\\\/", "\\."), replacements = c("
 #' @param variable.summary list, variable-specific configuration data
 #' @return modified version of input with values cleaned as described
 #' above
-#' @export remove.nonword.chars
 #' @examples
 #' phenotype.data <- data.frame(
 #'   c("WeiRd CaPs", "Trailing ", "NA"),
@@ -145,7 +141,6 @@ remove.nonword.chars <- function(df, variable.summary) {
 #' @param df data frame, input phenotype content
 #' @return modified version of input with values cleaned as described
 #' above
-#' @export normalize.missing.values
 #' @examples
 #' phenotype.data <- data.frame(
 #'   c("WeiRd CaPs", "Trailing ", "NA"),
@@ -215,7 +210,6 @@ is.blood.pressure <- function(vec, allow.trailing = FALSE) {
 #' @param vec character vector, input phenotype content
 #' @param var.summary list, variable summary entry for this particular variable
 #' @return modified version of input with values cleaned as described above
-#' @export reformat.numerics
 reformat.numerics <- function(vec, var.summary) {
   ## treat this as arbitrary numeric data
   ## if the prefix of a value looks like a numeric, strip its suffix
@@ -242,7 +236,6 @@ reformat.numerics <- function(vec, var.summary) {
 #' @param vec character vector, input phenotype content
 #' @param var.summary list, variable summary information for this particular variable
 #' @return modified version of input with values cleaned as described above
-#' @export reformat.blood.pressure
 reformat.blood.pressure <- function(vec, var.summary) {
   ## treat this as BP, eliminate anything else
   ## if the prefix of a value looks like BP, strip its suffix
@@ -270,7 +263,6 @@ reformat.blood.pressure <- function(vec, var.summary) {
 #' @return list, 'phenotype.data' contains converted phenotype information,
 #' 'variable.summary' contains input variable summary and possibly information
 #' about invalid factor levels converted to NA.
-#' @export reformat.factor
 reformat.factor <- function(vec, variable.summary) {
   stopifnot(!is.null(variable.summary$params$levels))
   ordered.levels <- c()
@@ -313,7 +305,6 @@ reformat.factor <- function(vec, variable.summary) {
 #' @param phenotype.data data.frame, input phenotype data
 #' @return data.frame input data with Unicode characters converted
 #' into more manageable equivalents.
-#' @export process.unicode.characters
 process.unicode.characters <- function(phenotype.data) {
   for (i in seq_len(ncol(phenotype.data))) {
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B1", "+/-")
@@ -349,7 +340,6 @@ process.unicode.characters <- function(phenotype.data) {
 #' @return list, first entry the input phenotype data with Excel error codes set to NA;
 #' second entry the variable summary list with injected reporting information about
 #' any Excel errors found for each variable
-#' @export exclude.excel.failures
 exclude.excel.failures <- function(phenotype.data, variable.summary) {
   excel.problem.regex <- "^=?#error!$|^=?#value!$|^=?#ERROR!$|^=?#VALUE!$"
   for (i in seq_len(ncol(phenotype.data))) {
@@ -382,7 +372,6 @@ exclude.excel.failures <- function(phenotype.data, variable.summary) {
 #' @param variable.summary list, per-variable summary information and config data
 #' @return list, input variable summary with updated logging information
 #' if any residual Unicode characters are detected.
-#' @export detect.unicode.characters
 detect.unicode.characters <- function(phenotype.data, variable.summary) {
   for (i in seq_len(ncol(phenotype.data))) {
     unicode.detected <- stringr::str_detect(phenotype.data[, i], "[^\001-\177]")

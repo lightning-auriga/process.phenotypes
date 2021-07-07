@@ -20,7 +20,6 @@
 #' with summary information injected from certain handlers)
 #' @seealso load.configuration
 #' @keywords phenotypes yaml
-#' @export apply.type.conversions
 apply.type.conversions <- function(phenotype.data, variable.summary) {
   stopifnot(ncol(phenotype.data) == length(variable.summary$variables))
   for (i in seq_len(length(variable.summary$variables))) {
@@ -53,7 +52,7 @@ apply.type.conversions <- function(phenotype.data, variable.summary) {
       ## string
       next
     } else {
-      result.list <- phenotypeprocessing::convert.type(
+      result.list <- convert.type(
         phenotype.data[, i], variable.summary$variables[[i]], target.type
       )
       phenotype.data[, i] <- result.list$phenotype.data
@@ -87,12 +86,11 @@ apply.type.conversions <- function(phenotype.data, variable.summary) {
 #' 'variable.summary' contains input variable summary.
 #' @seealso apply.type.conversion
 #' @keywords phenotypes yaml
-#' @export convert.type
 convert.type <- function(vec, var.summary, target.type) {
   result.list <- NULL
   if (grepl("^categorical$|^ordinal$|^binary$", target.type, ignore.case = TRUE)) {
     ## categorical or ordinal or binary
-    result.list <- phenotypeprocessing::reformat.factor(vec, var.summary)
+    result.list <- reformat.factor(vec, var.summary)
     if (grepl("ordinal", target.type, ignore.case = TRUE)) {
       result.list$phenotype.data <- ordered(result.list$phenotype.data,
         levels = levels(result.list$phenotype.data)
@@ -100,13 +98,13 @@ convert.type <- function(vec, var.summary, target.type) {
     }
   } else if (grepl("numeric", target.type, ignore.case = TRUE)) {
     ## numeric
-    result.list <- phenotypeprocessing::reformat.numerics(vec, var.summary)
+    result.list <- reformat.numerics(vec, var.summary)
   } else if (grepl("^blood[_ ]?pressure$|^bp$", target.type, ignore.case = TRUE)) {
     ## blood pressure
-    result.list <- phenotypeprocessing::reformat.blood.pressure(vec, var.summary)
+    result.list <- reformat.blood.pressure(vec, var.summary)
   } else if (grepl("^date$", target.type, ignore.case = TRUE)) {
     ## date
-    result.list <- phenotypeprocessing::parse.date(vec, var.summary)
+    result.list <- parse.date(vec, var.summary)
   } else {
     stop("invalid switch condition reached in convert.type")
   }
@@ -137,7 +135,6 @@ convert.type <- function(vec, var.summary, target.type) {
 #' with information on entries outside the defined bounds)
 #' @seealso load.configuration
 #' @keywords phenotypes yaml
-#' @export apply.bounds
 apply.bounds <- function(phenotype.data, variable.summary) {
   stopifnot(ncol(phenotype.data) == length(variable.summary$variables))
   for (i in seq_len(length(variable.summary$variables))) {
@@ -194,7 +191,6 @@ apply.bounds <- function(phenotype.data, variable.summary) {
 #' and parameters from yaml input
 #' @return data frame containing phenotype information with
 #' subjects containing specified values set to NA
-#' @export convert.variable.specific.na
 convert.variable.specific.na <- function(phenotype.data, variable.summary) {
   for (i in seq_len(length(variable.summary$variables))) {
     na.values <- variable.summary$variables[[i]]$params[["na-values"]]
@@ -230,7 +226,6 @@ convert.variable.specific.na <- function(phenotype.data, variable.summary) {
 #' @return list, 'phenotype.data' contains phenotype information with
 #' subjects below the age threshold excluded, 'variable.summary' contains
 #' input variable summary with information about excluded subjects.
-#' @export exclude.by.age
 exclude.by.age <- function(phenotype.data, variable.summary) {
   min.age <- as.numeric(variable.summary$globals$min_age_for_inclusion)
   stopifnot(!is.null(variable.summary$globals$min_age_for_inclusion), !is.na(min.age))
@@ -275,7 +270,6 @@ exclude.by.age <- function(phenotype.data, variable.summary) {
 #' @param vec character vector, input phenotype content
 #' @param var.summary list, variable summary entry for this particular variable
 #' @return modified version of input with values cleaned as described above
-#' @export parse.date
 parse.date <- function(vec, var.summary) {
   possible.date <- stringr::str_detect(vec, ".*[/ -](\\d{2}|\\d{4})$") & !is.na(vec)
   res <- rep(NA, length(vec))

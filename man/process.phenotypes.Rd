@@ -35,7 +35,7 @@ and should probably be named to reflect that if this
 is ever used in other contexts lol.
 }
 \examples{
-phenotypeprocessing::process.phenotypes()
+process.phenotypes()
 }
 \seealso{
 create.phenotype.report

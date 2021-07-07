@@ -19,7 +19,7 @@
 #' @keywords phenotypes
 #' @export process.phenotypes
 #' @examples
-#' phenotypeprocessing::process.phenotypes()
+#' process.phenotypes()
 process.phenotypes <- function(phenotype.path,
                                output.path,
                                phenotype.files = c(
