@@ -327,6 +327,7 @@ process.unicode.characters <- function(phenotype.data) {
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2715", "x")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00E7", "c")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2022", "*")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U202[89A-F]", "")
   }
   phenotype.data
 }

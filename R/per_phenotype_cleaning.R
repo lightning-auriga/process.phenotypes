@@ -24,6 +24,9 @@
 apply.type.conversions <- function(phenotype.data, variable.summary) {
   stopifnot(ncol(phenotype.data) == length(variable.summary$variables))
   for (i in seq_len(length(variable.summary$variables))) {
+    if (is.null(variable.summary$variables[[i]]$params$type)) {
+      warning(paste("variable \"", names(variable.summary$variables)[i], "\" has null type specification", sep = ""))
+    }
     target.type <- tolower(variable.summary$variables[[i]]$params$type)
     possible.types <- c(
       "string",
@@ -40,7 +43,7 @@ apply.type.conversions <- function(phenotype.data, variable.summary) {
       ## null
       next
     }
-    if (!is.element(target.type, possible.types)) {
+    if (!(target.type %in% possible.types)) {
       stop(
         "In apply.type.conversions, unrecognized type for variable \"",
         colnames(phenotype.data)[i], "\": \"",
@@ -86,6 +89,7 @@ apply.type.conversions <- function(phenotype.data, variable.summary) {
 #' @keywords phenotypes yaml
 #' @export convert.type
 convert.type <- function(vec, var.summary, target.type) {
+  result.list <- NULL
   if (grepl("^categorical$|^ordinal$|^binary$", target.type, ignore.case = TRUE)) {
     ## categorical or ordinal or binary
     result.list <- phenotypeprocessing::reformat.factor(vec, var.summary)
@@ -94,25 +98,22 @@ convert.type <- function(vec, var.summary, target.type) {
         levels = levels(result.list$phenotype.data)
       )
     }
-    vec <- result.list$phenotype.data
-    var.summary <- result.list$variable.summary
   } else if (grepl("numeric", target.type, ignore.case = TRUE)) {
     ## numeric
     result.list <- phenotypeprocessing::reformat.numerics(vec, var.summary)
-    vec <- result.list$phenotype.data
-    var.summary <- result.list$variable.summary
   } else if (grepl("^blood[_ ]?pressure$|^bp$", target.type, ignore.case = TRUE)) {
     ## blood pressure
     result.list <- phenotypeprocessing::reformat.blood.pressure(vec, var.summary)
-    vec <- result.list$phenotype.data
-    var.summary <- result.list$variable.summary
   } else if (grepl("^date$", target.type, ignore.case = TRUE)) {
     ## date
     result.list <- phenotypeprocessing::parse.date(vec, var.summary)
-    vec <- result.list$phenotype.data
-    var.summary <- result.list$variable.summary
+  } else {
+    stop("invalid switch condition reached in convert.type")
   }
-  list(phenotype.data = vec, variable.summary = var.summary)
+  list(
+    phenotype.data = result.list$phenotype.data,
+    variable.summary = result.list$variable.summary
+  )
 }
 
 #' Apply range bounds to each variable as defined in yaml config
@@ -142,7 +143,7 @@ apply.bounds <- function(phenotype.data, variable.summary) {
   for (i in seq_len(length(variable.summary$variables))) {
     target.type <- variable.summary$variables[[i]]$params$type
     if (!is.null(target.type)) {
-      if (grepl("numeric", target.type, ignore.case = TRUE)) {
+      if (grepl("^numeric$|^date$", target.type, ignore.case = TRUE)) {
         var.min <- variable.summary$variables[[i]]$params$bounds$min
         if (!is.null(var.min)) {
           var.min <- as.numeric(var.min)

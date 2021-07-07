@@ -80,6 +80,17 @@ to the variable's configured type.
 ```{r report.value.summary, eval=TRUE, echo=FALSE, results="asis"}
 for (name in names(variable.summary$variables)) {
   my.summ <- variable.summary$variables[[name]]$summary
+  ## report any indication of residual Excel junk in the variable
+  if (!is.null(variable.summary$variables[[name]]$excel.problem.count)) {
+    if (variable.summary$variables[[name]]$excel.problem.count == 1) {
+      cat("\nWARNING: 1 Excel error code detected in this variable.\n")
+    } else {
+      cat("\nWARNING: ", variable.summary$variables[[name]]$excel.problem.count,
+        " Excel error codes detected in this variable.\n",
+        sep = ""
+      )
+    }
+  }
   ## if the source data type is numeric
   if (is.vector(phenotype.data[, name], mode = "numeric")) {
     if (length(which(!is.na(phenotype.data[, name])))) {
@@ -127,7 +138,7 @@ for (name in names(variable.summary$variables)) {
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
       print(knitr::kable(df, caption = "Values that were not consistent with blood pressure measurement format."))
     } else {
-      cat("\nAll values consistent with blood pressure format or missing data.\n")
+      cat("\n\nAll values consistent with blood pressure format or missing data.\n")
     }
   }
   if (!is.null(variable.summary$variables[[name]]$invalid.numeric.entries)) {
@@ -138,7 +149,7 @@ for (name in names(variable.summary$variables)) {
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
       print(knitr::kable(df, caption = "Values that were not consistent with numeric format."))
     } else {
-      cat("\nAll values consistent with numeric format or missing data.\n")
+      cat("\n\nAll values consistent with numeric format or missing data.\n")
     }
   }
   if (!is.null(variable.summary$variables[[name]]$invalid.factor.entries)) {
@@ -149,17 +160,18 @@ for (name in names(variable.summary$variables)) {
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
       print(knitr::kable(df, caption = "Values that were not consistent with categorical format."))
     } else {
-      cat("\nAll values consistent with categorical format or missing data.\n")
+      cat("\n\nAll values consistent with categorical format or missing data.\n")
     }
   }
-  if (!is.null(variable.summary$variables[[name]]$excel.problem.count)) {
-    if (variable.summary$variables[[name]]$excel.problem.count == 1) {
-      cat("\nWARNING: 1 Excel error code detected in this variable.\n")
+  if (!is.null(variable.summary$variables[[name]]$invalid.date.entries)) {
+    if (length(variable.summary$variables[[name]]$invalid.date.entries) > 0) {
+      df <- data.frame(table(variable.summary$variables[[name]]$invalid.date.entries, useNA = "ifany"))
+      rownames(df) <- NULL
+      colnames(df) <- c(name, "Count")
+      df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
+      print(knitr::kable(df, caption = "Values that were not consistent with date format."))
     } else {
-      cat("\nWARNING: ", variable.summary$variables[[name]]$excel.problem.count,
-        " Excel error codes detected in this variable.\n",
-        sep = ""
-      )
+      cat("\n\nAll values consistent with date format or missing data.\n")
     }
   }
   if (!is.null(variable.summary$variables[[name]]$unicode.entries)) {
