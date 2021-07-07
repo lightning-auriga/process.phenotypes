@@ -281,7 +281,7 @@ reformat.factor <- function(vec, variable.summary) {
     ordered.levels <- c(ordered.levels, level$name)
   }
   res <- factor(vec, levels = ordered.levels)
-  variable.summary$invalid.factor.entries <- unique(vec[!is.na(vec) & is.na(res)])
+  variable.summary$invalid.factor.entries <- vec[!is.na(vec) & is.na(res)]
   list(
     phenotype.data = res,
     variable.summary = variable.summary
