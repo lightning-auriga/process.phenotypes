@@ -169,9 +169,9 @@ for (name in names(variable.summary$variables)) {
       rownames(df) <- NULL
       colnames(df) <- c(name, "Count")
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
-      print(knitr::kable(df, caption = "Values that were not consistent with date format."))
+      print(knitr::kable(df, caption = "Values that were not consistent with date (year only) format."))
     } else {
-      cat("\n\nAll values consistent with date format or missing data.\n")
+      cat("\n\nAll values consistent with date format (year only) or missing data.\n")
     }
   }
   if (!is.null(variable.summary$variables[[name]]$unicode.entries)) {
