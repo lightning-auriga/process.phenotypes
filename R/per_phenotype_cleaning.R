@@ -240,9 +240,10 @@ exclude.by.age <- function(phenotype.data, variable.summary) {
     }
   }
   if (flag) {
-    subjects.dropped <- length(which(phenotype.data[, flag] < min.age))
+    ## TODO: recognize date of birth column and attempt to rescue NA ages
+    subjects.dropped <- length(which(phenotype.data[, flag] < min.age | is.na(phenotype.data[, flag])))
     variable.summary$subjects.excluded.for.age <- subjects.dropped
-    phenotype.data <- phenotype.data[phenotype.data[, flag] >= min.age, ]
+    phenotype.data <- phenotype.data[phenotype.data[, flag] >= min.age & !is.na(phenotype.data[, flag]), ]
   } else {
     stop(
       "Please indicate which variable should be used as the subject age ",
