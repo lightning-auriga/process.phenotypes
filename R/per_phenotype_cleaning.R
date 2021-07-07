@@ -24,47 +24,95 @@
 apply.type.conversions <- function(phenotype.data, variable.summary) {
   stopifnot(ncol(phenotype.data) == length(variable.summary$variables))
   for (i in seq_len(length(variable.summary$variables))) {
-    target.type <- variable.summary$variables[[i]]$params$type
+    target.type <- tolower(variable.summary$variables[[i]]$params$type)
+    possible.types <- c(
+      "string",
+      "categorical",
+      "ordinal",
+      "binary",
+      "numeric",
+      "blood_pressure",
+      "blood pressure",
+      "bp",
+      "date"
+    )
     if (is.null(target.type)) {
       ## null
       next
     }
-    if (grepl("string", target.type, ignore.case = TRUE)) {
-      ## string
-      next
-    } else if (grepl("^categorical$|^ordinal$|^binary$", target.type, ignore.case = TRUE)) {
-      ## categorical or ordinal or binary
-      result.list <- phenotypeprocessing::reformat.factor(phenotype.data[, i], variable.summary$variables[[i]])
-      if (grepl("ordinal", target.type, ignore.case = TRUE)) {
-        result.list$phenotype.data <- ordered(result.list$phenotype.data,
-          levels = levels(result.list$phenotype.data)
-        )
-      }
-      phenotype.data[, i] <- result.list$phenotype.data
-      variable.summary$variables[[i]] <- result.list$variable.summary
-    } else if (grepl("numeric", target.type, ignore.case = TRUE)) {
-      ## numeric
-      result.list <- phenotypeprocessing::reformat.numerics(phenotype.data[, i], variable.summary$variables[[i]])
-      phenotype.data[, i] <- result.list$phenotype.data
-      variable.summary$variables[[i]] <- result.list$variable.summary
-    } else if (grepl("^blood[_ ]?pressure$|^bp$", target.type, ignore.case = TRUE)) {
-      ## blood pressure
-      result.list <- phenotypeprocessing::reformat.blood.pressure(phenotype.data[, i], variable.summary$variables[[i]])
-      phenotype.data[, i] <- result.list$phenotype.data
-      variable.summary$variables[[i]] <- result.list$variable.summary
-    } else {
+    if (!is.element(target.type, possible.types)) {
       stop(
         "In apply.type.conversions, unrecognized type for variable \"",
         colnames(phenotype.data)[i], "\": \"",
         target.type, "\""
       )
+    } else if (grepl("string", target.type, ignore.case = TRUE)) {
+      ## string
+      next
+    } else {
+      result.list <- phenotypeprocessing::convert.type(
+        phenotype.data[, i], variable.summary$variables[[i]], target.type
+      )
+      phenotype.data[, i] <- result.list$phenotype.data
+      variable.summary$variables[[i]] <- result.list$variable.summary
     }
   }
-
   list(
     phenotype.data = phenotype.data,
     variable.summary = variable.summary
   )
+}
+
+#' Coordinate different function calls for type conversion
+#'
+#' @details
+#' Each yaml configuration block should have a "type" entry
+#' (if not, will default to unmodified string) denoting what
+#' data storage type is expected for this variable.
+#'
+#' @description
+#' A short list of special handlers are implemented for particular
+#' data conversion problems (e.g. numerics with trailing unit suffixes,
+#' or blood pressure data).  This function dispatches the appropriate
+#' subroutine based on the detected data type.
+#'
+#' @param vec character vector, input phenotype content
+#' @param var.summary list, variable summary entry for this particular variable
+#' @param target.type character vector, denotes the expected type for each variable;
+#' read from the yaml config
+#' @return list, 'phenotype.data' contains converted phenotype information,
+#' 'variable.summary' contains input variable summary.
+#' @seealso apply.type.conversion
+#' @keywords phenotypes yaml
+#' @export convert.type
+convert.type <- function(vec, var.summary, target.type) {
+  if (grepl("^categorical$|^ordinal$|^binary$", target.type, ignore.case = TRUE)) {
+    ## categorical or ordinal or binary
+    result.list <- phenotypeprocessing::reformat.factor(vec, var.summary)
+    if (grepl("ordinal", target.type, ignore.case = TRUE)) {
+      result.list$phenotype.data <- ordered(result.list$phenotype.data,
+        levels = levels(result.list$phenotype.data)
+      )
+    }
+    vec <- result.list$phenotype.data
+    var.summary <- result.list$variable.summary
+  } else if (grepl("numeric", target.type, ignore.case = TRUE)) {
+    ## numeric
+    result.list <- phenotypeprocessing::reformat.numerics(vec, var.summary)
+    vec <- result.list$phenotype.data
+    var.summary <- result.list$variable.summary
+  } else if (grepl("^blood[_ ]?pressure$|^bp$", target.type, ignore.case = TRUE)) {
+    ## blood pressure
+    result.list <- phenotypeprocessing::reformat.blood.pressure(vec, var.summary)
+    vec <- result.list$phenotype.data
+    var.summary <- result.list$variable.summary
+  } else if (grepl("^date$", target.type, ignore.case = TRUE)) {
+    ## date
+    result.list <- phenotypeprocessing::parse.date(vec, var.summary)
+    vec <- result.list$phenotype.data
+    var.summary <- result.list$variable.summary
+  }
+  list(phenotype.data = vec, variable.summary = var.summary)
 }
 
 #' Apply range bounds to each variable as defined in yaml config
@@ -209,4 +257,32 @@ exclude.by.age <- function(phenotype.data, variable.summary) {
     phenotype.data = phenotype.data,
     variable.summary = variable.summary
   )
+}
+
+#' Convert values that should be dates to year
+#'
+#' @details
+#' Given string vector with malformed date entries, attempt
+#' to force conversion to YYYY
+#'
+#' @description
+#' Extracts two or four digit year values from dates of several formats,
+#' assigns likely century (20 or 19), and replaces the original date
+#' with just the four-digit year value.  Also removes extremely low
+#' likely erroneous year values.
+#'
+#' @param vec character vector, input phenotype content
+#' @param var.summary list, variable summary entry for this particular variable
+#' @return modified version of input with values cleaned as described above
+#' @export parse.date
+parse.date <- function(vec, var.summary) {
+  possible.date <- stringr::str_detect(vec, ".*[/ -](\\d{2}|\\d{4})$") & !is.na(vec)
+  res <- rep(NA, length(vec))
+  res[possible.date] <- stringr::str_replace(vec[possible.date], ".*[/ -](\\d{2}|\\d{4})$", "\\1")
+  res <- as.numeric(res)
+  res[res <= 21 & !is.na(res)] <- res[res <= 21 & !is.na(res)] + 2000
+  res[res < 100 & !is.na(res)] <- res[res < 100 & !is.na(res)] + 1900
+  res[res < 1800 & !is.na(res)] <- NA
+  var.summary$invalid.date.entries <- vec[(!possible.date | is.na(res)) & !is.na(vec)]
+  list(phenotype.data = res, variable.summary = var.summary)
 }

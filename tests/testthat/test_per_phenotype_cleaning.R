@@ -217,3 +217,14 @@ test_that("exclude.by.age correctly removes subjects with ages below the given t
     variable.summary = out.var.summary
   ))
 })
+
+test_that("parse.date extracts year and infers century correctly", {
+  in.vec <- c("10/20/19", "1/2/95", "2/3/1993", "1/6/123", "21 March 2002", "5-4-04")
+  in.var.summary <- list()
+  out.vec <- as.numeric(c(2019, 1995, 1993, NA, 2002, 2004))
+  out.var.summary <- list(invalid.date.entries = c("1/6/123"))
+  expect_identical(
+    parse.date(in.vec, in.var.summary),
+    list(phenotype.data = out.vec, variable.summary = out.var.summary)
+  )
+})

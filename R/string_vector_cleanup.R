@@ -157,7 +157,7 @@ normalize.missing.values <- function(df) {
   data.frame(lapply(df, stringr::str_replace_all,
     paste(
       "^n[/]?a$",
-      "^not a[pl]+ica[ble]+$",
+      "^not a[pl]+ica[ble]+[,:;]*$",
       "^nil$",
       "^$",
       "^not sure$",
