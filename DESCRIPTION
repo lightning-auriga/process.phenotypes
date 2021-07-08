@@ -15,6 +15,7 @@ License: MIT + file LICENSE
 Imports:
     kableExtra,
     knitr,
+    rlang,
     rmarkdown,
     stringr,
     yaml
