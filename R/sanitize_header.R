@@ -24,7 +24,10 @@
 #' colnames(df) <- c("Human height lol", "y")
 #' map.header(df, "mytag")
 map.header <- function(df, dataset.tag, config.data) {
-  new.names <- sprintf("%s%05d", dataset.tag, seq_len(ncol(df)))
+  ## new: pull names from input config variable specification
+  ## TODO: add yaml checker that makes sure these names
+  ## are alphanumeric only
+  new.names <- names(config.data$variables)
   res <- list(variables = lapply(colnames(df), function(i) {
     list(original.name = i)
   }))

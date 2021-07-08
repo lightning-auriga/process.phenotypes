@@ -132,7 +132,7 @@ test_that("normalize.missing.values normalizes all missing values", {
   out.df <- data.frame(
     A = c(NA, NA, NA, " ", "notmissing"),
     B = as.character(c(NA, NA, NA, NA, NA)),
-    C = as.character(c(NA, NA, NA, NA, NA)),
+    C = as.character(c("none", NA, NA, NA, NA)),
     D = c(NA, NA, NA, NA, "unvailable"),
     E = as.character(c(NA, NA, NA, NA, NA))
   )

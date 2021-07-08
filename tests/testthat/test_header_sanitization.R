@@ -24,14 +24,14 @@ config.data <- list(
 
 map.header.expected.output <- list(
   variables = list(
-    DF00001 = list(
+    var001 = list(
       original.name = "weird phenotype name 1",
       params = list(
         name = "weird phenotype name 1",
         type = "string"
       )
     ),
-    DF00002 = list(
+    var002 = list(
       original.name = "weird ** ////!! name __2",
       params = list(
         name = "weird ** ////!! name __2",
@@ -67,10 +67,10 @@ test_that("duplicate header names don't ruin mapping", {
   )
   expected.output <- list(
     variables = list(
-      DF00001 = list(original.name = "a", params = list(name = "a", type = "string")),
-      DF00002 = list(original.name = "b", params = list(name = "b", type = "string")),
-      DF00003 = list(original.name = "c", params = list(name = "c", type = "string")),
-      DF00004 = list(original.name = "b", params = list(name = "b", type = "string"))
+      var001 = list(original.name = "a", params = list(name = "a", type = "string")),
+      var002 = list(original.name = "b", params = list(name = "b", type = "string")),
+      var003 = list(original.name = "c", params = list(name = "c", type = "string")),
+      var004 = list(original.name = "b", params = list(name = "b", type = "string"))
     )
   )
   expect_identical(
@@ -81,7 +81,7 @@ test_that("duplicate header names don't ruin mapping", {
 
 test_that("data frame column names are updated in place", {
   expected.df <- phenotype.data
-  colnames(expected.df) <- c("DF00001", "DF00002")
+  colnames(expected.df) <- c("var001", "var002")
   expect_identical(sanitize.header(phenotype.data, map.header.expected.output), expected.df)
 })
 
