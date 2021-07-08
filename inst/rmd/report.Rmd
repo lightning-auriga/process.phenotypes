@@ -183,6 +183,30 @@ for (name in names(variable.summary$variables)) {
     colnames(unicode.df) <- c("Unicode String", "Observations")
     print(knitr::kable(unicode.df, caption = "String entries containing unresolved Unicode characters."))
   }
+  if (!is.null(variable.summary$variables[[name]]$params$dependencies)) {
+    dependency.names <- c()
+    dependency.conditions <- c()
+    dependency.results <- c()
+    dependencies <- variable.summary$variables[[name]]$params$dependencies
+    for (dependency.index in names(dependencies)) {
+      dependency.names <- c(dependency.names, dependencies[[dependency.index]]$name)
+      dependency.conditions <- c(dependency.conditions, dependencies[[dependency.index]]$condition)
+      dependency.result <- variable.summary$variables[[name]]$dependency.results[[dependency.index]]
+      if (length(dependency.result) == 0) {
+        dependency.result <- "all subjects pass"
+      } else if (length(dependency.result) > 1) {
+        dependency.result <- paste(dependency.result, collapse = ", ")
+      }
+      dependency.results <- c(dependency.results, dependency.result)
+    }
+    dependency.df <- data.frame(
+      Name = dependency.names,
+      Condition = dependency.conditions,
+      Result = dependency.results
+    )
+    rownames(dependency.df) <- NULL
+    print(knitr::kable(dependency.df, caption = "Results of cross-variable dependency tests."))
+  }
   cat("\n***\n<br>\n")
 }
 ```

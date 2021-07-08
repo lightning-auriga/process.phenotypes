@@ -18,8 +18,9 @@ check.variable.dependencies <- function(phenotype.data, variable.summary) {
   ## reporting for some styles of dependencies
   subject.id.column.index <- find.subject.id.index(variable.summary)
   for (i in seq_len(ncol(phenotype.data))) {
-    dependencies <- variable.summary$variables[[i]]$dependencies
+    dependencies <- variable.summary$variables[[i]]$params$dependencies
     if (!is.null(dependencies)) {
+      variable.summary$variables[[i]]$dependency.results <- list()
       for (j in names(dependencies)) {
         dependency.name <- dependencies[[j]]$name
         dependency.condition <- dependencies[[j]]$condition
@@ -38,12 +39,12 @@ check.variable.dependencies <- function(phenotype.data, variable.summary) {
         stopifnot(is.logical(dependency.result))
         ## if it's a single logical, it's just an overall test
         if (length(dependency.result) == 1) {
-          variable.summary$variables[[i]]$dependencies[[j]]$result <- dependency.result
+          variable.summary$variables[[i]]$dependency.results[[j]] <- dependency.result
           next
         } else if (length(dependency.result) == nrow(phenotype.data)) {
           ## if it's a logical as long as the data frame has rows,
           ## it's a per-subject test that should be true for everyone
-          variable.summary$variables[[i]]$dependencies[[j]]$result <-
+          variable.summary$variables[[i]]$dependency.results[[j]] <-
             as.character(phenotype.data[!dependency.result, subject.id.column.index])
           next
         }
@@ -77,8 +78,8 @@ check.variable.dependencies <- function(phenotype.data, variable.summary) {
 #' @return integer, index of subject ID column in input data
 find.subject.id.index <- function(variable.summary) {
   for (i in seq_len(length(variable.summary$variables))) {
-    if (!is.null(variable.summary$variables[[i]]$subject_id)) {
-      if (variable.summary$variables[[i]]$subject_id) {
+    if (!is.null(variable.summary$variables[[i]]$params$subject_id)) {
+      if (variable.summary$variables[[i]]$params$subject_id) {
         return(i)
       }
     }

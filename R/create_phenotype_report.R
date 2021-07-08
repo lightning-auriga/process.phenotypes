@@ -111,7 +111,12 @@ create.phenotype.report <- function(in.filename,
       reformatted.list$variable.summary
     )
   }
-  ## TODO: enforce yaml-specified variable relationships
+
+  ## enforce yaml-specified variable relationships
+  reformatted.list$variable.summary <- check.variable.dependencies(
+    reformatted.list$phenotype.data,
+    reformatted.list$variable.summary
+  )
 
   if (magic.fix) {
     phenotype.data <- reformatted.list$phenotype.data
