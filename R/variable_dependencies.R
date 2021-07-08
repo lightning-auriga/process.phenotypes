@@ -44,7 +44,7 @@ check.variable.dependencies <- function(phenotype.data, variable.summary) {
           ## if it's a logical as long as the data frame has rows,
           ## it's a per-subject test that should be true for everyone
           variable.summary$variables[[i]]$dependencies[[j]]$result <-
-            character(phenotype.data[!dependency.result, subject.id.column.index])
+            as.character(phenotype.data[!dependency.result, subject.id.column.index])
           next
         }
         ## it's something bizarre that this very tiny brain tester
@@ -58,6 +58,7 @@ check.variable.dependencies <- function(phenotype.data, variable.summary) {
       }
     }
   }
+  variable.summary
 }
 
 #' Locate a variable in the dataset flagged as subject ID
@@ -75,7 +76,7 @@ check.variable.dependencies <- function(phenotype.data, variable.summary) {
 #' @param variable.summary list, input configuration data
 #' @return integer, index of subject ID column in input data
 find.subject.id.index <- function(variable.summary) {
-  for (i in seq_len(variable.summary)) {
+  for (i in seq_len(length(variable.summary$variables))) {
     if (!is.null(variable.summary$variables[[i]]$subject_id)) {
       if (variable.summary$variables[[i]]$subject_id) {
         return(i)
