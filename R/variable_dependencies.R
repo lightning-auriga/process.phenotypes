@@ -31,7 +31,9 @@ check.variable.dependencies <- function(phenotype.data, variable.summary) {
         ## input string and then evaluates it in a quarantined environment.
         ## the point of that is that this should prevent this unknown code
         ## from overwriting anything in the current environment.
-        dependency.result <- rlang::eval_tidy(rlang::parse_expr(dependency.condition))
+        dependency.result <- rlang::eval_tidy(rlang::parse_expr(dependency.condition),
+          data = phenotype.data
+        )
         ## postconditions: result must be logical
         stopifnot(is.logical(dependency.result))
         ## if it's a single logical, it's just an overall test
