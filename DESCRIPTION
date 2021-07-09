@@ -1,4 +1,4 @@
-Package: phenotypeprocessing
+Package: process.phenotypes
 Title: Process audited phenotype datasets and report
 Version: 0.0.1
 Authors@R: 
