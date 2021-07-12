@@ -67,6 +67,23 @@ Then, choose one of the following methods:
 - from RStudio: `Tools -> Install Packages -> Install from: Package Archive File`,
 and select the tarball from your local drive.
 
+#### **From a git clone**
+
+With `git` from the command line, depending on whether ssh or https connection is configured
+for your system:
+
+`git clone git@gitlab.com:data-analysis5/process.phenotypes.git`
+
+`git clone https://gitlab.com/data-analysis5/process.phenotypes.git`
+
+Then, launch `R`. Install and launch `devtools` as needed (see section 
+"Direct Installation from GitLab" as necessary), and run the following commands:
+
+```
+library(devtools)
+devtools::install("/path/to/process.phenotypes")
+```
+
 ### Alternative: Installation from Conda (OSX and Linux only)
 
 Note: this option will only be available slightly after this README goes live, and at that
@@ -105,6 +122,11 @@ process.phenotypes::create.phenotype.report("/path/to/CV.export.tsv",
 ```
 
 ## YAML Configuration
+
+This section will be expanded in the near future as the configuration feature set is
+completed. For the time being, see existing dataset configuration files in 
+[this directory](https://gitlab.com/data-analysis5/process.phenotypes/-/tree/string_cleanup/yaml-configuration)
+for examples.
 
 ## Future Development Targets
 
