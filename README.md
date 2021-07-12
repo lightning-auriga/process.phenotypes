@@ -155,6 +155,7 @@ Prior to running this tool, you should validate the yaml configurations you've s
   - [ ] alternatively, can use derived variables explicitly
 
 ## Version History
+See changelog for more information.
  * 12 Jul 2021: string_cleanup branch merged into default; v0.1.0
 
 ## How to contribute to development
