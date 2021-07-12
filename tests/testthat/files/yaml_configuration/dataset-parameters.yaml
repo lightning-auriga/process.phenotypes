@@ -1,0 +1,12 @@
+---
+tag: testset
+globals:
+  min_age_for_inclusion: 16
+variables:
+  var001:
+    name: "PID"
+    type: string
+    subject_id: true
+  var013:
+    name: "Any associated goitre (neck swelling):"
+    shared_model: yes_no

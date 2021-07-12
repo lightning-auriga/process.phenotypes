@@ -1,0 +1,15 @@
+---
+models:
+  height:
+    type: numeric
+  yes_no:
+    type: binary
+    reference: "no"
+    comparison: "yes"
+  sex:
+    type: categorical
+    levels:
+      0:
+        name: female
+      1:
+        name: male

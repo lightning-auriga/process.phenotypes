@@ -1,13 +1,24 @@
-Package: phenotypeprocessing
+Package: process.phenotypes
 Title: Process audited phenotype datasets and report
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: 
-    person(given = "Bari",
-           family = "Ballew",
-           role = c("aut", "cre"),
-           email = "bari.ballew@54gene.com")
+    c(person(given = "Bari",
+             family = "Ballew",
+             role = "aut",
+             email = "bari.ballew@54gene.com"),
+      person(given = "Lightning",
+             family = "Auriga",
+             role = c("aut", "cre"),
+             email = "cameron.palmer@54gene.com"))
 Description: TBD.
 License: MIT + file LICENSE
+Imports:
+    kableExtra,
+    knitr,
+    rlang,
+    rmarkdown,
+    stringr,
+    yaml
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
