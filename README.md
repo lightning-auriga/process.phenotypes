@@ -1,6 +1,6 @@
-## process.phenotypes: automated phenotype dataset standardization and reporting
+# process.phenotypes: automated phenotype dataset standardization and reporting
 
-### Overview
+## Overview
 
 This is an R package designed to help the process of phenotype
 dataset cleaning be automated, rigorous, and transparent. The overall
@@ -19,25 +19,24 @@ summary statistics and data cleaning observations (e.g. invalid values detected
 for categorical variables); this file is both for recordkeeping and for helping
 the user improve configuration for more refined cleaning.
 
-### Installation
+## Installation
 
-#### Direct Installation from GitLab
+### Direct Installation from GitLab
 
 R has the capacity to install packages directly from GitLab.
 
 Run the following in [R](https://www.r-project.org/) or [RStudio](https://www.rstudio.com/):
 
-`# the following step is only required if you don't have the 'devtools' package installed yet`
+```
+# the following step is only required if you don't have the 'devtools' package installed yet
+install.packages("devtools")
+# the following steps are always required when launching R
+library(devtools)
+devtools::install_gitlab("data-analysis5/process.phenotypes@string_cleanup", auth_token = devtools::github_pat())
+```
 
-`install.packages("devtools")`
+#### **Note: Secured Access to GitLab**
 
-`# the following steps are always required when launching R`
-
-`library(devtools)`
-
-`devtools::install_gitlab("data-analysis5/process.phenotypes@string_cleanup", auth_token = devtools::github_pat())`
-
-##### Note: Secured Access to GitLab
 For security reasons, R must be permitted access to GitLab
 in order to allow remote installation. Please follow the instructions
 [here](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html)
@@ -52,11 +51,11 @@ this is a strange R quirk). You can do this by including the line
 in your R environment file "~/.Renviron". Alternatively, you can directly enter
 the access token into the following command, but this is not considered a secure behavior.
 
-#### Alternative: Installation from Local Copy
+### Alternative: Installation from Local Copy
 
 There are various ways to install an R package from a local copy of the project.
 
-##### With a tarball
+#### **With a tarball**
 
 The easiest way to get a tarball (`.tar.gz`) compressed version of the package is
 to go to the [project GitLab page](https://gitlab.com/data-analysis5/process.phenotypes),
@@ -68,7 +67,7 @@ Then, choose one of the following methods:
 - from RStudio: `Tools -> Install Packages -> Install from: Package Archive File`,
 and select the tarball from your local drive.
 
-#### Alternative: Installation from Conda (OSX and Linux only)
+### Alternative: Installation from Conda (OSX and Linux only)
 
 Note: this option will only be available slightly after this README goes live, and at that
 time this message will be removed.
@@ -77,15 +76,18 @@ This package has been added to the 54gene [Conda](https://docs.conda.io/en/lates
 To install, first install and configure [https://docs.conda.io/en/latest/miniconda.html](miniconda).
 Then add the following to your `~/.condarc` (creating the file if it does not already exist):
 
-`channels:
-  - https://gitlab.com/data-analysis5/conda-54gene/-/raw/default/conda-54gene`
+```
+channels:
+  - https://gitlab.com/data-analysis5/conda-54gene/-/raw/default/conda-54gene
+```
 
 From the command line, execute the following command:
 
 `conda install r-process.phenotypes`
 
-### Execution
+## Execution
 
+First, load the library in the current R instance:
 
 `library(process.phenotypes)`
 
@@ -94,27 +96,33 @@ You can get useful help documentation for this function
 in the usual R manner: `?process.phenotypes::create_phenotype.report`. An example
 run command might be:
 
-`process.phenotypes::create.phenotype.report("/path/to/CV.export.tsv", "CV", "yaml-configuration/CV.yaml", "yaml-configuration/shared-models.yaml", "/path/to/CV-output.html")`
+```
+process.phenotypes::create.phenotype.report("/path/to/CV.export.tsv",
+	                                        "CV",
+											"yaml-configuration/CV.yaml",
+											"yaml-configuration/shared-models.yaml",
+											"/path/to/CV-output.html")`
+```
 
-### YAML Configuration
+## YAML Configuration
 
-### Future Development Targets
+## Future Development Targets
 
-#### Imminent
+### Imminent
 - derived variables, using format similar to dependency specification
 - expanded README documentation
 - improved report format, because whoa
 
-#### Longer Term
+### Longer Term
 - action to take upon dependency failure
 - data export formats
   - plaintext/tsv
   - STATA
   - SAS?
 
-#### Open Proposals
+### Open Proposals
 - aliased variable transformations
   - alternatively, can use derived variables explicitly
 
-### Version History
+## Version History
  * 12 Jul 2021: string_cleanup branch merged into default; v0.1.0
