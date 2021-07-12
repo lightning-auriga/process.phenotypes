@@ -98,10 +98,10 @@ run command might be:
 
 ```{r}
 process.phenotypes::create.phenotype.report("/path/to/CV.export.tsv",
-"CV",
-"yaml-configuration/CV.yaml",
-"yaml-configuration/shared-models.yaml",
-"/path/to/CV-output.html")
+                                            "CV",
+                                            "yaml-configuration/CV.yaml",
+                                            "yaml-configuration/shared-models.yaml",
+                                            "/path/to/CV-output.html")
 ```
 
 ## YAML Configuration
