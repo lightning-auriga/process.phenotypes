@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is an R package designed to help the process of phenotype
+This is an `R` package designed to help the process of phenotype
 dataset cleaning be automated, rigorous, and transparent. The overall
 cleaning process is simplified as follows:
 
@@ -42,13 +42,13 @@ in order to allow remote installation. Please follow the instructions
 [here](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html)
 to generate an access token with at least `read_api` access.
 
-The convention in R is to set the access token to the "GITHUB_PAT" environment
+The convention in R is to set the access token to the `GITHUB_PAT` environment
 variable (note that this is **GITHUB_PAT** even though the access is via GitLab;
 this is a strange R quirk). You can do this by including the line
 
 `GITHUB_PAT = YOURACCESSTOKEN`
 
-in your R environment file "~/.Renviron". Alternatively, you can directly enter
+in your R environment file `~/.Renviron`. Alternatively, you can directly enter
 the access token into the following command, but this is not considered a secure behavior.
 
 ### Alternative: Installation from Local Copy
