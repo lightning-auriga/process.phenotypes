@@ -25,3 +25,5 @@ dependencies:
   - emacs
   - xorg-libxau
   - vim
+  - jsonschema
+
