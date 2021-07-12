@@ -1,4 +1,4 @@
-# process.phenotypes: automated phenotype dataset standardization and reporting
+# process.phenotypes: automated phenotype standardization and reporting
 
 ## Overview
 
