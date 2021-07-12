@@ -101,7 +101,7 @@ process.phenotypes::create.phenotype.report("/path/to/CV.export.tsv",
 "CV",
 "yaml-configuration/CV.yaml",
 "yaml-configuration/shared-models.yaml",
-"/path/to/CV-output.html")`
+"/path/to/CV-output.html")
 ```
 
 ## YAML Configuration
