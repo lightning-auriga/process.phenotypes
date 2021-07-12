@@ -132,21 +132,21 @@ for examples.
 ## Future Development Targets
 
 ### Imminent
-[ ] input YAML format checker
-[ ] derived variables, using format similar to dependency specification
-[ ] expanded README documentation
-[ ] improved report format, because whoa
+- [ ] input YAML format checker
+- [ ] derived variables, using format similar to dependency specification
+- [ ] expanded README documentation
+- [ ] improved report format, because whoa
 
 ### Longer Term
-[ ] action to take upon dependency failure
-[ ] data export formats
-  [ ] plaintext/tsv
-  [ ] STATA
-  [ ] SAS?
+- [ ] action to take upon dependency failure
+- [ ] data export formats
+  - [ ] plaintext/tsv
+  - [ ] STATA
+  - [ ] SAS?
 
 ### Open Proposals
-[ ] aliased variable transformations
-  [ ] alternatively, can use derived variables explicitly
+- [ ] aliased variable transformations
+  - [ ] alternatively, can use derived variables explicitly
 
 ## Version History
  * 12 Jul 2021: string_cleanup branch merged into default; v0.1.0
