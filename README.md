@@ -32,7 +32,7 @@ Run the following in [R](https://www.r-project.org/) or [RStudio](https://www.rs
 install.packages("devtools")
 # the following steps are always required when launching R
 library(devtools)
-devtools::install_gitlab("data-analysis5/process.phenotypes@string_cleanup", auth_token = devtools::github_pat())
+devtools::install_gitlab("data-analysis5/process.phenotypes@default", auth_token = devtools::github_pat())
 ```
 
 #### **Note: Secured Access to GitLab**
@@ -126,26 +126,27 @@ process.phenotypes::create.phenotype.report("/path/to/CV.export.tsv",
 
 This section will be expanded in the near future as the configuration feature set is
 completed. For the time being, see existing dataset configuration files in 
-[this directory](https://gitlab.com/data-analysis5/process.phenotypes/-/tree/string_cleanup/yaml-configuration)
+[this directory](https://gitlab.com/data-analysis5/process.phenotypes/-/tree/default/yaml-configuration)
 for examples.
 
 ## Future Development Targets
 
 ### Imminent
-- derived variables, using format similar to dependency specification
-- expanded README documentation
-- improved report format, because whoa
+[ ] input YAML format checker
+[ ] derived variables, using format similar to dependency specification
+[ ] expanded README documentation
+[ ] improved report format, because whoa
 
 ### Longer Term
-- action to take upon dependency failure
-- data export formats
-  - plaintext/tsv
-  - STATA
-  - SAS?
+[ ] action to take upon dependency failure
+[ ] data export formats
+  [ ] plaintext/tsv
+  [ ] STATA
+  [ ] SAS?
 
 ### Open Proposals
-- aliased variable transformations
-  - alternatively, can use derived variables explicitly
+[ ] aliased variable transformations
+  [ ] alternatively, can use derived variables explicitly
 
 ## Version History
  * 12 Jul 2021: string_cleanup branch merged into default; v0.1.0
