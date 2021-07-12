@@ -1,6 +1,6 @@
 Package: process.phenotypes
 Title: Process audited phenotype datasets and report
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: 
     c(person(given = "Bari",
              family = "Ballew",
