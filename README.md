@@ -129,6 +129,12 @@ completed. For the time being, see existing dataset configuration files in
 [this directory](https://gitlab.com/data-analysis5/process.phenotypes/-/tree/default/yaml-configuration)
 for examples.
 
+### YAML validation
+
+Prior to running this tool, you should validate the yaml configurations you've set up as follows:
+
+`./yaml_validator.py dataset_file.yaml shared_model_file.yaml`
+
 ## Future Development Targets
 
 ### Imminent
