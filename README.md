@@ -153,7 +153,7 @@ for examples.
 
 ## How to contribute to development
 
-### Step 1: Set up a development environment
+### Step 1: Set up a development environment (OSX and Linux only)
 
 - If needed, install miniconda by following the steps [here](https://docs.conda.io/en/latest/miniconda.html).
 - If needed, install [mamba](https://github.com/mamba-org/mamba): `conda install mamba`
@@ -187,6 +187,12 @@ commitizen init cz-conventional-changelog --save-dev --save-exact
 
 ```
 pre-commit install
+```
+
+- Install pre-commit in R (either in an R terminal or in Rstudio):
+
+```{r}
+install.packages("precommit")
 ```
 
 ### Step 2: Select an issue to work on, or submit one that you'd like to address
