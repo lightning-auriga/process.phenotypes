@@ -73,7 +73,7 @@ Note: this option will only be available slightly after this README goes live, a
 time this message will be removed.
 
 This package has been added to the 54gene [Conda](https://docs.conda.io/en/latest/) channel.
-To install, first install and configure [https://docs.conda.io/en/latest/miniconda.html](miniconda).
+To install, first install and configure [miniconda](https://docs.conda.io/en/latest/miniconda.html).
 Then add the following to your `~/.condarc` (creating the file if it does not already exist):
 
 ```
@@ -96,12 +96,12 @@ You can get useful help documentation for this function
 in the usual R manner: `?process.phenotypes::create_phenotype.report`. An example
 run command might be:
 
-```
+```{r}
 process.phenotypes::create.phenotype.report("/path/to/CV.export.tsv",
-	                                        "CV",
-											"yaml-configuration/CV.yaml",
-											"yaml-configuration/shared-models.yaml",
-											"/path/to/CV-output.html")`
+"CV",
+"yaml-configuration/CV.yaml",
+"yaml-configuration/shared-models.yaml",
+"/path/to/CV-output.html")`
 ```
 
 ## YAML Configuration
