@@ -110,7 +110,7 @@ First, load the library in the current R instance:
 
 The entry point for the software is `process.phenotypes::create.phenotype.report`. 
 You can get useful help documentation for this function
-in the usual R manner: `?process.phenotypes::create_phenotype.report`. An example
+in the usual R manner: `?process.phenotypes::create.phenotype.report`. An example
 run command might be:
 
 ```{r}
