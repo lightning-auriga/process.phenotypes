@@ -48,8 +48,9 @@ this is a strange R quirk). You can do this by including the line
 
 `GITHUB_PAT = YOURACCESSTOKEN`
 
-in your R environment file `~/.Renviron`. Alternatively, you can directly enter
-the access token into the following command, but this is not considered a secure behavior.
+in your R environment file `~/.Renviron`. Note that if you already have
+an `R` or `RStudio` instance running, you need to restart `R` for the
+`.Renviron` changes to be recognized.
 
 ### Alternative: Installation from Local Copy
 
