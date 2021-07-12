@@ -1,0 +1,29 @@
+name: r-dev
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - git
+  - mamba
+  - nodejs
+  - pre-commit
+  - r-devtools
+  - r-docopt
+  - r-lintr
+  - r-styler
+  - r-usethis
+  - r-rmarkdown
+  - r-knitr
+  - r-ggplot2
+  - r-rcolorbrewer 
+  - r-viridis
+  - r-docopt
+  - r-lintr
+  - r-styler
+  - r-usethis
+  - emacs
+  - xorg-libxau
+  - vim
+  - jsonschema
+  - argparse

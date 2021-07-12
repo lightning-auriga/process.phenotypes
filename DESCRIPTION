@@ -1,6 +1,6 @@
-Package: phenotypeprocessing
+Package: process.phenotypes
 Title: Process audited phenotype datasets and report
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: 
     c(person(given = "Bari",
              family = "Ballew",
@@ -15,7 +15,10 @@ License: MIT + file LICENSE
 Imports:
     kableExtra,
     knitr,
-    rmarkdown
+    rlang,
+    rmarkdown,
+    stringr,
+    yaml
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
