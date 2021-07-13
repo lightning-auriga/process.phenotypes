@@ -150,7 +150,7 @@ create.phenotype.report <- function(in.filename,
 
   ## find Rmd file from system installation
   rmarkdown.template <- system.file("rmd", "report.Rmd",
-    package = "phenotypeprocessing"
+    package = "process.phenotypes"
   )
   ## render output html report for this phenotype dataset
   rmarkdown::render(rmarkdown.template,
@@ -160,5 +160,10 @@ create.phenotype.report <- function(in.filename,
       dataset.name = in.filename,
       variable.summary = variable.summary
     )
+  )
+  ## temporary fix: report "cleaned" data as tsv file
+  ## TODO: replace with something more formal
+  write.table(phenotype.data, stringr::str_replace(out.filename, ".html$", ".tsv"),
+    row.names = FALSE, col.names = TRUE, quote = FALSE, sep = "\t"
   )
 }
