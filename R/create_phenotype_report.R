@@ -11,6 +11,7 @@
 #' @param dataset.yaml character vector, yaml configuration for project
 #' @param shared.model.yaml character vector, yaml configuration for shared model specifications
 #' @param out.filename character vector, name of output report html file
+#' @param quote character vector, character used to quote string tokens; defaults to null
 #' @seealso run.experiment
 #' @keywords phenotypes
 #' @export create.phenotype.report
@@ -21,7 +22,8 @@ create.phenotype.report <- function(in.filename,
                                     dataset.yaml,
                                     shared.model.yaml,
                                     out.filename,
-                                    magic.fix = TRUE) {
+                                    magic.fix = TRUE,
+                                    quote = "") {
   ## sanity check for in.filename param
   stopifnot(
     is.vector(in.filename, mode = "character"),
@@ -52,7 +54,7 @@ create.phenotype.report <- function(in.filename,
   phenotype.data <- read.table(in.filename,
     header = TRUE,
     sep = "\t", stringsAsFactors = FALSE,
-    comment.char = "", quote = "",
+    comment.char = "", quote = quote,
     check.names = FALSE,
     colClasses = "character"
   )
