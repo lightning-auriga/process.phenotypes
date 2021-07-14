@@ -10,7 +10,8 @@ create.phenotype.report(
   dataset.yaml,
   shared.model.yaml,
   out.filename,
-  magic.fix = TRUE
+  magic.fix = TRUE,
+  quote = ""
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ create.phenotype.report(
 \item{shared.model.yaml}{character vector, yaml configuration for shared model specifications}
 
 \item{out.filename}{character vector, name of output report html file}
+
+\item{quote}{character vector, character used to quote string tokens; defaults to null}
 }
 \description{
 TBD
