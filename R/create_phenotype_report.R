@@ -150,7 +150,7 @@ create.phenotype.report <- function(in.filename,
 
   ## find Rmd file from system installation
   rmarkdown.template <- system.file("rmd", "report.Rmd",
-    package = "phenotypeprocessing"
+    package = "process.phenotypes"
   )
   ## render output html report for this phenotype dataset
   rmarkdown::render(rmarkdown.template,
