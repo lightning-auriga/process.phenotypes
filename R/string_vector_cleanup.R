@@ -345,8 +345,8 @@ exclude.excel.failures <- function(phenotype.data, variable.summary) {
   for (i in seq_len(ncol(phenotype.data))) {
     excel.problems <- stringr::str_detect(phenotype.data[, i], excel.problem.regex)
     if (length(which(excel.problems))) {
-      phenotype.data[excel.problems, i] <- NA
-      variable.summary$variables[[i]]$excel.problem.count <- sum(excel.problems)
+      phenotype.data[excel.problems & !is.na(excel.problems), i] <- NA
+      variable.summary$variables[[i]]$excel.problem.count <- sum(excel.problems, na.rm = TRUE)
     }
   }
   list(
