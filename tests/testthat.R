@@ -1,4 +1,4 @@
 library(testthat)
-library(phenotypeprocessing)
+library(process.phenotypes)
 
-test_check("phenotypeprocessing")
+test_check("process.phenotypes")
