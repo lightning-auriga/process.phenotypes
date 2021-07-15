@@ -80,6 +80,11 @@ to the variable's configured type.
 ```{r report.value.summary, eval=TRUE, echo=FALSE, results="asis"}
 for (name in names(variable.summary$variables)) {
   my.summ <- variable.summary$variables[[name]]$summary
+  variable.pretty.name <- variable.summary$variables[[name]]$original.name
+  if (!is.null(variable.summary$variables[[name]]$params$identity)) {
+    variable.pretty.name <- paste(variable.pretty.name, variable.summary$variables[[name]]$params$identity, sep = "/")
+  }
+
   ## report any indication of residual Excel junk in the variable
   if (!is.null(variable.summary$variables[[name]]$excel.problem.count)) {
     if (variable.summary$variables[[name]]$excel.problem.count == 1) {
@@ -104,7 +109,7 @@ for (name in names(variable.summary$variables)) {
       )
       hist.plot <- hist.plot + xlab(name) + ylab("proportion of data")
       cat(
-        "\n#### Histogram of ", name, " (", variable.summary$variables[[name]]$original.name,
+        "\n#### Histogram of ", name, " (", variable.pretty.name,
         ") Distribution\n",
         sep = ""
       )
@@ -123,9 +128,10 @@ for (name in names(variable.summary$variables)) {
     variable.summary.df[, 1] <- stringr::str_replace(variable.summary.df[, 1], "^( *)([0-9]+)\\. ", "\\1\\2\\\\. ")
     rownames(variable.summary.df) <- NULL
     colnames(variable.summary.df) <- c("Value", "Summary statistics")
-    print(knitr::kable(variable.summary.df, caption = paste("Summary of ", name, " (", variable.summary$variables[[name]]$original.name, ")", sep = "")))
+    table.caption <- paste("Summary of ", name, " (", variable.pretty.name, ")", sep = "")
+    print(knitr::kable(variable.summary.df, caption = table.caption))
   } else if (length(my.summ) >= nrow(phenotype.data) / 3) {
-    cat("\nVariable ", name, " (", variable.summary$variables[[name]]$original.name, ") has ", length(my.summ), " unique values, and thus",
+    cat("\nVariable ", name, " (", variable.pretty.name, ") has ", length(my.summ), " unique values, and thus",
       " report output of individual value counts is suppressed.\n",
       sep = ""
     )
