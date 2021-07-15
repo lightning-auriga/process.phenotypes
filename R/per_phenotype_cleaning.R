@@ -268,17 +268,41 @@ exclude.by.age <- function(phenotype.data, variable.summary) {
 #' with just the four-digit year value.  Also removes extremely low
 #' likely erroneous year values.
 #'
+#' With new data, new support for the following data formats:
+#' - YYYY
+#' - YYYY-##-##
+#'
 #' @param vec character vector, input phenotype content
 #' @param var.summary list, variable summary entry for this particular variable
 #' @return modified version of input with values cleaned as described above
 parse.date <- function(vec, var.summary) {
-  possible.date <- stringr::str_detect(vec, ".*[/ -](\\d{2}|\\d{4})$") & !is.na(vec)
+  date.leading.year <- "^(\\d{4})-\\d{2}-\\d{2}$"
+  date.leading.year.match <- stringr::str_detect(vec, date.leading.year) & !is.na(vec)
+  date.trailing.year <- "^.*[/ -](\\d{2}|\\d{4})$"
+  date.trailing.year.match <- stringr::str_detect(vec, date.trailing.year) & !is.na(vec)
+  date.year.only <- "^(\\d{4})$"
+  date.year.only.match <- stringr::str_detect(vec, date.year.only) & !is.na(vec)
   res <- rep(NA, length(vec))
-  res[possible.date] <- stringr::str_replace(vec[possible.date], ".*[/ -](\\d{2}|\\d{4})$", "\\1")
+  res[date.leading.year.match] <- stringr::str_replace(
+    vec[date.leading.year.match],
+    date.leading.year, "\\1"
+  )
+  res[date.trailing.year.match &
+    !date.leading.year.match] <- stringr::str_replace(
+    vec[date.trailing.year.match &
+      !date.leading.year.match],
+    date.trailing.year, "\\1"
+  )
+  res[date.year.only.match] <- stringr::str_replace(
+    vec[date.year.only.match],
+    date.year.only, "\\1"
+  )
   res <- as.numeric(res)
   res[res <= 21 & !is.na(res)] <- res[res <= 21 & !is.na(res)] + 2000
   res[res < 100 & !is.na(res)] <- res[res < 100 & !is.na(res)] + 1900
   res[res < 1800 & !is.na(res)] <- NA
-  var.summary$invalid.date.entries <- vec[(!possible.date | is.na(res)) & !is.na(vec)]
+  var.summary$invalid.date.entries <- vec[(!(date.leading.year.match |
+    date.trailing.year.match |
+    date.year.only.match) | is.na(res)) & !is.na(vec)]
   list(phenotype.data = res, variable.summary = var.summary)
 }

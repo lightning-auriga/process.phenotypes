@@ -228,3 +228,14 @@ test_that("parse.date extracts year and infers century correctly", {
     list(phenotype.data = out.vec, variable.summary = out.var.summary)
   )
 })
+
+test_that("parse.date distinguishes between YYYY-##-## and ##-##-YY", {
+  in.vec <- c("10-20-19", "2014-05-06")
+  in.var.summary <- list()
+  out.vec <- as.numeric(c(2019, 2014))
+  out.var.summary <- list(invalid.date.entries = as.character(c()))
+  expect_identical(
+    parse.date(in.vec, in.var.summary),
+    list(phenotype.data = out.vec, variable.summary = out.var.summary)
+  )
+})
