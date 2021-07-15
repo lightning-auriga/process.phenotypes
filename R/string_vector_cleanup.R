@@ -117,8 +117,8 @@ remove.nonword.chars <- function(df, variable.summary) {
     df[, i] <- stringr::str_replace_all(df[, i], "^\\W+|\\W*[^[\\w)}\\]]]$", "")
     ## TODO: remove crappy logging
     diff.data <- cbind(
-      df.orig[df[, i] != df.orig],
-      df[df[, i] != df.orig, i]
+      df.orig[df[, i] != df.orig & !is.na(df[, i])],
+      df[df[, i] != df.orig & !is.na(df[, i]), i]
     )
     if (nrow(diff.data) > 0) {
       print(diff.data)
@@ -319,6 +319,8 @@ process.unicode.characters <- function(phenotype.data) {
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2022", "*")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U202[89A-F]", "")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\UFEFF", "")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U1F4AF", "100")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00A3", "")
   }
   phenotype.data
 }
@@ -341,7 +343,7 @@ process.unicode.characters <- function(phenotype.data) {
 #' second entry the variable summary list with injected reporting information about
 #' any Excel errors found for each variable
 exclude.excel.failures <- function(phenotype.data, variable.summary) {
-  excel.problem.regex <- "^=?#error!$|^=?#value!$|^=?#ERROR!$|^=?#VALUE!$"
+  excel.problem.regex <- "^=?div/0!$|=?#error!$|^=?#value!$|^=?#ERROR!$|^=?#VALUE!$|^=?DIV/0$"
   for (i in seq_len(ncol(phenotype.data))) {
     excel.problems <- stringr::str_detect(phenotype.data[, i], excel.problem.regex)
     if (length(which(excel.problems))) {
@@ -374,7 +376,7 @@ exclude.excel.failures <- function(phenotype.data, variable.summary) {
 #' if any residual Unicode characters are detected.
 detect.unicode.characters <- function(phenotype.data, variable.summary) {
   for (i in seq_len(ncol(phenotype.data))) {
-    unicode.detected <- stringr::str_detect(phenotype.data[, i], "[^\001-\177]")
+    unicode.detected <- stringr::str_detect(phenotype.data[, i], "[^\001-\177]") & !is.na(phenotype.data[, i])
     if (length(which(unicode.detected))) {
       variable.summary$variables[[i]]$unicode.entries <- table(phenotype.data[unicode.detected, i])
     }
