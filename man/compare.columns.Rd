@@ -8,6 +8,12 @@ compare.columns(query.column, query.colname, target.df)
 }
 \arguments{
 \item{query.column}{vector, data to be queried against target columns}
+
+\item{query.colname}{character vector, name of query column
+in its dataset}
+
+\item{target.df}{data frame, target dataset to scan against query
+column}
 }
 \description{
 TBD

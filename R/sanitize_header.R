@@ -14,6 +14,11 @@
 #' @param df data.frame, phenotype dataframe with untransformed headers
 #' @param dataset.tag character vector, unique string tag for this dataset
 #' @param config.data list, yaml configuration data per variable
+#' @param force.header.mapping logical, whether you want to be kinda foolish
+#' and allow desync between config variable names and dataset header data.
+#' this safety check was implemented in part due to the possible presence of duplicate
+#' column header names, and turning it off can potentially have catastrophically
+#' bad effects if your configuration file is malformed.
 #' @return list, mapping new variable names to lists; eventually meant to have
 #' more entries but will for now just have a original.name entry for mapping back
 #' to the raw variable names
@@ -23,7 +28,8 @@
 #' df <- data.frame(rnorm(100), runif(100))
 #' colnames(df) <- c("Human height lol", "y")
 #' map.header(df, "mytag")
-map.header <- function(df, dataset.tag, config.data) {
+map.header <- function(df, dataset.tag, config.data,
+                       force.header.mapping = FALSE) {
   ## new: pull names from input config variable specification
   ## TODO: add yaml checker that makes sure these names
   ## are alphanumeric only
@@ -39,26 +45,27 @@ map.header <- function(df, dataset.tag, config.data) {
     i[["name"]]
   })
 
-  if (!identical(colnames(df), unname(unlist(config.names)))) {
-    if (ncol(df) != length(config.names)) {
-      stop(
-        "for dataset tag ", dataset.tag, ", variable count ",
-        "in phenotypes does not match count in yaml config (",
-        "found ", ncol(df), " in phenotypes but ",
-        length(config.names), " in config)"
-      )
-    } else {
-      error.data <- cbind(
-        colnames(df),
-        unname(unlist(config.names))
-      )
-      print(error.data[error.data[, 1] != error.data[, 2], ])
-      stop(
-        "for dataset tag ", dataset.tag, ", column names ",
-        "in phenotypes do not match yaml config values"
-      )
-    }
+  if (ncol(df) != length(config.names)) {
+    stop(
+      "for dataset tag ", dataset.tag, ", variable count ",
+      "in phenotypes does not match count in yaml config (",
+      "found ", ncol(df), " in phenotypes but ",
+      length(config.names), " in config)"
+    )
   }
+  if (!identical(colnames(df), unname(unlist(config.names))) &
+    !force.header.mapping) {
+    error.data <- cbind(
+      colnames(df),
+      unname(unlist(config.names))
+    )
+    print(error.data[error.data[, 1] != error.data[, 2], ])
+    stop(
+      "for dataset tag ", dataset.tag, ", column names ",
+      "in phenotypes do not match yaml config values"
+    )
+  }
+
   for (i in seq_len(length(config.data$variables))) {
     res$variables[[i]]$params <- config.data$variables[[i]]
   }
