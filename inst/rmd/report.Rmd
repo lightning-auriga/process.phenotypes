@@ -37,7 +37,7 @@ library(kableExtra, quietly = TRUE)
 ***
 <br>
 
-#### Configure default ggplot2 theme for plotting
+#### Configure default themes for plotting/tables
 
 ```{r configure.ggplot2.theme, eval=TRUE, echo=FALSE}
 my.theme <- theme_light() + theme(
@@ -49,6 +49,9 @@ my.theme <- theme_light() + theme(
   legend.title = element_text(size = 14),
   legend.text = element_text(size = 13)
 )
+
+knitr.table.attr <- "style=\"width: 90%\""
+knitr.contingency.table.attr <- "style=\"width: 50%\""
 ```
 
 At some point, there should be introductory content here.
@@ -71,7 +74,7 @@ variable.mapping.df <- data.frame(
 )
 rownames(variable.mapping.df) <- NULL
 colnames(variable.mapping.df) <- c("Standardized", "Original")
-knitr::kable(variable.mapping.df, caption = "Phenotype Variable Names")
+knitr::kable(variable.mapping.df, caption = "Phenotype Variable Names", table.attr = knitr.table.attr)
 ```
 
 ***
@@ -92,6 +95,8 @@ for (name in names(variable.summary$variables)) {
   if (!is.null(variable.summary$variables[[name]]$params$identity)) {
     variable.pretty.name <- paste(variable.pretty.name, variable.summary$variables[[name]]$params$identity, sep = "/")
   }
+
+  cat("\n\n### ", variable.pretty.name, "\n\n")
 
   ## report any indication of residual Excel junk in the variable
   if (!is.null(variable.summary$variables[[name]]$excel.problem.count)) {
@@ -163,7 +168,7 @@ for (name in names(variable.summary$variables)) {
     rownames(variable.summary.df) <- NULL
     colnames(variable.summary.df) <- c("Value", "Summary statistics")
     table.caption <- paste("Summary of ", name, " (", variable.pretty.name, ")", sep = "")
-    print(knitr::kable(variable.summary.df, caption = table.caption))
+    print(knitr::kable(variable.summary.df, caption = table.caption, table.attr = knitr.table.attr))
   } else if (length(my.summ) >= nrow(phenotype.data) / 3) {
     cat("\nVariable ", name, " (", variable.pretty.name, ") has ", length(my.summ), " unique values, and thus",
       " report output of individual value counts is suppressed.\n",
@@ -176,7 +181,7 @@ for (name in names(variable.summary$variables)) {
       rownames(df) <- NULL
       colnames(df) <- c(name, "Count")
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
-      print(knitr::kable(df, caption = "Values that were not consistent with blood pressure measurement format."))
+      print(knitr::kable(df, caption = "Values that were not consistent with blood pressure measurement format.", table.attr = knitr.table.attr))
     } else {
       cat("\n\nAll values consistent with blood pressure format or missing data.\n")
     }
@@ -187,7 +192,7 @@ for (name in names(variable.summary$variables)) {
       rownames(df) <- NULL
       colnames(df) <- c(name, "Count")
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
-      print(knitr::kable(df, caption = "Values that were not consistent with numeric format."))
+      print(knitr::kable(df, caption = "Values that were not consistent with numeric format.", table.attr = knitr.table.attr))
     } else {
       cat("\n\nAll values consistent with numeric format or missing data.\n")
     }
@@ -198,7 +203,7 @@ for (name in names(variable.summary$variables)) {
       rownames(df) <- NULL
       colnames(df) <- c(name, "Count")
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
-      print(knitr::kable(df, caption = "Values that were not consistent with categorical format."))
+      print(knitr::kable(df, caption = "Values that were not consistent with categorical format.", table.attr = knitr.table.attr))
     } else {
       cat("\n\nAll values consistent with categorical format or missing data.\n")
     }
@@ -209,7 +214,7 @@ for (name in names(variable.summary$variables)) {
       rownames(df) <- NULL
       colnames(df) <- c(name, "Count")
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
-      print(knitr::kable(df, caption = "Values that were not consistent with date (year only) format."))
+      print(knitr::kable(df, caption = "Values that were not consistent with date (year only) format.", table.attr = knitr.table.attr))
     } else {
       cat("\n\nAll values consistent with date format (year only) or missing data.\n")
     }
@@ -221,9 +226,10 @@ for (name in names(variable.summary$variables)) {
     )
     rownames(unicode.df) <- NULL
     colnames(unicode.df) <- c("Unicode String", "Observations")
-    print(knitr::kable(unicode.df, caption = "String entries containing unresolved Unicode characters."))
+    print(knitr::kable(unicode.df, caption = "String entries containing unresolved Unicode characters.", table.attr = knitr.table.attr))
   }
   if (!is.null(variable.summary$variables[[name]]$params$dependencies)) {
+    cat("\n\n#### Dependency tracking\n\n")
     dependency.names <- c()
     dependency.conditions <- c()
     dependency.results <- c()
@@ -238,6 +244,38 @@ for (name in names(variable.summary$variables)) {
         dependency.result <- paste(dependency.result, collapse = ", ")
       }
       dependency.results <- c(dependency.results, dependency.result)
+
+
+      ## allow table_comparisons for simple contingency tables between this and other variables
+      if (!is.null(dependencies[[dependency.index]]$table_comparisons)) {
+        for (table.target in dependencies[[dependency.index]]$table_comparisons) {
+          stopifnot(table.target %in% colnames(phenotype.data))
+          comparison.variable.pretty.name <- variable.summary$variables[[table.target]]$original.name
+          if (!is.null(variable.summary$variables[[table.target]]$params$identity)) {
+            comparison.variable.pretty.name <- paste(comparison.variable.pretty.name,
+              variable.summary$variables[[table.target]]$params$identity,
+              sep = "/"
+            )
+          }
+          table.data <- table(
+            phenotype.data[, table.target],
+            phenotype.data[, name],
+            useNA = "ifany"
+          )
+          print(knitr::kable(table.data,
+            caption = paste("Contingency table for ",
+              table.target,
+              " (",
+              comparison.variable.pretty.name,
+              ") [rows] versus ",
+              name,
+              " [columns]",
+              sep = ""
+            ),
+            table.attr = knitr.contingency.table.attr
+          ))
+        }
+      }
     }
     dependency.df <- data.frame(
       Name = dependency.names,
@@ -245,7 +283,7 @@ for (name in names(variable.summary$variables)) {
       Result = dependency.results
     )
     rownames(dependency.df) <- NULL
-    print(knitr::kable(dependency.df, caption = "Results of cross-variable dependency tests."))
+    print(knitr::kable(dependency.df, caption = "Results of cross-variable dependency tests.", table.attr = knitr.table.attr))
   }
   cat("\n***\n<br>\n")
 }
