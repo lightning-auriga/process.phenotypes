@@ -258,7 +258,7 @@ compare.columns <- function(query.column, query.colname,
   }
   res <- data.frame(
     all.names,
-    all.comparisons * 100,
+    round(all.comparisons * 100, 2),
     all.n
   )
   colnames(res) <- c("Variable Name", "Percent Identity", "N Comparisons")
@@ -316,10 +316,10 @@ compare.column.pair <- function(col1, col1.name, col1.config,
   } else {
     cat("Percent identity comparison for fixed pair scan between ",
       col1.name, " and ", col2.name, " (", col2.config$params$name, "): ",
-      length(which(as.character(col1) == as.character(col2) &
+      round(length(which(as.character(col1) == as.character(col2) &
         !is.na(col1) &
         !is.na(col2))) /
-        length(which(!is.na(col1) & !is.na(col2))),
+        length(which(!is.na(col1) & !is.na(col2))) * 100, 2),
       " (from ",
       length(which(!is.na(col1) & !is.na(col2))),
       " comparisons)\n\n",
