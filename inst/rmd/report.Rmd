@@ -12,11 +12,19 @@ output:
   toc_float:
     collapsed: no
     smooth_scroll: yes
-  params:
-    dataset.name: ""
-    variable.summary: NULL
-    phenotype.data: ""
+params:
+  dataset.name: ""
+  variable.summary: NULL
+  phenotype.data: ""
 ---
+
+#### Link input parameters to local variables
+
+```{r link.variables, eval=TRUE, echo=FALSE}
+dataset.name <- params$dataset.name
+variable.summary <- params$variable.summary
+phenotype.data <- params$phenotype.data
+```
 
 #### Load required R packages
 
@@ -115,6 +123,32 @@ for (name in names(variable.summary$variables)) {
       )
       print(hist.plot)
     }
+  }
+  ## if the source data has a linked_date variable, indicating it is an age
+  ## that in theory should be derived from a date
+  if (!is.null(variable.summary$variables[[name]]$params$linked_date)) {
+    reported.year.varname <- variable.summary$variables[[name]]$params$linked_date$reported_year
+    reference.year <- variable.summary$variables[[name]]$params$linked_date$reference_year
+    stopifnot(
+      reported.year.varname %in% names(variable.summary$variables),
+      is.numeric(reference.year) |
+        (is.character(reference.year) & reference.year %in% names(variable.summary$variables))
+    )
+    reported.year <- phenotype.data[, reported.year.varname]
+    if (is.character(reference.year)) {
+      reference.year <- phenotype.data[, reference.year]
+    }
+    reported.age <- phenotype.data[, name]
+    derived.age <- reference.year - reported.year
+    plot.data <- data.frame(
+      x = reported.age,
+      y = derived.age
+    )
+    age.plot <- ggplot(aes(x = x, y = y), data = plot.data) + my.theme
+    age.plot <- age.plot + geom_point() + geom_abline(slope = 1, intercept = 0)
+    age.plot <- age.plot + xlab("Reported Age") + ylab("Age Computed from Date")
+    cat("Comparison between reported age ", name, " and age derived from date ", reported.year.varname, sep = "")
+    print(age.plot)
   }
   ## original exclusion criterion here is hitting everything for small datasets,
   ## even when the report is not a unique value report

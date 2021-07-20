@@ -160,7 +160,8 @@ create.phenotype.report <- function(in.filename,
     output_dir = dirname(out.filename),
     params = list(
       dataset.name = in.filename,
-      variable.summary = variable.summary
+      variable.summary = variable.summary,
+      phenotype.data = phenotype.data
     )
   )
   ## temporary fix: report "cleaned" data as tsv file
