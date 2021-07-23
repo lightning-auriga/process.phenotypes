@@ -114,6 +114,12 @@ create.phenotype.report <- function(in.filename,
     )
   }
 
+  ## create derived variables from cleanest possible versions of standard variables
+  reformatted.list <- create.derived.variables(
+    reformatted.list$phenotype.data,
+    reformatted.list$variable.summary
+  )
+
   ## enforce yaml-specified variable relationships
   reformatted.list$variable.summary <- check.variable.dependencies(
     reformatted.list$phenotype.data,
