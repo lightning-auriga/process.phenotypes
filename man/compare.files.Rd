@@ -9,6 +9,7 @@ compare.files(
   first.config.yaml,
   second.filename,
   second.config.yaml,
+  second.dataset.tag,
   shared.model.yaml
 )
 }
@@ -26,6 +27,11 @@ second file to load and compare}
 
 \item{second.config.yaml}{character vector, name
 of second file's config yaml}
+
+\item{second.dataset.tag}{character vector,
+dataset tag for second input; used to find
+TAG##### variable identifiers in yaml
+identity entries}
 
 \item{shared.model.yaml}{character vector,
 name of shared model configuration for both

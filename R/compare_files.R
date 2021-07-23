@@ -17,6 +17,10 @@
 #' second file to load and compare
 #' @param second.config.yaml character vector, name
 #' of second file's config yaml
+#' @param second.dataset.tag character vector,
+#' dataset tag for second input; used to find
+#' TAG##### variable identifiers in yaml
+#' identity entries
 #' @param shared.model.yaml character vector,
 #' name of shared model configuration for both
 #' input files
@@ -29,6 +33,7 @@ compare.files.report <- function(first.filename,
                                  first.config.yaml,
                                  second.filename,
                                  second.config.yaml,
+                                 second.dataset.tag,
                                  shared.model.yaml,
                                  out.filename) {
   stopifnot(
@@ -46,6 +51,10 @@ compare.files.report <- function(first.filename,
   stopifnot(
     is.vector(second.config.yaml, mode = "character"),
     length(second.config.yaml) == 1
+  )
+  stopifnot(
+    is.vector(second.dataset.tag, mode = "character"),
+    length(second.dataset.tag) == 1
   )
   stopifnot(
     is.vector(shared.model.yaml, mode = "character"),
@@ -67,6 +76,7 @@ compare.files.report <- function(first.filename,
       pre.audit.config = first.config.yaml,
       post.audit.filename = second.filename,
       post.audit.config = second.config.yaml,
+      post.audit.tag = second.dataset.tag,
       shared.model.yaml = shared.model.yaml
     )
   )
@@ -96,6 +106,10 @@ compare.files.report <- function(first.filename,
 #' second file to load and compare
 #' @param second.config.yaml character vector, name
 #' of second file's config yaml
+#' @param second.dataset.tag character vector,
+#' dataset tag for second input; used to find
+#' TAG##### variable identifiers in yaml
+#' identity entries
 #' @param shared.model.yaml character vector,
 #' name of shared model configuration for both
 #' input files
@@ -108,6 +122,7 @@ compare.files <- function(first.filename,
                           first.config.yaml,
                           second.filename,
                           second.config.yaml,
+                          second.dataset.tag,
                           shared.model.yaml) {
   stopifnot(
     is.vector(first.filename, mode = "character"),
@@ -126,6 +141,10 @@ compare.files <- function(first.filename,
     length(second.config.yaml) == 1
   )
   stopifnot(
+    is.vector(second.dataset.tag, mode = "character"),
+    length(second.dataset.tag) == 1
+  )
+  stopifnot(
     is.vector(shared.model.yaml, mode = "character"),
     length(shared.model.yaml) == 1
   )
@@ -140,7 +159,9 @@ compare.files <- function(first.filename,
     first.config.yaml,
     shared.model.yaml
   )
-  config1 <- map.header(data1, "CV_raw", config1,
+  config1 <- map.header(data1,
+    paste(second.dataset.tag, "_raw", sep = ""),
+    config1,
     force.header.mapping = TRUE
   )
   subject.id.index.1 <- find.subject.id.index(config1)
@@ -156,7 +177,7 @@ compare.files <- function(first.filename,
     second.config.yaml,
     shared.model.yaml
   )
-  config2 <- map.header(data2, "CV", config2,
+  config2 <- map.header(data2, second.dataset.tag, config2,
     force.header.mapping = TRUE
   )
   subject.id.index.2 <- find.subject.id.index(config2)
@@ -174,10 +195,11 @@ compare.files <- function(first.filename,
     var.identity <- config1$variables[[var.name]]$params$identity
     stopifnot(!is.null(var.identity))
     is.unknown <- grepl("^unknown.*$", var.identity)
-    is.tagged <- stringr::str_detect(var.identity, "\\((CV\\d+)\\)")
+    tagged.pattern <- paste("^.*\\((", second.dataset.tag, "\\d+)\\).*$", sep = "")
+    is.tagged <- stringr::str_detect(var.identity, tagged.pattern)
     if (is.tagged) {
       ## scan just against specific target
-      var.target <- stringr::str_replace(var.identity, "^.*\\((CV\\d+)\\).*$", "\\1")
+      var.target <- stringr::str_replace(var.identity, tagged.pattern, "\\1")
       stopifnot(!is.null(config2$variables[[var.target]]))
       compare.column.pair(
         data1[, i],

@@ -17,6 +17,7 @@ params:
   pre.audit.config: ""
   post.audit.filename: ""
   post.audit.config: ""
+  post.audit.tag: ""
   shared.model.yaml: ""
 ---
 
@@ -39,6 +40,7 @@ compare.files(
   params$pre.audit.config,
   params$post.audit.filename,
   params$post.audit.config,
+  params$post.audit.tag,
   params$shared.model.yaml
 )
 ```

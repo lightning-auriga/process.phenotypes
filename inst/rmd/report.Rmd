@@ -149,11 +149,43 @@ for (name in names(variable.summary$variables)) {
       x = reported.age,
       y = derived.age
     )
+    plot.data <- plot.data[!is.na(plot.data$x) & !is.na(plot.data$y), ]
     age.plot <- ggplot(aes(x = x, y = y), data = plot.data) + my.theme
     age.plot <- age.plot + geom_point() + geom_abline(slope = 1, intercept = 0)
     age.plot <- age.plot + xlab("Reported Age") + ylab("Age Computed from Date")
-    cat("Comparison between reported age ", name, " and age derived from date ", reported.year.varname, sep = "")
+    cat("\n\n#### Comparison between reported age ", name, " and age derived from date ",
+      reported.year.varname, "\n\n",
+      sep = ""
+    )
     print(age.plot)
+  }
+  ## if the source data has a computed_bmi variable, indicating it is BMI
+  ## that in theory should be derived from height and weight
+  if (!is.null(variable.summary$variables[[name]]$params$computed_bmi)) {
+    height.varname <- variable.summary$variables[[name]]$params$computed_bmi$height
+    weight.varname <- variable.summary$variables[[name]]$params$computed_bmi$weight
+    stopifnot(
+      height.varname %in% colnames(phenotype.data),
+      weight.varname %in% colnames(phenotype.data)
+    )
+    reported.bmi <- phenotype.data[, name]
+    height.var <- phenotype.data[, height.varname]
+    weight.var <- phenotype.data[, weight.varname]
+    computed.bmi <- weight.var / height.var^2
+    plot.data <- data.frame(
+      x = reported.bmi,
+      y = computed.bmi
+    )
+    plot.data <- plot.data[!is.na(plot.data$x) & !is.na(plot.data$y), ]
+    bmi.plot <- ggplot(aes(x = x, y = y), data = plot.data) + my.theme
+    bmi.plot <- bmi.plot + geom_point() + geom_abline(slope = 1, intercept = 0)
+    bmi.plot <- bmi.plot + xlab("Reported BMI") + ylab("BMI Computed from Height/Weight")
+    cat("\n\n#### Comparison between reported BMI ", name,
+      " and BMI derived from height ", height.varname,
+      " and weight ", weight.varname, "\n\n",
+      sep = ""
+    )
+    print(bmi.plot)
   }
   ## original exclusion criterion here is hitting everything for small datasets,
   ## even when the report is not a unique value report
@@ -170,8 +202,8 @@ for (name in names(variable.summary$variables)) {
     table.caption <- paste("Summary of ", name, " (", variable.pretty.name, ")", sep = "")
     print(knitr::kable(variable.summary.df, caption = table.caption, table.attr = knitr.table.attr))
   } else if (length(my.summ) >= nrow(phenotype.data) / 3) {
-    cat("\nVariable ", name, " (", variable.pretty.name, ") has ", length(my.summ), " unique values, and thus",
-      " report output of individual value counts is suppressed.\n",
+    cat("\n\nVariable ", name, " (", variable.pretty.name, ") has ", length(my.summ), " unique values, and thus",
+      " report output of individual value counts is suppressed.\n\n",
       sep = ""
     )
   }
@@ -183,7 +215,7 @@ for (name in names(variable.summary$variables)) {
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
       print(knitr::kable(df, caption = "Values that were not consistent with blood pressure measurement format.", table.attr = knitr.table.attr))
     } else {
-      cat("\n\nAll values consistent with blood pressure format or missing data.\n")
+      cat("\n\nAll values consistent with blood pressure format or missing data.\n\n")
     }
   }
   if (!is.null(variable.summary$variables[[name]]$invalid.numeric.entries)) {
@@ -194,7 +226,7 @@ for (name in names(variable.summary$variables)) {
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
       print(knitr::kable(df, caption = "Values that were not consistent with numeric format.", table.attr = knitr.table.attr))
     } else {
-      cat("\n\nAll values consistent with numeric format or missing data.\n")
+      cat("\n\nAll values consistent with numeric format or missing data.\n\n")
     }
   }
   if (!is.null(variable.summary$variables[[name]]$invalid.factor.entries)) {
@@ -205,7 +237,7 @@ for (name in names(variable.summary$variables)) {
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
       print(knitr::kable(df, caption = "Values that were not consistent with categorical format.", table.attr = knitr.table.attr))
     } else {
-      cat("\n\nAll values consistent with categorical format or missing data.\n")
+      cat("\n\nAll values consistent with categorical format or missing data.\n\n")
     }
   }
   if (!is.null(variable.summary$variables[[name]]$invalid.date.entries)) {
@@ -216,7 +248,7 @@ for (name in names(variable.summary$variables)) {
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
       print(knitr::kable(df, caption = "Values that were not consistent with date (year only) format.", table.attr = knitr.table.attr))
     } else {
-      cat("\n\nAll values consistent with date format (year only) or missing data.\n")
+      cat("\n\nAll values consistent with date format (year only) or missing data.\n\n")
     }
   }
   if (!is.null(variable.summary$variables[[name]]$unicode.entries)) {
