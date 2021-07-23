@@ -120,6 +120,15 @@ create.phenotype.report <- function(in.filename,
     reformatted.list$variable.summary
   )
 
+  ## apply variable-specific range restrictions a second time, so that
+  ## newly-calculated derived variables will also have bounds applied
+  if (magic.fix) {
+    reformatted.list <- apply.bounds(
+      reformatted.list$phenotype.data,
+      reformatted.list$variable.summary
+    )
+  }
+
   ## enforce yaml-specified variable relationships
   reformatted.list$variable.summary <- check.variable.dependencies(
     reformatted.list$phenotype.data,
