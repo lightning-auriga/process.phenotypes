@@ -187,6 +187,23 @@ for (name in names(variable.summary$variables)) {
     )
     print(bmi.plot)
   }
+  ## if the source data has a computed_bp_ratio variable, plot the ratio
+  ## between the systolic and diastolic measurements as indicated
+  if (!is.null(variable.summary$variables[[name]]$params$computed_bp_ratio)) {
+    systolic.bp <- phenotype.data[, name]
+    diastolic.bp.varname <- variable.summary$variables[[name]]$params$computed_bp_ratio$diastolic
+    stopifnot(diastolic.bp.varname %in% colnames(phenotype.data))
+    diastolic.bp <- phenotype.data[, diastolic.bp.varname]
+    plot.data <- data.frame(x = systolic.bp, y = diastolic.bp)
+    bp.plot <- ggplot(aes(x = x, y = y), data = plot.data) + my.theme
+    bp.plot <- bp.plot + geom_point() + geom_abline(slope = 1, intercept = 0)
+    bp.plot <- bp.plot + xlab("Reported systolic BP") + ylab("Reported diastolic BP")
+    cat("\n\n#### Comparison between reported systolic ", name,
+      " and diastolic blood pressure ", diastolic.bp.varname, "\n\n",
+      sep = ""
+    )
+    print(bp.plot)
+  }
   ## original exclusion criterion here is hitting everything for small datasets,
   ## even when the report is not a unique value report
   if (is.vector(phenotype.data[, name], mode = "numeric") |
