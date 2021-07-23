@@ -37,7 +37,8 @@ create.derived.variables <- function(phenotype.data, variable.summary) {
       derived.name <- variable.summary$derived[[i]]$name
       derived.code <- variable.summary$derived[[i]]$code
       derived.exprs <- rlang::parse_exprs(derived.code)
-      if (derived.exprs == list()) {
+      if (identical(derived.exprs, list())) {
+        not.done.list[[i]] <- NULL
         next
       }
       derived.result <- evaluate.derived.expressions(phenotype.data, derived.exprs)
@@ -45,7 +46,10 @@ create.derived.variables <- function(phenotype.data, variable.summary) {
         not.done.list[[i]] <- NULL
         stopifnot(is.vector(derived.result), length(derived.result) == nrow(phenotype.data))
         phenotype.data[, i] <- derived.result
-        variable.summary$variables[[i]] <- variable.summary$derived[[i]]
+        variable.summary$variables[[i]] <- list(
+          original.name = variable.summary$derived[[i]]$name,
+          params = variable.summary$derived[[i]]
+        )
       }
     }
   }
@@ -83,8 +87,8 @@ create.derived.variables <- function(phenotype.data, variable.summary) {
 #' the derived variable, or an object of class "try-error" indicating
 #' the failure of the evaluation chain.
 evaluate.derived.expressions <- function(phenotype.data, derived.exprs) {
-  my.data.mask <- as_data_mask(phenotype.data)
-  my.env <- caller_env()
+  my.data.mask <- rlang::as_data_mask(phenotype.data)
+  my.env <- rlang::caller_env()
   for (expr in derived.exprs) {
     # if evaluation fails, add it to a list for re-trying (e.g. if
     # a derived variable is required but doesn't exist yet)

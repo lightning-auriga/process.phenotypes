@@ -70,6 +70,7 @@ map.header <- function(df, dataset.tag, config.data,
     res$variables[[i]]$params <- config.data$variables[[i]]
   }
   res$globals <- config.data$globals
+  res$derived <- config.data$derived
   res
 }
 

@@ -45,7 +45,6 @@ load.configuration <- function(dataset.parameter.filename,
           requested.model, "\" not found in shared model configuration"
         )
       }
-      stopifnot(!is.null(out.model))
       ## apply dataset-specific values on top of any colliding variables in the
       ## global specification
       for (parameter.name in names(dataset.parameters$variables[[var.name]])) {
