@@ -343,7 +343,7 @@ process.unicode.characters <- function(phenotype.data) {
 #' second entry the variable summary list with injected reporting information about
 #' any Excel errors found for each variable
 exclude.excel.failures <- function(phenotype.data, variable.summary) {
-  excel.problem.regex <- "^=?div/0!$|=?#error!$|^=?#value!$|^=?#ERROR!$|^=?#VALUE!$|^=?DIV/0$"
+  excel.problem.regex <- "^=?#div/0!$|^=?#error!$|^=?#value!$|^=?#ERROR!$|^=?#VALUE!$|^=?#DIV/0!$"
   for (i in seq_len(ncol(phenotype.data))) {
     excel.problems <- stringr::str_detect(phenotype.data[, i], excel.problem.regex)
     if (length(which(excel.problems))) {
