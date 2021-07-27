@@ -47,12 +47,54 @@ load.configuration <- function(dataset.parameter.filename,
       }
       ## apply dataset-specific values on top of any colliding variables in the
       ## global specification
-      for (parameter.name in names(dataset.parameters$variables[[var.name]])) {
-        out.model[[parameter.name]] <- dataset.parameters$variables[[var.name]][[parameter.name]]
-      }
-      dataset.parameters$variables[[var.name]] <- out.model
+      dataset.parameters$variables[[var.name]] <- combine.lists(
+        out.model,
+        dataset.parameters$variables[[var.name]]
+      )
     }
   }
   ## return synthesized variable configuration data
   dataset.parameters
+}
+
+#' Report final configuration data to file
+#'
+#' @details
+#' Configuration data from input config.yaml are modified on load,
+#' and some information is lost. Before reporting, the variable
+#' summary information from the run needs to be somewhat reformatted
+#' into a version that is compatible with the input format.
+#'
+#' @param variable.summary list, configuration data from
+#' create.phenotype.report run
+#' @param out.filename character vector, name of file
+#' to which to write yaml-format configuration data
+write.configuration <- function(variable.summary, out.filename) {
+  stopifnot(is.list(variable.summary))
+  stopifnot(is.vector(out.filename, mode = "character"))
+  res <- list()
+  for (name in names(variable.summary)) {
+    if (name == "derived") {
+      ## seemingly... just skip it?
+      next
+    } else if (name == "variables") {
+      ## input configuration data have been placed in the
+      ## params sublist; this needs to be rescued
+      var.list <- list()
+      for (var.name in names(variable.summary$variables)) {
+        var.list[[var.name]] <- variable.summary$variables[[var.name]]$params
+        ## have to update the variable name to reflect the standardized
+        ## name injected by the program. but also have to save the original
+        ## column name, because it tends to be rather informative
+        if (is.null(var.list[[var.name]]$original.name)) {
+          var.list[[var.name]]$original.name <- var.list[[var.name]]$name
+        }
+        var.list[[name]] <- var.name
+      }
+      res[["variables"]] <- var.list
+    } else {
+      res[[name]] <- variable.summary[[name]]
+    }
+  }
+  yaml::write_yaml(res, out.filename)
 }

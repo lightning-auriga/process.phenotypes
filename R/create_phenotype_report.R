@@ -184,4 +184,5 @@ create.phenotype.report <- function(in.filename,
   write.table(phenotype.data, stringr::str_replace(out.filename, ".html$", ".tsv"),
     row.names = FALSE, col.names = TRUE, quote = FALSE, sep = "\t"
   )
+  write.configuration(variable.summary, stringr::str_replace(out.filename, ".html$", ".yaml"))
 }
