@@ -16,6 +16,7 @@ params:
   dataset.name: ""
   variable.summary: NULL
   phenotype.data: ""
+  unique.variable.value.inclusion.proportion: 0.333
 ---
 
 #### Link input parameters to local variables
@@ -222,7 +223,7 @@ for (name in names(variable.summary$variables)) {
     colnames(variable.summary.df) <- c("Value", "Summary statistics")
     table.caption <- paste("Summary of ", name, " (", variable.pretty.name, ")", sep = "")
     print(knitr::kable(variable.summary.df, caption = table.caption, table.attr = knitr.table.attr))
-  } else if (length(my.summ) >= nrow(phenotype.data) / 3) {
+  } else if (length(my.summ) >= nrow(phenotype.data) * unique.variable.value.inclusion.proportion) {
     cat("\n\nVariable ", name, " (", variable.pretty.name, ") has ", length(my.summ), " unique values, and thus",
       " report output of individual value counts is suppressed.\n\n",
       sep = ""

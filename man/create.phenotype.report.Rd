@@ -11,7 +11,8 @@ create.phenotype.report(
   shared.model.yaml,
   out.filename,
   magic.fix = TRUE,
-  quote = ""
+  quote = "",
+  uniq.var.inclusion.prop = 1/3
 )
 }
 \arguments{
@@ -26,6 +27,9 @@ create.phenotype.report(
 \item{out.filename}{character vector, name of output report html file}
 
 \item{quote}{character vector, character used to quote string tokens; defaults to null}
+
+\item{uniq.var.inclusion.prop}{numeric, proportion of total values of a string
+variable that can be unique before tabular output is suppressed from the output report}
 }
 \description{
 TBD

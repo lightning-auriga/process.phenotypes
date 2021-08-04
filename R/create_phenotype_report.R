@@ -12,6 +12,8 @@
 #' @param shared.model.yaml character vector, yaml configuration for shared model specifications
 #' @param out.filename character vector, name of output report html file
 #' @param quote character vector, character used to quote string tokens; defaults to null
+#' @param uniq.var.inclusion.prop numeric, proportion of total values of a string
+#' variable that can be unique before tabular output is suppressed from the output report
 #' @seealso run.experiment
 #' @keywords phenotypes
 #' @export create.phenotype.report
@@ -23,7 +25,8 @@ create.phenotype.report <- function(in.filename,
                                     shared.model.yaml,
                                     out.filename,
                                     magic.fix = TRUE,
-                                    quote = "") {
+                                    quote = "",
+                                    uniq.var.inclusion.prop = 1 / 3) {
   ## sanity check for in.filename param
   stopifnot(
     is.vector(in.filename, mode = "character"),
@@ -49,6 +52,11 @@ create.phenotype.report <- function(in.filename,
   stopifnot(
     is.vector(out.filename, mode = "character"),
     length(out.filename) == 1
+  )
+  ## sanity check for unique.variable.value.inclusion.proportion param
+  stopifnot(
+    is.numeric(unique.variable.value.inclusion.proportion),
+    length(unique.variable.value.inclusion.proportion) == 1
   )
 
   phenotype.data <- read.table(in.filename,
@@ -176,7 +184,8 @@ create.phenotype.report <- function(in.filename,
     params = list(
       dataset.name = in.filename,
       variable.summary = variable.summary,
-      phenotype.data = phenotype.data
+      phenotype.data = phenotype.data,
+      unique.variable.value.inclusion.proportion = uniq.var.inclusion.prop
     )
   )
   ## temporary fix: report "cleaned" data as tsv file
