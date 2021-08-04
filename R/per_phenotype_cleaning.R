@@ -282,6 +282,11 @@ parse.date <- function(vec, var.summary) {
   date.trailing.year.match <- stringr::str_detect(vec, date.trailing.year) & !is.na(vec)
   date.year.only <- "^(\\d{4})$"
   date.year.only.match <- stringr::str_detect(vec, date.year.only) & !is.na(vec)
+  date.text.month.year <- paste("^(january|february|march|april|may|june|july",
+    "|august|september|october|november|december),?(\\d{4})$",
+    sep = ""
+  )
+  date.text.month.year.match <- stringr::str_detect(vec, date.text.month.year) & !is.na(vec)
   res <- rep(NA, length(vec))
   res[date.leading.year.match] <- stringr::str_replace(
     vec[date.leading.year.match],
@@ -296,6 +301,10 @@ parse.date <- function(vec, var.summary) {
   res[date.year.only.match] <- stringr::str_replace(
     vec[date.year.only.match],
     date.year.only, "\\1"
+  )
+  res[date.text.month.year.match] <- stringr::str_replace(
+    vec[date.text.month.year.match],
+    date.text.month.year, "\\2"
   )
   res <- as.numeric(res)
   res[res <= 21 & !is.na(res)] <- res[res <= 21 & !is.na(res)] + 2000
