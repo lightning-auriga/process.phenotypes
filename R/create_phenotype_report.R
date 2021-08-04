@@ -55,8 +55,8 @@ create.phenotype.report <- function(in.filename,
   )
   ## sanity check for unique.variable.value.inclusion.proportion param
   stopifnot(
-    is.numeric(unique.variable.value.inclusion.proportion),
-    length(unique.variable.value.inclusion.proportion) == 1
+    is.numeric(uniq.var.inclusion.prop),
+    length(uniq.var.inclusion.prop) == 1
   )
 
   phenotype.data <- read.table(in.filename,
