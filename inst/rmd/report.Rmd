@@ -25,6 +25,7 @@ params:
 dataset.name <- params$dataset.name
 variable.summary <- params$variable.summary
 phenotype.data <- params$phenotype.data
+unique.variable.value.inclusion.proportion <- params$unique.variable.value.inclusion.proportion
 ```
 
 #### Load required R packages
