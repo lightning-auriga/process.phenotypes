@@ -214,7 +214,7 @@ for (name in names(variable.summary$variables)) {
   ## even when the report is not a unique value report
   if (is.vector(phenotype.data[, name], mode = "numeric") |
     is.factor(phenotype.data[, name]) |
-    length(my.summ) < nrow(phenotype.data) / 3) {
+    length(my.summ) < nrow(phenotype.data) * unique.variable.value.inclusion.proportion) {
     variable.summary.df <- data.frame(
       names(my.summ), as.vector(my.summ)
     )
