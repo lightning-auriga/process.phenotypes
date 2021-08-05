@@ -321,6 +321,11 @@ process.unicode.characters <- function(phenotype.data) {
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\UFEFF", "")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U1F4AF", "100")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00A3", "")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00F9", "u")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U20A9", "")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\UFE64", "")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00E0", "a")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00E8", "e")
   }
   phenotype.data
 }
