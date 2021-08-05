@@ -312,6 +312,7 @@ parse.date <- function(vec, var.summary) {
   res[res < 1800 & !is.na(res)] <- NA
   var.summary$invalid.date.entries <- vec[(!(date.leading.year.match |
     date.trailing.year.match |
-    date.year.only.match) | is.na(res)) & !is.na(vec)]
+    date.year.only.match |
+    date.text.month.year.match) | is.na(res)) & !is.na(vec)]
   list(phenotype.data = res, variable.summary = var.summary)
 }
