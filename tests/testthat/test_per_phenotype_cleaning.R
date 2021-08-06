@@ -239,3 +239,50 @@ test_that("parse.date distinguishes between YYYY-##-## and ##-##-YY", {
     list(phenotype.data = out.vec, variable.summary = out.var.summary)
   )
 })
+
+test_that("parse.date can capture dates of the format monthname,?year", {
+  in.vec <- c(
+    "january,2021",
+    "february,1991",
+    "march2020",
+    "april1993",
+    "may,2022",
+    "june,2002",
+    "july1988",
+    "august,1999",
+    "september,2021",
+    "october1999",
+    "november1941",
+    "december,1944",
+    "June,1999",
+    "Junetember,1999",
+    "May,199"
+  )
+  in.var.summary <- list()
+  out.vec <- as.numeric(c(
+    2021,
+    1991,
+    2020,
+    1993,
+    2022,
+    2002,
+    1988,
+    1999,
+    2021,
+    1999,
+    1941,
+    1944,
+    NA,
+    NA,
+    NA
+  ))
+  out.var.summary <- list(invalid.date.entries = as.character(c(
+    "June,1999",
+    "Junetember,1999",
+    "May,199"
+  )))
+  expect_identical(
+    parse.date(in.vec, in.var.summary),
+    list(phenotype.data = out.vec, variable.summary = out.var.summary)
+  )
+})
