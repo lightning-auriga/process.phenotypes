@@ -121,10 +121,10 @@ for (name in names(variable.summary$variables)) {
       ## create data histogram for numeric data
       plot.data <- data.frame(x = phenotype.data[!is.na(phenotype.data[, name]), name])
       hist.plot <- ggplot(data = plot.data) + my.theme
-      binwidth <- diff(quantile(plot.data$x, probs = c(0.5, 0.75), na.rm = TRUE)) / 12.5
+      # binwidth <- diff(quantile(plot.data$x, probs = c(0.5, 0.75), na.rm = TRUE)) / 12.5
       hist.plot <- hist.plot + geom_histogram(
         aes(x = x, y = ..count.. / sum(..count..)),
-        binwidth = binwidth
+        bins = 50
       )
       hist.plot <- hist.plot + xlab(name) + ylab("proportion of data")
       cat(
