@@ -4,12 +4,10 @@
 \alias{derive.first.degree}
 \title{Derive binary yes/no first-degree relatives from family member data}
 \usage{
-derive.first.degree(variable.name, derived.name)
+derive.first.degree(variable.name)
 }
 \arguments{
 \item{variable.name}{string, name of existing variable to operate on}
-
-\item{derived.name}{string, name of new derived variable}
 }
 \value{
 a vector of length nrow(phenotype.data) representing the

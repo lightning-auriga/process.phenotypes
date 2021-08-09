@@ -10,16 +10,21 @@
 #' @param dependent.variable string, name of dependent variable to operate on
 #' @param independent.variable string, name of independent variable
 #' @param allow.no logical, whether to allow "no" answers as equivalent to NA
+#' @param additional.na.levels vector, define alternative values to be treated
+#' as NAs, e.g. "0 times"
 #' @return a vector of length nrow(phenotype.data) representing the results
 #' of the dependency test
 #' @export response.depends.on.yes
-response.depends.on.yes <- function(dependent.variable, independent.variable, allow.no = FALSE) {
+response.depends.on.yes <- function(dependent.variable, independent.variable,
+                                    allow.no = FALSE, additional.na.levels = c()) {
   if (allow.no) {
     is.na(dependent.variable) |
       dependent.variable == "no" |
+      independent.variable %in% additional.na.levels |
       (!is.na(independent.variable) & independent.variable == "yes")
   } else {
     is.na(dependent.variable) |
+      independent.variable %in% additional.na.levels |
       (!is.na(independent.variable) & independent.variable == "yes")
   }
 }
@@ -72,4 +77,21 @@ response.is.less.than <- function(dependent.variable, independent.variable) {
   is.na(dependent.variable) |
     is.na(independent.variable) |
     dependent.variable < independent.variable
+}
+
+#' Test concordance of duplicate variables
+#'
+#' @details
+#'
+#' @description
+#'
+#' @param dependent.variable string, name of dependent variable to operate on
+#' @param independent.variable string, name of independent variable
+#' @return a vector of length nrow(phenotype.data) representing the results
+#' of the dependency test
+#' @export response.is.duplicate.of
+response.is.duplicate.of <- function(dependent.variable, independent.variable) {
+  is.na(dependent.variable) |
+    is.na(independent.variable) |
+    dependent.variable == independent.variable
 }
