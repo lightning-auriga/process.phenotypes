@@ -1,11 +1,11 @@
 #' Test dependency of one variable on "yes" response of another
 #'
 #' @details
-#' Specifically, this function tests two variables where one result depends
+#' This function tests two variables where one result depends
 #' on a "yes" result in the other.
 #'
 #' @description
-#' Sanity check to ensure that related rules are behaving as expected.
+#' Sanity check to ensure that related variables are behaving as expected.
 #'
 #' @param dependent.variable string, name of dependent variable to operate on
 #' @param independent.variable string, name of independent variable
@@ -27,11 +27,11 @@ response.depends.on.yes <- function(dependent.variable, independent.variable, al
 #' Test dependency of one variable on non-NA response of another
 #'
 #' @details
-#' Specifically, this function tests two variables where one result depends
+#' This function tests two variables where one result depends
 #' on any non-NA result in the other.
 #'
 #' @description
-#' Sanity check to ensure that related rules are behaving as expected.
+#' Sanity check to ensure that related variables are behaving as expected.
 #'
 #' @param dependent.variable string, name of dependent variable to operate on
 #' @param independent.variable string, name of independent variable
@@ -53,4 +53,23 @@ response.depends.on.not.na <- function(dependent.variable, independent.variable,
       !(is.na(independent.variable) |
         independent.variable %in% additional.na.levels)
   }
+}
+
+#' Test that one variable is less than the other
+#'
+#' @details
+#' This function tests that one variable is less than another.
+#'
+#' @description
+#' Sanity check to ensure that related variables are behaving as expected.
+#'
+#' @param dependent.variable string, name of dependent variable to operate on
+#' @param independent.variable string, name of independent variable
+#' @return a vector of length nrow(phenotype.data) representing the results
+#' of the dependency test
+#' @export response.is.less.than
+response.is.less.than <- function(dependent.variable, independent.variable) {
+  is.an(dependent.variable) |
+    is.na(independent.variable) |
+    independent.variable < dependent.variable
 }

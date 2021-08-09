@@ -26,9 +26,9 @@ a vector of length nrow(phenotype.data) representing the results
 of the dependency test
 }
 \description{
-Sanity check to ensure that related rules are behaving as expected.
+Sanity check to ensure that related variables are behaving as expected.
 }
 \details{
-Specifically, this function tests two variables where one result depends
+This function tests two variables where one result depends
 on any non-NA result in the other.
 }
