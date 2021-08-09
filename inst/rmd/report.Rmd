@@ -32,6 +32,7 @@ unique.variable.value.inclusion.proportion <- params$unique.variable.value.inclu
 
 ```{r load.packages, eval=TRUE, echo=FALSE}
 library(ggplot2, quietly = TRUE)
+library(RColorBrewer, quietly = TRUE)
 library(knitr, quietly = TRUE)
 library(kableExtra, quietly = TRUE)
 ```
@@ -119,17 +120,58 @@ for (name in names(variable.summary$variables)) {
   if (is.vector(phenotype.data[, name], mode = "numeric")) {
     if (length(which(!is.na(phenotype.data[, name])))) {
       ## create data histogram for numeric data
+      nbins <- 50
       plot.data <- data.frame(x = phenotype.data[!is.na(phenotype.data[, name]), name])
       hist.plot <- ggplot(data = plot.data) + my.theme
-      # binwidth <- diff(quantile(plot.data$x, probs = c(0.5, 0.75), na.rm = TRUE)) / 12.5
-      hist.plot <- hist.plot + geom_histogram(
-        aes(x = x, y = ..count.. / sum(..count..)),
-        bins = 50
-      )
+
+      if (!is.null(variable.summary$variables[[name]]$params$multimodal)) {
+        multimodal.varname <- variable.summary$variables[[name]]$params$multimodal
+        stopifnot(multimodal.varname %in% colnames(phenotype.data))
+        multimodal.values <- unique(phenotype.data[, multimodal.varname])
+        hist.plot.colours <- RColorBrewer::brewer.pal(length(multimodal.values), "Dark2")
+        annotate.y <- max(hist(phenotype.data[, name], breaks = nbins, plot = FALSE)$counts) / nrow(phenotype.data)
+        for (i in seq_len(length(multimodal.values))) {
+          if (length(which(phenotype.data[, multimodal.varname] == multimodal.values[i] &
+            !is.na(phenotype.data[, multimodal.varname]))) == 0) {
+            next
+          }
+          plot.subset <- phenotype.data[phenotype.data[, multimodal.varname] == multimodal.values[i] &
+            !is.na(phenotype.data[, name]), ]
+          hist.plot <- hist.plot + geom_histogram(aes_string(
+            x = name,
+            y = "..count../sum(..count..)"
+          ),
+          data = plot.subset,
+          bins = nbins,
+          fill = hist.plot.colours[i],
+          alpha = 0.2
+          )
+          mode.mean <- mean(plot.subset[, name],
+            na.rm = TRUE
+          )
+          hist.plot <- hist.plot + geom_vline(
+            xintercept = mode.mean,
+            colour = hist.plot.colours[i]
+          )
+          hist.plot <- hist.plot + annotate("text",
+            label = multimodal.values[i],
+            x = mode.mean * 1.15,
+            y = annotate.y * (1 - (i - 1) * 0.05),
+            size = 3,
+            hjust = 0,
+            colour = hist.plot.colours[i]
+          )
+        }
+      } else {
+        hist.plot <- hist.plot + geom_histogram(
+          aes(x = x, y = ..count.. / sum(..count..)),
+          bins = nbins
+        )
+      }
       hist.plot <- hist.plot + xlab(name) + ylab("proportion of data")
       cat(
-        "\n#### Histogram of ", name, " (", variable.pretty.name,
-        ") Distribution\n",
+        "\n\n#### Histogram of ", name, " (", variable.pretty.name,
+        ") Distribution\n\n",
         sep = ""
       )
       print(hist.plot)
