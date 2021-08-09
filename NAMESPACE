@@ -3,3 +3,6 @@
 export(compare.files)
 export(compare.files.report)
 export(create.phenotype.report)
+export(derive.first.degree)
+export(response.depends.on.not.na)
+export(response.depends.on.yes)
