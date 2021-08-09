@@ -319,7 +319,20 @@ process.unicode.characters <- function(phenotype.data) {
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00D7", "x")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00E7", "c")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2022", "*")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U202[89A-F]", "")
+    phenotype.data[, i] <- stringr::str_replace_all(
+      phenotype.data[, i],
+      paste("\U2028",
+        "\U2029",
+        "\U202A",
+        "\U202B",
+        "\U202C",
+        "\U202D",
+        "\U202E",
+        "\U202F",
+        sep = "|"
+      ),
+      ""
+    )
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\UFEFF", "")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U1F4AF", "100")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00A3", "")
@@ -339,6 +352,8 @@ process.unicode.characters <- function(phenotype.data) {
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2713", "")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U1D50", "m")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U141F|\U2E0D", "/")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2039", "<")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U203A", ">")
     ## this is technically "care of" but it seems like the one instance of it meant percent for some reason
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2105", "%")
   }
