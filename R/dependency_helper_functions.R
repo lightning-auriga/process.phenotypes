@@ -71,5 +71,5 @@ response.depends.on.not.na <- function(dependent.variable, independent.variable,
 response.is.less.than <- function(dependent.variable, independent.variable) {
   is.na(dependent.variable) |
     is.na(independent.variable) |
-    independent.variable < dependent.variable
+    dependent.variable < independent.variable
 }
