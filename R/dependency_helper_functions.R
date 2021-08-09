@@ -69,7 +69,7 @@ response.depends.on.not.na <- function(dependent.variable, independent.variable,
 #' of the dependency test
 #' @export response.is.less.than
 response.is.less.than <- function(dependent.variable, independent.variable) {
-  is.an(dependent.variable) |
+  is.na(dependent.variable) |
     is.na(independent.variable) |
     independent.variable < dependent.variable
 }
