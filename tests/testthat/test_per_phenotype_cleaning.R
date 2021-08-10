@@ -163,6 +163,76 @@ test_that("apply.bounds handles missing min or max correctly", {
   ))
 })
 
+test_that("apply.bounds handles bidirectional standard deviation bound", {
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts",
+          type = "numeric",
+          bounds = list(sd = 1)
+        )
+      )
+    )
+  )
+  in.phenotype.data <- data.frame(TN001 = c(1, 2, 3, 5, 6, 8, 10, 11, 12))
+  out.var.summary <- in.var.summary
+  out.var.summary$variables$TN001$num.beyond.sd <- as.integer(4)
+  out.phenotype.data <- data.frame(TN001 = c(NA, NA, 3, 5, 6, 8, 10, NA, NA))
+  expect_identical(apply.bounds(in.phenotype.data, in.var.summary), list(
+    phenotype.data = out.phenotype.data,
+    variable.summary = out.var.summary
+  ))
+})
+
+test_that("apply.bounds handles bidirectional standard deviation bound after min/max", {
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts",
+          type = "numeric",
+          bounds = list(min = -20, max = 20, sd = 0.5)
+        )
+      )
+    )
+  )
+  in.phenotype.data <- data.frame(TN001 = c(-20000, 1, 2, 3, 4, 5, 1000))
+  out.var.summary <- in.var.summary
+  out.var.summary$variables$TN001$num.below.min <- as.integer(1)
+  out.var.summary$variables$TN001$num.above.max <- as.integer(1)
+  out.var.summary$variables$TN001$num.beyond.sd <- as.integer(4)
+  out.phenotype.data <- data.frame(TN001 = c(NA, NA, NA, 3, NA, NA, NA))
+  expect_identical(apply.bounds(in.phenotype.data, in.var.summary), list(
+    phenotype.data = out.phenotype.data,
+    variable.summary = out.var.summary
+  ))
+})
+
+test_that("apply.bounds errors if sd factor is negative", {
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts",
+          type = "numeric",
+          bounds = list(min = -20, max = 20, sd = -0.5)
+        )
+      )
+    )
+  )
+  in.phenotype.data <- data.frame(TN001 = c(-20000, 1, 2, 3, 4, 5, 1000))
+  out.var.summary <- in.var.summary
+  out.var.summary$variables$TN001$num.below.min <- as.integer(1)
+  out.var.summary$variables$TN001$num.above.max <- as.integer(1)
+  out.var.summary$variables$TN001$num.beyond.sd <- as.integer(4)
+  out.phenotype.data <- data.frame(TN001 = c(NA, NA, NA, 3, NA, NA, NA))
+  expect_error(apply.bounds(in.phenotype.data, in.var.summary))
+})
+
 test_that("convert.variable.specific.na sets instances of strings to NA", {
   in.phenotype.data <- data.frame(TN001 = c("apple", "banana", "river", "cranberry"))
   in.variable.summary <- list(variables = list(TN001 = list(

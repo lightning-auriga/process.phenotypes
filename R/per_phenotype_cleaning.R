@@ -165,6 +165,19 @@ apply.bounds <- function(phenotype.data, variable.summary) {
               !is.na(phenotype.data[, i]), i] <- NA
           }
         }
+        var.sd <- variable.summary$variables[[i]]$params$bounds$sd
+        if (!is.null(var.sd)) {
+          var.sd <- as.numeric(var.sd)
+          stopifnot(var.sd >= 0)
+          ## count and apply bidirectional standard deviation threshold
+          sd.min.bound <- mean(phenotype.data[, i], na.rm = TRUE) - var.sd * sd(phenotype.data[, i], na.rm = TRUE)
+          sd.max.bound <- mean(phenotype.data[, i], na.rm = TRUE) + var.sd * sd(phenotype.data[, i], na.rm = TRUE)
+          num.sd <- length(which(phenotype.data[, i] < sd.min.bound | phenotype.data[, i] > sd.max.bound))
+          variable.summary$variables[[i]]$num.beyond.sd <- num.sd
+          phenotype.data[(phenotype.data[, i] < sd.min.bound |
+            phenotype.data[, i] > sd.max.bound) &
+            !is.na(phenotype.data[, i]), i] <- NA
+        }
       }
     }
   }
