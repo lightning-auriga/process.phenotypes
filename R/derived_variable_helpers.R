@@ -17,11 +17,10 @@
 #' affected.
 #'
 #' @param variable.name string, name of existing variable to operate on
-#' @param derived.name string, name of new derived variable
 #' @return a vector of length nrow(phenotype.data) representing the
 #' derived variable
 #' @export derive.first.degree
-derive.first.degree <- function(variable.name, derived.name) {
+derive.first.degree <- function(variable.name) {
   first.degree <- paste("^mother$", "^father$", "^brother$",
     "^sister$", "^sibling['s]*$", "^parent['s]*$",
     "^son['s]*$", "^daughter['s]*$", "^child[ren]*$",
@@ -33,10 +32,10 @@ derive.first.degree <- function(variable.name, derived.name) {
       any(stringr::str_detect(stringr::str_replace_all(i, "\\s", ""), first.degree))
     }
   ))
-  derived.name <- rep(NA, length(variable.name))
-  derived.name[!is.na(variable.name) & pat] <- "yes"
-  derived.name[!is.na(variable.name) & !pat] <- "no"
-  derived.name
+  derived.variable <- rep(NA, length(variable.name))
+  derived.variable[!is.na(variable.name) & pat] <- "yes"
+  derived.variable[!is.na(variable.name) & !pat] <- "no"
+  derived.variable
 }
 
 #' Apply inverse/rank normal transformation to numeric variable

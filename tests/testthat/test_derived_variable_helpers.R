@@ -11,7 +11,7 @@ test_that("conversion from family members to yes/no first degree relative works"
     derived = list("PPB001_derived" = list(
       name = "first_degree",
       type = "string",
-      code = "process.phenotypes::derive.first.degree(PPB001, PPB001_derived)"
+      code = "process.phenotypes::derive.first.degree(PPB001)"
     ))
   )
   out.phenotype.data <- in.phenotype.data

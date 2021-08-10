@@ -7,7 +7,8 @@
 response.depends.on.yes(
   dependent.variable,
   independent.variable,
-  allow.no = FALSE
+  allow.no = FALSE,
+  additional.na.levels = c()
 )
 }
 \arguments{
@@ -16,6 +17,9 @@ response.depends.on.yes(
 \item{independent.variable}{string, name of independent variable}
 
 \item{allow.no}{logical, whether to allow "no" answers as equivalent to NA}
+
+\item{additional.na.levels}{vector, define alternative values to be treated
+as NAs, e.g. "0 times"}
 }
 \value{
 a vector of length nrow(phenotype.data) representing the results
