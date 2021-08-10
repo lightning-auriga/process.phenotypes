@@ -16,8 +16,10 @@ a vector of length nrow(phenotype.data) representing the results
 of the dependency test
 }
 \description{
-
+Sanity check to ensure that suspected duplicate variables are concordant.
 }
 \details{
-
+This function tests that two non-NA values are concordant.  Note
+that non-NA/NA mismatches are allowed here, to focus on the most
+toxic discordant cases.
 }
