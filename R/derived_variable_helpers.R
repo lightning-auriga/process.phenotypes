@@ -98,7 +98,7 @@ derive.rank.normal.transform <- function(variable,
   if (length(stratification.vars) > 0) {
     ## just stratify by the first one; leave the rest to recursion
     for (lvl in levels(stratification.vars[[1]])) {
-      subset.inclusion <- include.subjects & stratification.vars[[1]] == lvl
+      subset.inclusion <- include.subjects & stratification.vars[[1]] == lvl & !is.na(stratification.vars[[1]])
       recurse.result <- derive.rank.normal.transform(
         variable,
         offset,
