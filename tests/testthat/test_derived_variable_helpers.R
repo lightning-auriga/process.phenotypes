@@ -198,3 +198,9 @@ test_that("rank normal transform detects when primary.call is malformed", {
     primary.call = rnorm(10)
   ))
 })
+
+test_that("rank normal transform emits a normally distributed variable", {
+  x <- runif(1000)
+  y <- derive.rank.normal.transform(x)
+  expect_true(shapiro.test(y)$p.value >= 0.01)
+})
