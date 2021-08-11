@@ -7,5 +7,5 @@ test_that("get.top.ten returns the top ten named and values from a named vector 
     Subjects = c("a", "b", "d", "e", "f", "g", "h", "i", "j", "k"),
     Counts = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
   )
-  expect_identical(get.top.ten(decreasing = FALSE, input.vec), output.df)
+  expect_identical(get.top.ten(decreasing = FALSE, input.vec, "Subjects"), output.df)
 })
