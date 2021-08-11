@@ -169,12 +169,46 @@ for (name in names(variable.summary$variables)) {
         )
       }
       hist.plot <- hist.plot + xlab(name) + ylab("proportion of data")
+      if (is.null(variable.summary$variables[[name]]$params$bounds$sd)) {
+        var.mean <- mean(phenotype.data[, name], na.rm = TRUE)
+        var.sd <- sd(phenotype.data[, name], na.rm = TRUE)
+        hist.plot <- hist.plot + geom_vline(xintercept = var.mean + 3 * var.sd, linetype = "dashed")
+        hist.plot <- hist.plot + geom_vline(xintercept = var.mean - 3 * var.sd, linetype = "dashed")
+      }
       cat(
         "\n\n#### Histogram of ", name, " (", variable.pretty.name,
         ") Distribution\n\n",
         sep = ""
       )
       print(hist.plot)
+    }
+    if (!is.null(variable.summary$variables[[name]]$params$bounds)) {
+      bound.type <- c()
+      bound.value <- c()
+      bound.count <- c()
+      if (!is.null(variable.summary$variables[[name]]$params$bounds$min)) {
+        bound.type <- c(bound.type, "minimum")
+        bound.value <- c(bound.value, variable.summary$variables[[name]]$params$bounds$min)
+        bound.count <- c(bound.count, variable.summary$variables[[name]]$num.below.min)
+      }
+      if (!is.null(variable.summary$variables[[name]]$params$bounds$max)) {
+        bound.type <- c(bound.type, "maximum")
+        bound.value <- c(bound.value, variable.summary$variables[[name]]$params$bounds$max)
+        bound.count <- c(bound.count, variable.summary$variables[[name]]$num.above.max)
+      }
+      if (!is.null(variable.summary$variables[[name]]$params$bounds$sd)) {
+        bound.type <- c(bound.type, "standard deviation")
+        bound.value <- c(bound.value, variable.summary$variables[[name]]$params$bounds$sd)
+        bound.count <- c(bound.count, variable.summary$variables[[name]]$num.beyond.sd)
+      }
+      bound.df <- data.frame(
+        Type = bound.type,
+        Value = bound.value,
+        Count = bound.count
+      )
+      rownames(bound.df) <- NULL
+      table.caption <- paste("Numeric bounds on ", name, " (", variable.pretty.name, ")", sep = "")
+      print(knitr::kable(bound.df, caption = table.caption, table.attr = knitr.table.attr))
     }
   }
   ## if the source data has a linked_date variable, indicating it is an age
