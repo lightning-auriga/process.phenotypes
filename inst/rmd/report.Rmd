@@ -68,9 +68,45 @@ At some point, there should be introductory content here.
 removed for being below the minimum permissible age of
 `r variable.summary$globals$min_age_for_inclusion`.
 
+***
+<br>
+
+### Subject level metrics
+
+```{r report.subject.specific.na, eval=TRUE, echo=FALSE, results="asis"}
+## probably want a histogram of this one
+plot.data <- data.frame(x = nas.by.subject)
+my.hist <- ggplot(aes(x = x, y = ..count.. / sum(..count..)), data = plot.data)
+my.hist <- my.hist + my.theme + geom_histogram(bins = 50)
+my.hist <- my.hist + xlab("Number of NA Values by Subject") + ylab("Proportion of Subjects")
+cat("\n\n#### Distribution of NA Counts by Subject\n\n")
+print(my.hist)
+```
+
+```{r report.subject.type.failures, eval=TRUE, echo=FALSE, results="asis"}
+## probably also want a histogram of this one
+plot.data <- data.frame(x = subjects.wrong.type)
+my.hist <- ggplot(aes(x = x, y = ..count.. / sum(..count..)), data = plot.data)
+my.hist <- my.hist + my.theme + geom_histogram(bins = 50)
+my.hist <- my.hist + xlab("Number of Invalid Type Datapoints by Subject") + ylab("Proportion of Subjects")
+cat("\n\n#### Distribution of Invalid Type Datapoints by Subject\n\n")
+print(my.hist)
+```
 
 ***
 <br>
+
+### Variable level metrics
+
+```{r report.variable.type.failures, eval=TRUE, echo=FALSE, results="asis"}
+## for now, histogram this too
+plot.data <- data.frame(x = variables.wrong.type)
+my.hist <- ggplot(aes(x = x, y = ..count.. / sum(..count..)), data = plot.data)
+my.hist <- my.hist + my.theme + geom_histogram(bins = 50)
+my.hist <- my.hist + xlab("Number of Invalid Type Datapoints by Variable") + ylab("Proportion of Variables")
+cat("\n\n#### Distribution of Invalid Type Datapoints by Variable\n\n")
+print(my.hist)
+```
 
 ### Report linking between input and standardized variable names
 

@@ -28,7 +28,7 @@ test_that("aggregate.variables.wrong.type works at all", {
   )
 })
 
-test_that("compute.subject.specific.na.count works at all", {
+test_that("compute.subject.na.count works at all", {
   in.phenotype.data <- data.frame(
     TV001 = c("A", "B", "C", "D", "E"),
     TV002 = c(1, 2, 3, NA, 5),
@@ -73,7 +73,7 @@ test_that("compute.subject.specific.na.count works at all", {
   output <- as.integer(c(2, 1, 2, 2, 0))
   names(output) <- in.phenotype.data[, "TV001"]
   expect_identical(
-    compute.subject.specific.na.count(
+    compute.subject.na.count(
       in.phenotype.data,
       in.variable.summary
     ),
