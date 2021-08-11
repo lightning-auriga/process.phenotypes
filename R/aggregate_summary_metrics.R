@@ -45,7 +45,7 @@ aggregate.subjects.wrong.type <- function(variable.summary) {
 #'
 #' @param variable.summary list, variable configuration and
 #' summary data
-#' @return named numeric vector; values are counts of non-compliant
+#' @return named integer vector; values are counts of non-compliant
 #' subjects per variable, names are variable names
 aggregate.variables.wrong.type <- function(variable.summary) {
   counts <- sapply(variable.summary$variables, function(i) {
@@ -53,4 +53,29 @@ aggregate.variables.wrong.type <- function(variable.summary) {
   })
   names(counts) <- names(variable.summary$variables)
   counts
+}
+
+#' Compute per-subject NA count across all variables
+#'
+#' @description
+#' Computes a count for each subject of all NAs across
+#' all variables, after all filtering and conversion has
+#' been applied.
+#'
+#' @details
+#' NAs can be present in input data or introduced at various
+#' steps, and the overall count can be indicative of various
+#' phenomena, including expected blockwise NA due to individual
+#' subjects not completing all questionnaire sections.
+#'
+#' @param phenotype.data data frame, subject data, subjects
+#' as rows, phenotypes as columns
+#' @return named integer vector; values are counts of NAs
+#' for each subject across all variables, names are subject IDs
+compute.subject.na.count <- function(phenotype.data, variable.summary) {
+  res <- apply(phenotype.data, 1, function(i) {
+    length(which(is.na(i)))
+  })
+  names(res) <- phenotype.data[, find.subject.id.index(variable.summary)]
+  res
 }

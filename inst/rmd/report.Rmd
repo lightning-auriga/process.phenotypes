@@ -19,6 +19,7 @@ params:
   unique.variable.value.inclusion.proportion: 0.333
   subjects.wrong.type: c()
   variables.wrong.type: c()
+  nas.by.subject: c()
 ---
 
 #### Link input parameters to local variables
@@ -30,6 +31,7 @@ phenotype.data <- params$phenotype.data
 unique.variable.value.inclusion.proportion <- params$unique.variable.value.inclusion.proportion
 subjects.wrong.type <- params$subjects.wrong.type
 variables.wrong.type <- params$variables.wrong.type
+nas.by.subject <- params$nas.by.subject
 ```
 
 #### Load required R packages

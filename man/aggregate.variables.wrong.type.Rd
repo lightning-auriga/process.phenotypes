@@ -12,7 +12,7 @@ not matching the specified type.}
 summary data}
 }
 \value{
-named numeric vector; values are counts of non-compliant
+named integer vector; values are counts of non-compliant
 subjects per variable, names are variable names
 }
 \description{
