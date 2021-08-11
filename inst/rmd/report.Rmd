@@ -143,9 +143,6 @@ to the variable's configured type.
 for (name in names(variable.summary$variables)) {
   my.summ <- variable.summary$variables[[name]]$summary
   variable.pretty.name <- variable.summary$variables[[name]]$original.name
-  if (!is.null(variable.summary$variables[[name]]$params$identity)) {
-    variable.pretty.name <- paste(variable.pretty.name, variable.summary$variables[[name]]$params$identity, sep = "/")
-  }
 
   cat(
     "\n\n### ", variable.pretty.name,
@@ -430,12 +427,6 @@ for (name in names(variable.summary$variables)) {
         for (table.target in dependencies[[dependency.index]]$table_comparisons) {
           stopifnot(table.target %in% colnames(phenotype.data))
           comparison.variable.pretty.name <- variable.summary$variables[[table.target]]$original.name
-          if (!is.null(variable.summary$variables[[table.target]]$params$identity)) {
-            comparison.variable.pretty.name <- paste(comparison.variable.pretty.name,
-              variable.summary$variables[[table.target]]$params$identity,
-              sep = "/"
-            )
-          }
           table.data <- table(
             phenotype.data[, table.target],
             phenotype.data[, name],
