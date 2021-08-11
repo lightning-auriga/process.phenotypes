@@ -91,6 +91,9 @@ my.hist <- my.hist + my.theme + geom_histogram(bins = 50)
 my.hist <- my.hist + xlab("Number of Invalid Type Datapoints by Subject") + ylab("Proportion of Subjects")
 cat("\n\n#### Distribution of Invalid Type Datapoints by Subject\n\n")
 print(my.hist)
+
+knitr::kable(process.phenotypes:::get.top.ten(TRUE, subjects.wrong.type, "Subjects"), caption = "Ten highest type conversion failures", table.attr = knitr.table.attr)
+knitr::kable(process.phenotypes:::get.top.ten(FALSE, subjects.wrong.type, "Subjects"), caption = "Ten lowest type conversion failures", table.attr = knitr.table.attr)
 ```
 
 ***
@@ -106,6 +109,9 @@ my.hist <- my.hist + my.theme + geom_histogram(bins = 50)
 my.hist <- my.hist + xlab("Number of Invalid Type Datapoints by Variable") + ylab("Proportion of Variables")
 cat("\n\n#### Distribution of Invalid Type Datapoints by Variable\n\n")
 print(my.hist)
+
+knitr::kable(process.phenotypes:::get.top.ten(TRUE, variables.wrong.type, "Variables"), caption = "Ten highest type conversion failures", table.attr = knitr.table.attr)
+knitr::kable(process.phenotypes:::get.top.ten(FALSE, variables.wrong.type, "Variables"), caption = "Ten lowest type conversion failures", table.attr = knitr.table.attr)
 ```
 
 ### Report linking between input and standardized variable names
