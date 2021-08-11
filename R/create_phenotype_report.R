@@ -172,6 +172,8 @@ create.phenotype.report <- function(in.filename,
   }
 
   ## TODO(lightning.auriga): add things to summary list
+  subjects.wrong.type <- aggregate.subjects.wrong.type(variable.summary)
+  variables.wrong.type <- aggregate.variables.wrong.type(variable.summary)
 
   ## find Rmd file from system installation
   rmarkdown.template <- system.file("rmd", "report.Rmd",
@@ -185,7 +187,9 @@ create.phenotype.report <- function(in.filename,
       dataset.name = in.filename,
       variable.summary = variable.summary,
       phenotype.data = phenotype.data,
-      unique.variable.value.inclusion.proportion = uniq.var.inclusion.prop
+      unique.variable.value.inclusion.proportion = uniq.var.inclusion.prop,
+      subjects.wrong.type = subjects.wrong.type,
+      variables.wrong.type = variables.wrong.type
     )
   )
   ## temporary fix: report "cleaned" data as tsv file

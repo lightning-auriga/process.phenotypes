@@ -17,6 +17,8 @@ params:
   variable.summary: NULL
   phenotype.data: ""
   unique.variable.value.inclusion.proportion: 0.333
+  subjects.wrong.type: c()
+  variables.wrong.type: c()
 ---
 
 #### Link input parameters to local variables
@@ -26,6 +28,8 @@ dataset.name <- params$dataset.name
 variable.summary <- params$variable.summary
 phenotype.data <- params$phenotype.data
 unique.variable.value.inclusion.proportion <- params$unique.variable.value.inclusion.proportion
+subjects.wrong.type <- params$subjects.wrong.type
+variables.wrong.type <- params$variables.wrong.type
 ```
 
 #### Load required R packages

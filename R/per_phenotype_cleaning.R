@@ -52,11 +52,18 @@ apply.type.conversions <- function(phenotype.data, variable.summary) {
       ## string
       next
     } else {
+      na.before.conversion <- is.na(phenotype.data[, i])
       result.list <- convert.type(
         phenotype.data[, i], variable.summary$variables[[i]], target.type
       )
       phenotype.data[, i] <- result.list$phenotype.data
       variable.summary$variables[[i]] <- result.list$variable.summary
+      na.after.conversion <- is.na(phenotype.data[, i])
+      variable.summary$variables[[i]]$subjects.wrong.type <-
+        phenotype.data[
+          na.after.conversion & !na.before.conversion,
+          find.subject.id.index(variable.summary)
+        ]
     }
   }
   list(
