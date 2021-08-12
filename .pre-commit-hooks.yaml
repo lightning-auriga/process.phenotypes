@@ -1,0 +1,10 @@
+- id: yaml-validation
+  name: yaml-validation
+  description: run yaml_validator.py
+  entry: yaml-configuration/yaml_validator.py
+  language: script
+  files: '*_raw.yaml'
+  args:
+    - 'yaml-configuration/shared-models.yaml'
+    - 'yaml-configuration/schema.datasets.yaml'
+    - 'yaml-configuration/schema.shared-models.yaml'
