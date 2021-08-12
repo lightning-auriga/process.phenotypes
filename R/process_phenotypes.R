@@ -18,16 +18,18 @@
 #' @seealso create.phenotype.report
 #' @keywords phenotypes
 #' @examples
-#' process.phenotypes("/path/to/phenotypes/audit_jun2021", "my_results")
+#' process.phenotypes("/path/to/phenotypes/pre-audit", "my_results")
 process.phenotypes <- function(phenotype.path,
                                output.path,
                                phenotype.files = c(
-                                 "CV_FINAL_STORE.tsv",
-                                 "ET_Final_Store.tsv",
-                                 "HO_FINAL_STORE.tsv",
-                                 "MM_FINAl_store.tsv",
-                                 "Neuro_final_store.tsv",
-                                 "SC_final_store.tsv"
+                                 "CV_raw.tsv",
+                                 "DM_raw.tsv",
+                                 "ET_raw.tsv",
+                                 "HO_raw.tsv",
+                                 "MM_raw.tsv",
+                                 "Neuro_raw.tsv",
+                                 "SC_raw.tsv",
+                                 "SO_raw.tsv"
                                ),
                                yaml.dir = "yaml-configuration") {
   ## sanity check on phenotype.path param
@@ -55,7 +57,7 @@ process.phenotypes <- function(phenotype.path,
   ## dispatch report creation for each input file
   for (file in phenotype.files) {
     ## TODO: replace this tag assumption with configurable tag from yaml file
-    dataset.tag <- strsplit(file, "_")[[1]][1]
+    dataset.tag <- stringr::str_replace(file, ".tsv", "")
     ## temporary: assume dataset-specific yaml is in a fixed name under yaml.dir
     dataset.yaml <- paste(yaml.dir, paste(dataset.tag, "yaml", sep = "."), sep = "/")
     output.filename <- paste(output.path, paste(dataset.tag, "report.html", sep = "_"), sep = "/")
@@ -64,7 +66,8 @@ process.phenotypes <- function(phenotype.path,
       dataset.tag,
       dataset.yaml,
       shared.model.yaml,
-      output.filename
+      output.filename,
+      quote = "\""
     )
   }
   print("all done hooray!")
