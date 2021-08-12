@@ -145,10 +145,14 @@ for (name in names(variable.summary$variables)) {
   variable.pretty.name <- variable.summary$variables[[name]]$original.name
 
   cat(
-    "\n\n### ", variable.pretty.name,
-    "\n\nOfficial variable identity: \"",
-    variable.summary$variables[[name]]$params$canonical_name, "\"", "\n\n"
+    "\n\n### ", variable.pretty.name, "\n\n"
   )
+  if (!is.null(variable.summary$variables[[name]]$params$canonical_name)) {
+    cat(
+      "Official variable identity: \"",
+      variable.summary$variables[[name]]$params$canonical_name, "\"", "\n\n"
+    )
+  }
 
   ## report any indication of residual Excel junk in the variable
   if (!is.null(variable.summary$variables[[name]]$excel.problem.count)) {
