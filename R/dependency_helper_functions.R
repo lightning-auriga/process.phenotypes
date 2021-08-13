@@ -10,21 +10,27 @@
 #' @param dependent.variable string, name of dependent variable to operate on
 #' @param independent.variable string, name of independent variable
 #' @param allow.no logical, whether to allow "no" answers as equivalent to NA
+#' in the dependent variable
+#' @param no.aliases character vector, values to be interpreted as
+#' "no" responses in the dependent variable
 #' @param additional.na.levels vector, define alternative values to be treated
-#' as NAs, e.g. "0 times"
+#' as NAs in the independent variable, e.g. "0 times"
 #' @return a vector of length nrow(phenotype.data) representing the results
 #' of the dependency test
 #' @export response.depends.on.yes
 response.depends.on.yes <- function(dependent.variable, independent.variable,
-                                    allow.no = FALSE, additional.na.levels = c()) {
+                                    allow.no = FALSE,
+                                    no.aliases = c("no"),
+                                    additional.na.levels = c()) {
   stopifnot(length(dependent.variable) >= 1)
   stopifnot(length(independent.variable) >= 1)
-  stopifnot(is.logical(allow.no))
+  stopifnot(is.logical(allow.no), length(allow.no) == 1)
+  stopifnot(is.character(no.aliases), length(no.aliases) > 0)
   stopifnot(length(dependent.variable) == length(independent.variable))
 
   if (allow.no) {
     is.na(dependent.variable) |
-      dependent.variable == "no" |
+      dependent.variable %in% no.aliases |
       independent.variable %in% additional.na.levels |
       (!is.na(independent.variable) & independent.variable == "yes")
   } else {
@@ -46,21 +52,26 @@ response.depends.on.yes <- function(dependent.variable, independent.variable,
 #' @param dependent.variable string, name of dependent variable to operate on
 #' @param independent.variable string, name of independent variable
 #' @param allow.no logical, whether to allow "no" answers as equivalent to NA
+#' in the dependent variable
+#' @param no.aliases character vector, values to be interpreted as
+#' "no" responses in the dependent variable
 #' @param additional.na.levels vector, define alternative values to be treated
-#' as NAs, e.g. "0 times"
+#' as NAs in the independent variable, e.g. "0 times"
 #' @return a vector of length nrow(phenotype.data) representing the results
 #' of the dependency test
 #' @export response.depends.on.not.na
 response.depends.on.not.na <- function(dependent.variable, independent.variable,
-                                       allow.no = FALSE, additional.na.levels = c()) {
+                                       allow.no = FALSE, no.aliases = c("no"),
+                                       additional.na.levels = c()) {
   stopifnot(length(dependent.variable) >= 1)
   stopifnot(length(independent.variable) >= 1)
-  stopifnot(is.logical(allow.no))
+  stopifnot(is.logical(allow.no), length(allow.no) == 1)
+  stopifnot(is.character(no.aliases), length(no.aliases) > 0)
   stopifnot(length(dependent.variable) == length(independent.variable))
 
   if (allow.no) {
     is.na(dependent.variable) |
-      dependent.variable == "no" |
+      dependent.variable %in% no.aliases |
       !(is.na(independent.variable) |
         independent.variable %in% additional.na.levels)
   } else {
