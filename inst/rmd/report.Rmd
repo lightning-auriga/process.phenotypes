@@ -20,6 +20,7 @@ params:
   subjects.wrong.type: c()
   variables.wrong.type: c()
   nas.by.subject: c()
+  subjects.failing.deps: c()
 ---
 
 #### Link input parameters to local variables
@@ -32,6 +33,7 @@ unique.variable.value.inclusion.proportion <- params$unique.variable.value.inclu
 subjects.wrong.type <- params$subjects.wrong.type
 variables.wrong.type <- params$variables.wrong.type
 nas.by.subject <- params$nas.by.subject
+subjects.failing.deps <- params$subjects.failing.deps
 ```
 
 #### Load required R packages
@@ -94,6 +96,19 @@ print(my.hist)
 
 knitr::kable(process.phenotypes:::get.top.ten(TRUE, subjects.wrong.type, "Subjects"), caption = "Ten highest type conversion failures", table.attr = knitr.table.attr)
 knitr::kable(process.phenotypes:::get.top.ten(FALSE, subjects.wrong.type, "Subjects"), caption = "Ten lowest type conversion failures", table.attr = knitr.table.attr)
+```
+
+***
+<br>
+
+```{r report.subject.dependency.failures, eval=TRUE, echo=FALSE, results="asis"}
+## histogram time
+plot.data <- data.frame(x = subjects.failing.deps)
+my.hist <- ggplot(aes(x = x, y = ..count.. / sum(..count..)), data = plot.data)
+my.hist <- my.hist + my.theme + geom_histogram(bins = 50)
+my.hist <- my.hist + xlab("Number of Variable Dependency Failures by Subject") + ylab("Proportion of Subjects")
+cat("\n\n#### Distribution of Dependency Failures by Subject\n\n")
+print(my.hist)
 ```
 
 ***

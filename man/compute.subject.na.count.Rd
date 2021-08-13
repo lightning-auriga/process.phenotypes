@@ -9,6 +9,9 @@ compute.subject.na.count(phenotype.data, variable.summary)
 \arguments{
 \item{phenotype.data}{data frame, subject data, subjects
 as rows, phenotypes as columns}
+
+\item{variable.summary}{list, variable configuration
+and summary data}
 }
 \value{
 named integer vector; values are counts of NAs

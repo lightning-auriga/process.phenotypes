@@ -175,6 +175,7 @@ create.phenotype.report <- function(in.filename,
   subjects.wrong.type <- aggregate.subjects.wrong.type(variable.summary)
   variables.wrong.type <- aggregate.variables.wrong.type(variable.summary)
   nas.by.subject <- compute.subject.na.count(phenotype.data, variable.summary)
+  subjects.failing.deps <- aggregate.subject.dep.failures(variable.summary)
 
   ## find Rmd file from system installation
   rmarkdown.template <- system.file("rmd", "report.Rmd",
@@ -191,7 +192,8 @@ create.phenotype.report <- function(in.filename,
       unique.variable.value.inclusion.proportion = uniq.var.inclusion.prop,
       subjects.wrong.type = subjects.wrong.type,
       variables.wrong.type = variables.wrong.type,
-      nas.by.subject = nas.by.subject
+      nas.by.subject = nas.by.subject,
+      subjects.failing.deps = subjects.failing.deps
     )
   )
   ## temporary fix: report "cleaned" data as tsv file

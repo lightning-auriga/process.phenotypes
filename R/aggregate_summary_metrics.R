@@ -70,6 +70,8 @@ aggregate.variables.wrong.type <- function(variable.summary) {
 #'
 #' @param phenotype.data data frame, subject data, subjects
 #' as rows, phenotypes as columns
+#' @param variable.summary list, variable configuration
+#' and summary data
 #' @return named integer vector; values are counts of NAs
 #' for each subject across all variables, names are subject IDs
 compute.subject.na.count <- function(phenotype.data, variable.summary) {
@@ -77,5 +79,42 @@ compute.subject.na.count <- function(phenotype.data, variable.summary) {
     length(which(is.na(i)))
   })
   names(res) <- phenotype.data[, find.subject.id.index(variable.summary)]
+  res
+}
+#' Compute per-subject dependency failures counts across all variables
+#'
+#' @description
+#' Computes a count for each subject of all dependency failures
+#' across all variables, after all filtering and conversion has
+#' been applied.
+#'
+#' @details
+#' This obviously has a bunch of caveats associated with it.
+#' The metric only means as much as the dependencies do.
+#' Large numbers of dependency failures can be introduced
+#' with particular discrepancies (not addressing atypical
+#' "no" responses in some dependent questions, approximate
+#' BMI deviations, atypical N/A values in string variables)
+#' that will inflate these counts without useful meaning.
+#' Discrepancies in early links in some dependency chains
+#' can cause the same subject to fail an entire batch
+#' of related variables (e.g. smoking, alcohol), and
+#' while it's probably appropriate to penalize that datapoint
+#' due to this phenomenon, it's not entirely clear
+#' how many times that penalty should be applied.
+#'
+#' @param variable.summary list, variable configuration
+#' and summary data
+#' @return named integer vector; values are counts of
+#' dependency failures for each subject across all variables,
+#' names are subject IDs
+aggregate.subject.dep.failures <- function(variable.summary) {
+  all.instances <- unlist(lapply(variable.summary$variables, function(i) {
+    unique(unlist(i$dependency.results))
+  }))
+  res <- table(all.instances)
+  res.names <- names(res)
+  res <- as.integer(res)
+  names(res) <- res.names
   res
 }
