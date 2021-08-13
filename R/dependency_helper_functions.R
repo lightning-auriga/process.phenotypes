@@ -9,6 +9,8 @@
 #'
 #' @param dependent.variable string, name of dependent variable to operate on
 #' @param independent.variable string, name of independent variable
+#' @param yes.aliases character vector, values to be interpreted as "yes"
+#' in the independent variable
 #' @param allow.no logical, whether to allow "no" answers as equivalent to NA
 #' in the dependent variable
 #' @param no.aliases character vector, values to be interpreted as
@@ -19,11 +21,13 @@
 #' of the dependency test
 #' @export response.depends.on.yes
 response.depends.on.yes <- function(dependent.variable, independent.variable,
+                                    yes.aliases = c("yes"),
                                     allow.no = FALSE,
                                     no.aliases = c("no"),
                                     additional.na.levels = c()) {
   stopifnot(length(dependent.variable) >= 1)
   stopifnot(length(independent.variable) >= 1)
+  stopifnot(is.character(yes.aliases), length(yes.aliases) > 0)
   stopifnot(is.logical(allow.no), length(allow.no) == 1)
   stopifnot(is.character(no.aliases), length(no.aliases) > 0)
   stopifnot(length(dependent.variable) == length(independent.variable))
@@ -32,11 +36,11 @@ response.depends.on.yes <- function(dependent.variable, independent.variable,
     is.na(dependent.variable) |
       dependent.variable %in% no.aliases |
       independent.variable %in% additional.na.levels |
-      (!is.na(independent.variable) & independent.variable == "yes")
+      (!is.na(independent.variable) & independent.variable %in% yes.aliases)
   } else {
     is.na(dependent.variable) |
       independent.variable %in% additional.na.levels |
-      (!is.na(independent.variable) & independent.variable == "yes")
+      (!is.na(independent.variable) & independent.variable %in% yes.aliases)
   }
 }
 

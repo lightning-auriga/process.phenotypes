@@ -7,6 +7,7 @@
 response.depends.on.yes(
   dependent.variable,
   independent.variable,
+  yes.aliases = c("yes"),
   allow.no = FALSE,
   no.aliases = c("no"),
   additional.na.levels = c()
@@ -16,6 +17,9 @@ response.depends.on.yes(
 \item{dependent.variable}{string, name of dependent variable to operate on}
 
 \item{independent.variable}{string, name of independent variable}
+
+\item{yes.aliases}{character vector, values to be interpreted as "yes"
+in the independent variable}
 
 \item{allow.no}{logical, whether to allow "no" answers as equivalent to NA
 in the dependent variable}

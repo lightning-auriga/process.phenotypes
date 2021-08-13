@@ -88,7 +88,7 @@ print(my.hist)
 ```{r report.subject.type.failures, eval=TRUE, echo=FALSE, results="asis"}
 ## probably also want a histogram of this one
 plot.data <- data.frame(x = subjects.wrong.type)
-my.hist <- ggplot(aes(x = x, y = ..count.. / sum(..count..)), data = plot.data)
+my.hist <- ggplot(aes(x = x, y = ..count.. / nrow(phenotype.data)), data = plot.data)
 my.hist <- my.hist + my.theme + geom_histogram(bins = 50)
 my.hist <- my.hist + xlab("Number of Invalid Type Datapoints by Subject") + ylab("Proportion of Subjects")
 cat("\n\n#### Distribution of Invalid Type Datapoints by Subject\n\n")
@@ -104,7 +104,7 @@ knitr::kable(process.phenotypes:::get.top.ten(FALSE, subjects.wrong.type, "Subje
 ```{r report.subject.dependency.failures, eval=TRUE, echo=FALSE, results="asis"}
 ## histogram time
 plot.data <- data.frame(x = subjects.failing.deps)
-my.hist <- ggplot(aes(x = x, y = ..count.. / sum(..count..)), data = plot.data)
+my.hist <- ggplot(aes(x = x, y = ..count.. / nrow(phenotype.data)), data = plot.data)
 my.hist <- my.hist + my.theme + geom_histogram(bins = 50)
 my.hist <- my.hist + xlab("Number of Variable Dependency Failures by Subject") + ylab("Proportion of Subjects")
 cat("\n\n#### Distribution of Dependency Failures by Subject\n\n")
@@ -469,6 +469,7 @@ for (name in names(variable.summary$variables)) {
     dependency.df <- data.frame(
       Name = dependency.names,
       Condition = dependency.conditions,
+      Count = length(dependency.results),
       Result = dependency.results
     )
     rownames(dependency.df) <- NULL
