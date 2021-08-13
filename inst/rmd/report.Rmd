@@ -469,11 +469,16 @@ for (name in names(variable.summary$variables)) {
     dependency.df <- data.frame(
       Name = dependency.names,
       Condition = dependency.conditions,
-      Count = length(dependency.results),
+      Count = sapply(strsplit(dependency.results, ","), function(i) {
+        length(i)
+      }),
       Result = dependency.results
     )
     rownames(dependency.df) <- NULL
-    print(knitr::kable(dependency.df, caption = "Results of cross-variable dependency tests.", table.attr = knitr.table.attr))
+    print(knitr::kable(dependency.df,
+      caption = "Results of cross-variable dependency tests.",
+      table.attr = knitr.table.attr
+    ))
   }
   cat("\n***\n<br>\n")
 }
