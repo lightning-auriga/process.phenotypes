@@ -446,6 +446,14 @@ for (name in names(variable.summary$variables)) {
         for (table.target in dependencies[[dependency.index]]$table_comparisons) {
           stopifnot(table.target %in% colnames(phenotype.data))
           comparison.variable.pretty.name <- variable.summary$variables[[table.target]]$original.name
+          if (!is.null(variable.summary$variables[[table.target]]$params$canonical_name)) {
+            comparison.variable.pretty.name <- paste(comparison.variable.pretty.name,
+              " (",
+              variable.summary$variables[[table.target]]$params$canonical_name,
+              ")",
+              sep = ""
+            )
+          }
           table.data <- table(
             phenotype.data[, table.target],
             phenotype.data[, name],
