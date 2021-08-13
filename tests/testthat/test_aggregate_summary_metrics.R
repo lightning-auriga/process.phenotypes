@@ -80,3 +80,23 @@ test_that("compute.subject.na.count works at all", {
     output
   )
 })
+
+test_that("aggregate.subject.dep.failures works at all", {
+  in.variable.summary <- list(variables = list(
+    TV001 = list(dependency.results = list(
+      "1" = c("S001", "S002"),
+      "2" = c("S001", "S003")
+    )),
+    TV002 = list(dependency.results = list(
+      "1" = c("S002", "S004", "S005"),
+      "2" = c()
+    )),
+    TV003 = list(params = list(subject_id = TRUE))
+  ))
+  output <- as.integer(c(1, 2, 1, 1, 1))
+  names(output) <- paste("S00", 1:5, sep = "")
+  expect_identical(
+    aggregate.subject.dep.failures(in.variable.summary),
+    output
+  )
+})
