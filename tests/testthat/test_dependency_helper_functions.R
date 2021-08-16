@@ -615,3 +615,45 @@ test_that("consistency of age and year of birth is correctly flagged, using a ve
     out.variable.summary
   )
 })
+
+test_that("consistency of BMI and weight/height is correctly flagged", {
+  in.phenotype.data <- data.frame(
+    "subject" = c("A", "B", "C", "D", "E"),
+    "PPB001" = c(40, 45, NA, 20, 20),
+    "PPB002" = c(1.25, 1.15, 1.1, NA, 2),
+    "PPB003" = c(25.6, 34.6, 32, 30, NA)
+  )
+  in.variable.summary <- list(
+    variables = list(
+      "subject" = list(params = list(
+        name = "subject",
+        type = "string",
+        subject_id = TRUE
+      )),
+      "PPB001" = list(params = list(
+        name = "weight",
+        type = "numeric"
+      )),
+      "PPB002" = list(params = list(
+        name = "height",
+        type = "numeric"
+      )),
+      "PPB003" = list(params = list(
+        name = "BMI",
+        type = "numeric",
+        dependencies = list(
+          "1" = list(
+            name = "test1",
+            condition = "response.is.computed.bmi(PPB003, PPB001, PPB002, 0.05)"
+          )
+        )
+      ))
+    )
+  )
+  out.variable.summary <- in.variable.summary
+  out.variable.summary$variables[["PPB003"]]$dependency.results[["1"]] <- c("B")
+  expect_identical(
+    check.variable.dependencies(in.phenotype.data, in.variable.summary),
+    out.variable.summary
+  )
+})

@@ -134,6 +134,42 @@ response.is.duplicate.of <- function(dependent.variable, independent.variable) {
     dependent.variable == independent.variable
 }
 
+#' Test consistency of BMI with height and weight
+#'
+#' @description
+#' This dependency will enforce BMI ~= weight/height^2,
+#' with weight in kilograms and height in meters, within
+#' a certain absolute tolerance.
+#'
+#' @details
+#' Large numbers of deviations are expected when the
+#' reported BMI has been arbitrarily entered by respondents
+#' and not computed directly from the source data.
+#'
+#' @param bmi numeric vector, reported BMI
+#' @param weight numeric vector, reported weight
+#' @param height numeric vector, reported height
+#' @param tolerance numeric, acceptable deviation
+#' between computed and reported BMI
+#' @return a vector of length nrow(phenotype.data) representing
+#' the results of the dependency test
+#' @export response.is.computed.bmi
+response.is.computed.bmi <- function(bmi, weight, height, tolerance) {
+  stopifnot(is.numeric(bmi))
+  stopifnot(is.numeric(weight))
+  stopifnot(is.numeric(height))
+  stopifnot(
+    length(bmi) == length(weight),
+    length(bmi) == length(height)
+  )
+  stopifnot(
+    is.numeric(tolerance),
+    length(tolerance) == 1
+  )
+  is.na(bmi) | is.na(height) | is.na(weight) |
+    abs(weight / height^2 - bmi) <= tolerance
+}
+
 #' Test consistency of age and year of birth
 #'
 #' @details
