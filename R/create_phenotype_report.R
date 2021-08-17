@@ -143,7 +143,9 @@ create.phenotype.report <- function(in.filename,
     reformatted.list$variable.summary
   )
   ## apply NA exclusions based on dependency results
-  reformatted.list$phenotype.data <- dependency.failure.handling(
+  ## however: do not apply in place, as this makes the output
+  ## contingency tables very uninformative
+  phenotype.data.na.applied <- dependency.failure.handling(
     reformatted.list$phenotype.data,
     reformatted.list$variable.summary
   )
@@ -203,7 +205,7 @@ create.phenotype.report <- function(in.filename,
   )
   ## temporary fix: report "cleaned" data as tsv file
   ## TODO: replace with something more formal
-  write.table(phenotype.data, stringr::str_replace(out.filename, ".html$", ".tsv"),
+  write.table(phenotype.data.na.applied, stringr::str_replace(out.filename, ".html$", ".tsv"),
     row.names = FALSE, col.names = TRUE, quote = FALSE, sep = "\t"
   )
   write.configuration(variable.summary, stringr::str_replace(out.filename, ".html$", ".yaml"))
