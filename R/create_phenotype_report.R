@@ -142,6 +142,11 @@ create.phenotype.report <- function(in.filename,
     reformatted.list$phenotype.data,
     reformatted.list$variable.summary
   )
+  ## apply NA exclusions based on dependency results
+  reformatted.list$phenotype.data <- dependency.failure.handling(
+    reformatted.list$phenotype.data,
+    reformatted.list$variable.summary
+  )
 
   if (magic.fix) {
     phenotype.data <- reformatted.list$phenotype.data

@@ -62,6 +62,47 @@ check.variable.dependencies <- function(phenotype.data, variable.summary) {
   variable.summary
 }
 
+#' Apply config-specified R commands as variable sanity checks
+#'
+#' @details
+#' Certain variables in an input dataset should have defined relationships
+#' between one another. This function will evaluate, in a hopefully safe manner,
+#' R syntax expressions from the config yaml files and report their results
+#' to the per-variable summary data, for reporting in the output html.
+#'
+#' @description
+#' TBD
+#'
+#' @param phenotype.data data.frame, input phenotype data
+#' @param variable.summary list, configuration data per variable
+#' @return data frame, modified version of input phenotype.data argument
+#' with requested subject/variable entries replaced with NA on
+#' dependency failure
+dependency.failure.handling <- function(phenotype.data, variable.summary) {
+  ## need to map reported failed subject ID back to phenotype.data row index
+  subject.id.column.index <- find.subject.id.index(variable.summary)
+  for (i in seq_len(ncol(phenotype.data))) {
+    dependencies <- variable.summary$variables[[i]]$params$dependencies
+    results <- variable.summary$variables[[i]]$dependency.results
+    stopifnot(length(dependencies) == length(results))
+    for (j in seq_len(length(dependencies))) {
+      exclude.on.failure <- dependencies[[j]]$exclude_on_failure
+      exclude.subjects <- results[[j]]
+      if (is.null(exclude.on.failure) |
+        is.null(exclude.subjects)) {
+        next
+      }
+      exclude.indices <- phenotype.data[, subject.id.column.index] %in% exclude.subjects
+      stopifnot(identical(
+        exclude.on.failure %in% colnames(phenotype.data),
+        rep(TRUE, length(exclude.on.failure))
+      ))
+      phenotype.data[exclude.indices, exclude.on.failure] <- NA
+    }
+  }
+  phenotype.data
+}
+
 #' Locate a variable in the dataset flagged as subject ID
 #'
 #' @details
