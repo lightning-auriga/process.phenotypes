@@ -98,13 +98,13 @@ load.ancestry.linker <- function(filename) {
     length(filename) == 1,
     file.exists(filename)
   )
-  h <- read.table(filename, header = FALSE, stringsAsFactors = FALSE, sep = "\t")
+  h <- read.table(filename, header = FALSE, stringsAsFactors = FALSE, sep = "\t", quote = "")
   stopifnot(ncol(h) == 1)
   h <- h[, 1]
   stopifnot(identical(grepl(":::", h), rep(FALSE, length(h))))
-  primary.name <- stringr::str_replace(h, "^([^\\(]+) (\\([^\\)]+\\))?$", "\\1")
-  alternates <- stringr::str_extract(h, "\\([^\\)]+\\)")
-  alternates <- stringr::str_extract(alternates, "[^\\(][^\\)]+")
+  primary.name <- stringr::str_replace(h, "^([^\\[]+) (\\[[^\\]]+\\])?$", "\\1")
+  alternates <- stringr::str_extract(h, "\\[[^\\]]+\\]")
+  alternates <- stringr::str_extract(alternates, "[^\\[][^\\]]+")
   alternates <- strsplit(alternates, ", ")
   scoped.names <- unlist(sapply(seq_len(length(alternates)), function(i) {
     paste(primary.name[i],
@@ -121,6 +121,7 @@ load.ancestry.linker <- function(filename) {
   unique.names <- stringr::str_replace(scoped.names, "^.*:::(.*)$", "\\1")
   ## apply standard string harmonization to unique group names
   unique.names <- remove.whitespace(make.lowercase(data.frame(unique.names)))[, 1]
+  print(unique.names[duplicated(unique.names)])
   stopifnot(length(unique(unique.names)) == length(unique.names))
   names(res) <- unique.names
   res

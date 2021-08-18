@@ -401,15 +401,24 @@ for (name in names(variable.summary$variables)) {
     ## called. this behavior may be updated later once this method has been
     ## improved
     df <- data.frame(
-      Input = variable.summary$variables[[name]]$ancestry.conversion.before,
-      Output = variable.summary$variables[[name]]$ancestry.conversion.after,
-      Reasoning = variable.summary$variables[[name]]$ancestry.reasoning,
-      "Best Match" = variable.summary$variables[[name]]$ancestry.best.match,
-      "Best Score" = variable.summary$variables[[name]]$ancestry.best.value,
-      "Second Match" = variable.summary$variables[[name]]$ancestry.second.match,
-      "Second Score" = variable.summary$variables[[name]]$ancestry.second.value
+      variable.summary$variables[[name]]$ancestry.conversion.before,
+      variable.summary$variables[[name]]$ancestry.conversion.after,
+      variable.summary$variables[[name]]$ancestry.reasoning,
+      variable.summary$variables[[name]]$ancestry.best.match,
+      round(variable.summary$variables[[name]]$ancestry.best.value, 2),
+      variable.summary$variables[[name]]$ancestry.second.match,
+      round(variable.summary$variables[[name]]$ancestry.second.value, 2)
     )
     rownames(df) <- NULL
+    colnames(df) <- c(
+      "Input",
+      "Output",
+      "Reasoning",
+      "Best Match",
+      "Best Score",
+      "Second Match",
+      "Second Score"
+    )
     print(knitr::kable(df, caption = "Handling of all partial match self-reported ancestries.", table.attr = knitr.table.attr))
   } else if (!is.null(variable.summary$variables[[name]]$invalid.factor.entries)) {
     ## other things that are factors

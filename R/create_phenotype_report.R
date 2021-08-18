@@ -122,6 +122,15 @@ create.phenotype.report <- function(in.filename,
     )
   }
 
+  ## attempt to harmonize ancestry variables using target list of ancestry tags
+  reformatted.list <- harmonize.ancestry(
+    reformatted.list$phenotype.data,
+    reformatted.list$variable.summary,
+    "nigeria",
+    0.8,
+    0.75
+  )
+
   ## create derived variables from cleanest possible versions of standard variables
   reformatted.list <- create.derived.variables(
     reformatted.list$phenotype.data,
