@@ -187,6 +187,10 @@ harmonize.ancestry.from.linker <- function(phenotype,
   ## variable summary for reporting purposes
   variable$ancestry.conversion.before <- phenotype[imperfect.matches]
   variable$ancestry.conversion.after <- partial.match.replacements
+  ## as this is about to become a factor, update the standard factor
+  ## conversion tracking data
+  variable$invalid.factor.entries <-
+    phenotype[imperfect.matches][is.na(partial.match.replacements)]
   ## update the partial matches
   phenotype[imperfect.matches] <- partial.match.replacements
   ## link to standard labels
