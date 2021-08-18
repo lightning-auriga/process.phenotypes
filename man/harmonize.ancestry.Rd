@@ -8,7 +8,9 @@ ancestry labels}
 harmonize.ancestry(
   phenotype.data,
   variable.summary,
-  ancestry.source = "nigeria"
+  ancestry.source = "nigeria",
+  best.match.threshold = 0.9,
+  best.match.discernment = 0.75
 )
 }
 \arguments{
@@ -17,7 +19,16 @@ harmonize.ancestry(
 \item{variable.summary}{list, variable configuration data}
 
 \item{ancestry.source}{character vector, name of data
-source to pull known labels from; e.g. "nigeria"}
+source to pull known labels from (e.g. "nigeria"); or
+a file in the format expected by load.ancestry.linker}
+
+\item{best.match.threshold}{numeric, on \link{0,1}, denoting how high
+the best match similarity must be to permit a call}
+
+\item{best.match.discernment}{numeric, on \link{0,1} denoting the proportion
+of the top match the next best match must be less than (assuming the
+next best match does not map to the same harmonized label) in order
+to accept the top match}
 }
 \value{
 list; first entry is modified phenotype dataset
@@ -33,4 +44,7 @@ it's worth a shot.
 }
 \details{
 TBD
+}
+\seealso{
+load.ancestry.linker
 }

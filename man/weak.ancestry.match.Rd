@@ -32,9 +32,13 @@ next best match does not map to the same harmonized label) in order
 to accept the top match}
 }
 \value{
-character vector, modified version of the input
-ancestry reports, modified to best guess ancestry, or NA if
-the best match is poor
+list; first entry is character vector, modified version of
+the input ancestry reports, modified to best guess ancestry, or
+NA if the best match is poor; second entry is character vector
+describing the reasoning for accepting or rejecting partial matches;
+third is best ancestry match regardless of acceptance; fourth is
+quality of best match; fifth is second best ancestry match;
+sixth is quality of second best match
 }
 \description{
 Self-reported free-text ancestry is messy. If it perfectly

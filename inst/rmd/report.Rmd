@@ -392,7 +392,27 @@ for (name in names(variable.summary$variables)) {
       cat("\n\nAll values consistent with numeric format or missing data.\n\n")
     }
   }
-  if (!is.null(variable.summary$variables[[name]]$invalid.factor.entries)) {
+  ## factors
+  ## give ancestry factor variable special treatment
+  if (!is.null(variable.summary$variables[[name]]$params$subject_ancestry)) {
+    ## instead of reporting failed conversions specifically,
+    ## report a table of all imperfect matches to the reference ancestry labels,
+    ## and track the outcomes for all of them, even the ones that were eventually
+    ## called. this behavior may be updated later once this method has been
+    ## improved
+    df <- data.frame(
+      Input = variable.summary$variables[[name]]$ancestry.conversion.before,
+      Output = variable.summary$variables[[name]]$ancestry.conversion.after,
+      Reasoning = variable.summary$variables[[name]]$ancestry.reasoning,
+      "Best Match" = variable.summary$variables[[name]]$ancestry.best.match,
+      "Best Score" = variable.summary$variables[[name]]$ancestry.best.value,
+      "Second Match" = variable.summary$variables[[name]]$ancestry.second.match,
+      "Second Score" = variable.summary$variables[[name]]$ancestry.second.value
+    )
+    rownames(df) <- NULL
+    print(knitr::kable(df, caption = "Handling of all partial match self-reported ancestries.", table.attr = knitr.table.attr))
+  } else if (!is.null(variable.summary$variables[[name]]$invalid.factor.entries)) {
+    ## other things that are factors
     if (length(variable.summary$variables[[name]]$invalid.factor.entries) > 0) {
       df <- data.frame(table(variable.summary$variables[[name]]$invalid.factor.entries, useNA = "ifany"))
       rownames(df) <- NULL

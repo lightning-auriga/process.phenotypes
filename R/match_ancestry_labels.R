@@ -14,30 +14,47 @@
 #' @param phenotype.data data frame, input phenotype data
 #' @param variable.summary list, variable configuration data
 #' @param ancestry.source character vector, name of data
-#' source to pull known labels from; e.g. "nigeria"
+#' source to pull known labels from (e.g. "nigeria"); or
+#' a file in the format expected by load.ancestry.linker
+#' @param best.match.threshold numeric, on [0,1], denoting how high
+#' the best match similarity must be to permit a call
+#' @param best.match.discernment numeric, on [0,1] denoting the proportion
+#' of the top match the next best match must be less than (assuming the
+#' next best match does not map to the same harmonized label) in order
+#' to accept the top match
 #' @return list; first entry is modified phenotype dataset
 #' with ancestry labels updated, second entry is modified
 #' variable summary with ancestry label update metrics added
-harmonize.ancestry <- function(phenotype.data, variable.summary, ancestry.source = "nigeria") {
+#' @seealso load.ancestry.linker
+harmonize.ancestry <- function(phenotype.data,
+                               variable.summary,
+                               ancestry.source = "nigeria",
+                               best.match.threshold = 0.9,
+                               best.match.discernment = 0.75) {
   stopifnot(is.data.frame(phenotype.data))
   stopifnot(is.list(variable.summary))
   stopifnot(
     is.character(ancestry.source),
     length(ancestry.source) == 1,
-    ancestry.source == "nigeria"
+    ancestry.source == "nigeria" | file.exists(ancestry.source)
   )
-  stopifnot(length(variable.summary) == ncol(phenotype.data))
-  ancestry.filename <- system.file("external",
-    paste(ancestry.source, ".ancestry.tsv", sep = ""),
-    package = "process.phenotypes"
-  )
+  stopifnot(length(variable.summary$variables) == ncol(phenotype.data))
+  ancestry.filename <- ancestry.source
+  if (!file.exists(ancestry.filename)) {
+    ancestry.filename <- system.file("external",
+      paste(ancestry.source, ".ancestry.tsv", sep = ""),
+      package = "process.phenotypes"
+    )
+  }
   ancestry.data <- load.ancestry.linker(ancestry.filename)
   for (i in seq_len(length(variable.summary$variables))) {
     if (!is.null(variable.summary$variables[[i]]$params$subject_ancestry)) {
       res <- harmonize.ancestry.from.linker(
         phenotype.data[, i],
         variable.summary$variables[[i]],
-        ancestry.data
+        ancestry.data,
+        best.match.threshold,
+        best.match.discernment
       )
       phenotype.data[, i] <- res$phenotype
       variable.summary$variables[[i]] <- res$variable
@@ -170,12 +187,13 @@ harmonize.ancestry.from.linker <- function(phenotype,
   ## count these perfect matches for downstream reporting
   variable$perfect.ancestry.matches <- length(which(perfect.matches))
   ## handle ancestries with imperfect matches in the linker
-  partial.match.replacements <- weak.ancestry.match(
+  weak.match.results <- weak.ancestry.match(
     phenotype[imperfect.matches],
     ancestry.data,
     best.match.threshold,
     best.match.discernment
   )
+  partial.match.replacements <- weak.match.results$phenotype
   ## count these imperfect matches for downstream reporting
   variable$imperfect.ancestry.matches <- length(which(!is.na(partial.match.replacements)))
   ## count how many conversions failed entirely
@@ -187,6 +205,14 @@ harmonize.ancestry.from.linker <- function(phenotype,
   ## variable summary for reporting purposes
   variable$ancestry.conversion.before <- phenotype[imperfect.matches]
   variable$ancestry.conversion.after <- partial.match.replacements
+  ## report even more tracking data: best and second best matches
+  ## and quality of those matches; also report a text description
+  ## of the reasoning behind the acceptance or rejection of a match
+  variable$ancestry.reasoning <- weak.match.results$reasoning
+  variable$ancestry.best.match <- weak.match.results$top.match
+  variable$ancestry.best.value <- weak.match.results$top.value
+  variable$ancestry.second.match <- weak.match.results$second.match
+  variable$ancestry.second.value <- weak.match.results$second.value
   ## as this is about to become a factor, update the standard factor
   ## conversion tracking data
   variable$invalid.factor.entries <-
@@ -229,9 +255,13 @@ harmonize.ancestry.from.linker <- function(phenotype,
 #' of the top match the next best match must be less than (assuming the
 #' next best match does not map to the same harmonized label) in order
 #' to accept the top match
-#' @return character vector, modified version of the input
-#' ancestry reports, modified to best guess ancestry, or NA if
-#' the best match is poor
+#' @return list; first entry is character vector, modified version of
+#' the input ancestry reports, modified to best guess ancestry, or
+#' NA if the best match is poor; second entry is character vector
+#' describing the reasoning for accepting or rejecting partial matches;
+#' third is best ancestry match regardless of acceptance; fourth is
+#' quality of best match; fifth is second best ancestry match;
+#' sixth is quality of second best match
 weak.ancestry.match <- function(phenotype,
                                 ancestry.data,
                                 best.match.threshold = 0.9,
@@ -251,10 +281,8 @@ weak.ancestry.match <- function(phenotype,
   ## attempt #1: stringdist
   ## compute a similarity matrix between all inputs and all
   ## possible ancestries. then pick the top match, if the
-  ## match is at least 0.9 (on [0,1]) and the next best match
-  ## is at most 80% as good
-  ## TODO(lightning.auriga): expose matching parameters if it looks
-  ## like this will work at all
+  ## match is at least X (on [0,1]) and the next best match
+  ## is at most Y*100% as good
   sim.matrix <- stringdist::stringsimmatrix(phenotype, names(ancestry.data))
   ## find index of
   best.match <- apply(sim.matrix, 1, which.max)
@@ -270,8 +298,21 @@ weak.ancestry.match <- function(phenotype,
     sim.matrix[i, next.best.match[i]]
   })
   res <- names(ancestry.data[best.match])
-  res[best.value < best.match.threshold] <- NA
-  res[next.best.value >= best.match.discernment * best.value &
-    ancestry.data[best.match] != ancestry.data[next.best.match]] <- NA
-  res
+  reasoning <- rep("success", length(res))
+  exclude.by.quality <- best.value < best.match.threshold
+  res[exclude.by.quality] <- NA
+  reasoning[exclude.by.quality] <- "top match quality too low"
+  exclude.by.discernment <- !exclude.by.quality & next.best.value >= best.match.discernment * best.value
+  override.by.collision <- ancestry.data[best.match] == ancestry.data[next.best.match]
+  res[exclude.by.discernment & !override.by.collision] <- NA
+  reasoning[exclude.by.discernment & override.by.collision] <- "low discernment but top matches concordant"
+  reasoning[exclude.by.discernment & !override.by.collision] <- "low discernment between discordant calls"
+  list(
+    phenotype = res,
+    reasoning = reasoning,
+    top.match = names(ancestry.data[best.match]),
+    top.value = best.value,
+    second.match = names(ancestry.data[next.best.match]),
+    second.value = next.best.value
+  )
 }
