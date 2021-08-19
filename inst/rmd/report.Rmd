@@ -418,6 +418,11 @@ for (name in names(variable.summary$variables)) {
       "Second Match",
       "Second Score"
     )
+    df$Count <- rep(0, nrow(df))
+    for (query in unique(df[, 1])) {
+      df$Count[df[, 1] == query] <- length(which(df[, 1] == query))
+    }
+
     ## clean up table: for large datasets, this gets unwieldy
     ## first remove duplicate queries, as the resolution is always the same
     df <- df[!duplicated(df[, 1]), ]
