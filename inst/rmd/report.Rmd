@@ -192,7 +192,7 @@ for (name in names(variable.summary$variables)) {
         multimodal.varname <- variable.summary$variables[[name]]$params$multimodal
         stopifnot(multimodal.varname %in% colnames(phenotype.data))
         multimodal.values <- unique(phenotype.data[, multimodal.varname])
-        hist.plot.colours <- RColorBrewer::brewer.pal(length(multimodal.values), "Dark2")
+        hist.plot.colours <- RColorBrewer::brewer.pal(max(3, length(multimodal.values)), "Dark2")[seq_len(length(multimodal.values))]
         annotate.y <- max(hist(phenotype.data[, name], breaks = nbins, plot = FALSE)$counts) / nrow(phenotype.data)
         for (i in seq_len(length(multimodal.values))) {
           if (length(which(phenotype.data[, multimodal.varname] == multimodal.values[i] &
