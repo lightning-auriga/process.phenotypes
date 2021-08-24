@@ -7,7 +7,6 @@
 #' TBD
 #'
 #' @param in.filename character vector, name of input phenotype tsv file
-#' @param dataset.tag character vector, dataset-specific tag to prefix variable names
 #' @param dataset.yaml character vector, yaml configuration for project
 #' @param shared.model.yaml character vector, yaml configuration for shared model specifications
 #' @param out.filename character vector, name of output report html file
@@ -20,7 +19,6 @@
 #' @examples
 #' create.phenotype.report("/path/to/directory/MM_FINAl_store.tsv", "MM", "/output/path/MM_report.html")
 create.phenotype.report <- function(in.filename,
-                                    dataset.tag,
                                     dataset.yaml,
                                     shared.model.yaml,
                                     out.filename,
@@ -32,11 +30,6 @@ create.phenotype.report <- function(in.filename,
     is.vector(in.filename, mode = "character"),
     length(in.filename) == 1,
     file.exists(in.filename)
-  )
-  ## sanity check for dataset.tag param
-  stopifnot(
-    is.vector(dataset.tag, mode = "character"),
-    length(dataset.tag) == 1
   )
   ## sanity check for dataset.yaml param
   stopifnot(
@@ -74,8 +67,7 @@ create.phenotype.report <- function(in.filename,
   phenotype.data <- remove.invalid.columns(phenotype.data)
 
   ## sanitize headers
-  ## TODO: eventually feed dataset tag from yaml
-  variable.summary <- map.header(phenotype.data, dataset.tag, config.data)
+  variable.summary <- map.header(phenotype.data, config.data)
   phenotype.data <- sanitize.header(phenotype.data, variable.summary)
 
   ## clean up strings (global functions across all variables)

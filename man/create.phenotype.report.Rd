@@ -6,7 +6,6 @@
 \usage{
 create.phenotype.report(
   in.filename,
-  dataset.tag,
   dataset.yaml,
   shared.model.yaml,
   out.filename,
@@ -17,8 +16,6 @@ create.phenotype.report(
 }
 \arguments{
 \item{in.filename}{character vector, name of input phenotype tsv file}
-
-\item{dataset.tag}{character vector, dataset-specific tag to prefix variable names}
 
 \item{dataset.yaml}{character vector, yaml configuration for project}
 

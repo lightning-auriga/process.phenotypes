@@ -4,12 +4,10 @@
 \alias{map.header}
 \title{Create and map structured variable names to replace arbitrary input variable names}
 \usage{
-map.header(df, dataset.tag, config.data, force.header.mapping = FALSE)
+map.header(df, config.data, force.header.mapping = FALSE)
 }
 \arguments{
 \item{df}{data.frame, phenotype dataframe with untransformed headers}
-
-\item{dataset.tag}{character vector, unique string tag for this dataset}
 
 \item{config.data}{list, yaml configuration data per variable}
 

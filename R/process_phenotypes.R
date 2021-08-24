@@ -63,7 +63,6 @@ process.phenotypes <- function(phenotype.path,
     output.filename <- paste(output.path, paste(dataset.tag, "report.html", sep = "_"), sep = "/")
     create.phenotype.report(
       paste(phenotype.path, file, sep = "/"),
-      dataset.tag,
       dataset.yaml,
       shared.model.yaml,
       output.filename,
