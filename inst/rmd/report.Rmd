@@ -67,7 +67,14 @@ knitr.table.attr <- "style=\"width: 90%\""
 knitr.contingency.table.attr <- "style=\"width: 50%\""
 ```
 
-At some point, there should be introductory content here.
+This report is a summary of the phenotype data and includes subject-level summary metrics, 
+variable-level summary metrics, a linker between original variable names and standardized encoded names,
+and per-variable summaries.  The per-variable summaries vary based on data type.  Numeric types will
+display a histogram and min/max/mean/median/deciles.  Categorical and ordinal types display counts of each 
+factor level.  All types other than string include a summary of data entries that are not consistent with 
+the indicated data type.  Dependencies, bounds, data types, etc. are defined in the accompanying configuration
+file.  
+<br>
 `r variable.summary$subjects.excluded.for.age` subjects were
 removed for being below the minimum permissible age of
 `r variable.summary$globals$min_age_for_inclusion`.
@@ -177,7 +184,11 @@ for (name in names(variable.summary$variables)) {
     )
   }
   if (!is.null(variable.summary$variables[[name]]$params$code)) {
-    cat("\n\n```\n", variable.summary$variables[[name]]$params$code, "\n```\n\n", sep = "")
+    cat(
+      "\n\nThe logic to create this derived variable is as follows:\n\n```\n",
+      variable.summary$variables[[name]]$params$code, "\n```\n\n",
+      sep = ""
+    )
   }
 
   ## report any indication of residual Excel junk in the variable
@@ -380,6 +391,8 @@ for (name in names(variable.summary$variables)) {
       " report output of individual value counts is suppressed.\n\n",
       sep = ""
     )
+  } else if (suppress.reporting) {
+    cat("\n\nReporting for this variable was suppressed in the configuration.\n\n")
   }
   if (!is.null(variable.summary$variables[[name]]$invalid.blood.pressure.entries)) {
     if (length(variable.summary$variables[[name]]$invalid.blood.pressure.entries) > 0) {

@@ -67,7 +67,7 @@ create.phenotype.report <- function(in.filename,
   phenotype.data <- remove.invalid.columns(phenotype.data)
 
   ## sanitize headers
-  variable.summary <- map.header(phenotype.data, config.data)
+  variable.summary <- map.header(phenotype.data, config.data$tag, config.data)
   phenotype.data <- sanitize.header(phenotype.data, variable.summary)
 
   ## clean up strings (global functions across all variables)

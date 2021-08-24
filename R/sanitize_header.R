@@ -13,6 +13,7 @@
 #'
 #' @param df data.frame, phenotype dataframe with untransformed headers
 #' @param config.data list, yaml configuration data per variable
+#' @param dataset.tag character vector, unique string tag for this dataset
 #' @param force.header.mapping logical, whether you want to be kinda foolish
 #' and allow desync between config variable names and dataset header data.
 #' this safety check was implemented in part due to the possible presence of duplicate
@@ -27,7 +28,7 @@
 #' df <- data.frame(rnorm(100), runif(100))
 #' colnames(df) <- c("Human height lol", "y")
 #' map.header(df, "mytag")
-map.header <- function(df, config.data,
+map.header <- function(df, dataset.tag, config.data,
                        force.header.mapping = FALSE) {
   ## new: pull names from input config variable specification
   ## TODO: add yaml checker that makes sure these names
@@ -46,7 +47,7 @@ map.header <- function(df, config.data,
 
   if (ncol(df) != length(config.names)) {
     stop(
-      "for dataset tag ", config.data$tag, ", variable count ",
+      "for dataset tag ", dataset.tag, ", variable count ",
       "in phenotypes does not match count in yaml config (",
       "found ", ncol(df), " in phenotypes but ",
       length(config.names), " in config)"
@@ -60,7 +61,7 @@ map.header <- function(df, config.data,
     )
     print(error.data[error.data[, 1] != error.data[, 2], ])
     stop(
-      "for dataset tag ", config.data$tag, ", column names ",
+      "for dataset tag ", dataset.tag, ", column names ",
       "in phenotypes do not match yaml config values"
     )
   }
