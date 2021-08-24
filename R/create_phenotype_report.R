@@ -193,6 +193,14 @@ create.phenotype.report <- function(in.filename,
   nas.by.subject <- compute.subject.na.count(phenotype.data, variable.summary)
   subjects.failing.deps <- aggregate.subject.dep.failures(variable.summary)
 
+  ## apply per-subject exclusions based on some set of computed metrics and a bound
+  phenotype.data.na.applied <- exclude.subjects.by.metric(
+    phenotype.data.na.applied,
+    subjects.wrong.type,
+    variable.summary$globals$max_invalid_datatypes_per_subject
+  )
+
+
   ## find Rmd file from system installation
   rmarkdown.template <- system.file("rmd", "report.Rmd",
     package = "process.phenotypes"
@@ -209,7 +217,8 @@ create.phenotype.report <- function(in.filename,
       subjects.wrong.type = subjects.wrong.type,
       variables.wrong.type = variables.wrong.type,
       nas.by.subject = nas.by.subject,
-      subjects.failing.deps = subjects.failing.deps
+      subjects.failing.deps = subjects.failing.deps,
+      subj.invalid.type.max = variable.summary$globals$max_invalid_datatypes_per_subject
     )
   )
   ## temporary fix: report "cleaned" data as tsv file

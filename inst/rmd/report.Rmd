@@ -21,6 +21,7 @@ params:
   variables.wrong.type: c()
   nas.by.subject: c()
   subjects.failing.deps: c()
+  subj.invalid.type.max: 100
 ---
 
 #### Link input parameters to local variables
@@ -34,6 +35,7 @@ subjects.wrong.type <- params$subjects.wrong.type
 variables.wrong.type <- params$variables.wrong.type
 nas.by.subject <- params$nas.by.subject
 subjects.failing.deps <- params$subjects.failing.deps
+subj.invalid.type.max <- params$subj.invalid.type.max
 ```
 
 #### Load required R packages
@@ -69,6 +71,10 @@ At some point, there should be introductory content here.
 `r variable.summary$subjects.excluded.for.age` subjects were
 removed for being below the minimum permissible age of
 `r variable.summary$globals$min_age_for_inclusion`.
+`r n.invalid.types.removed <- length(which(subjects.wrong.type >= subj.invalid.type.max))`
+`r n.invalid.types.removed` `r if (n.invalid.types.removed == 1) {" subject is "} else {" subjects are "}`
+removed for containing more than `r subj.invalid.type.max` datapoints not matching the
+corresponding variable type.
 
 ***
 <br>
@@ -91,11 +97,11 @@ plot.data <- data.frame(x = subjects.wrong.type)
 my.hist <- ggplot(aes(x = x, y = ..count.. / nrow(phenotype.data)), data = plot.data)
 my.hist <- my.hist + my.theme + geom_histogram(bins = 50)
 my.hist <- my.hist + xlab("Number of Invalid Type Datapoints by Subject") + ylab("Proportion of Subjects")
+my.hist <- my.hist + geom_vline(xintercept = subj.invalid.type.max, col = "red", lty = 2)
 cat("\n\n#### Distribution of Invalid Type Datapoints by Subject\n\n")
 print(my.hist)
 
 knitr::kable(process.phenotypes:::get.top.ten(TRUE, subjects.wrong.type, "Subjects"), caption = "Ten highest type conversion failures", table.attr = knitr.table.attr)
-knitr::kable(process.phenotypes:::get.top.ten(FALSE, subjects.wrong.type, "Subjects"), caption = "Ten lowest type conversion failures", table.attr = knitr.table.attr)
 ```
 
 ***
@@ -126,7 +132,6 @@ cat("\n\n#### Distribution of Invalid Type Datapoints by Variable\n\n")
 print(my.hist)
 
 knitr::kable(process.phenotypes:::get.top.ten(TRUE, variables.wrong.type, "Variables"), caption = "Ten highest type conversion failures", table.attr = knitr.table.attr)
-knitr::kable(process.phenotypes:::get.top.ten(FALSE, variables.wrong.type, "Variables"), caption = "Ten lowest type conversion failures", table.attr = knitr.table.attr)
 ```
 
 ### Report linking between input and standardized variable names
@@ -158,7 +163,10 @@ to the variable's configured type.
 for (name in names(variable.summary$variables)) {
   my.summ <- variable.summary$variables[[name]]$summary
   variable.pretty.name <- variable.summary$variables[[name]]$original.name
-
+  suppress.reporting <- FALSE
+  if (!is.null(variable.summary$variables[[name]]$params$suppress_reporting)) {
+    suppress.reporting <- variable.summary$variables[[name]]$params$suppress_reporting
+  }
   cat(
     "\n\n### ", variable.pretty.name, "\n\n"
   )
@@ -167,6 +175,9 @@ for (name in names(variable.summary$variables)) {
       "Official variable identity: \"",
       variable.summary$variables[[name]]$params$canonical_name, "\"", "\n\n"
     )
+  }
+  if (!is.null(variable.summary$variables[[name]]$params$code)) {
+    cat("\n\n```\n", variable.summary$variables[[name]]$params$code, "\n```\n\n", sep = "")
   }
 
   ## report any indication of residual Excel junk in the variable
@@ -353,8 +364,8 @@ for (name in names(variable.summary$variables)) {
   ## original exclusion criterion here is hitting everything for small datasets,
   ## even when the report is not a unique value report
   if (is.vector(phenotype.data[, name], mode = "numeric") |
-    is.factor(phenotype.data[, name]) |
-    length(my.summ) < nrow(phenotype.data) * unique.variable.value.inclusion.proportion) {
+    ((is.factor(phenotype.data[, name]) |
+      length(my.summ) < nrow(phenotype.data) * unique.variable.value.inclusion.proportion) & !suppress.reporting)) {
     variable.summary.df <- data.frame(
       names(my.summ), as.vector(my.summ)
     )
@@ -527,6 +538,7 @@ for (name in names(variable.summary$variables)) {
       table.attr = knitr.table.attr
     ))
   }
+
   cat("\n***\n<br>\n")
 }
 ```
