@@ -21,6 +21,9 @@ exclude.subjects.by.metric <- function(phenotype.data,
     length(which(is.na(metric.vec))) == 0,
     length(metric.vec) == nrow(phenotype.data)
   )
+  if (is.null(upper.limit)) {
+    upper.limit <- Inf
+  }
   stopifnot(
     is.numeric(upper.limit),
     length(upper.limit) == 1,
