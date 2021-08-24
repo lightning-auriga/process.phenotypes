@@ -5,14 +5,21 @@
 \title{Remove subjects from a data frame based on a pre-computed
 metric and a bound on that metric.}
 \usage{
-exclude.subjects.by.metric(phenotype.data, metric.vec, upper.limit)
+exclude.subjects.by.metric(
+  phenotype.data,
+  variable.summary,
+  metric.vec,
+  upper.limit
+)
 }
 \arguments{
 \item{phenotype.data}{data.frame, input phenotype data}
 
-\item{metric.vec}{numeric vector, pre-computed values,
-one per row of input data frame, to be used for determining
-exclusion}
+\item{variable.summary}{list, variable configuration data}
+
+\item{metric.vec}{integer vector, pre-computed values,
+with corresponding subject IDs as names, to be used for
+determining exclusion}
 
 \item{upper.limit}{numeric, bound on computed metric
 above which corresponding subjects will be removed}

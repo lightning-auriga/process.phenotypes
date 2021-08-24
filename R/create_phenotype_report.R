@@ -196,6 +196,7 @@ create.phenotype.report <- function(in.filename,
   ## apply per-subject exclusions based on some set of computed metrics and a bound
   phenotype.data.na.applied <- exclude.subjects.by.metric(
     phenotype.data.na.applied,
+    variable.summary,
     subjects.wrong.type,
     variable.summary$globals$max_invalid_datatypes_per_subject
   )
