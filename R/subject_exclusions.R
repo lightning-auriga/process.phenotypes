@@ -32,7 +32,6 @@ exclude.subjects.by.metric <- function(phenotype.data,
     !is.na(upper.limit)
   )
   subject.id.index <- find.subject.id.index(variable.summary)
-  stopifnot(length(which(names(metric.vec) %in% phenotype.data[, subject.id.index])) == length(metric.vec))
   aligned.data <- metric.vec[phenotype.data[, subject.id.index]]
   aligned.data[is.na(aligned.data)] <- 0
   phenotype.data[aligned.data <= upper.limit, ]
