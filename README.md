@@ -175,24 +175,25 @@ If you are using pre-commit as described below, the yaml configurations will be 
 ## Future Development Targets
 
 ### Imminent
-- [ ] input YAML format checker
-- [ ] derived variables, using format similar to dependency specification
-- [ ] expanded README documentation
-- [ ] improved report format, because whoa
+- [x] input YAML format checker
+- [x] derived variables, using format similar to dependency specification
+- [x] expanded README documentation
+- [x] improved report format, because whoa
 
 ### Longer Term
-- [ ] action to take upon dependency failure
+- [x] action to take upon dependency failure
 - [ ] data export formats
-  - [ ] plaintext/tsv
+  - [x] plaintext/tsv
   - [ ] STATA
   - [ ] SAS?
 
 ### Open Proposals
-- [ ] aliased variable transformations
-  - [ ] alternatively, can use derived variables explicitly
+- [x] aliased variable transformations
+  - [x] alternatively, can use derived variables explicitly
 
 ## Version History
 See changelog for more information.
+ * 27 Aug 2021: derived variables, transformations, many assorted improvements, and better readme
  * 12 Jul 2021: string_cleanup branch merged into default; v0.1.0
 
 ## How to contribute to development
