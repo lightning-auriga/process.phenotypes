@@ -56,7 +56,6 @@ process.phenotypes <- function(phenotype.path,
   shared.model.yaml <- paste(yaml.dir, "shared-models.yaml", sep = "/")
   ## dispatch report creation for each input file
   for (file in phenotype.files) {
-    ## TODO: replace this tag assumption with configurable tag from yaml file
     dataset.tag <- stringr::str_replace(file, ".tsv", "")
     ## temporary: assume dataset-specific yaml is in a fixed name under yaml.dir
     dataset.yaml <- paste(yaml.dir, paste(dataset.tag, "yaml", sep = "."), sep = "/")

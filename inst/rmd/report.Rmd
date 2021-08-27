@@ -1,5 +1,5 @@
 ---
-title: "Report Template for Audited Phenotype Files"
+title: "Phenotype Quality Control Report"
 output:
   html_document:
     code_folding: hide
@@ -24,9 +24,8 @@ params:
   subj.invalid.type.max: 100
 ---
 
-#### Link input parameters to local variables
-
 ```{r link.variables, eval=TRUE, echo=FALSE}
+#### Link input parameters to local variables
 dataset.name <- params$dataset.name
 variable.summary <- params$variable.summary
 phenotype.data <- params$phenotype.data
@@ -38,21 +37,31 @@ subjects.failing.deps <- params$subjects.failing.deps
 subj.invalid.type.max <- params$subj.invalid.type.max
 ```
 
-#### Load required R packages
-
 ```{r load.packages, eval=TRUE, echo=FALSE}
+#### Load required R packages
 library(ggplot2, quietly = TRUE)
 library(RColorBrewer, quietly = TRUE)
 library(knitr, quietly = TRUE)
 library(kableExtra, quietly = TRUE)
 ```
 
+```{r get.bins, eval=TRUE, echo=FALSE}
+#### Make sure the number of bins in a histogram isn't too close to the number of unique values!
+get.bins <- function(vec) {
+  n.unique.values <- length(unique(vec))
+  if (n.unique.values > 50) {
+    50
+  } else {
+    n.unique.values
+  }
+}
+```
+
 ***
 <br>
 
-#### Configure default themes for plotting/tables
-
 ```{r configure.ggplot2.theme, eval=TRUE, echo=FALSE}
+#### Configure default themes for plotting/tables
 my.theme <- theme_light() + theme(
   plot.title = element_text(size = 16, hjust = 0.5),
   axis.title = element_text(size = 14),
@@ -79,13 +88,27 @@ factor level.  All types other than string include a summary of data entries tha
 the indicated data type.  Dependencies, bounds, data types, etc. are defined in the accompanying configuration
 file.  
 <br>
+`r nrow(phenotype.data) + variable.summary$subjects.excluded.for.age` subjects were originally present in this dataset.
+<br>
 `r variable.summary$subjects.excluded.for.age` subjects were
 removed for being below the minimum permissible age of
 `r variable.summary$globals$min_age_for_inclusion`.
-`r n.invalid.types.removed <- length(which(subjects.wrong.type >= subj.invalid.type.max))`
-`r n.invalid.types.removed` `r if (n.invalid.types.removed == 1) {" subject "} else {" subjects "}`
-will be removed from cleaned output data for containing more than `r subj.invalid.type.max` 
-datapoints not matching the corresponding variable type.
+```{r report.invalid.type.removal, eval=TRUE, echo=FALSE, results="asis"}
+n.invalid.types.removed <- 0
+if (!is.null(subj.invalid.type.max)) {
+  n.invalid.types.removed <- length(which(subjects.wrong.type >= subj.invalid.type.max))
+  cat("\n",
+    n.invalid.types.removed,
+    ifelse(n.invalid.types.removed == 1, "subject", "subjects"),
+    "will be removed from cleaned output data for containing more than",
+    subj.invalid.type.max,
+    "datapoints not matching the corresponding variable type.\n",
+    sep = " "
+  )
+}
+```
+<br>
+`r nrow(phenotype.data) - n.invalid.types.removed` subjects remain in the cleaned dataset.
 
 ***
 <br>
@@ -96,7 +119,8 @@ datapoints not matching the corresponding variable type.
 ## probably want a histogram of this one
 plot.data <- data.frame(x = nas.by.subject)
 my.hist <- ggplot(aes(x = x, y = ..count.. / sum(..count..)), data = plot.data)
-my.hist <- my.hist + my.theme + geom_histogram(bins = 50)
+nbins <- get.bins(nas.by.subject)
+my.hist <- my.hist + my.theme + geom_histogram(bins = nbins, binwidth = diff(range(nas.by.subject)) / nbins)
 my.hist <- my.hist + xlab("Number of NA Values by Subject") + ylab("Proportion of Subjects")
 cat("\n\n#### Distribution of NA Counts by Subject\n\n")
 print(my.hist)
@@ -106,7 +130,8 @@ print(my.hist)
 ## probably also want a histogram of this one
 plot.data <- data.frame(x = subjects.wrong.type)
 my.hist <- ggplot(aes(x = x, y = ..count.. / nrow(phenotype.data)), data = plot.data)
-my.hist <- my.hist + my.theme + geom_histogram(bins = 50)
+nbins <- get.bins(subjects.wrong.type)
+my.hist <- my.hist + my.theme + geom_histogram(bins = nbins, binwidth = diff(range(subjects.wrong.type)) / nbins)
 my.hist <- my.hist + xlab("Number of Invalid Type Datapoints by Subject") + ylab("Proportion of Subjects")
 my.hist <- my.hist + geom_vline(xintercept = subj.invalid.type.max, col = "red", lty = 2)
 cat("\n\n#### Distribution of Invalid Type Datapoints by Subject\n\n")
@@ -122,7 +147,8 @@ knitr::kable(process.phenotypes:::get.top.ten(TRUE, subjects.wrong.type, "Subjec
 ## histogram time
 plot.data <- data.frame(x = subjects.failing.deps)
 my.hist <- ggplot(aes(x = x, y = ..count.. / nrow(phenotype.data)), data = plot.data)
-my.hist <- my.hist + my.theme + geom_histogram(bins = 50)
+nbins <- get.bins(subjects.failing.deps)
+my.hist <- my.hist + my.theme + geom_histogram(bins = nbins, binwidth = diff(range(subjects.failing.deps)) / nbins)
 my.hist <- my.hist + xlab("Number of Variable Dependency Failures by Subject") + ylab("Proportion of Subjects")
 cat("\n\n#### Distribution of Dependency Failures by Subject\n\n")
 print(my.hist)
@@ -137,7 +163,8 @@ print(my.hist)
 ## for now, histogram this too
 plot.data <- data.frame(x = variables.wrong.type)
 my.hist <- ggplot(aes(x = x, y = ..count.. / sum(..count..)), data = plot.data)
-my.hist <- my.hist + my.theme + geom_histogram(bins = 50)
+nbins <- get.bins(variables.wrong.type)
+my.hist <- my.hist + my.theme + geom_histogram(bins = nbins, binwidth = diff(range(variables.wrong.type)) / nbins)
 my.hist <- my.hist + xlab("Number of Invalid Type Datapoints by Variable") + ylab("Proportion of Variables")
 cat("\n\n#### Distribution of Invalid Type Datapoints by Variable\n\n")
 print(my.hist)
@@ -152,10 +179,17 @@ variable.mapping.df <- data.frame(
   names(variable.summary$variables),
   sapply(variable.summary$variables, function(i) {
     i$original.name
+  }),
+  sapply(variable.summary$variables, function(i) {
+    if (!is.null(i$params$canonical_name)) {
+      i$params$canonical_name
+    } else {
+      ""
+    }
   })
 )
 rownames(variable.mapping.df) <- NULL
-colnames(variable.mapping.df) <- c("Standardized", "Original")
+colnames(variable.mapping.df) <- c("Standardized", "Original", "Description")
 knitr::kable(variable.mapping.df, caption = "Phenotype Variable Names", table.attr = knitr.table.attr)
 ```
 
@@ -210,10 +244,10 @@ for (name in names(variable.summary$variables)) {
   if (is.vector(phenotype.data[, name], mode = "numeric")) {
     if (length(which(!is.na(phenotype.data[, name])))) {
       ## create data histogram for numeric data
-      nbins <- 50
       plot.data <- data.frame(x = phenotype.data[!is.na(phenotype.data[, name]), name])
       hist.plot <- ggplot(data = plot.data) + my.theme
-
+      nbins <- get.bins(phenotype.data[!is.na(phenotype.data[, name]), name])
+      binwidth <- diff(range(phenotype.data[!is.na(phenotype.data[, name]), name])) / nbins
       if (!is.null(variable.summary$variables[[name]]$params$multimodal)) {
         multimodal.varname <- variable.summary$variables[[name]]$params$multimodal
         stopifnot(multimodal.varname %in% colnames(phenotype.data))
@@ -233,6 +267,7 @@ for (name in names(variable.summary$variables)) {
           ),
           data = plot.subset,
           bins = nbins,
+          binwidth = binwidth,
           fill = hist.plot.colours[i],
           alpha = 0.2
           )
@@ -255,7 +290,8 @@ for (name in names(variable.summary$variables)) {
       } else {
         hist.plot <- hist.plot + geom_histogram(
           aes(x = x, y = ..count.. / sum(..count..)),
-          bins = nbins
+          bins = nbins,
+          binwidth = binwidth
         )
       }
       hist.plot <- hist.plot + xlab(name) + ylab("proportion of data")
