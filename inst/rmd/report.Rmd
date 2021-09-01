@@ -581,7 +581,7 @@ for (name in names(variable.summary$variables)) {
       Name = dependency.names,
       Condition = dependency.conditions,
       Count = sapply(strsplit(dependency.results, ","), function(i) {
-        length(i)
+        ifelse(identical(i, "all subjects pass"), 0, length(i))
       }),
       Result = dependency.results
     )
