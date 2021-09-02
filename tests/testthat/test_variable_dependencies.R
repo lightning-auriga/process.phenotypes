@@ -138,8 +138,15 @@ test_that("dependency.failure.handling successfully responds to exclusion reques
     TV003 = c(NA, 2.002, NA, 4.04, 5.05, NA),
     TV004 = c(TRUE, NA, TRUE, NA, TRUE, FALSE)
   )
+  out.variable.summary <- in.variable.summary
+  out.variable.summary$actual.nas.from.deps <- as.integer(6)
+  out.variable.summary$possible.nas.from.deps <- as.integer(18)
+
   expect_identical(
     dependency.failure.handling(in.phenotype.data, in.variable.summary),
-    out.phenotype.data
+    list(
+      phenotype.data = out.phenotype.data,
+      variable.summary = out.variable.summary
+    )
   )
 })

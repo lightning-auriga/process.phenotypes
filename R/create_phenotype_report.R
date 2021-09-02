@@ -146,10 +146,12 @@ create.phenotype.report <- function(in.filename,
   ## apply NA exclusions based on dependency results
   ## however: do not apply in place, as this makes the output
   ## contingency tables very uninformative
-  phenotype.data.na.applied <- dependency.failure.handling(
+  reformatted.list.na.applied <- dependency.failure.handling(
     reformatted.list$phenotype.data,
     reformatted.list$variable.summary
   )
+  phenotype.data.na.applied <- reformatted.list.na.applied$phenotype.data
+  reformatted.list$variable.summary <- reformatted.list.na.applied$variable.summary
 
   if (magic.fix) {
     phenotype.data <- reformatted.list$phenotype.data
