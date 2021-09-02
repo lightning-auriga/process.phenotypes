@@ -108,7 +108,7 @@ if (!is.null(subj.invalid.type.max)) {
 }
 ```
 <br>
-`r nrow(phenotype.data) - n.invalid.types.removed` subjects remain in the cleaned dataset.
+`r as.integer(nrow(phenotype.data) - n.invalid.types.removed)` subjects remain in the cleaned dataset.
 Based on configured dependency relationships between variables,
 `r variable.summary$actual.nas.from.deps` of `r variable.summary$possible.nas.from.deps`,
 or `r ifelse(variable.summary$possible.nas.from.deps == 0, 0, round(variable.summary$actual.nas.from.deps / variable.summary$possible.nas.from.deps, 2))`%,
