@@ -544,7 +544,7 @@ for (name in names(variable.summary$variables)) {
       if (length(dependency.result) == 0) {
         dependency.result <- "all subjects pass"
       } else if (length(dependency.result) > 1) {
-        dependency.result <- paste(dependency.result, collapse = ", ")
+        dependency.result <- paste(sort(dependency.result), collapse = ", ")
       }
       dependency.results <- c(dependency.results, dependency.result)
 
