@@ -37,6 +37,8 @@ apply.consent.exclusion <- function(phenotype.data, variable.summary) {
         header = FALSE,
         stringsAsFactors = FALSE, comment.char = ""
       )[, 1]
+      subj.inc <- make.lowercase(subj.inc)
+      subj.inc <- remove.whitespace(subj.inc)
     }
   }
   if (has.subj.exc) {
@@ -48,6 +50,8 @@ apply.consent.exclusion <- function(phenotype.data, variable.summary) {
         header = FALSE,
         stringsAsFactors = FALSE, comment.char = ""
       )[, 1]
+      subj.exc <- make.lowercase(subj.exc)
+      subj.exc <- remove.whitespace(subj.exc)
     }
   }
   ## if there are collisions, this is treated as an error

@@ -140,6 +140,9 @@ bash make_empty_dataset_yaml.bash ../raw_normalized/SO_raw.tsv SO | tr -s â€œ\â€
 - `globals`: contains two global settings that are applied across all variables
   - `min_age_for_inclusion`: (required) subjects will be excluded from all histograms etc. in the report and from the cleaned output if their age falls below this threshold
   - `max_invalid_datatypes_per_subject`: subjects will be excluded from  the cleaned output if they have more than this number of variables that can not be converted to the expected datatypes
+  - `consent_inclusion_file`: name of file containing subject IDs with confirmed consent approval. format is: plaintext file, no header, one ID per line
+  - `consent_exclusion_file`: name of file containing subject IDs without valid consent. format is: plaintext file, no header, one ID per line
+    - the above two files are each optional. the files can be specified but empty. if neither is specified, no subjects will be included or excluded for consent. if one or the other but not both is specified, the included file's action will be applied alone. if both are specified, both actions will be performed, and additionally any subject ID found in the dataset but in neither list will be excluded and listed in a table in the final report for inspection. IDs cannot be present on both lists at once; if any such IDs are found, the program will complain.
 - `variables`: this section contains one block for each variable in the dataset, with a variety of other configuration settings described in the next section
 - `derived`: this section defines variables to be derived from existing variables
 

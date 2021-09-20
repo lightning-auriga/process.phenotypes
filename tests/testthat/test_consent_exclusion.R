@@ -1,7 +1,7 @@
 test_that("consent exclusion works with both files specified", {
   in.phenotype.data <- data.frame(
     TV001 = 1:6,
-    TV002 = c("E", "B", "C", "A", "D", "F"),
+    TV002 = c("e", "b", "c", "a", "d", "f"),
     TV003 = c(TRUE, FALSE, TRUE, TRUE, TRUE, FALSE)
   )
   in.variable.summary <- list(
@@ -20,7 +20,7 @@ test_that("consent exclusion works with both files specified", {
   out.variable.summary$total.initial.sample.size <- as.integer(6)
   out.variable.summary$subjects.consent.no <- as.integer(c(1))
   out.variable.summary$subjects.consent.yes <- as.integer(c(2))
-  out.variable.summary$subjects.ambiguous.consent <- c("E", "C", "F")
+  out.variable.summary$subjects.ambiguous.consent <- c("e", "c", "f")
   expect_identical(
     apply.consent.exclusion(in.phenotype.data, in.variable.summary),
     list(
@@ -33,7 +33,7 @@ test_that("consent exclusion works with both files specified", {
 test_that("consent exclusion works with only exclusion file specified", {
   in.phenotype.data <- data.frame(
     TV001 = 1:6,
-    TV002 = c("E", "B", "C", "A", "D", "F"),
+    TV002 = c("e", "b", "c", "a", "d", "f"),
     TV003 = c(TRUE, FALSE, TRUE, TRUE, TRUE, FALSE)
   )
   in.variable.summary <- list(
@@ -64,7 +64,7 @@ test_that("consent exclusion works with only exclusion file specified", {
 test_that("consent exclusion works with only inclusion file specified", {
   in.phenotype.data <- data.frame(
     TV001 = 1:6,
-    TV002 = c("E", "B", "C", "A", "D", "F"),
+    TV002 = c("e", "b", "c", "a", "d", "f"),
     TV003 = c(TRUE, FALSE, TRUE, TRUE, TRUE, FALSE)
   )
   in.variable.summary <- list(
@@ -95,7 +95,7 @@ test_that("consent exclusion works with only inclusion file specified", {
 test_that("consent exclusion does nothing with no files specified", {
   in.phenotype.data <- data.frame(
     TV001 = 1:6,
-    TV002 = c("E", "B", "C", "A", "D", "F"),
+    TV002 = c("e", "b", "c", "a", "d", "f"),
     TV003 = c(TRUE, FALSE, TRUE, TRUE, TRUE, FALSE)
   )
   in.variable.summary <- list(
@@ -124,7 +124,7 @@ test_that("consent exclusion does nothing with no files specified", {
 test_that("consent exclusion gracefully handles empty files", {
   in.phenotype.data <- data.frame(
     TV001 = 1:6,
-    TV002 = c("E", "B", "C", "A", "D", "F"),
+    TV002 = c("e", "b", "c", "a", "d", "f"),
     TV003 = c(TRUE, FALSE, TRUE, TRUE, TRUE, FALSE)
   )
   in.variable.summary <- list(
@@ -143,7 +143,7 @@ test_that("consent exclusion gracefully handles empty files", {
   out.variable.summary$total.initial.sample.size <- as.integer(6)
   out.variable.summary$subjects.consent.no <- as.integer(c(0))
   out.variable.summary$subjects.consent.yes <- as.integer(c(0))
-  out.variable.summary$subjects.ambiguous.consent <- c("E", "B", "C", "A", "D", "F")
+  out.variable.summary$subjects.ambiguous.consent <- c("e", "b", "c", "a", "d", "f")
   expect_identical(
     apply.consent.exclusion(in.phenotype.data, in.variable.summary),
     list(
