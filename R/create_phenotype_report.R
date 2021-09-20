@@ -70,6 +70,11 @@ create.phenotype.report <- function(in.filename,
   variable.summary <- map.header(phenotype.data, config.data$tag, config.data)
   phenotype.data <- sanitize.header(phenotype.data, variable.summary)
 
+  ## as soon as possible, remove subjects lacking consent
+  reformatted.list <- apply.consent.exclusion(phenotype.data, variable.summary)
+  phenotype.data <- reformatted.list$phenotype.data
+  variable.summary <- reformatted.list$variable.summary
+
   ## clean up strings (global functions across all variables)
   phenotype.data <- make.lowercase(phenotype.data)
   if (magic.fix) {
