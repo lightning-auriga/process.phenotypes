@@ -17,6 +17,7 @@ test_that("consent exclusion works with both files specified", {
   )
   out.phenotype.data <- in.phenotype.data[4:5, ]
   out.variable.summary <- in.variable.summary
+  out.variable.summary$total.initial.sample.size <- as.integer(6)
   out.variable.summary$subjects.consent.no <- as.integer(c(1))
   out.variable.summary$subjects.consent.yes <- as.integer(c(2))
   out.variable.summary$subjects.ambiguous.consent <- c("E", "C", "F")
@@ -47,6 +48,7 @@ test_that("consent exclusion works with only exclusion file specified", {
   )
   out.phenotype.data <- in.phenotype.data[-2, ]
   out.variable.summary <- in.variable.summary
+  out.variable.summary$total.initial.sample.size <- as.integer(6)
   out.variable.summary$subjects.consent.no <- as.integer(c(1))
   out.variable.summary$subjects.consent.yes <- as.integer(c(0))
   out.variable.summary$subjects.ambiguous.consent <- character()
@@ -77,6 +79,7 @@ test_that("consent exclusion works with only inclusion file specified", {
   )
   out.phenotype.data <- in.phenotype.data[4:5, ]
   out.variable.summary <- in.variable.summary
+  out.variable.summary$total.initial.sample.size <- as.integer(6)
   out.variable.summary$subjects.consent.no <- as.integer(c(0))
   out.variable.summary$subjects.consent.yes <- as.integer(c(2))
   out.variable.summary$subjects.ambiguous.consent <- character()
@@ -105,6 +108,7 @@ test_that("consent exclusion does nothing with no files specified", {
   )
   out.phenotype.data <- in.phenotype.data
   out.variable.summary <- in.variable.summary
+  out.variable.summary$total.initial.sample.size <- as.integer(6)
   out.variable.summary$subjects.consent.no <- as.integer(c(0))
   out.variable.summary$subjects.consent.yes <- as.integer(c(0))
   out.variable.summary$subjects.ambiguous.consent <- character()
@@ -136,6 +140,7 @@ test_that("consent exclusion gracefully handles empty files", {
   )
   out.phenotype.data <- in.phenotype.data[rep(FALSE, 6), ]
   out.variable.summary <- in.variable.summary
+  out.variable.summary$total.initial.sample.size <- as.integer(6)
   out.variable.summary$subjects.consent.no <- as.integer(c(0))
   out.variable.summary$subjects.consent.yes <- as.integer(c(0))
   out.variable.summary$subjects.ambiguous.consent <- c("E", "B", "C", "A", "D", "F")

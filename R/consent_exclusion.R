@@ -18,6 +18,8 @@
 #' entry modified version of input config data with summary
 #' information included about consent status for report.
 apply.consent.exclusion <- function(phenotype.data, variable.summary) {
+  ## annotate initial sample size
+  variable.summary$total.initial.sample.size <- nrow(phenotype.data)
   ## get filenames from configuration data
   subj.inc.filename <- variable.summary$globals$consent_inclusion_file
   subj.exc.filename <- variable.summary$globals$consent_exclusion_file

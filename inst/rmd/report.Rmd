@@ -88,20 +88,13 @@ factor level.  All types other than string include a summary of data entries tha
 the indicated data type.  Dependencies, bounds, data types, etc. are defined in the accompanying configuration
 file.  
 <br>
-`r variable.summary$subjects.consent.yes + variable.summary$subjects.consent.no + length(variable.summary$subjects.ambiguous.consent)`
-subjects were originally present in this dataset. 
-`if (!is.null(variable.summary$globals$consent_inclusion_file)) { paste(variable.summary$subjects.consent.yes, ifelse(variable.summary$subjects.consent.yes == 1, " subject was", " subjects were"), " included with verified consent.") }`
-`if (!is.null(variable.summary$globals$consent_exclusion_file)) { paste(variable.summary$subjects.consent.no, ifelse(variable.summary$subjects.consent.no == 1, " subject was", " subjects were"), excluded for lacking consent.") }`
-`if (!is.null(variable.summary$globals$consent_inclusion_file) & !is.null(variable.summary$globals$consent_exclusion_file)) { paste(length(variable.summary$subjects.ambiguous.consent), ifelse(length(variable.summary$subjects.ambiguous.consent) == 1, " subject was", " subjects were"), additionally excluded for not being present in either the inclusion or exclusion file.") }`
-<br>
-`r variable.summary$subjects.excluded.for.age` additional `r ifelse(variable.summary$subjects.excluded.for.age == 1, " subject was ", " subjects were ")`
-removed for being below the minimum permissible age of `r variable.summary$globals$min_age_for_inclusion`.
+`r paste(variable.summary$total.initial.sample.size, ifelse(variable.summary$total.initial.sample.size == 1, " subject was", " subjects were"), " originally present in this dataset.", ifelse(!is.null(variable.summary$globals$consent_inclusion_file), paste(" ", variable.summary$subjects.consent.yes, ifelse(variable.summary$subjects.consent.yes == 1, " subject was", " subjects were"), " included with verified consent.", sep = ""), ""), ifelse(!is.null(variable.summary$globals$consent_exclusion_file), paste(" ", variable.summary$subjects.consent.no, ifelse(variable.summary$subjects.consent.no == 1, " subject was", " subjects were"), " excluded for lacking consent.", sep = ""), ""), ifelse(!is.null(variable.summary$globals$consent_inclusion_file) & !is.null(variable.summary$globals$consent_exclusion_file), paste(" ", length(variable.summary$subjects.ambiguous.consent), ifelse(length(variable.summary$subjects.ambiguous.consent) == 1, " subject was", " subjects were"), " additionally excluded for not being explicitly listed as either having or lacking consent.", sep = ""), ""), " ", variable.summary$subjects.excluded.for.age, ifelse(variable.summary$subjects.excluded.for.age == 1, " subject was ", " subjects were "), "removed for being below the minimum permissible age of ", variable.summary$globals$min_age_for_inclusion, ".", sep = "")`
 
-***
-<br>
+`r if (length(variable.summary$subjects.ambiguous.consent) > 0) {paste("***\n<br>")}`
 
 ```{r report.consent.ambiguity, eval=length(variable.summary$subjects.ambiguous.consent) > 0, echo=FALSE, results="asis"}
-ambig.consent <- data.frame("Subject ID" = variable.summary$subjects.ambiguous.consent)
+ambig.consent <- data.frame(x = sort(variable.summary$subjects.ambiguous.consent))
+colnames(ambig.consent) <- c("Subject ID")
 knitr::kable(ambig.consent, caption = "Subjects Absent from Consent Tracking", table.attr = knitr.table.attr)
 ```
 
