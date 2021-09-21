@@ -7,8 +7,8 @@
 process.phenotypes(
   phenotype.path,
   output.path,
-  phenotype.files = c("CV_FINAL_STORE.tsv", "ET_Final_Store.tsv", "HO_FINAL_STORE.tsv",
-    "MM_FINAl_store.tsv", "Neuro_final_store.tsv", "SC_final_store.tsv"),
+  phenotype.files = c("CV_raw.tsv", "DM_raw.tsv", "ET_raw.tsv", "HO_raw.tsv",
+    "MM_raw.tsv", "Neuro_raw.tsv", "SC_raw.tsv", "SO_raw.tsv"),
   yaml.dir = "yaml-configuration"
 )
 }
@@ -35,7 +35,7 @@ and should probably be named to reflect that if this
 is ever used in other contexts lol.
 }
 \examples{
-process.phenotypes("/path/to/phenotypes/audit_jun2021", "my_results")
+process.phenotypes("/path/to/phenotypes/pre-audit", "my_results")
 }
 \seealso{
 create.phenotype.report

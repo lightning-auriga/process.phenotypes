@@ -18,12 +18,9 @@ dependencies:
   - r-ggplot2
   - r-rcolorbrewer 
   - r-viridis
-  - r-docopt
-  - r-lintr
-  - r-styler
-  - r-usethis
   - emacs
   - xorg-libxau
   - vim
   - jsonschema
   - argparse
+  - r-kableextra

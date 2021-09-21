@@ -4,7 +4,7 @@
 \alias{map.header}
 \title{Create and map structured variable names to replace arbitrary input variable names}
 \usage{
-map.header(df, dataset.tag, config.data)
+map.header(df, dataset.tag, config.data, force.header.mapping = FALSE)
 }
 \arguments{
 \item{df}{data.frame, phenotype dataframe with untransformed headers}
@@ -12,6 +12,12 @@ map.header(df, dataset.tag, config.data)
 \item{dataset.tag}{character vector, unique string tag for this dataset}
 
 \item{config.data}{list, yaml configuration data per variable}
+
+\item{force.header.mapping}{logical, whether you want to be kinda foolish
+and allow desync between config variable names and dataset header data.
+this safety check was implemented in part due to the possible presence of duplicate
+column header names, and turning it off can potentially have catastrophically
+bad effects if your configuration file is malformed.}
 }
 \value{
 list, mapping new variable names to lists; eventually meant to have

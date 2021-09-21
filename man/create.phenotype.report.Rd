@@ -6,23 +6,27 @@
 \usage{
 create.phenotype.report(
   in.filename,
-  dataset.tag,
   dataset.yaml,
   shared.model.yaml,
   out.filename,
-  magic.fix = TRUE
+  magic.fix = TRUE,
+  quote = "",
+  uniq.var.inclusion.prop = 1/3
 )
 }
 \arguments{
 \item{in.filename}{character vector, name of input phenotype tsv file}
-
-\item{dataset.tag}{character vector, dataset-specific tag to prefix variable names}
 
 \item{dataset.yaml}{character vector, yaml configuration for project}
 
 \item{shared.model.yaml}{character vector, yaml configuration for shared model specifications}
 
 \item{out.filename}{character vector, name of output report html file}
+
+\item{quote}{character vector, character used to quote string tokens; defaults to null}
+
+\item{uniq.var.inclusion.prop}{numeric, proportion of total values of a string
+variable that can be unique before tabular output is suppressed from the output report}
 }
 \description{
 TBD

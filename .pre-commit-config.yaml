@@ -12,3 +12,7 @@ repos:
   - id: roxygenize
   - id: deps-in-desc
   - id: use-tidy-description
+- repo: .
+  rev: '5981348a0b5aa29fe03ab5714673452b243a5298'
+  hooks:
+    - id: yaml-validation
