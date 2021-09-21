@@ -212,3 +212,23 @@ year.is.consistent.with.age <- function(dependent.variable, independent.variable
     ((reference.year - dependent.variable - acceptable.tolerance) < independent.variable &
       independent.variable < (reference.year - dependent.variable + acceptable.tolerance))
 }
+
+#' Evaluate relative magnitude of variables
+#'
+#' @param larger.var numeric vector, expected to be larger
+#' @param smaller.var numeric vector, expected to be smaller
+#' @param allow.equal logical, whether equality is permitted
+#' @return logical vector of same length as input vectors, denoting
+#' whether first vector values are larger than second's
+response.greater.than <- function(larger.var, smaller.var, allow.equal = TRUE) {
+  stopifnot(
+    is.numeric(larger.var),
+    is.numeric(smaller.var),
+    length(larger.var) == length(smaller.var)
+  )
+  if (allow.equal) {
+    !is.na(larger.var) & !is.na(smaller.var) & larger.var >= smaller.var
+  } else {
+    !is.na(larger.var) & !is.na(smaller.var) & larger.var > smaller.var
+  }
+}

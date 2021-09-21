@@ -657,3 +657,27 @@ test_that("consistency of BMI and weight/height is correctly flagged", {
     out.variable.summary
   )
 })
+
+test_that("variable greater than comparison works", {
+  x1 <- 1:11
+  x2 <- 11:1
+  expect_identical(
+    response.greater.than(x1, x2),
+    c(
+      rep(FALSE, 5),
+      rep(TRUE, 6)
+    )
+  )
+})
+
+test_that("variable greater than or equal to comparison works", {
+  x1 <- 1:11
+  x2 <- 11:1
+  expect_identical(
+    response.greater.than(x1, x2, FALSE),
+    c(
+      rep(FALSE, 6),
+      rep(TRUE, 5)
+    )
+  )
+})
