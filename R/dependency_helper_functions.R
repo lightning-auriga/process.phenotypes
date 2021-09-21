@@ -227,8 +227,8 @@ response.greater.than <- function(larger.var, smaller.var, allow.equal = TRUE) {
     length(larger.var) == length(smaller.var)
   )
   if (allow.equal) {
-    !is.na(larger.var) & !is.na(smaller.var) & larger.var >= smaller.var
+    is.na(larger.var) | is.na(smaller.var) | larger.var >= smaller.var
   } else {
-    !is.na(larger.var) & !is.na(smaller.var) & larger.var > smaller.var
+    is.na(larger.var) | is.na(smaller.var) | larger.var > smaller.var
   }
 }
