@@ -117,8 +117,8 @@ remove.nonword.chars <- function(df, variable.summary) {
     df[, i] <- stringr::str_replace_all(df[, i], "^\\W+|\\W*[^[\\w)}\\]]]$", "")
     ## TODO: remove crappy logging
     diff.data <- cbind(
-      df.orig[df[, i] != df.orig],
-      df[df[, i] != df.orig, i]
+      df.orig[df[, i] != df.orig & !is.na(df[, i])],
+      df[df[, i] != df.orig & !is.na(df[, i]), i]
     )
     if (nrow(diff.data) > 0) {
       print(diff.data)
@@ -313,11 +313,49 @@ process.unicode.characters <- function(phenotype.data) {
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2018|\U2019", "'")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U201C|\U201D", "\"")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B2", "2")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B3", "3")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B9", "1")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2715", "x")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00D7", "x")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00E7", "c")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2022", "*")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U202[89A-F]", "")
+    phenotype.data[, i] <- stringr::str_replace_all(
+      phenotype.data[, i],
+      paste("\U2028",
+        "\U2029",
+        "\U202A",
+        "\U202B",
+        "\U202C",
+        "\U202D",
+        "\U202E",
+        "\U202F",
+        sep = "|"
+      ),
+      ""
+    )
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\UFEFF", "")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U1F4AF", "100")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00A3", "")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00F9", "u")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U20A9", "")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\UFE64", "")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00E0", "a")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00E8", "e")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U200E", "")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00F1", "n")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2153", "1/3")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U215C", "3/8")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2026", "...")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2079", "9")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U207F", "n")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00AE", "")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2713", "")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U1D50", "m")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U141F|\U2E0D", "/")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2039", "<")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U203A", ">")
+    ## this is technically "care of" but it seems like the one instance of it meant percent for some reason
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2105", "%")
   }
   phenotype.data
 }
@@ -340,12 +378,12 @@ process.unicode.characters <- function(phenotype.data) {
 #' second entry the variable summary list with injected reporting information about
 #' any Excel errors found for each variable
 exclude.excel.failures <- function(phenotype.data, variable.summary) {
-  excel.problem.regex <- "^=?#error!$|^=?#value!$|^=?#ERROR!$|^=?#VALUE!$"
+  excel.problem.regex <- "^=?#div/0!$|^=?#error!$|^=?#value!$|^=?#ERROR!$|^=?#VALUE!$|^=?#DIV/0!$"
   for (i in seq_len(ncol(phenotype.data))) {
     excel.problems <- stringr::str_detect(phenotype.data[, i], excel.problem.regex)
     if (length(which(excel.problems))) {
-      phenotype.data[excel.problems, i] <- NA
-      variable.summary$variables[[i]]$excel.problem.count <- sum(excel.problems)
+      phenotype.data[excel.problems & !is.na(excel.problems), i] <- NA
+      variable.summary$variables[[i]]$excel.problem.count <- sum(excel.problems, na.rm = TRUE)
     }
   }
   list(
@@ -373,7 +411,7 @@ exclude.excel.failures <- function(phenotype.data, variable.summary) {
 #' if any residual Unicode characters are detected.
 detect.unicode.characters <- function(phenotype.data, variable.summary) {
   for (i in seq_len(ncol(phenotype.data))) {
-    unicode.detected <- stringr::str_detect(phenotype.data[, i], "[^\001-\177]")
+    unicode.detected <- stringr::str_detect(phenotype.data[, i], "[^\001-\177]") & !is.na(phenotype.data[, i])
     if (length(which(unicode.detected))) {
       variable.summary$variables[[i]]$unicode.entries <- table(phenotype.data[unicode.detected, i])
     }

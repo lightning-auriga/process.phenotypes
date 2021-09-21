@@ -5,7 +5,8 @@ test_that("apply.type.conversions minimally functions for all types", {
     TN003 = c("1-10", "11-20", "11-20", "41-50"),
     TN004 = c("orange", "orange", "pineapple", "banana"),
     TN005 = c("1.05", "4.44mm", "3.21", "169 / 100"),
-    TN006 = c("100/90", "100 / 80mhg", "200/ 100", "40")
+    TN006 = c("100/90", "100 / 80mhg", "200/ 100", "40"),
+    TN007 = c("A", "B", "C", "D")
   )
   out.phenotype.data <- data.frame(
     TN001 = c("freeform", "text", "entry", "field"),
@@ -24,7 +25,8 @@ test_that("apply.type.conversions minimally functions for all types", {
       levels = c("pineapple", "banana", "orange")
     ),
     TN005 = c(1.05, 4.44, 3.21, NA),
-    TN006 = c("100/90", "100/80", "200/100", NA)
+    TN006 = c("100/90", "100/80", "200/100", NA),
+    TN007 = c("A", "B", "C", "D")
   )
   in.var.summary <- list(
     variables = list(
@@ -86,15 +88,28 @@ test_that("apply.type.conversions minimally functions for all types", {
           name = "sleepwalking blood pressure",
           type = "blood pressure"
         )
+      ),
+      TN007 = list(
+        original.name = "something",
+        params = list(
+          name = "something",
+          type = "string",
+          subject_id = TRUE
+        )
       )
     )
   )
   out.var.summary <- in.var.summary
   out.var.summary$variables$TN002$invalid.factor.entries <- character()
+  out.var.summary$variables$TN002$subjects.wrong.type <- character()
   out.var.summary$variables$TN003$invalid.factor.entries <- character()
+  out.var.summary$variables$TN003$subjects.wrong.type <- character()
   out.var.summary$variables$TN004$invalid.factor.entries <- character()
+  out.var.summary$variables$TN004$subjects.wrong.type <- character()
   out.var.summary$variables$TN005$invalid.numeric.entries <- c("169 / 100")
+  out.var.summary$variables$TN005$subjects.wrong.type <- c("D")
   out.var.summary$variables$TN006$invalid.blood.pressure.entries <- c("40")
+  out.var.summary$variables$TN006$subjects.wrong.type <- c("D")
   expect_identical(
     apply.type.conversions(in.phenotype.data, in.var.summary),
     list(
@@ -163,6 +178,76 @@ test_that("apply.bounds handles missing min or max correctly", {
   ))
 })
 
+test_that("apply.bounds handles bidirectional standard deviation bound", {
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts",
+          type = "numeric",
+          bounds = list(sd = 1)
+        )
+      )
+    )
+  )
+  in.phenotype.data <- data.frame(TN001 = c(1, 2, 3, 5, 6, 8, 10, 11, 12))
+  out.var.summary <- in.var.summary
+  out.var.summary$variables$TN001$num.beyond.sd <- as.integer(4)
+  out.phenotype.data <- data.frame(TN001 = c(NA, NA, 3, 5, 6, 8, 10, NA, NA))
+  expect_identical(apply.bounds(in.phenotype.data, in.var.summary), list(
+    phenotype.data = out.phenotype.data,
+    variable.summary = out.var.summary
+  ))
+})
+
+test_that("apply.bounds handles bidirectional standard deviation bound after min/max", {
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts",
+          type = "numeric",
+          bounds = list(min = -20, max = 20, sd = 0.5)
+        )
+      )
+    )
+  )
+  in.phenotype.data <- data.frame(TN001 = c(-20000, 1, 2, 3, 4, 5, 1000))
+  out.var.summary <- in.var.summary
+  out.var.summary$variables$TN001$num.below.min <- as.integer(1)
+  out.var.summary$variables$TN001$num.above.max <- as.integer(1)
+  out.var.summary$variables$TN001$num.beyond.sd <- as.integer(4)
+  out.phenotype.data <- data.frame(TN001 = c(NA, NA, NA, 3, NA, NA, NA))
+  expect_identical(apply.bounds(in.phenotype.data, in.var.summary), list(
+    phenotype.data = out.phenotype.data,
+    variable.summary = out.var.summary
+  ))
+})
+
+test_that("apply.bounds errors if sd factor is negative", {
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts",
+          type = "numeric",
+          bounds = list(min = -20, max = 20, sd = -0.5)
+        )
+      )
+    )
+  )
+  in.phenotype.data <- data.frame(TN001 = c(-20000, 1, 2, 3, 4, 5, 1000))
+  out.var.summary <- in.var.summary
+  out.var.summary$variables$TN001$num.below.min <- as.integer(1)
+  out.var.summary$variables$TN001$num.above.max <- as.integer(1)
+  out.var.summary$variables$TN001$num.beyond.sd <- as.integer(4)
+  out.phenotype.data <- data.frame(TN001 = c(NA, NA, NA, 3, NA, NA, NA))
+  expect_error(apply.bounds(in.phenotype.data, in.var.summary))
+})
+
 test_that("convert.variable.specific.na sets instances of strings to NA", {
   in.phenotype.data <- data.frame(TN001 = c("apple", "banana", "river", "cranberry"))
   in.variable.summary <- list(variables = list(TN001 = list(
@@ -223,6 +308,64 @@ test_that("parse.date extracts year and infers century correctly", {
   in.var.summary <- list()
   out.vec <- as.numeric(c(2019, 1995, 1993, NA, 2002, 2004))
   out.var.summary <- list(invalid.date.entries = c("1/6/123"))
+  expect_identical(
+    parse.date(in.vec, in.var.summary),
+    list(phenotype.data = out.vec, variable.summary = out.var.summary)
+  )
+})
+
+test_that("parse.date distinguishes between YYYY-##-## and ##-##-YY", {
+  in.vec <- c("10-20-19", "2014-05-06")
+  in.var.summary <- list()
+  out.vec <- as.numeric(c(2019, 2014))
+  out.var.summary <- list(invalid.date.entries = as.character(c()))
+  expect_identical(
+    parse.date(in.vec, in.var.summary),
+    list(phenotype.data = out.vec, variable.summary = out.var.summary)
+  )
+})
+
+test_that("parse.date can capture dates of the format monthname,?year", {
+  in.vec <- c(
+    "january,2021",
+    "february,1991",
+    "march2020",
+    "april1993",
+    "may,2022",
+    "june,2002",
+    "july1988",
+    "august,1999",
+    "september,2021",
+    "october1999",
+    "november1941",
+    "december,1944",
+    "June,1999",
+    "Junetember,1999",
+    "May,199"
+  )
+  in.var.summary <- list()
+  out.vec <- as.numeric(c(
+    2021,
+    1991,
+    2020,
+    1993,
+    2022,
+    2002,
+    1988,
+    1999,
+    2021,
+    1999,
+    1941,
+    1944,
+    NA,
+    NA,
+    NA
+  ))
+  out.var.summary <- list(invalid.date.entries = as.character(c(
+    "June,1999",
+    "Junetember,1999",
+    "May,199"
+  )))
   expect_identical(
     parse.date(in.vec, in.var.summary),
     list(phenotype.data = out.vec, variable.summary = out.var.summary)

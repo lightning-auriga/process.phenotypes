@@ -52,11 +52,18 @@ apply.type.conversions <- function(phenotype.data, variable.summary) {
       ## string
       next
     } else {
+      na.before.conversion <- is.na(phenotype.data[, i])
       result.list <- convert.type(
         phenotype.data[, i], variable.summary$variables[[i]], target.type
       )
       phenotype.data[, i] <- result.list$phenotype.data
       variable.summary$variables[[i]] <- result.list$variable.summary
+      na.after.conversion <- is.na(phenotype.data[, i])
+      variable.summary$variables[[i]]$subjects.wrong.type <-
+        phenotype.data[
+          na.after.conversion & !na.before.conversion,
+          find.subject.id.index(variable.summary)
+        ]
     }
   }
   list(
@@ -165,6 +172,19 @@ apply.bounds <- function(phenotype.data, variable.summary) {
               !is.na(phenotype.data[, i]), i] <- NA
           }
         }
+        var.sd <- variable.summary$variables[[i]]$params$bounds$sd
+        if (!is.null(var.sd)) {
+          var.sd <- as.numeric(var.sd)
+          stopifnot(var.sd >= 0)
+          ## count and apply bidirectional standard deviation threshold
+          sd.min.bound <- mean(phenotype.data[, i], na.rm = TRUE) - var.sd * sd(phenotype.data[, i], na.rm = TRUE)
+          sd.max.bound <- mean(phenotype.data[, i], na.rm = TRUE) + var.sd * sd(phenotype.data[, i], na.rm = TRUE)
+          num.sd <- length(which(phenotype.data[, i] < sd.min.bound | phenotype.data[, i] > sd.max.bound))
+          variable.summary$variables[[i]]$num.beyond.sd <- num.sd
+          phenotype.data[(phenotype.data[, i] < sd.min.bound |
+            phenotype.data[, i] > sd.max.bound) &
+            !is.na(phenotype.data[, i]), i] <- NA
+        }
       }
     }
   }
@@ -268,17 +288,51 @@ exclude.by.age <- function(phenotype.data, variable.summary) {
 #' with just the four-digit year value.  Also removes extremely low
 #' likely erroneous year values.
 #'
+#' With new data, new support for the following data formats:
+#' - YYYY
+#' - YYYY-##-##
+#'
 #' @param vec character vector, input phenotype content
 #' @param var.summary list, variable summary entry for this particular variable
 #' @return modified version of input with values cleaned as described above
 parse.date <- function(vec, var.summary) {
-  possible.date <- stringr::str_detect(vec, ".*[/ -](\\d{2}|\\d{4})$") & !is.na(vec)
+  date.leading.year <- "^(\\d{4})-\\d{2}-\\d{2}$"
+  date.leading.year.match <- stringr::str_detect(vec, date.leading.year) & !is.na(vec)
+  date.trailing.year <- "^.*[/ -](\\d{2}|\\d{4})$"
+  date.trailing.year.match <- stringr::str_detect(vec, date.trailing.year) & !is.na(vec)
+  date.year.only <- "^(\\d{4})$"
+  date.year.only.match <- stringr::str_detect(vec, date.year.only) & !is.na(vec)
+  date.text.month.year <- paste("^(january|february|march|april|may|june|july",
+    "|august|september|october|november|december),?(\\d{4})$",
+    sep = ""
+  )
+  date.text.month.year.match <- stringr::str_detect(vec, date.text.month.year) & !is.na(vec)
   res <- rep(NA, length(vec))
-  res[possible.date] <- stringr::str_replace(vec[possible.date], ".*[/ -](\\d{2}|\\d{4})$", "\\1")
+  res[date.leading.year.match] <- stringr::str_replace(
+    vec[date.leading.year.match],
+    date.leading.year, "\\1"
+  )
+  res[date.trailing.year.match &
+    !date.leading.year.match] <- stringr::str_replace(
+    vec[date.trailing.year.match &
+      !date.leading.year.match],
+    date.trailing.year, "\\1"
+  )
+  res[date.year.only.match] <- stringr::str_replace(
+    vec[date.year.only.match],
+    date.year.only, "\\1"
+  )
+  res[date.text.month.year.match] <- stringr::str_replace(
+    vec[date.text.month.year.match],
+    date.text.month.year, "\\2"
+  )
   res <- as.numeric(res)
   res[res <= 21 & !is.na(res)] <- res[res <= 21 & !is.na(res)] + 2000
   res[res < 100 & !is.na(res)] <- res[res < 100 & !is.na(res)] + 1900
   res[res < 1800 & !is.na(res)] <- NA
-  var.summary$invalid.date.entries <- vec[(!possible.date | is.na(res)) & !is.na(vec)]
+  var.summary$invalid.date.entries <- vec[(!(date.leading.year.match |
+    date.trailing.year.match |
+    date.year.only.match |
+    date.text.month.year.match) | is.na(res)) & !is.na(vec)]
   list(phenotype.data = res, variable.summary = var.summary)
 }

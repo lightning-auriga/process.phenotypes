@@ -1,0 +1,56 @@
+---
+title: "Report: pre- vs post-audit dataset comparison"
+output:
+  html_document:
+    code_folding: hide
+    md_extensions: "-fancy_lists -emoji"
+  highlight: tango
+  number_sections: no
+  theme: default
+  toc: yes
+  toc_depth: 3
+  toc_float:
+    collapsed: no
+    smooth_scroll: yes
+params:
+  pre.audit.filename: ""
+  pre.audit.config: ""
+  post.audit.filename: ""
+  post.audit.config: ""
+  post.audit.tag: ""
+  shared.model.yaml: ""
+---
+
+#### Load required R packages
+
+```{r load.packages, eval=TRUE, echo=FALSE}
+library(ggplot2, quietly = TRUE)
+library(knitr, quietly = TRUE)
+library(kableExtra, quietly = TRUE)
+```
+
+***
+<br>
+
+### Report comparisons between pre- and post-audit variables
+
+```{r compare.variables, eval=TRUE, echo=FALSE, results="asis"}
+compare.files(
+  params$pre.audit.filename,
+  params$pre.audit.config,
+  params$post.audit.filename,
+  params$post.audit.config,
+  params$post.audit.tag,
+  params$shared.model.yaml
+)
+```
+
+#### Session Information
+
+<br>
+
+The following summarizes the loaded R configuration for the run that created this report.
+
+```{r session.info, eval=TRUE, echo=TRUE}
+sessionInfo()
+```

@@ -1,0 +1,6 @@
+- id: yaml-validation
+  name: yaml-validation
+  description: run yaml_validator_precommit.py
+  entry: yaml-configuration/yaml_validator_precommit.py
+  language: script
+  files: '_raw.yaml$'
