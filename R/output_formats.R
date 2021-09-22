@@ -15,8 +15,7 @@
 #' will have the relevant format-specific suffixes appended
 #' @param write.tsv logical, whether to emit output phenotype data in tsv tab-delimited plaintext
 #' @param write.stata logical, whether to emit output phenotype data in STATA .dta format
-#' @param write.spss logical, whether to emit output phenotype data in native SPSS format;
-#' currently not implemented
+#' @param write.spss logical, whether to emit output phenotype data in SPSS .zsav format
 #' @param write.sas logical, whether to emit output phenotype data in SAS .sas7bdat format,
 #' along with a source .sas file that needs to be run to assign category levels and types
 #' @param write.yaml logical, whether to emit final version of stored configuration data
@@ -66,7 +65,7 @@ write.output.formats <- function(phenotype.data,
     )
   }
   if (write.spss) {
-    ## TODO(lightning.auriga): implement SPSS output support
+    haven::write_sav(phenotype.data, paste(out.prefix, ".zsav", sep = ""), compress = TRUE)
   }
   if (write.sas) {
     ## note that foreign does not directly support sas7bcat output;

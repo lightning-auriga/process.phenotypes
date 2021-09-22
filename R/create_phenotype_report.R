@@ -15,8 +15,7 @@
 #' variable that can be unique before tabular output is suppressed from the output report
 #' @param write.tsv logical, whether to emit output phenotype data in tsv tab-delimited plaintext
 #' @param write.stata logical, whether to emit output phenotype data in STATA .dta format
-#' @param write.spss logical, whether to emit output phenotype data in native SPSS format;
-#' currently not implemented
+#' @param write.spss logical, whether to emit output phenotype data in SPSS .zsav format
 #' @param write.sas logical, whether to emit output phenotype data in SAS .sas7bdat format,
 #' along with a source .sas file that needs to be run to assign category levels and types
 #' @param write.yaml logical, whether to emit final version of stored configuration data
@@ -35,7 +34,7 @@ create.phenotype.report <- function(in.filename,
                                     uniq.var.inclusion.prop = 1 / 3,
                                     write.tsv = TRUE,
                                     write.stata = TRUE,
-                                    write.spss = FALSE,
+                                    write.spss = TRUE,
                                     write.sas = TRUE,
                                     write.yaml = FALSE) {
   ## sanity check for in.filename param

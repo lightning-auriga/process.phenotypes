@@ -29,8 +29,7 @@ will have the relevant format-specific suffixes appended}
 
 \item{write.stata}{logical, whether to emit output phenotype data in STATA .dta format}
 
-\item{write.spss}{logical, whether to emit output phenotype data in native SPSS format;
-currently not implemented}
+\item{write.spss}{logical, whether to emit output phenotype data in SPSS .zsav format}
 
 \item{write.sas}{logical, whether to emit output phenotype data in SAS .sas7bdat format,
 along with a source .sas file that needs to be run to assign category levels and types}

@@ -14,7 +14,7 @@ create.phenotype.report(
   uniq.var.inclusion.prop = 1/3,
   write.tsv = TRUE,
   write.stata = TRUE,
-  write.spss = FALSE,
+  write.spss = TRUE,
   write.sas = TRUE,
   write.yaml = FALSE
 )
@@ -37,8 +37,7 @@ variable that can be unique before tabular output is suppressed from the output 
 
 \item{write.stata}{logical, whether to emit output phenotype data in STATA .dta format}
 
-\item{write.spss}{logical, whether to emit output phenotype data in native SPSS format;
-currently not implemented}
+\item{write.spss}{logical, whether to emit output phenotype data in SPSS .zsav format}
 
 \item{write.sas}{logical, whether to emit output phenotype data in SAS .sas7bdat format,
 along with a source .sas file that needs to be run to assign category levels and types}
