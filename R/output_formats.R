@@ -2,10 +2,10 @@
 #'
 #' @description
 #' This function contains handlers for the primary supported output formats
-#' for this package: plaintext tab-delimited, STATA, SAS (TBD), SPSS (TBD),
-#' and YAML (for final configuration; TBD). Additional control parameters
-#' are likely to be added at a later data. Any number of outputs can be
-#' selected and they will all be reported sequentially.
+#' for this package: plaintext tab-delimited, STAT (.dta), SAS (.xpt only),
+#' SPSS (TBD), and YAML (for final configuration; TBD). Additional control
+#' parameters are likely to be added at a later data. Any number of outputs
+#' can be selected and they will all be reported sequentially.
 #'
 #' @param phenotype.data data.frame, stored phenotype dataset with all cleaning
 #' and filtering applied
@@ -17,8 +17,7 @@
 #' @param write.stata logical, whether to emit output phenotype data in STATA .dta format
 #' @param write.spss logical, whether to emit output phenotype data in native SPSS format;
 #' currently not implemented
-#' @param write.sas logical, whether to emit output phenotype data in native SAS format;
-#' currently not implemented
+#' @param write.sas logical, whether to emit output phenotype data in SAS .sas7bdat format
 #' @param write.yaml logical, whether to emit final version of stored configuration data
 #' in YAML format; currently not tested
 write.output.formats <- function(phenotype.data,
@@ -61,13 +60,16 @@ write.output.formats <- function(phenotype.data,
     )
   }
   if (write.stata) {
-    haven::write_dta(phenotype.data, paste(out.prefix, ".dta", sep = ""), label = "phenotype.data")
+    haven::write_dta(phenotype.data, paste(out.prefix, ".dta", sep = ""),
+      version = 14, label = "phenotype.data"
+    )
   }
   if (write.spss) {
-    # TODO(lightning.auriga): implement SPSS output support
+    ## TODO(lightning.auriga): implement SPSS output support
   }
   if (write.sas) {
-    # TODO(lightning.auriga): implement SAS output support
+    haven::write_sas(phenotype.data, paste(out.prefix, ".sas7bdat", sep = ""))
+    ## TODO(lightning.auriga): look into sas7bdat support, which is only partially supported by haven
   }
   if (write.yaml) {
     write.configuration(variable.summary, paste(out.prefix, ".yaml", sep = ""))

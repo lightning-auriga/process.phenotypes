@@ -17,8 +17,7 @@
 #' @param write.stata logical, whether to emit output phenotype data in STATA .dta format
 #' @param write.spss logical, whether to emit output phenotype data in native SPSS format;
 #' currently not implemented
-#' @param write.sas logical, whether to emit output phenotype data in native SAS format;
-#' currently not implemented
+#' @param write.sas logical, whether to emit output phenotype data in SAS .sas7bdat format
 #' @param write.yaml logical, whether to emit final version of stored configuration data
 #' in YAML format; currently not tested
 #' @seealso run.experiment
@@ -36,7 +35,7 @@ create.phenotype.report <- function(in.filename,
                                     write.tsv = TRUE,
                                     write.stata = TRUE,
                                     write.spss = FALSE,
-                                    write.sas = FALSE,
+                                    write.sas = TRUE,
                                     write.yaml = FALSE) {
   ## sanity check for in.filename param
   stopifnot(

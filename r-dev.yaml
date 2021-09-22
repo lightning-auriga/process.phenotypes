@@ -12,6 +12,7 @@ dependencies:
   - r-docopt
   - r-lintr
   - r-styler
+  - r-haven
   - r-usethis
   - r-rmarkdown
   - r-knitr

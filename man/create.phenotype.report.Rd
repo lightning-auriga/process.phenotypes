@@ -15,7 +15,7 @@ create.phenotype.report(
   write.tsv = TRUE,
   write.stata = TRUE,
   write.spss = FALSE,
-  write.sas = FALSE,
+  write.sas = TRUE,
   write.yaml = FALSE
 )
 }
@@ -40,8 +40,7 @@ variable that can be unique before tabular output is suppressed from the output 
 \item{write.spss}{logical, whether to emit output phenotype data in native SPSS format;
 currently not implemented}
 
-\item{write.sas}{logical, whether to emit output phenotype data in native SAS format;
-currently not implemented}
+\item{write.sas}{logical, whether to emit output phenotype data in SAS .sas7bdat format}
 
 \item{write.yaml}{logical, whether to emit final version of stored configuration data
 in YAML format; currently not tested}

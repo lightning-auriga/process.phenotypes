@@ -32,16 +32,15 @@ will have the relevant format-specific suffixes appended}
 \item{write.spss}{logical, whether to emit output phenotype data in native SPSS format;
 currently not implemented}
 
-\item{write.sas}{logical, whether to emit output phenotype data in native SAS format;
-currently not implemented}
+\item{write.sas}{logical, whether to emit output phenotype data in SAS .sas7bdat format}
 
 \item{write.yaml}{logical, whether to emit final version of stored configuration data
 in YAML format; currently not tested}
 }
 \description{
 This function contains handlers for the primary supported output formats
-for this package: plaintext tab-delimited, STATA, SAS (TBD), SPSS (TBD),
-and YAML (for final configuration; TBD). Additional control parameters
-are likely to be added at a later data. Any number of outputs can be
-selected and they will all be reported sequentially.
+for this package: plaintext tab-delimited, STAT (.dta), SAS (.xpt only),
+SPSS (TBD), and YAML (for final configuration; TBD). Additional control
+parameters are likely to be added at a later data. Any number of outputs
+can be selected and they will all be reported sequentially.
 }
