@@ -9,7 +9,7 @@ cleaning process is simplified as follows:
 - a phenotype spreadsheet is exported to any of several supported formats:
   - .tsv (plaintext, tab-delimited)
   - .dta (STATA format)
-  - .sas7bdat (SAS format)
+  - .sas7bdat (SAS format, with accompanying .sas code for category labels)
   - .zsav (SPSS format)
 - the phenotype dataset is configured in 
 [YAML](https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html)
@@ -192,7 +192,7 @@ If you are using pre-commit as described below, the yaml configurations will be 
 - [x] data export formats
   - [x] plaintext/tsv
   - [x] STATA (dta)
-  - [x] SAS (sas7bdat)
+  - [x] SAS (sas7bdat and auxiliary source file)
   - [x] SPSS (zsav)
 
 ### Open Proposals
