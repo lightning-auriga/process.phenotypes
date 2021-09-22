@@ -40,7 +40,8 @@ variable that can be unique before tabular output is suppressed from the output 
 \item{write.spss}{logical, whether to emit output phenotype data in native SPSS format;
 currently not implemented}
 
-\item{write.sas}{logical, whether to emit output phenotype data in SAS .sas7bdat format}
+\item{write.sas}{logical, whether to emit output phenotype data in SAS .sas7bdat format,
+along with a source .sas file that needs to be run to assign category levels and types}
 
 \item{write.yaml}{logical, whether to emit final version of stored configuration data
 in YAML format; currently not tested}

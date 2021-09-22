@@ -17,7 +17,8 @@
 #' @param write.stata logical, whether to emit output phenotype data in STATA .dta format
 #' @param write.spss logical, whether to emit output phenotype data in native SPSS format;
 #' currently not implemented
-#' @param write.sas logical, whether to emit output phenotype data in SAS .sas7bdat format
+#' @param write.sas logical, whether to emit output phenotype data in SAS .sas7bdat format,
+#' along with a source .sas file that needs to be run to assign category levels and types
 #' @param write.yaml logical, whether to emit final version of stored configuration data
 #' in YAML format; currently not tested
 #' @seealso run.experiment

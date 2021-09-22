@@ -17,7 +17,8 @@
 #' @param write.stata logical, whether to emit output phenotype data in STATA .dta format
 #' @param write.spss logical, whether to emit output phenotype data in native SPSS format;
 #' currently not implemented
-#' @param write.sas logical, whether to emit output phenotype data in SAS .sas7bdat format
+#' @param write.sas logical, whether to emit output phenotype data in SAS .sas7bdat format,
+#' along with a source .sas file that needs to be run to assign category levels and types
 #' @param write.yaml logical, whether to emit final version of stored configuration data
 #' in YAML format; currently not tested
 write.output.formats <- function(phenotype.data,
@@ -68,8 +69,17 @@ write.output.formats <- function(phenotype.data,
     ## TODO(lightning.auriga): implement SPSS output support
   }
   if (write.sas) {
-    haven::write_sas(phenotype.data, paste(out.prefix, ".sas7bdat", sep = ""))
-    ## TODO(lightning.auriga): look into sas7bdat support, which is only partially supported by haven
+    ## note that foreign does not directly support sas7bcat output;
+    ## so the function emits two output files, the sas7bdat as expected,
+    ## and a SAS source code file that needs to be run to assign
+    ## appropriate types and category levels to the sas7bdat content.
+    foreign::write.foreign(phenotype.data,
+      paste(out.prefix, ".sas7bdat", sep = ""),
+      paste(out.prefix, ".sas", sep = ""),
+      package = "SAS",
+      dataname = "phenotype.data",
+      validvarname = "V7"
+    )
   }
   if (write.yaml) {
     write.configuration(variable.summary, paste(out.prefix, ".yaml", sep = ""))
