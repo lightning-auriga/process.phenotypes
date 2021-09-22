@@ -11,7 +11,12 @@ create.phenotype.report(
   out.filename,
   magic.fix = TRUE,
   quote = "",
-  uniq.var.inclusion.prop = 1/3
+  uniq.var.inclusion.prop = 1/3,
+  write.tsv = TRUE,
+  write.stata = TRUE,
+  write.spss = FALSE,
+  write.sas = FALSE,
+  write.yaml = FALSE
 )
 }
 \arguments{
@@ -27,6 +32,19 @@ create.phenotype.report(
 
 \item{uniq.var.inclusion.prop}{numeric, proportion of total values of a string
 variable that can be unique before tabular output is suppressed from the output report}
+
+\item{write.tsv}{logical, whether to emit output phenotype data in tsv tab-delimited plaintext}
+
+\item{write.stata}{logical, whether to emit output phenotype data in STATA .dta format}
+
+\item{write.spss}{logical, whether to emit output phenotype data in native SPSS format;
+currently not implemented}
+
+\item{write.sas}{logical, whether to emit output phenotype data in native SAS format;
+currently not implemented}
+
+\item{write.yaml}{logical, whether to emit final version of stored configuration data
+in YAML format; currently not tested}
 }
 \description{
 TBD

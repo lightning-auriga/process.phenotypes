@@ -13,6 +13,7 @@ Authors@R:
 Description: TBD.
 License: MIT + file LICENSE
 Imports:
+    haven,
     kableExtra,
     knitr,
     rlang,
