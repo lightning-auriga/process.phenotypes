@@ -137,6 +137,8 @@ my.hist <- my.hist + my.theme + geom_histogram(bins = nbins, binwidth = diff(ran
 my.hist <- my.hist + xlab("Number of NA Values by Subject") + ylab("Proportion of Subjects")
 cat("\n\n#### Distribution of NA Counts by Subject\n\n")
 print(my.hist)
+
+knitr::kable(process.phenotypes:::get.top.ten(TRUE, nas.by.subject, "Subjects"), caption = "Ten highest NA-count subjects", table.attr = knitr.table.attr)
 ```
 
 ```{r report.subject.type.failures, eval=TRUE, echo=FALSE, results="asis"}
