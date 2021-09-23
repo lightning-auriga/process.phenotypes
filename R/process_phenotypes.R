@@ -59,7 +59,7 @@ process.phenotypes <- function(phenotype.path,
     dataset.tag <- stringr::str_replace(file, ".tsv", "")
     ## temporary: assume dataset-specific yaml is in a fixed name under yaml.dir
     dataset.yaml <- paste(yaml.dir, paste(dataset.tag, "yaml", sep = "."), sep = "/")
-    output.filename <- paste(output.path, paste(dataset.tag, "report.html", sep = "_"), sep = "/")
+    output.filename <- paste(output.path, paste(dataset.tag, ".html", sep = ""), sep = "/")
     create.phenotype.report(
       paste(phenotype.path, file, sep = "/"),
       dataset.yaml,
