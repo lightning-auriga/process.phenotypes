@@ -11,37 +11,28 @@
 #' @param independent.variable string, name of independent variable
 #' @param yes.aliases character vector, values to be interpreted as "yes"
 #' in the independent variable
-#' @param allow.no logical, whether to allow "no" answers as equivalent to NA
-#' in the dependent variable
-#' @param no.aliases character vector, values to be interpreted as
-#' "no" responses in the dependent variable
-#' @param additional.na.levels vector, define alternative values to be treated
+#' @param independent.na.aliases character vector, define alternative values to be treated
 #' as NAs in the independent variable, e.g. "0 times"
+#' @param dependent.na.aliases character vector, define alternative values to be treated
+#' as NAs in the dependent variable, e.g. "0 times"
 #' @return a vector of length nrow(phenotype.data) representing the results
 #' of the dependency test
 #' @export response.depends.on.yes
 response.depends.on.yes <- function(dependent.variable, independent.variable,
                                     yes.aliases = c("yes"),
-                                    allow.no = FALSE,
-                                    no.aliases = c("no"),
-                                    additional.na.levels = c()) {
+                                    independent.na.aliases = character(),
+                                    dependent.na.aliases = character()) {
   stopifnot(length(dependent.variable) >= 1)
   stopifnot(length(independent.variable) >= 1)
   stopifnot(is.character(yes.aliases), length(yes.aliases) > 0)
-  stopifnot(is.logical(allow.no), length(allow.no) == 1)
-  stopifnot(is.character(no.aliases), length(no.aliases) > 0)
   stopifnot(length(dependent.variable) == length(independent.variable))
+  stopifnot(is.character(independent.na.aliases))
+  stopifnot(is.character(dependent.na.aliases))
 
-  if (allow.no) {
-    is.na(dependent.variable) |
-      dependent.variable %in% no.aliases |
-      independent.variable %in% additional.na.levels |
-      (!is.na(independent.variable) & independent.variable %in% yes.aliases)
-  } else {
-    is.na(dependent.variable) |
-      independent.variable %in% additional.na.levels |
-      (!is.na(independent.variable) & independent.variable %in% yes.aliases)
-  }
+  is.na(dependent.variable) |
+    dependent.variable %in% dependent.na.aliases |
+    independent.variable %in% independent.na.aliases |
+    (!is.na(independent.variable) & independent.variable %in% yes.aliases)
 }
 
 #' Test dependency of one variable on non-NA response of another
@@ -55,34 +46,26 @@ response.depends.on.yes <- function(dependent.variable, independent.variable,
 #'
 #' @param dependent.variable string, name of dependent variable to operate on
 #' @param independent.variable string, name of independent variable
-#' @param allow.no logical, whether to allow "no" answers as equivalent to NA
-#' in the dependent variable
-#' @param no.aliases character vector, values to be interpreted as
-#' "no" responses in the dependent variable
-#' @param additional.na.levels vector, define alternative values to be treated
+#' @param independent.na.aliases character vector, define alternative values to be treated
 #' as NAs in the independent variable, e.g. "0 times"
+#' @param dependent.na.aliases character vector, define alternative values to be treated
+#' as NAs in the dependent variable, e.g. "0 times"
 #' @return a vector of length nrow(phenotype.data) representing the results
 #' of the dependency test
 #' @export response.depends.on.not.na
 response.depends.on.not.na <- function(dependent.variable, independent.variable,
-                                       allow.no = FALSE, no.aliases = c("no"),
-                                       additional.na.levels = c()) {
+                                       independent.na.aliases = character(),
+                                       dependent.na.aliases = character()) {
   stopifnot(length(dependent.variable) >= 1)
   stopifnot(length(independent.variable) >= 1)
-  stopifnot(is.logical(allow.no), length(allow.no) == 1)
-  stopifnot(is.character(no.aliases), length(no.aliases) > 0)
   stopifnot(length(dependent.variable) == length(independent.variable))
+  stopifnot(is.character(independent.na.aliases))
+  stopifnot(is.character(dependent.na.aliases))
 
-  if (allow.no) {
-    is.na(dependent.variable) |
-      dependent.variable %in% no.aliases |
-      !(is.na(independent.variable) |
-        independent.variable %in% additional.na.levels)
-  } else {
-    is.na(dependent.variable) |
-      !(is.na(independent.variable) |
-        independent.variable %in% additional.na.levels)
-  }
+  is.na(dependent.variable) |
+    dependent.variable %in% dependent.na.aliases |
+    !(is.na(independent.variable) |
+      independent.variable %in% independent.na.aliases)
 }
 
 #' Test that one variable is less than the other
