@@ -12,6 +12,8 @@ dependencies:
   - r-docopt
   - r-lintr
   - r-styler
+  - r-haven
+  - r-foreign
   - r-usethis
   - r-rmarkdown
   - r-knitr

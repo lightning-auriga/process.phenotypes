@@ -13,6 +13,13 @@
 #' @param quote character vector, character used to quote string tokens; defaults to null
 #' @param uniq.var.inclusion.prop numeric, proportion of total values of a string
 #' variable that can be unique before tabular output is suppressed from the output report
+#' @param write.tsv logical, whether to emit output phenotype data in tsv tab-delimited plaintext
+#' @param write.stata logical, whether to emit output phenotype data in STATA .dta format
+#' @param write.spss logical, whether to emit output phenotype data in SPSS .zsav format
+#' @param write.sas logical, whether to emit output phenotype data in SAS .sas7bdat format,
+#' along with a source .sas file that needs to be run to assign category levels and types
+#' @param write.yaml logical, whether to emit final version of stored configuration data
+#' in YAML format; currently not tested
 #' @seealso run.experiment
 #' @keywords phenotypes
 #' @export create.phenotype.report
@@ -24,7 +31,12 @@ create.phenotype.report <- function(in.filename,
                                     out.filename,
                                     magic.fix = TRUE,
                                     quote = "",
-                                    uniq.var.inclusion.prop = 1 / 3) {
+                                    uniq.var.inclusion.prop = 1 / 3,
+                                    write.tsv = TRUE,
+                                    write.stata = TRUE,
+                                    write.spss = TRUE,
+                                    write.sas = TRUE,
+                                    write.yaml = FALSE) {
   ## sanity check for in.filename param
   stopifnot(
     is.vector(in.filename, mode = "character"),
@@ -50,6 +62,27 @@ create.phenotype.report <- function(in.filename,
   stopifnot(
     is.numeric(uniq.var.inclusion.prop),
     length(uniq.var.inclusion.prop) == 1
+  )
+  ## sanity checks for output format control variables
+  stopifnot(
+    is.logical(write.tsv),
+    length(write.tsv) == 1
+  )
+  stopifnot(
+    is.logical(write.stata),
+    length(write.stata) == 1
+  )
+  stopifnot(
+    is.logical(write.spss),
+    length(write.spss) == 1
+  )
+  stopifnot(
+    is.logical(write.sas),
+    length(write.sas) == 1
+  )
+  stopifnot(
+    is.logical(write.yaml),
+    length(write.yaml) == 1
   )
 
   phenotype.data <- read.table(in.filename,
@@ -226,10 +259,11 @@ create.phenotype.report <- function(in.filename,
       subj.invalid.type.max = variable.summary$globals$max_invalid_datatypes_per_subject
     )
   )
-  ## temporary fix: report "cleaned" data as tsv file
-  ## TODO: replace with something more formal
-  write.table(phenotype.data.na.applied, stringr::str_replace(out.filename, ".html$", ".tsv"),
-    row.names = FALSE, col.names = TRUE, quote = FALSE, sep = "\t"
+  ## report "cleaned" data as assorted output formats
+  ## TODO(lightning.auriga): implement handlers for SPSS, SAS
+  out.prefix <- stringr::str_replace(out.filename, ".html$", "")
+  write.output.formats(
+    phenotype.data, variable.summary, out.prefix,
+    write.tsv, write.stata, write.spss, write.sas, write.yaml
   )
-  write.configuration(variable.summary, stringr::str_replace(out.filename, ".html$", ".yaml"))
 }

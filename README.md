@@ -6,7 +6,11 @@ This is an `R` package designed to help the process of phenotype
 dataset cleaning be automated, rigorous, and transparent. The overall
 cleaning process is simplified as follows:
 
-- a phenotype spreadsheet is exported to .tsv (plaintext, tab-delimited).
+- a phenotype spreadsheet is exported to any of several supported formats:
+  - .tsv (plaintext, tab-delimited)
+  - .dta (STATA format)
+  - .sas7bdat (SAS format, with accompanying .sas code for category labels)
+  - .zsav (SPSS format)
 - the phenotype dataset is configured in 
 [YAML](https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html)
 format. this allows the user to specify the expected data format
@@ -185,10 +189,11 @@ If you are using pre-commit as described below, the yaml configurations will be 
 
 ### Longer Term
 - [x] action to take upon dependency failure
-- [ ] data export formats
+- [x] data export formats
   - [x] plaintext/tsv
-  - [ ] STATA
-  - [ ] SAS?
+  - [x] STATA (dta)
+  - [x] SAS (sas7bdat and auxiliary source file)
+  - [x] SPSS (zsav)
 
 ### Open Proposals
 - [x] aliased variable transformations
@@ -196,6 +201,7 @@ If you are using pre-commit as described below, the yaml configurations will be 
 
 ## Version History
 See changelog for more information.
+ * 21 Sep 2021: initial release v1.0.0
  * 27 Aug 2021: derived variables, transformations, many assorted improvements, and better readme
  * 12 Jul 2021: string_cleanup branch merged into default; v0.1.0
 

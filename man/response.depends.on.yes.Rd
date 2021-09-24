@@ -8,9 +8,8 @@ response.depends.on.yes(
   dependent.variable,
   independent.variable,
   yes.aliases = c("yes"),
-  allow.no = FALSE,
-  no.aliases = c("no"),
-  additional.na.levels = c()
+  independent.na.aliases = character(),
+  dependent.na.aliases = character()
 )
 }
 \arguments{
@@ -21,14 +20,11 @@ response.depends.on.yes(
 \item{yes.aliases}{character vector, values to be interpreted as "yes"
 in the independent variable}
 
-\item{allow.no}{logical, whether to allow "no" answers as equivalent to NA
-in the dependent variable}
-
-\item{no.aliases}{character vector, values to be interpreted as
-"no" responses in the dependent variable}
-
-\item{additional.na.levels}{vector, define alternative values to be treated
+\item{independent.na.aliases}{character vector, define alternative values to be treated
 as NAs in the independent variable, e.g. "0 times"}
+
+\item{dependent.na.aliases}{character vector, define alternative values to be treated
+as NAs in the dependent variable, e.g. "0 times"}
 }
 \value{
 a vector of length nrow(phenotype.data) representing the results

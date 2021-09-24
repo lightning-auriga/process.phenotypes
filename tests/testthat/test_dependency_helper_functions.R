@@ -13,7 +13,7 @@ test_that("unit test that dependency on yes is assessed as expected; 'no' answer
   independent.variable <- c("yes", "no", NA, "no")
   result <- c(TRUE, TRUE, TRUE, FALSE)
   expect_identical(
-    response.depends.on.yes(dependent.variable, independent.variable, allow.no = TRUE),
+    response.depends.on.yes(dependent.variable, independent.variable, dependent.na.aliases = c("no")),
     result
   )
 })
@@ -23,7 +23,7 @@ test_that("unit test that dependency on yes is assessed as expected; specified a
   independent.variable <- c("yes", "no", "zero", "no")
   result <- c(TRUE, TRUE, TRUE, FALSE)
   expect_identical(
-    response.depends.on.yes(dependent.variable, independent.variable, additional.na.levels = "zero"),
+    response.depends.on.yes(dependent.variable, independent.variable, independent.na.aliases = c("zero")),
     result
   )
 })
@@ -44,13 +44,6 @@ test_that("unit test that dependency on yes is assessed as expected, xfail vecto
   )
 })
 
-test_that("unit test that dependency on yes is assessed as expected, xfail allow.no not a logical", {
-  dependent.variable <- c("yes", NA, "no", "yes")
-  independent.variable <- c("yes", "no", NA, "no")
-  expect_error(
-    response.depends.on.yes(dependent.variable, independent.variable, allow.no = "HAHA"),
-  )
-})
 
 test_that("variables that require a yes in a related variable are correctly flagged", {
   in.phenotype.data <- data.frame(
@@ -112,7 +105,7 @@ test_that("variables that require a yes in a related variable are correctly flag
         dependencies = list(
           "1" = list(
             name = "test1",
-            condition = "response.depends.on.yes(PPB001, PPB002, allow.no = TRUE)"
+            condition = "response.depends.on.yes(PPB001, PPB002, dependent.na.aliases = c('no'))"
           )
         )
       ))
@@ -150,7 +143,7 @@ specified answers are treated as NA", {
         dependencies = list(
           "1" = list(
             name = "test1",
-            condition = "response.depends.on.yes(PPB001, PPB002, additional.na.levels = '0 times')"
+            condition = "response.depends.on.yes(PPB001, PPB002, independent.na.aliases = '0 times')"
           )
         )
       ))
@@ -179,7 +172,7 @@ test_that("unit test that dependency on not-NA is assessed as expected; 'no' ans
   independent.variable <- c("yes", "no", NA, "no")
   result <- c(TRUE, TRUE, TRUE, TRUE)
   expect_identical(
-    response.depends.on.not.na(dependent.variable, independent.variable, allow.no = TRUE),
+    response.depends.on.not.na(dependent.variable, independent.variable, dependent.na.aliases = c("no")),
     result
   )
 })
@@ -189,7 +182,7 @@ test_that("unit test that dependency on not-NA is assessed as expected; specifie
   independent.variable <- c("yes", "no", "zero", "no")
   result <- c(TRUE, TRUE, FALSE, TRUE)
   expect_identical(
-    response.depends.on.not.na(dependent.variable, independent.variable, additional.na.levels = "zero"),
+    response.depends.on.not.na(dependent.variable, independent.variable, independent.na.aliases = c("zero")),
     result
   )
 })
@@ -207,14 +200,6 @@ test_that("unit test that dependency on not-NA is assessed as expected, xfail ve
   independent.variable <- c()
   expect_error(
     response.depends.on.not.na(dependent.variable, independent.variable),
-  )
-})
-
-test_that("unit test that dependency on not-NA is assessed as expected, xfail allow.no not a logical", {
-  dependent.variable <- c("yes", NA, "no", "yes")
-  independent.variable <- c("yes", "no", NA, "no")
-  expect_error(
-    response.depends.on.not.na(dependent.variable, independent.variable, allow.no = "HAHA"),
   )
 })
 
@@ -279,7 +264,7 @@ test_that("variables that require a non-NA response in a related variable are co
         dependencies = list(
           "1" = list(
             name = "test1",
-            condition = "response.depends.on.not.na(PPB001, PPB002, allow.no = TRUE)"
+            condition = "response.depends.on.not.na(PPB001, PPB002, dependent.na.aliases = c('no'))"
           )
         )
       ))
@@ -317,7 +302,7 @@ specified answers are treated as NA", {
         dependencies = list(
           "1" = list(
             name = "test1",
-            condition = "response.depends.on.not.na(PPB001, PPB002, additional.na.levels = '0 times')"
+            condition = "response.depends.on.not.na(PPB001, PPB002, independent.na.aliases = c('0 times'))"
           )
         )
       ))
@@ -655,5 +640,29 @@ test_that("consistency of BMI and weight/height is correctly flagged", {
   expect_identical(
     check.variable.dependencies(in.phenotype.data, in.variable.summary),
     out.variable.summary
+  )
+})
+
+test_that("variable greater than comparison works", {
+  x1 <- c(1:11, NA, 6)
+  x2 <- c(11:1, 5, NA)
+  expect_identical(
+    response.greater.than(x1, x2),
+    c(
+      rep(FALSE, 5),
+      rep(TRUE, 8)
+    )
+  )
+})
+
+test_that("variable greater than or equal to comparison works", {
+  x1 <- c(1:11, NA, 6)
+  x2 <- c(11:1, 5, NA)
+  expect_identical(
+    response.greater.than(x1, x2, FALSE),
+    c(
+      rep(FALSE, 6),
+      rep(TRUE, 7)
+    )
   )
 })
