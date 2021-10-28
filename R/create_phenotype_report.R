@@ -92,7 +92,8 @@ create.phenotype.report <- function(in.filename,
     sep = "\t", stringsAsFactors = FALSE,
     comment.char = "", quote = quote, sep = sep,
     check.names = FALSE,
-    colClasses = "character"
+    colClasses = "character",
+    check.names = FALSE
   )
 
   ## load project yaml configuration data
