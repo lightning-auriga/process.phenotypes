@@ -31,7 +31,7 @@ create.phenotype.report(
 
 \item{quote}{character vector, character used to quote string tokens; defaults to null}
 
-\item{sep}{character vector, character used to delimit input fields; defaults to tab (\t)}
+\item{sep}{character vector, character used to delimit input fields; defaults to tab}
 
 \item{uniq.var.inclusion.prop}{numeric, proportion of total values of a string
 variable that can be unique before tabular output is suppressed from the output report}
