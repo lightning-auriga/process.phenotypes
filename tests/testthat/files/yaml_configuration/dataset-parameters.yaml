@@ -10,3 +10,7 @@ variables:
   var013:
     name: "Any associated goitre (neck swelling):"
     shared_model: yes_no
+derived:
+  var013_derived:
+    name: "Any associated goitre (neck swelling):"
+    shared_model: yes_no

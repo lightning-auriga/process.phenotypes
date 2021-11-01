@@ -11,6 +11,7 @@ create.phenotype.report(
   out.filename,
   magic.fix = TRUE,
   quote = "",
+  sep = "\\t",
   uniq.var.inclusion.prop = 1/3,
   write.tsv = TRUE,
   write.stata = TRUE,
@@ -29,6 +30,8 @@ create.phenotype.report(
 \item{out.filename}{character vector, name of output report html file}
 
 \item{quote}{character vector, character used to quote string tokens; defaults to null}
+
+\item{sep}{character vector, character used to delimit input fields; defaults to tab}
 
 \item{uniq.var.inclusion.prop}{numeric, proportion of total values of a string
 variable that can be unique before tabular output is suppressed from the output report}

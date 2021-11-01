@@ -18,6 +18,15 @@ test_that("dataset parameters loaded from yaml and updated with shared models", 
         name = "Any associated goitre (neck swelling):",
         shared_model = "yes_no"
       )
+    ),
+    derived = list(
+      var013_derived = list(
+        type = "binary",
+        reference = "no",
+        comparison = "yes",
+        name = "Any associated goitre (neck swelling):",
+        shared_model = "yes_no"
+      )
     )
   )
   expect_identical(

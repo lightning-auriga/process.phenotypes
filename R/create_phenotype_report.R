@@ -11,6 +11,7 @@
 #' @param shared.model.yaml character vector, yaml configuration for shared model specifications
 #' @param out.filename character vector, name of output report html file
 #' @param quote character vector, character used to quote string tokens; defaults to null
+#' @param sep character vector, character used to delimit input fields; defaults to tab
 #' @param uniq.var.inclusion.prop numeric, proportion of total values of a string
 #' variable that can be unique before tabular output is suppressed from the output report
 #' @param write.tsv logical, whether to emit output phenotype data in tsv tab-delimited plaintext
@@ -31,6 +32,7 @@ create.phenotype.report <- function(in.filename,
                                     out.filename,
                                     magic.fix = TRUE,
                                     quote = "",
+                                    sep = "\t",
                                     uniq.var.inclusion.prop = 1 / 3,
                                     write.tsv = TRUE,
                                     write.stata = TRUE,
@@ -87,8 +89,8 @@ create.phenotype.report <- function(in.filename,
 
   phenotype.data <- read.table(in.filename,
     header = TRUE,
-    sep = "\t", stringsAsFactors = FALSE,
-    comment.char = "", quote = quote,
+    stringsAsFactors = FALSE,
+    comment.char = "", quote = quote, sep = sep,
     check.names = FALSE,
     colClasses = "character"
   )
