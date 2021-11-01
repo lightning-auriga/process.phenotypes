@@ -44,7 +44,7 @@ create.derived.variables <- function(phenotype.data, variable.summary) {
       derived.result <- evaluate.derived.expressions(phenotype.data, derived.exprs)
       if (class(derived.result) != "try-error") {
         not.done.list[[i]] <- NULL
-        stopifnot(is.vector(derived.result), length(derived.result) == nrow(phenotype.data))
+        stopifnot(!is.list(derived.result), length(derived.result) == nrow(phenotype.data))
         phenotype.data[, i] <- derived.result
         variable.summary$variables[[i]] <- list(
           original.name = variable.summary$derived[[i]]$name,

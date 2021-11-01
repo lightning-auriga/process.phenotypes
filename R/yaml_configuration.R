@@ -53,6 +53,24 @@ load.configuration <- function(dataset.parameter.filename,
       )
     }
   }
+  for (var.name in names(dataset.parameters$derived)) {
+    requested.model <- dataset.parameters$derived[[var.name]][["shared_model"]]
+    if (!is.null(requested.model)) {
+      out.model <- global.parameters$models[[requested.model]]
+      if (is.null(out.model)) {
+        stop(
+          "For variable ", var.name, ": requested shared model \"",
+          requested.model, "\" not found in shared model configuration"
+        )
+      }
+      ## apply dataset-specific values on top of any colliding variables in the
+      ## global specification
+      dataset.parameters$derived[[var.name]] <- combine.lists(
+        out.model,
+        dataset.parameters$derived[[var.name]]
+      )
+    }
+  }
   ## return synthesized variable configuration data
   dataset.parameters
 }
