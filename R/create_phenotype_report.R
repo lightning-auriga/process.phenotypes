@@ -240,7 +240,6 @@ create.phenotype.report <- function(in.filename,
     variable.summary$globals$max_invalid_datatypes_per_subject
   )
 
-
   ## find Rmd file from system installation
   rmarkdown.template <- system.file("rmd", "report.Rmd",
     package = "process.phenotypes"
