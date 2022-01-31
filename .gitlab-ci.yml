@@ -18,10 +18,7 @@
 image: rocker/tidyverse:latest
 
 stages:
-  - build
-  - document
   - check
-  - test
   - deploy
 
 workflow:
@@ -33,46 +30,31 @@ variables:
   _R_CHECK_CRAN_INCOMING_: "false"
   _R_CHECK_FORCE_SUGGESTS_: "true"
 
-before_script:
-  - apt-get update
-  - apt-get install -y wget tar
-  - wget https://gitlab.com/data-analysis5/conda-54gene/-/raw/default/conda-54gene/linux-64/r-process.phenotypes-v1.0.2-0.tar.bz2
-  - tar xjvf r-process.phenotypes-v1.0.2-0.tar.bz2
-  - |
-    cp -R lib/R/library/process.phenotypes $(echo ".libPaths()[1]" | R --vanilla --slave | sed 's/\[1\] "// ; s/"$//')
-    rm -Rf lib info *process.phenotypes*bz2
-
-buildbinary:
-  stage: build
-  script:
-    - Rscript -e 'devtools::build(binary = TRUE)'
-
-checkerrors:
-  stage: check
-  script:
-    - Rscript -e 'if (!identical(devtools::check(document = FALSE, args = "--no-tests", error_on = "error")[["errors"]], character(0))) stop("Check with Errors")'
-
-checkwarnings:
-  stage: check
-  script:
-    - Rscript -e 'if (!identical(devtools::check(document = FALSE, args = "--no-tests", error_on = "warning")[["warnings"]], character(0))) stop("Check with Warnings")'
-
-checknotes:
-  stage: check
-  script:
-    - Rscript -e 'if (!identical(devtools::check(document = FALSE, args = "--no-tests", error_on = "note")[["notes"]], character(0))) stop("Check with Notes")'
-
-unittests:
-  stage: test
-  script:
-    - Rscript -e 'if (any(as.data.frame(devtools::test())[["failed"]] > 0)) stop("Some tests failed.")'
-
-codecov:
-  stage: test
-  script:
-    - Rscript -e 'covr::codecov()'
-
-install:
+pages:
   stage: deploy
   script:
+    - mkdir .public
+    - cp -r * .public
+    - mv .public public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+run_all:
+  stage: check
+  image: rocker/tidyverse:latest
+  script:
+    - apt-get update
+    - apt-get install -y wget tar
+    - Rscript -e 'devtools::build(binary = TRUE)'
+    - Rscript -e 'devtools::check(document = FALSE, args = "--no-tests", error_on = "note")'
+    - Rscript -e 'if (any(as.data.frame(devtools::test())[["failed"]] > 0)) stop("Some tests failed.")'
+    - Rscript -e 'install.packages(c("covr", "DT"), repos = "https://cran.seoul.go.kr/")'
+    - Rscript -e 'covr::gitlab(quiet = FALSE) ; cat("total package coverage ", covr::coverage_to_list()$totalcoverage, "\n", sep = "")'
     - Rscript -e 'devtools::install()'
+  coverage: '/total package coverage \d+.\d/'
+  artifacts:
+    paths:
+      - public
