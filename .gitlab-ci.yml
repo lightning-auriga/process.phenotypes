@@ -1,0 +1,78 @@
+# This file is a template, and might need editing before it works on your project.
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
+
+# This is a sample GitLab CI/CD configuration file that should run without any modifications.
+# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
+# it uses echo commands to simulate the pipeline execution.
+#
+# A pipeline is composed of independent jobs that run scripts, grouped into stages.
+# Stages run in sequential order, but jobs within stages run in parallel.
+#
+# For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
+
+# derived from https://jozef.io/r106-r-package-gitlab-ci/
+
+image: rocker/tidyverse:latest
+
+stages:
+  - build
+  - document
+  - check
+  - test
+  - deploy
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE != "merge_request_event"
+
+variables:
+  _R_CHECK_CRAN_INCOMING_: "false"
+  _R_CHECK_FORCE_SUGGESTS_: "true"
+
+before_script:
+  - apt-get update
+  - apt-get install -y wget tar
+  - wget https://gitlab.com/data-analysis5/conda-54gene/-/raw/default/conda-54gene/linux-64/r-process.phenotypes-v1.0.2-0.tar.bz2
+  - tar xjvf r-process.phenotypes-v1.0.2-0.tar.bz2
+  - |
+    cp -R lib/R/library/process.phenotypes $(echo ".libPaths()[1]" | R --vanilla --slave | sed 's/\[1\] "// ; s/"$//')
+    rm -Rf lib info *process.phenotypes*bz2
+
+buildbinary:
+  stage: build
+  script:
+    - Rscript -e 'devtools::build(binary = TRUE)'
+
+checkerrors:
+  stage: check
+  script:
+    - Rscript -e 'if (!identical(devtools::check(document = FALSE, args = "--no-tests", error_on = "error")[["errors"]], character(0))) stop("Check with Errors")'
+
+checkwarnings:
+  stage: check
+  script:
+    - Rscript -e 'if (!identical(devtools::check(document = FALSE, args = "--no-tests", error_on = "warning")[["warnings"]], character(0))) stop("Check with Warnings")'
+
+checknotes:
+  stage: check
+  script:
+    - Rscript -e 'if (!identical(devtools::check(document = FALSE, args = "--no-tests", error_on = "note")[["notes"]], character(0))) stop("Check with Notes")'
+
+unittests:
+  stage: test
+  script:
+    - Rscript -e 'if (any(as.data.frame(devtools::test())[["failed"]] > 0)) stop("Some tests failed.")'
+
+codecov:
+  stage: test
+  script:
+    - Rscript -e 'covr::codecov()'
+
+install:
+  stage: deploy
+  script:
+    - Rscript -e 'devtools::install()'
