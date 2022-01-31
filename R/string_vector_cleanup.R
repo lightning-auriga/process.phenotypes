@@ -6,17 +6,11 @@
 #' - convert all characters to lower case
 #'
 #' @description
+#' Converts all characters to lower case
 #'
 #' @param df data frame, input phenotype content
 #' @return modified version of input with values cleaned as described
 #' above
-#' @examples
-#' phenotype.data <- data.frame(
-#'   c("WeiRd CaPs", "Trailing ", "NA"),
-#'   c(";something", "Not Applicable", "Too   muchspace")
-#' )
-#' colnames(phenotype.data) <- c("col1", "col2")
-#' phenotype.data <- make.lowercase(phenotype.data)
 make.lowercase <- function(df) {
   data.frame(lapply(df, tolower))
 }
@@ -30,17 +24,12 @@ make.lowercase <- function(df) {
 #'   consecutive whitespaces
 #'
 #' @description
+#' Removes all trailing and preceding whitespaces; collapses
+#' multiple consecutive whitespaces
 #'
 #' @param df data frame, input phenotype content
 #' @return modified version of input with values cleaned as described
 #' above
-#' @examples
-#' phenotype.data <- data.frame(
-#'   c("WeiRd CaPs", "Trailing ", "NA"),
-#'   c(";something", "Not Applicable", "Too   muchspace")
-#' )
-#' colnames(phenotype.data) <- c("col1", "col2")
-#' phenotype.data <- remove.whitespace(phenotype.data)
 remove.whitespace <- function(df) {
   df <- data.frame(lapply(df, stringr::str_squish))
   data.frame(lapply(df, stringr::str_replace_all, "[ \\-]*-[ \\-]*", "-"))
@@ -54,17 +43,13 @@ remove.whitespace <- function(df) {
 #' - collapses multiple instances of specified character to a single replacement
 #'
 #' @description
+#' Collapses multiple consecutive instances of specificed character;
+#' defaults to operating on slashes and periods
 #'
 #' @param df data frame, input phenotype content
 #' @param targets character vector, input character(s) to replace duplicates of
 #' @param replacements character vector, character to replace target duplicates with
 #' @return modified version of input with values cleaned as described
-#' @examples
-#' phenotype.data <- data.frame(
-#'   A = c("\\/", "0..112"),
-#'   B = c("//////", "0..\\//\\..01")
-#' )
-#' phenotype.data <- collapse.repeats(df)
 collapse.repeats <- function(df, targets = c("\\\\/", "\\."), replacements = c("/", ".")) {
   stopifnot(
     is.vector(targets, mode = "character"),
@@ -89,18 +74,12 @@ collapse.repeats <- function(df, targets = c("\\\\/", "\\."), replacements = c("
 #' - remove trailing and preceding non-alphanumerics
 #'
 #' @description
+#' Removes preceding and trailing non-alphanumeric characters
 #'
 #' @param df data frame, input phenotype content
 #' @param variable.summary list, variable-specific configuration data
 #' @return modified version of input with values cleaned as described
 #' above
-#' @examples
-#' phenotype.data <- data.frame(
-#'   c("WeiRd CaPs", "Trailing ", "NA"),
-#'   c(";something", "Not Applicable", "Too   muchspace")
-#' )
-#' colnames(phenotype.data) <- c("col1", "col2")
-#' phenotype.data <- remove.nonword.chars(phenotype.data)
 remove.nonword.chars <- function(df, variable.summary) {
   for (i in seq_len(ncol(df))) {
     if (is.null(variable.summary$variables[[i]]$params$type)) next
@@ -135,19 +114,11 @@ remove.nonword.chars <- function(df, variable.summary) {
 #' - harmonize na, nan, not applicable values (unknowns?  blanks?)
 #'
 #' @description
-#'
 #' Assumes input content has already had `make.lowercase` applied.
 #'
 #' @param df data frame, input phenotype content
 #' @return modified version of input with values cleaned as described
 #' above
-#' @examples
-#' phenotype.data <- data.frame(
-#'   c("WeiRd CaPs", "Trailing ", "NA"),
-#'   c(";something", "Not Applicable", "Too   muchspace")
-#' )
-#' colnames(phenotype.data) <- c("col1", "col2")
-#' phenotype.data <- normalize.missing.values(phenotype.data)
 normalize.missing.values <- function(df) {
   data.frame(lapply(df, stringr::str_replace_all,
     paste(
@@ -175,6 +146,8 @@ normalize.missing.values <- function(df) {
 #' entries in a single vector, complicating numeric casts.
 #'
 #' @description
+#' Attempts to identify blood pressure measurements in
+#' DBP/SBP format
 #'
 #' @param vec character vector, input candidate values
 #' @param allow.trailing logical, whether a blood pressure-like
@@ -182,8 +155,6 @@ normalize.missing.values <- function(df) {
 #' a good result
 #' @return logical vector, one per input value, whether the input
 #' matches blood pressure format
-#' @examples
-#' is.blood.pressure(c("100/80", "100/", "100/80."))
 is.blood.pressure <- function(vec, allow.trailing = FALSE) {
   # TODO: Note that this currently will massage values like
   # 100/80.98181818 to 100/80, for example.  What is the desired
@@ -205,6 +176,7 @@ is.blood.pressure <- function(vec, allow.trailing = FALSE) {
 #' to force conversion to numerics by stripping common problems.
 #'
 #' @description
+#' Remove trailing non-numerics to allow conversion to numeric
 #'
 #' @param vec character vector, input phenotype content
 #' @param var.summary list, variable summary entry for this particular variable
@@ -231,6 +203,7 @@ reformat.numerics <- function(vec, var.summary) {
 #' common problems.
 #'
 #' @description
+#' Removed unexpected values from probable blood pressure entries
 #'
 #' @param vec character vector, input phenotype content
 #' @param var.summary list, variable summary information for this particular variable
@@ -256,6 +229,7 @@ reformat.blood.pressure <- function(vec, var.summary) {
 #' This will report entries that are converted to NA without first being set to NA intentionally.
 #'
 #' @description
+#' Reformats character vector to factor
 #'
 #' @param vec character vector, input string phenotype data
 #' @param variable.summary list, summary information for a given variable
@@ -403,7 +377,7 @@ exclude.excel.failures <- function(phenotype.data, variable.summary) {
 #' be flagged here.
 #'
 #' @description
-#' TBD
+#' Flag any unicode characters not already handled
 #'
 #' @param phenotype.data data.frame, input phenotype data
 #' @param variable.summary list, per-variable summary information and config data

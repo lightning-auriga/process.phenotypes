@@ -16,19 +16,11 @@ modified version of input with values cleaned as described
 above
 }
 \description{
-
+Removes preceding and trailing non-alphanumeric characters
 }
 \details{
 Performs the following data modifications to non-numeric values:
 \itemize{
 \item remove trailing and preceding non-alphanumerics
 }
-}
-\examples{
-phenotype.data <- data.frame(
-  c("WeiRd CaPs", "Trailing ", "NA"),
-  c(";something", "Not Applicable", "Too   muchspace")
-)
-colnames(phenotype.data) <- c("col1", "col2")
-phenotype.data <- remove.nonword.chars(phenotype.data)
 }

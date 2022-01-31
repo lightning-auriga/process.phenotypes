@@ -24,10 +24,6 @@
 #' to the raw variable names
 #' @seealso sanitize.header
 #' @keywords phenotypes
-#' @examples
-#' df <- data.frame(rnorm(100), runif(100))
-#' colnames(df) <- c("Human height lol", "y")
-#' map.header(df, "mytag")
 map.header <- function(df, dataset.tag, config.data,
                        force.header.mapping = FALSE) {
   ## new: pull names from input config variable specification
@@ -86,17 +82,14 @@ map.header <- function(df, dataset.tag, config.data,
 #' will fail silently.
 #'
 #' @description
+#' Apply mapped header values to data frame to address issues like non-standard
+#' characters, repeat values, etc.
 #'
 #' @param df data frame, phenotype dataframe with untransformed headers
 #' @param var.map output of `map.header` for df
 #' @return input data frame with variable name transformation applied
 #' @seealso map.header
 #' @keywords phenotypes
-#' @examples
-#' df <- data.frame(rnorm(100), runif(100))
-#' colnames(df) <- c("Human height lol", "y")
-#' mapped.values <- map.header(df, "mytag")
-#' df.transformed <- sanitize.header(df, mapped.values)
 sanitize.header <- function(df, var.map) {
   name.lookup <- names(var.map$variables)
   res <- df

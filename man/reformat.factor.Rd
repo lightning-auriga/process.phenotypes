@@ -17,7 +17,7 @@ list, 'phenotype.data' contains converted phenotype information,
 about invalid factor levels converted to NA.
 }
 \description{
-
+Reformats character vector to factor
 }
 \details{
 Converts character vector to factor based on level specification in yaml config.
