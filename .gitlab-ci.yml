@@ -15,7 +15,7 @@
 
 # derived from https://jozef.io/r106-r-package-gitlab-ci/
 
-image: rocker/tidyverse:latest
+image: barijane/r-dev:1
 
 stages:
   - check
@@ -44,7 +44,7 @@ pages:
 
 run_all:
   stage: check
-  image: rocker/tidyverse:latest
+  image: barijane/r-dev:1
   script:
     - apt-get update
     - apt-get install -y wget tar
