@@ -18,9 +18,9 @@ list of lists, containing parsed yaml configuration
 information
 }
 \description{
-
+TBD
 }
 \details{
-
+TBD
 }
 \keyword{yaml}

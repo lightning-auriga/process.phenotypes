@@ -18,12 +18,10 @@ logical vector, one per input value, whether the input
 matches blood pressure format
 }
 \description{
-
+Attempts to identify blood pressure measurements in
+DBP/SBP format
 }
 \details{
 Blood pressure measurements may be reported as ###/###
 entries in a single vector, complicating numeric casts.
-}
-\examples{
-is.blood.pressure(c("100/80", "100/", "100/80."))
 }

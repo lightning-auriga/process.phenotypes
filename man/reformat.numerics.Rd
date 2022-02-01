@@ -15,7 +15,7 @@ reformat.numerics(vec, var.summary)
 modified version of input with values cleaned as described above
 }
 \description{
-
+Remove trailing non-numerics to allow conversion to numeric
 }
 \details{
 Given string vector with malformed numeric entries, attempt

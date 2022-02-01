@@ -19,7 +19,7 @@ subjects below the age threshold excluded, 'variable.summary' contains
 input variable summary with information about excluded subjects.
 }
 \description{
-
+TBD
 }
 \details{
 This function will exclude subjects whose age, as defined with the

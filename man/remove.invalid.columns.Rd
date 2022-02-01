@@ -14,7 +14,7 @@ modified version of input with certain bad columns
 removed
 }
 \description{
-
+TBD
 }
 \details{
 Removes columns under the following criteria:
@@ -25,7 +25,9 @@ Removes columns under the following criteria:
 }
 }
 \examples{
+\dontrun{
 phenotype.data <- data.frame(1:3, 4:6, 7:9)
 colnames(phenotype.data) <- c("", NA, "ok name")
 phenotype.data <- remove.invalid.columns(phenotype.data)
+}
 }

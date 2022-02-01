@@ -19,7 +19,7 @@ data frame containing phenotype information with
 subjects containing specified values set to NA
 }
 \description{
-
+TBD
 }
 \details{
 User config can optionally contain an 'na-values' sequence

@@ -37,7 +37,10 @@ identity entries}
 
 \item{shared.model.yaml}{character vector,
 name of shared model configuration for both
-input files
+input files}
+
+\item{out.filename}{character vector, name of
+output file
 
 note that this function is primary used for its
 side effect, emitting content to screen.}

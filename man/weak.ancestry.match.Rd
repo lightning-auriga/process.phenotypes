@@ -23,10 +23,10 @@ both entries and names in this vector are assumed to have gone
 through approximately analogous processing as the input free-text
 ancestry group labels, e.g. made lowercase and had whitespace removed.}
 
-\item{best.match.threshold}{numeric, on \link{0,1}, denoting how high
+\item{best.match.threshold}{numeric, on [0,1], denoting how high
 the best match similarity must be to permit a call}
 
-\item{best.match.discernment}{numeric, on \link{0,1} denoting the proportion
+\item{best.match.discernment}{numeric, on [0,1] denoting the proportion
 of the top match the next best match must be less than (assuming the
 next best match does not map to the same harmonized label) in order
 to accept the top match}

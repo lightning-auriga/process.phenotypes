@@ -1,1 +1,13 @@
 ^LICENSE\.md$
+^node_modules/.*
+CHANGELOG.md
+package-lock.json
+package.json
+r-dev.yaml
+raw_normalized
+test_results
+yaml-configuration
+.gitlab-ci.yml
+.lintr
+.pre-commit-config.yaml
+.pre-commit-hooks.yaml

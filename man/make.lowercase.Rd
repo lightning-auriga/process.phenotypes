@@ -14,19 +14,11 @@ modified version of input with values cleaned as described
 above
 }
 \description{
-
+Converts all characters to lower case
 }
 \details{
 Performs the following data modifications to non-numeric values:
 \itemize{
 \item convert all characters to lower case
 }
-}
-\examples{
-phenotype.data <- data.frame(
-  c("WeiRd CaPs", "Trailing ", "NA"),
-  c(";something", "Not Applicable", "Too   muchspace")
-)
-colnames(phenotype.data) <- c("col1", "col2")
-phenotype.data <- make.lowercase(phenotype.data)
 }
