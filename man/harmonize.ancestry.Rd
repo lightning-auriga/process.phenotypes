@@ -22,10 +22,10 @@ harmonize.ancestry(
 source to pull known labels from (e.g. "nigeria"); or
 a file in the format expected by load.ancestry.linker}
 
-\item{best.match.threshold}{numeric, on \link{0,1}, denoting how high
+\item{best.match.threshold}{numeric, on [0,1], denoting how high
 the best match similarity must be to permit a call}
 
-\item{best.match.discernment}{numeric, on \link{0,1} denoting the proportion
+\item{best.match.discernment}{numeric, on [0,1] denoting the proportion
 of the top match the next best match must be less than (assuming the
 next best match does not map to the same harmonized label) in order
 to accept the top match}

@@ -18,7 +18,9 @@
 #' @seealso create.phenotype.report
 #' @keywords phenotypes
 #' @examples
+#' \dontrun{
 #' process.phenotypes("/path/to/phenotypes/pre-audit", "my_results")
+#' }
 process.phenotypes <- function(phenotype.path,
                                output.path,
                                phenotype.files = c(

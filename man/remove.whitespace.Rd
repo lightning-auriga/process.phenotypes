@@ -14,7 +14,8 @@ modified version of input with values cleaned as described
 above
 }
 \description{
-
+Removes all trailing and preceding whitespaces; collapses
+multiple consecutive whitespaces
 }
 \details{
 Performs the following data modifications to non-numeric values:
@@ -22,12 +23,4 @@ Performs the following data modifications to non-numeric values:
 \item remove all trailing and preceding whitespaces and collapse
 consecutive whitespaces
 }
-}
-\examples{
-phenotype.data <- data.frame(
-  c("WeiRd CaPs", "Trailing ", "NA"),
-  c(";something", "Not Applicable", "Too   muchspace")
-)
-colnames(phenotype.data) <- c("col1", "col2")
-phenotype.data <- remove.whitespace(phenotype.data)
 }

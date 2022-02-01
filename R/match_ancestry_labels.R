@@ -16,9 +16,9 @@
 #' @param ancestry.source character vector, name of data
 #' source to pull known labels from (e.g. "nigeria"); or
 #' a file in the format expected by load.ancestry.linker
-#' @param best.match.threshold numeric, on [0,1], denoting how high
+#' @param best.match.threshold numeric, on \[0,1\], denoting how high
 #' the best match similarity must be to permit a call
-#' @param best.match.discernment numeric, on [0,1] denoting the proportion
+#' @param best.match.discernment numeric, on \[0,1\] denoting the proportion
 #' of the top match the next best match must be less than (assuming the
 #' next best match does not map to the same harmonized label) in order
 #' to accept the top match
@@ -147,9 +147,9 @@ load.ancestry.linker <- function(filename) {
 #' both entries and names in this vector are assumed to have gone
 #' through approximately analogous processing as the input free-text
 #' ancestry group labels, e.g. made lowercase and had whitespace removed.
-#' @param best.match.threshold numeric, on [0,1], denoting how high
+#' @param best.match.threshold numeric, on \[0,1\], denoting how high
 #' the best match similarity must be to permit a call
-#' @param best.match.discernment numeric, on [0,1] denoting the proportion
+#' @param best.match.discernment numeric, on \[0,1\] denoting the proportion
 #' of the top match the next best match must be less than (assuming the
 #' next best match does not map to the same harmonized label) in order
 #' to accept the top match
@@ -250,9 +250,9 @@ harmonize.ancestry.from.linker <- function(phenotype,
 #' both entries and names in this vector are assumed to have gone
 #' through approximately analogous processing as the input free-text
 #' ancestry group labels, e.g. made lowercase and had whitespace removed.
-#' @param best.match.threshold numeric, on [0,1], denoting how high
+#' @param best.match.threshold numeric, on \[0,1\], denoting how high
 #' the best match similarity must be to permit a call
-#' @param best.match.discernment numeric, on [0,1] denoting the proportion
+#' @param best.match.discernment numeric, on \[0,1\] denoting the proportion
 #' of the top match the next best match must be less than (assuming the
 #' next best match does not map to the same harmonized label) in order
 #' to accept the top match

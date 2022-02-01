@@ -16,7 +16,7 @@ list, input variable summary with updated logging information
 if any residual Unicode characters are detected.
 }
 \description{
-TBD
+Flag any unicode characters not already handled
 }
 \details{
 Unicode characters should be removed when detected, as they are typically

@@ -21,18 +21,12 @@ collapse.repeats(
 modified version of input with values cleaned as described
 }
 \description{
-
+Collapses multiple consecutive instances of specificed character;
+defaults to operating on slashes and periods
 }
 \details{
 Performs the following data modifications to non-numeric values:
 \itemize{
 \item collapses multiple instances of specified character to a single replacement
 }
-}
-\examples{
-phenotype.data <- data.frame(
-  A = c("\\\\/", "0..112"),
-  B = c("//////", "0..\\\\//\\\\..01")
-)
-phenotype.data <- collapse.repeats(df)
 }

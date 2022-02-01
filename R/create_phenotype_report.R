@@ -10,6 +10,9 @@
 #' @param dataset.yaml character vector, yaml configuration for project
 #' @param shared.model.yaml character vector, yaml configuration for shared model specifications
 #' @param out.filename character vector, name of output report html file
+#' @param magic.fix logical, whether or not to apply most of the automated fixes
+#' in this package; used to "turn off" fixes but still generate a parseable dataset
+#' for comparison purposes
 #' @param quote character vector, character used to quote string tokens; defaults to null
 #' @param sep character vector, character used to delimit input fields; defaults to tab
 #' @param uniq.var.inclusion.prop numeric, proportion of total values of a string
@@ -25,7 +28,14 @@
 #' @keywords phenotypes
 #' @export create.phenotype.report
 #' @examples
-#' create.phenotype.report("/path/to/directory/MM_FINAl_store.tsv", "MM", "/output/path/MM_report.html")
+#' \dontrun{
+#' create.phenotype.report(
+#'   "/path/to/directory/MM_FINAl_store.tsv",
+#'   "MM", "/output/path/MM_report.html"
+#' )
+#' }
+#' @importFrom stats qnorm quantile sd
+#' @importFrom utils read.table type.convert write.table
 create.phenotype.report <- function(in.filename,
                                     dataset.yaml,
                                     shared.model.yaml,

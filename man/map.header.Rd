@@ -35,11 +35,6 @@ headers; this function maps those to standardized format "TAG#####" names.
 The new names are reported as names(result), and the old variable names
 corresponding to those names are reported as result${newname}$original.name.
 }
-\examples{
-df <- data.frame(rnorm(100), runif(100))
-colnames(df) <- c("Human height lol", "y")
-map.header(df, "mytag")
-}
 \seealso{
 sanitize.header
 }

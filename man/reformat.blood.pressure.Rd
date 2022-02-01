@@ -15,7 +15,7 @@ reformat.blood.pressure(vec, var.summary)
 modified version of input with values cleaned as described above
 }
 \description{
-
+Removed unexpected values from probable blood pressure entries
 }
 \details{
 Given string vector with potentially malformed blood pressure

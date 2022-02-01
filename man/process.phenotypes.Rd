@@ -35,7 +35,9 @@ and should probably be named to reflect that if this
 is ever used in other contexts lol.
 }
 \examples{
+\dontrun{
 process.phenotypes("/path/to/phenotypes/pre-audit", "my_results")
+}
 }
 \seealso{
 create.phenotype.report

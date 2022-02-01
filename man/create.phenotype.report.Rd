@@ -29,6 +29,10 @@ create.phenotype.report(
 
 \item{out.filename}{character vector, name of output report html file}
 
+\item{magic.fix}{logical, whether or not to apply most of the automated fixes
+in this package; used to "turn off" fixes but still generate a parseable dataset
+for comparison purposes}
+
 \item{quote}{character vector, character used to quote string tokens; defaults to null}
 
 \item{sep}{character vector, character used to delimit input fields; defaults to tab}
@@ -56,7 +60,12 @@ Given phenotype information in tsv file, run some TBD reporting/cleaning
 and emit summary information.
 }
 \examples{
-create.phenotype.report("/path/to/directory/MM_FINAl_store.tsv", "MM", "/output/path/MM_report.html")
+\dontrun{
+create.phenotype.report(
+  "/path/to/directory/MM_FINAl_store.tsv",
+  "MM", "/output/path/MM_report.html"
+)
+}
 }
 \seealso{
 run.experiment

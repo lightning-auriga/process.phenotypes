@@ -204,6 +204,7 @@ apply.bounds <- function(phenotype.data, variable.summary) {
 #' not match exactly as desired in some cases.
 #'
 #' @description
+#' TBD
 #'
 #' @param phenotype.data data frame, loaded phenotype data with
 #' standardized headers
@@ -238,6 +239,7 @@ convert.variable.specific.na <- function(phenotype.data, variable.summary) {
 #' This is useful for excluding minors, for example.
 #'
 #' @description
+#' TBD
 #'
 #' @param phenotype.data data frame, loaded phenotype data with
 #' standardized headers; all columns should be character vectors

@@ -22,11 +22,3 @@ Performs the following data modifications to non-numeric values:
 \item harmonize na, nan, not applicable values (unknowns?  blanks?)
 }
 }
-\examples{
-phenotype.data <- data.frame(
-  c("WeiRd CaPs", "Trailing ", "NA"),
-  c(";something", "Not Applicable", "Too   muchspace")
-)
-colnames(phenotype.data) <- c("col1", "col2")
-phenotype.data <- normalize.missing.values(phenotype.data)
-}
