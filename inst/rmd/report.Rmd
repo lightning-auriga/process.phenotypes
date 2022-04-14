@@ -247,7 +247,7 @@ for (name in names(variable.summary$variables)) {
   }
 
   ## report any indication of residual Excel junk in the variable
-  if (!is.null(variable.summary$variables[[name]]$excel.problem.count)) {
+  if (!is.null(variable.summary$variables[[name]]$excel.problem.count) & !suppress.reporting) {
     if (variable.summary$variables[[name]]$excel.problem.count == 1) {
       cat("\nWARNING: 1 Excel error code detected in this variable.\n")
     } else {
@@ -258,7 +258,7 @@ for (name in names(variable.summary$variables)) {
     }
   }
   ## if the source data type is numeric
-  if (is.vector(phenotype.data[, name], mode = "numeric")) {
+  if (is.vector(phenotype.data[, name], mode = "numeric") & !suppress.reporting) {
     if (length(which(!is.na(phenotype.data[, name])))) {
       ## create data histogram for numeric data
       plot.data <- data.frame(x = phenotype.data[!is.na(phenotype.data[, name]), name])
@@ -358,7 +358,7 @@ for (name in names(variable.summary$variables)) {
   }
   ## if the source data has a linked_date variable, indicating it is an age
   ## that in theory should be derived from a date
-  if (!is.null(variable.summary$variables[[name]]$params$linked_date)) {
+  if (!is.null(variable.summary$variables[[name]]$params$linked_date) & !suppress.reporting) {
     reported.year.varname <- variable.summary$variables[[name]]$params$linked_date$reported_year
     reference.year <- variable.summary$variables[[name]]$params$linked_date$reference_year
     stopifnot(
@@ -388,7 +388,7 @@ for (name in names(variable.summary$variables)) {
   }
   ## if the source data has a computed_bmi variable, indicating it is BMI
   ## that in theory should be derived from height and weight
-  if (!is.null(variable.summary$variables[[name]]$params$computed_bmi)) {
+  if (!is.null(variable.summary$variables[[name]]$params$computed_bmi) & !suppress.reporting) {
     height.varname <- variable.summary$variables[[name]]$params$computed_bmi$height
     weight.varname <- variable.summary$variables[[name]]$params$computed_bmi$weight
     stopifnot(
@@ -416,7 +416,7 @@ for (name in names(variable.summary$variables)) {
   }
   ## if the source data has a computed_bp_ratio variable, plot the ratio
   ## between the systolic and diastolic measurements as indicated
-  if (!is.null(variable.summary$variables[[name]]$params$computed_bp_ratio)) {
+  if (!is.null(variable.summary$variables[[name]]$params$computed_bp_ratio) & !suppress.reporting) {
     systolic.bp <- phenotype.data[, name]
     diastolic.bp.varname <- variable.summary$variables[[name]]$params$computed_bp_ratio$diastolic
     stopifnot(diastolic.bp.varname %in% colnames(phenotype.data))
@@ -433,7 +433,7 @@ for (name in names(variable.summary$variables)) {
   }
   ## original exclusion criterion here is hitting everything for small datasets,
   ## even when the report is not a unique value report
-  if (is.vector(phenotype.data[, name], mode = "numeric") |
+  if ((is.vector(phenotype.data[, name], mode = "numeric") & !suppress.reporting) |
     ((is.factor(phenotype.data[, name]) |
       length(my.summ) < nrow(phenotype.data) * unique.variable.value.inclusion.proportion) & !suppress.reporting)) {
     variable.summary.df <- data.frame(
@@ -445,7 +445,7 @@ for (name in names(variable.summary$variables)) {
     colnames(variable.summary.df) <- c("Value", "Summary statistics")
     table.caption <- paste("Summary of ", name, " (", variable.pretty.name, ")", sep = "")
     cat(knitr::kable(variable.summary.df, caption = table.caption) %>% kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
-  } else if (length(my.summ) >= nrow(phenotype.data) * unique.variable.value.inclusion.proportion) {
+  } else if (length(my.summ) >= nrow(phenotype.data) * unique.variable.value.inclusion.proportion & !suppress.reporting) {
     cat("\n\nVariable ", name, " (", variable.pretty.name, ") has ", length(my.summ), " unique values, and thus",
       " report output of individual value counts is suppressed.\n\n",
       sep = ""
@@ -453,7 +453,7 @@ for (name in names(variable.summary$variables)) {
   } else if (suppress.reporting) {
     cat("\n\nReporting for this variable was suppressed in the configuration.\n\n")
   }
-  if (!is.null(variable.summary$variables[[name]]$invalid.blood.pressure.entries)) {
+  if (!is.null(variable.summary$variables[[name]]$invalid.blood.pressure.entries) & !suppress.reporting) {
     if (length(variable.summary$variables[[name]]$invalid.blood.pressure.entries) > 0) {
       df <- data.frame(table(variable.summary$variables[[name]]$invalid.blood.pressure.entries, useNA = "ifany"))
       rownames(df) <- NULL
@@ -464,7 +464,7 @@ for (name in names(variable.summary$variables)) {
       cat("\n\nAll values consistent with blood pressure format or missing data.\n\n")
     }
   }
-  if (!is.null(variable.summary$variables[[name]]$invalid.numeric.entries)) {
+  if (!is.null(variable.summary$variables[[name]]$invalid.numeric.entries) & !suppress.reporting) {
     if (length(variable.summary$variables[[name]]$invalid.numeric.entries) > 0) {
       df <- data.frame(table(variable.summary$variables[[name]]$invalid.numeric.entries, useNA = "ifany"))
       rownames(df) <- NULL
@@ -477,7 +477,7 @@ for (name in names(variable.summary$variables)) {
   }
   ## factors
   ## give ancestry factor variable special treatment
-  if (!is.null(variable.summary$variables[[name]]$params$subject_ancestry)) {
+  if (!is.null(variable.summary$variables[[name]]$params$subject_ancestry) & !suppress.reporting) {
     ## instead of reporting failed conversions specifically,
     ## report a table of all imperfect matches to the reference ancestry labels,
     ## and track the outcomes for all of them, even the ones that were eventually
@@ -513,7 +513,7 @@ for (name in names(variable.summary$variables)) {
     df <- df[order(df[, 3], df[, 2], df[, 1]), ]
     rownames(df) <- NULL
     cat(knitr::kable(df, caption = "Handling of all partial match self-reported ancestries.") %>% kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
-  } else if (!is.null(variable.summary$variables[[name]]$invalid.factor.entries)) {
+  } else if (!is.null(variable.summary$variables[[name]]$invalid.factor.entries) & !suppress.reporting) {
     ## other things that are factors
     if (length(variable.summary$variables[[name]]$invalid.factor.entries) > 0) {
       df <- data.frame(table(variable.summary$variables[[name]]$invalid.factor.entries, useNA = "ifany"))
@@ -525,7 +525,7 @@ for (name in names(variable.summary$variables)) {
       cat("\n\nAll values consistent with categorical format or missing data.\n\n")
     }
   }
-  if (!is.null(variable.summary$variables[[name]]$invalid.date.entries)) {
+  if (!is.null(variable.summary$variables[[name]]$invalid.date.entries) & !suppress.reporting) {
     if (length(variable.summary$variables[[name]]$invalid.date.entries) > 0) {
       df <- data.frame(table(variable.summary$variables[[name]]$invalid.date.entries, useNA = "ifany"))
       rownames(df) <- NULL
@@ -536,7 +536,7 @@ for (name in names(variable.summary$variables)) {
       cat("\n\nAll values consistent with date format (year only) or missing data.\n\n")
     }
   }
-  if (!is.null(variable.summary$variables[[name]]$unicode.entries)) {
+  if (!is.null(variable.summary$variables[[name]]$unicode.entries) & !suppress.reporting) {
     unicode.df <- data.frame(
       names(variable.summary$variables[[name]]$unicode.entries),
       as.vector(variable.summary$variables[[name]]$unicode.entries)
@@ -545,7 +545,7 @@ for (name in names(variable.summary$variables)) {
     colnames(unicode.df) <- c("Unicode String", "Observations")
     cat(knitr::kable(unicode.df, caption = "String entries containing unresolved Unicode characters.") %>% kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
   }
-  if (!is.null(variable.summary$variables[[name]]$params$dependencies)) {
+  if (!is.null(variable.summary$variables[[name]]$params$dependencies) & !suppress.reporting) {
     cat("\n\n#### Dependency tracking\n\n")
     dependency.names <- c()
     dependency.conditions <- c()
