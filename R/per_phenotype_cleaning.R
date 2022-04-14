@@ -142,7 +142,7 @@ convert.type <- function(vec, var.summary, target.type) {
 #' with information on entries outside the defined bounds)
 #' @seealso load.configuration
 #' @keywords phenotypes yaml
-apply.bounds <- function(phenotype.data, variable.summary) {
+apply.bounds <- function(phenotype.data, variable.summary, target.derived) {
   stopifnot(ncol(phenotype.data) == length(variable.summary$variables))
   for (i in seq_len(length(variable.summary$variables))) {
     target.type <- variable.summary$variables[[i]]$params$type
@@ -151,7 +151,7 @@ apply.bounds <- function(phenotype.data, variable.summary) {
         var.min <- variable.summary$variables[[i]]$params$bounds$min
         if (!is.null(var.min)) {
           var.min <- as.numeric(var.min)
-          if (!is.na(var.min)) {
+          if (!is.na(var.min) & is.null(variable.summary$variables[[i]]$num.below.min)) {
             # count and apply min threshold
             num.min <- length(phenotype.data[phenotype.data[, i] < var.min &
               !is.na(phenotype.data[, i]), i])
@@ -163,7 +163,7 @@ apply.bounds <- function(phenotype.data, variable.summary) {
         var.max <- variable.summary$variables[[i]]$params$bounds$max
         if (!is.null(var.max)) {
           var.max <- as.numeric(var.max)
-          if (!is.na(var.max)) {
+          if (!is.na(var.max) & is.null(variable.summary$variables[[i]]$num.above.max)) {
             # count and apply max threshold
             num.max <- length(phenotype.data[phenotype.data[, i] > var.max &
               !is.na(phenotype.data[, i]), i])
@@ -173,7 +173,7 @@ apply.bounds <- function(phenotype.data, variable.summary) {
           }
         }
         var.sd <- variable.summary$variables[[i]]$params$bounds$sd
-        if (!is.null(var.sd)) {
+        if (!is.null(var.sd) & is.null(variable.summary$variables[[i]]$num.beyond.sd)) {
           var.sd <- as.numeric(var.sd)
           stopifnot(var.sd >= 0)
           ## count and apply bidirectional standard deviation threshold
