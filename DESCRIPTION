@@ -1,15 +1,10 @@
 Package: process.phenotypes
 Title: Process audited phenotype datasets and report
 Version: 1.0.3
-Authors@R: 
-    c(person(given = "Bari",
-             family = "Ballew",
-             role = "aut",
-             email = "bari.ballew@54gene.com"),
-      person(given = "Lightning",
-             family = "Auriga",
-             role = c("aut", "cre"),
-             email = "cameron.palmer@54gene.com"))
+Authors@R: c(
+    person("Bari", "Ballew", , "bari.ballew@54gene.com", role = "aut"),
+    person("Lightning", "Auriga", , "cameron.palmer@54gene.com", role = c("aut", "cre"))
+  )
 Description: TBD.
 License: MIT + file LICENSE
 Imports:
@@ -17,6 +12,7 @@ Imports:
     haven,
     kableExtra,
     knitr,
+    openxlsx,
     rlang,
     rmarkdown,
     stringdist,
@@ -28,4 +24,4 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
