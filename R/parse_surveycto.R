@@ -147,7 +147,8 @@ build.variable.data <- function(type.value, name.value, label.value, choice.list
         )
       }
     } else {
-      stop("unrecognized CTO type flag detected: ", type.value)
+      warning("unrecognized CTO type flag detected: \"", type.value, "\"")
+      res <- NULL
     }
   }
   res
@@ -312,6 +313,11 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
     i <- i + 1
   }
   out.yaml <- add.trailing.metadata(out.yaml, dataset.tag, responses)
+  ## sanity check: output content should match response headers
+  output.predicted.headers <- unname(sapply(out.yaml$variables, function(i) {
+    i$name
+  }))
+  stopifnot(identical(output.predicted.headers, responses))
   yaml::write_yaml(out.yaml, out.yaml.filename, fileEncoding = "UTF-8")
   yaml::write_yaml(choice.list, out.shared.models, fileEncoding = "UTF-8")
 }
