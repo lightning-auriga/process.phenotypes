@@ -39,10 +39,10 @@ subj.invalid.type.max <- params$subj.invalid.type.max
 
 ```{r load.packages, eval=TRUE, echo=FALSE}
 #### Load required R packages
-library(ggplot2, quietly = TRUE)
-library(RColorBrewer, quietly = TRUE)
-library(knitr, quietly = TRUE)
-library(kableExtra, quietly = TRUE)
+suppressPackageStartupMessages(library(ggplot2, quietly = TRUE))
+suppressPackageStartupMessages(library(RColorBrewer, quietly = TRUE))
+suppressPackageStartupMessages(library(knitr, quietly = TRUE))
+suppressPackageStartupMessages(library(kableExtra, quietly = TRUE))
 ```
 
 ```{r get.bins, eval=TRUE, echo=FALSE}
@@ -140,7 +140,7 @@ knitr::kable(process.phenotypes:::get.top.ten(TRUE, nas.by.subject, "Subjects"),
   kableExtra::kable_styling("condensed", position = "left", full_width = FALSE)
 ```
 
-```{r report.subject.type.failures, eval=TRUE, echo=FALSE, results="asis"}
+```{r report.subject.type.failures, eval=length(subjects.wrong.type) > 0, echo=FALSE, results="asis"}
 ## probably also want a histogram of this one
 plot.data <- data.frame(x = subjects.wrong.type)
 my.hist <- ggplot(aes(x = x, y = ..count.. / nrow(phenotype.data)), data = plot.data)
@@ -158,7 +158,7 @@ knitr::kable(process.phenotypes:::get.top.ten(TRUE, subjects.wrong.type, "Subjec
 ***
 <br>
 
-```{r report.subject.dependency.failures, eval=TRUE, echo=FALSE, results="asis"}
+```{r report.subject.dependency.failures, eval=length(subjects.failing.deps) > 0, echo=FALSE, results="asis"}
 ## histogram time
 plot.data <- data.frame(x = subjects.failing.deps)
 my.hist <- ggplot(aes(x = x, y = ..count.. / nrow(phenotype.data)), data = plot.data)
@@ -172,9 +172,9 @@ print(my.hist)
 ***
 <br>
 
-### Variable level metrics
+`r if (length(variables.wrong.type) > 0) {"### Variable level metrics"}`
 
-```{r report.variable.type.failures, eval=TRUE, echo=FALSE, results="asis"}
+```{r report.variable.type.failures, eval=length(variables.wrong.type) > 0, echo=FALSE, results="asis"}
 ## for now, histogram this too
 plot.data <- data.frame(x = variables.wrong.type)
 my.hist <- ggplot(aes(x = x, y = ..count.. / sum(..count..)), data = plot.data)
@@ -262,68 +262,70 @@ for (name in names(variable.summary$variables)) {
     if (length(which(!is.na(phenotype.data[, name])))) {
       ## create data histogram for numeric data
       plot.data <- data.frame(x = phenotype.data[!is.na(phenotype.data[, name]), name])
-      hist.plot <- ggplot(data = plot.data) + my.theme
-      nbins <- get.bins(phenotype.data[!is.na(phenotype.data[, name]), name])
-      binwidth <- diff(range(phenotype.data[!is.na(phenotype.data[, name]), name])) / nbins
-      if (!is.null(variable.summary$variables[[name]]$params$multimodal)) {
-        multimodal.varname <- variable.summary$variables[[name]]$params$multimodal
-        stopifnot(multimodal.varname %in% colnames(phenotype.data))
-        multimodal.values <- unique(phenotype.data[, multimodal.varname])
-        hist.plot.colours <- RColorBrewer::brewer.pal(max(3, length(multimodal.values)), "Dark2")[seq_len(length(multimodal.values))]
-        annotate.y <- max(hist(phenotype.data[, name], breaks = nbins, plot = FALSE)$counts) / nrow(phenotype.data)
-        for (i in seq_len(length(multimodal.values))) {
-          if (length(which(phenotype.data[, multimodal.varname] == multimodal.values[i] &
-            !is.na(phenotype.data[, multimodal.varname]))) == 0) {
-            next
+      if (length(unique(plot.data$x)) > 0) {
+        hist.plot <- ggplot(data = plot.data) + my.theme
+        nbins <- get.bins(phenotype.data[!is.na(phenotype.data[, name]), name])
+        binwidth <- diff(range(phenotype.data[!is.na(phenotype.data[, name]), name])) / nbins
+        if (!is.null(variable.summary$variables[[name]]$params$multimodal)) {
+          multimodal.varname <- variable.summary$variables[[name]]$params$multimodal
+          stopifnot(multimodal.varname %in% colnames(phenotype.data))
+          multimodal.values <- unique(phenotype.data[, multimodal.varname])
+          hist.plot.colours <- RColorBrewer::brewer.pal(max(3, length(multimodal.values)), "Dark2")[seq_len(length(multimodal.values))]
+          annotate.y <- max(hist(phenotype.data[, name], breaks = nbins, plot = FALSE)$counts) / nrow(phenotype.data)
+          for (i in seq_len(length(multimodal.values))) {
+            if (length(which(phenotype.data[, multimodal.varname] == multimodal.values[i] &
+              !is.na(phenotype.data[, multimodal.varname]))) == 0) {
+              next
+            }
+            plot.subset <- phenotype.data[phenotype.data[, multimodal.varname] == multimodal.values[i] &
+              !is.na(phenotype.data[, name]) & !is.na(phenotype.data[, multimodal.varname]), ]
+            hist.plot <- hist.plot + geom_histogram(aes_string(
+              x = name,
+              y = "..count../sum(..count..)"
+            ),
+            data = plot.subset,
+            bins = nbins,
+            binwidth = binwidth,
+            fill = hist.plot.colours[i],
+            alpha = 0.2
+            )
+            mode.mean <- mean(plot.subset[, name],
+              na.rm = TRUE
+            )
+            hist.plot <- hist.plot + geom_vline(
+              xintercept = mode.mean,
+              colour = hist.plot.colours[i]
+            )
+            hist.plot <- hist.plot + annotate("text",
+              label = multimodal.values[i],
+              x = mode.mean * 1.15,
+              y = annotate.y * (1 - (i - 1) * 0.05),
+              size = 3,
+              hjust = 0,
+              colour = hist.plot.colours[i]
+            )
           }
-          plot.subset <- phenotype.data[phenotype.data[, multimodal.varname] == multimodal.values[i] &
-            !is.na(phenotype.data[, name]) & !is.na(phenotype.data[, multimodal.varname]), ]
-          hist.plot <- hist.plot + geom_histogram(aes_string(
-            x = name,
-            y = "..count../sum(..count..)"
-          ),
-          data = plot.subset,
-          bins = nbins,
-          binwidth = binwidth,
-          fill = hist.plot.colours[i],
-          alpha = 0.2
-          )
-          mode.mean <- mean(plot.subset[, name],
-            na.rm = TRUE
-          )
-          hist.plot <- hist.plot + geom_vline(
-            xintercept = mode.mean,
-            colour = hist.plot.colours[i]
-          )
-          hist.plot <- hist.plot + annotate("text",
-            label = multimodal.values[i],
-            x = mode.mean * 1.15,
-            y = annotate.y * (1 - (i - 1) * 0.05),
-            size = 3,
-            hjust = 0,
-            colour = hist.plot.colours[i]
+        } else {
+          hist.plot <- hist.plot + geom_histogram(
+            aes(x = x, y = ..count.. / sum(..count..)),
+            bins = nbins,
+            binwidth = binwidth
           )
         }
-      } else {
-        hist.plot <- hist.plot + geom_histogram(
-          aes(x = x, y = ..count.. / sum(..count..)),
-          bins = nbins,
-          binwidth = binwidth
+        hist.plot <- hist.plot + xlab(name) + ylab("proportion of data")
+        if (is.null(variable.summary$variables[[name]]$params$bounds$sd)) {
+          var.mean <- mean(phenotype.data[, name], na.rm = TRUE)
+          var.sd <- sd(phenotype.data[, name], na.rm = TRUE)
+          hist.plot <- hist.plot + geom_vline(xintercept = var.mean + 3 * var.sd, linetype = "dashed")
+          hist.plot <- hist.plot + geom_vline(xintercept = var.mean - 3 * var.sd, linetype = "dashed")
+        }
+        cat(
+          "\n\n#### Histogram of ", name, " (", variable.pretty.name,
+          ") Distribution\n\n",
+          sep = ""
         )
+        print(hist.plot)
       }
-      hist.plot <- hist.plot + xlab(name) + ylab("proportion of data")
-      if (is.null(variable.summary$variables[[name]]$params$bounds$sd)) {
-        var.mean <- mean(phenotype.data[, name], na.rm = TRUE)
-        var.sd <- sd(phenotype.data[, name], na.rm = TRUE)
-        hist.plot <- hist.plot + geom_vline(xintercept = var.mean + 3 * var.sd, linetype = "dashed")
-        hist.plot <- hist.plot + geom_vline(xintercept = var.mean - 3 * var.sd, linetype = "dashed")
-      }
-      cat(
-        "\n\n#### Histogram of ", name, " (", variable.pretty.name,
-        ") Distribution\n\n",
-        sep = ""
-      )
-      print(hist.plot)
     }
     if (!is.null(variable.summary$variables[[name]]$params$bounds)) {
       bound.type <- c()
