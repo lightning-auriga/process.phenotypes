@@ -30,13 +30,23 @@ populate.choices <- function(df) {
     list.name.values <- list.name.values[!duplicated(list.name.values)]
 
     var.levels <- list()
+    found.names <- c()
     for (i in seq_len(length(list.name.values))) {
+      if (list.name.labels[i] %in% found.names) {
+        next
+      } else {
+        found.names <- c(found.names, list.name.labels[i])
+      }
       lvl.tag <- paste("lvl", length(var.levels) + 1, sep = "")
       var.levels[[lvl.tag]] <- list(
         "name" = list.name.labels[i]
       )
+      alternate.patterns <- list.name.values[list.name.labels == list.name.labels[i]]
+      if (length(alternate.patterns) == 1) {
+        alternate.patterns <- rep(alternate.patterns, 2)
+      }
       if (list.name.labels[i] != list.name.values[i]) {
-        var.levels[[lvl.tag]][["alternate_patterns"]] <- rep(list.name.values[i], 2)
+        var.levels[[lvl.tag]][["alternate_patterns"]] <- alternate.patterns
       }
     }
     var.model <- list(
