@@ -22,6 +22,13 @@ populate.choices <- function(df) {
       "\\1"
     )
     list.name.labels <- df[df[, "list_name"] == list.name, "label"]
+
+    ## deal with the factor levels in CTO configuration not
+    ## being unique, due to filter restrictions that are not
+    ## represented in the output csv
+    list.name.labels <- list.name.labels[!duplicated(list.name.values)]
+    list.name.values <- list.name.values[!duplicated(list.name.values)]
+
     var.levels <- list()
     for (i in seq_len(length(list.name.values))) {
       lvl.tag <- paste("lvl", length(var.levels) + 1, sep = "")
