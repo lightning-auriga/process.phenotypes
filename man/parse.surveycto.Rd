@@ -11,7 +11,8 @@ parse.surveycto(
   out.yaml.filename,
   out.shared.models,
   subject.id.name = "pid",
-  age.name = "age"
+  age.name = "age",
+  na.values = c("I don't know/not sure", "Prefer not to answer")
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ for shared categorical model data for this questionnaire}
 \item{subject.id.name}{character vector; name of variable containing subject ID}
 
 \item{age.name}{character vector; name of variable containing subject age}
+
+\item{na.values}{character vector; factor levels that should be treated as NA}
 }
 \description{
 Convert SurveyCTO configuration data into yaml configuration for this package

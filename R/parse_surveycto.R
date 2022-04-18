@@ -16,9 +16,11 @@ apply.replacements <- function(vec) {
 #' at least present
 #' @param survey.type character vector; type column entries
 #' from "survey" tab of CTO form configuration
+#' @param na.values character vector; factor levels that should
+#' be treated as NA
 #' @return list of choice information as shared_models
 #' yaml list, with all variables configured as categoricals
-populate.choices <- function(df, survey.type) {
+populate.choices <- function(df, survey.type, na.values) {
   stopifnot(
     ncol(df) >= 3,
     c("list_name", "value", "label") %in% colnames(df)
@@ -64,11 +66,16 @@ populate.choices <- function(df, survey.type) {
 
     var.levels <- list()
     found.names <- c()
+    na.levels <- c()
     for (i in seq_len(length(list.name.values))) {
       if (list.name.labels[i] %in% found.names) {
         next
       } else {
         found.names <- c(found.names, list.name.labels[i])
+      }
+      if (tolower(list.name.labels[i]) %in% tolower(na.values)) {
+        na.levels <- c(na.levels, list.name.values[i])
+        next
       }
       lvl.tag <- paste("lvl", length(var.levels) + 1, sep = "")
       var.levels[[lvl.tag]] <- list(
@@ -103,6 +110,12 @@ populate.choices <- function(df, survey.type) {
       "type" = "categorical",
       "levels" = var.levels
     )
+    if (length(na.levels) > 0) {
+      if (length(na.levels) == 1) {
+        na.levels <- rep(na.levels, 2)
+      }
+      var.model[["na-values"]] <- na.levels
+    }
     res[[list.name]] <- var.model
   }
   list("models" = res)
@@ -406,20 +419,22 @@ flag.required.variables <- function(out.yaml, subject.id.name, age.name) {
 #' for shared categorical model data for this questionnaire
 #' @param subject.id.name character vector; name of variable containing subject ID
 #' @param age.name character vector; name of variable containing subject age
+#' @param na.values character vector; factor levels that should be treated as NA
 #' @export
 parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag, out.yaml.filename, out.shared.models,
-                            subject.id.name = "pid", age.name = "age") {
+                            subject.id.name = "pid", age.name = "age",
+                            na.values = c("I don't know/not sure", "Prefer not to answer")) {
   survey <- openxlsx::read.xlsx(in.form.filename, sheet = "survey")
   stopifnot(c("type", "name", "label") %in% colnames(survey))
   survey$name <- apply.replacements(survey$name)
   survey$type <- apply.replacements(survey$type)
   survey$label <- apply.replacements(survey$label)
   choices <- openxlsx::read.xlsx(in.form.filename, sheet = "choices")
-  choice.list <- populate.choices(choices, survey$type)
+  choice.list <- populate.choices(choices, survey$type, na.values)
   responses <- colnames(read.table(in.response.filename,
     sep = ",", comment.char = "",
     quote = "\"", header = TRUE, nrows = 1
-    ))
+  ))
   responses <- apply.replacements(responses)
   out.yaml <- create.config(dataset.tag)
   i <- 1

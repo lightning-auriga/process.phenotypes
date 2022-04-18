@@ -5,7 +5,7 @@
 \title{Render SurveyCTO configuration "choices" tab
 as a shared_models style yaml list}
 \usage{
-populate.choices(df, survey.type)
+populate.choices(df, survey.type, na.values)
 }
 \arguments{
 \item{df}{data.frame, input choices tab from SurveyCTO spreadsheet
@@ -14,6 +14,9 @@ at least present}
 
 \item{survey.type}{character vector; type column entries
 from "survey" tab of CTO form configuration}
+
+\item{na.values}{character vector; factor levels that should
+be treated as NA}
 }
 \value{
 list of choice information as shared_models
