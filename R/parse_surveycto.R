@@ -73,15 +73,17 @@ populate.choices <- function(df, survey.type, na.values) {
       } else {
         found.names <- c(found.names, list.name.labels[i])
       }
-      if (tolower(list.name.labels[i]) %in% tolower(na.values)) {
-        na.levels <- c(na.levels, list.name.values[i])
-        next
-      }
       lvl.tag <- paste("lvl", length(var.levels) + 1, sep = "")
       var.levels[[lvl.tag]] <- list(
         "name" = list.name.labels[i]
       )
       alternate.patterns <- list.name.values[list.name.labels == list.name.labels[i]]
+      if (length(variable.select.multiple) == 0 &
+        tolower(list.name.labels[i]) %in% tolower(na.values)) {
+        na.levels <- c(na.levels, list.name.values[i])
+        next
+      }
+
       if (length(alternate.patterns) == 1) {
         alternate.patterns <- rep(alternate.patterns, 2)
       } else {
