@@ -225,7 +225,7 @@ add.trailing.metadata <- function(out.yaml, dataset.tag, responses) {
 handle.repeat.variables <- function(out.yaml, cur.varname, name.value,
                                     label.value, survey, dataset.tag, responses,
                                     choice.list, i) {
-  count.var.present <- length(which(responses == paste(cur.varname, "count", sep = "_"))) > 0
+  count.var.present <- length(which(responses == paste(name.value, "count", sep = "_"))) > 0
   if (count.var.present) {
     out.yaml$variables[[paste(cur.varname, "count", sep = "_")]] <- list(
       "name" = paste(name.value, "count", sep = "_"),
@@ -348,7 +348,7 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
       print("computed result variables are not present in real data")
       print(excess.headers.in.prediction)
     }
-    if (length(excess.headers.in.prediction) == 0 |
+    if (length(excess.headers.in.prediction) == 0 &
       length(headers.not.present) == 0) {
       print("output variables are correct but in the wrong order")
       aligned <- cbind(responses, output.predicted.headers)
