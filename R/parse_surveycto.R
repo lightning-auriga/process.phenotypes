@@ -15,8 +15,11 @@ populate.choices <- function(df) {
   res <- list()
   for (list.name in unique.list.names) {
     list.name.values <- df[df[, "list_name"] == list.name, "value"]
-    list.name.values <- as.vector(as.integer(as.numeric(list.name.values) + 0.5),
-      mode = "character"
+    value.is.number <- stringr::str_detect(list.name.values, "^[0-9]+\\.0$")
+    list.name.values[value.is.number] <- stringr::str_replace(
+      list.name.values[value.is.number],
+      "^([0-9]+)\\.0$",
+      "\\1"
     )
     list.name.labels <- df[df[, "list_name"] == list.name, "label"]
     var.levels <- list()
