@@ -136,9 +136,15 @@ build.variable.data <- function(type.value, name.value, label.value, choice.list
         "canonical_name" = label.value
       )
       for (level.num in seq_len(length(names(choice.list$models[[shared.model]]$levels)))) {
-        sub.varname <- paste(varname, level.num, sep = "_")
+        sub.varname <- paste(varname,
+          choice.list$models[[shared.model]]$levels[[level.num]][["alternate_patterns"]][1],
+          sep = "_"
+        )
         res$variables[[sub.varname]] <- list(
-          "name" = paste(name.value, level.num, sep = "_"),
+          "name" = paste(name.value,
+            choice.list$models[[shared.model]]$levels[[level.num]][["alternate_patterns"]][1],
+            sep = "_"
+          ),
           "shared_model" = "yesno",
           "canonical_name" = paste(label.value,
             ", indicator response for level ",
