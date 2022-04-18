@@ -24,10 +24,13 @@ populate.choices <- function(df) {
     list.name.labels <- df[df[, "list_name"] == list.name, "label"]
     var.levels <- list()
     for (i in seq_len(length(list.name.values))) {
-      var.levels[[paste("lvl", length(var.levels) + 1, sep = "")]] <- list(
-        "name" = list.name.labels[i],
-        "alternate_patterns" = rep(list.name.values[i], 2)
+      lvl.tag <- paste("lvl", length(var.levels) + 1, sep = "")
+      var.levels[[lvl.tag]] <- list(
+        "name" = list.name.labels[i]
       )
+      if (list.name.labels[i] != list.name.values[i]) {
+        var.levels[[lvl.tag]][["alternate_patterns"]] <- rep(list.name.values[i], 2)
+      }
     }
     var.model <- list(
       "type" = "categorical",
@@ -142,13 +145,19 @@ build.variable.data <- function(type.value, name.value, label.value, choice.list
         "canonical_name" = label.value
       )
       for (level.num in seq_len(length(names(choice.list$models[[shared.model]]$levels)))) {
+        ## due to possible removal of redundancy in name/alternate_patterns of shared.models,
+        ## assign name as the tag but only if alternate_patterns is null
+        lvl.tag <- choice.list$models[[shared.model]]$levels[[level.num]][["name"]]
+        if (!is.null(choice.list$models[[shared.model]]$levels[[level.num]][["alternate_patterns"]])) {
+          lvl.tag <- choice.list$models[[shared.model]]$levels[[level.num]][["alternate_patterns"]][1]
+        }
         sub.varname <- paste(varname,
-          choice.list$models[[shared.model]]$levels[[level.num]][["alternate_patterns"]][1],
+          lvl.tag,
           sep = "_"
         )
         res$variables[[sub.varname]] <- list(
           "name" = paste(name.value,
-            choice.list$models[[shared.model]]$levels[[level.num]][["alternate_patterns"]][1],
+            lvl.tag,
             sep = "_"
           ),
           "shared_model" = "yesno",
