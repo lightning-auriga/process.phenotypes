@@ -30,6 +30,7 @@ apply.type.conversions <- function(phenotype.data, variable.summary) {
     possible.types <- c(
       "string",
       "categorical",
+      "categorical_to_numeric",
       "ordinal",
       "binary",
       "numeric",
@@ -95,12 +96,26 @@ apply.type.conversions <- function(phenotype.data, variable.summary) {
 #' @keywords phenotypes yaml
 convert.type <- function(vec, var.summary, target.type) {
   result.list <- NULL
-  if (grepl("^categorical$|^ordinal$|^binary$", target.type, ignore.case = TRUE)) {
+  if (grepl("^categorical$|^ordinal$|^binary$|^categorical_to_numeric$", target.type, ignore.case = TRUE)) {
     ## categorical or ordinal or binary
     result.list <- reformat.factor(vec, var.summary)
     if (grepl("ordinal", target.type, ignore.case = TRUE)) {
       result.list$phenotype.data <- ordered(result.list$phenotype.data,
         levels = levels(result.list$phenotype.data)
+      )
+    }
+    if (grepl("categorical_to_numeric", target.type, ignore.case = TRUE)) {
+      ## new: allow categoricals that have pure numeric labels
+      ## to be converted to numerics with their labels as values.
+      ## note that this will seemingly suppress categorical conversion
+      ## errors and skip some numeric cleaning; so in theory, this
+      ## should only be performed on variables that have already
+      ## been sufficiently sanitized such that this is not a concern.
+      result.list$phenotype.data <- as.vector(result.list$phenotype.data, mode = "character")
+      result.list$variable.summary$params$type <- "numeric"
+      result.list <- reformat.numerics(
+        result.list$phenotype.data,
+        result.list$variable.summary
       )
     }
   } else if (grepl("numeric", target.type, ignore.case = TRUE)) {
