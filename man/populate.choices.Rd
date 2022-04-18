@@ -5,12 +5,15 @@
 \title{Render SurveyCTO configuration "choices" tab
 as a shared_models style yaml list}
 \usage{
-populate.choices(df)
+populate.choices(df, survey.type)
 }
 \arguments{
 \item{df}{data.frame, input choices tab from SurveyCTO spreadsheet
 with column headers "list_name", "value", and "label"
 at least present}
+
+\item{survey.type}{character vector; type column entries
+from "survey" tab of CTO form configuration}
 }
 \value{
 list of choice information as shared_models

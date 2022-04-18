@@ -4,9 +4,11 @@
 #' @param df data.frame, input choices tab from SurveyCTO spreadsheet
 #' with column headers "list_name", "value", and "label"
 #' at least present
+#' @param survey.type character vector; type column entries
+#' from "survey" tab of CTO form configuration
 #' @return list of choice information as shared_models
 #' yaml list, with all variables configured as categoricals
-populate.choices <- function(df) {
+populate.choices <- function(df, survey.type) {
   stopifnot(
     ncol(df) >= 3,
     c("list_name", "value", "label") %in% colnames(df)
@@ -22,6 +24,20 @@ populate.choices <- function(df) {
       "\\1"
     )
     list.name.labels <- df[df[, "list_name"] == list.name, "label"]
+
+    ## handle situations with irreconciliable factor levels
+    ## if the shared model is invoked as both a multiple and single
+    ## response, it is impossible to encode with a single factor
+    ## specification due to how CTO encodes one hot responses
+    ## to multiple selection variables
+    variable.selections <- survey.type[stringr::str_detect(
+      survey.type,
+      paste(" ", list.name, "$", sep = "")
+    )]
+    variable.select.multiple <- variable.selections[stringr::str_detect(
+      variable.selections,
+      "^select_multiple "
+    )]
 
     ## deal with the factor levels in CTO configuration not
     ## being unique, due to filter restrictions that are not
@@ -44,6 +60,23 @@ populate.choices <- function(df) {
       alternate.patterns <- list.name.values[list.name.labels == list.name.labels[i]]
       if (length(alternate.patterns) == 1) {
         alternate.patterns <- rep(alternate.patterns, 2)
+      } else {
+        ## try to deal with invalid level configurations
+        if (length(variable.select.multiple) > 0) {
+          ## if the variable is always a multiple response, then even the bad
+          ## levels should be reported out separately, because due to the
+          ## CTO one hot convention, it is never actually used as a categorical
+          ## encoding
+          found.names <- found.names[-length(found.names)]
+          alternate.patterns <- rep(list.name.values[i], 2)
+          if (length(variable.select.multiple) != length(variable.selections)) {
+            warning(
+              "for shared model ", list.name, " invalid factor levels exist ",
+              "that can not be reconciled with automated configuration without ",
+              "editing the CSV; please correct manually before generating phenotype report"
+            )
+          }
+        }
       }
       if (list.name.labels[i] != list.name.values[i]) {
         var.levels[[lvl.tag]][["alternate_patterns"]] <- alternate.patterns
@@ -328,7 +361,7 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
   survey <- openxlsx::read.xlsx(in.form.filename, sheet = "survey")
   stopifnot(c("type", "name", "label") %in% colnames(survey))
   choices <- openxlsx::read.xlsx(in.form.filename, sheet = "choices")
-  choice.list <- populate.choices(choices)
+  choice.list <- populate.choices(choices, survey$type)
   responses <- colnames(read.table(in.response.filename,
     sep = ",", comment.char = "",
     quote = "\"", header = TRUE, nrows = 1
