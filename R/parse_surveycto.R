@@ -80,7 +80,8 @@ build.variable.data <- function(type.value, name.value, label.value, choice.list
     "caseid", "image"
   )
   res <- list(variables = list())
-  if (length(type.value) < 1 | is.na(type.value) | type.value == "note") {
+  if (length(type.value) < 1 | is.na(type.value) | type.value == "note" |
+    type.value == "begin group" | type.value == "end group") {
     res <- NULL
   } else {
     if (type.value %in% cto.specials) {
