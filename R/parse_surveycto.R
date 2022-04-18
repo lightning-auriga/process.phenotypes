@@ -150,10 +150,11 @@ build.variable.data <- function(type.value, name.value, label.value, choice.list
         "canonical_name" = ifelse(label.value == "", NA, label.value)
       )
     } else if (type.value == "calculate") {
-      ## creates a numeric apparently?
+      ## calculate variables have variable type,
+      ## and will be set by default to string
       res$variables[[varname]] <- list(
         "name" = name.value,
-        "type" = "numeric",
+        "type" = "string",
         "canonical_name" = label.value
       )
     } else if (type.value %in% c("text", "datetime")) {
