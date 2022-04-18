@@ -102,8 +102,8 @@ create.config <- function(dataset.tag) {
   res[["globals"]] <- list(
     "min_age_for_inclusion" = 18,
     "max_invalid_datatypes_per_subject" = 10,
-    "consent_inclusion_file" = "",
-    "consent_exclusion_file" = ""
+    "consent_inclusion_file" = NULL,
+    "consent_exclusion_file" = NULL
   )
   res$variables <- list()
   res$variables[[paste(dataset.tag,
@@ -342,6 +342,35 @@ handle.repeat.variables <- function(out.yaml, cur.varname, name.value,
   )
 }
 
+#' Add flags for subject ID and age variables
+#'
+#' @param out.yaml list; constructed variable configuration data
+#' @param subject.id.name character vector; expected name of subject ID variable
+#' @param age.name character vector; expected name of age variable
+#' @return list; input yaml with flags added to appropriate variables
+flag.required.variables <- function(out.yaml, subject.id.name, age.name) {
+  subject.found <- FALSE
+  age.found <- FALSE
+  for (varname in names(out.yaml$variables)) {
+    if (out.yaml$variables[[varname]]$name == subject.id.name) {
+      if (subject.found) {
+        stop("duplicate apparent subject ID columns; check survey name column")
+      }
+      subject.found <- TRUE
+      out.yaml$variables[[varname]][["subject_id"]] <- TRUE
+    } else if (out.yaml$variables[[varname]]$name == age.name) {
+      if (age.found) {
+        stop("duplicate apparent subject age columns; check survey name column")
+      }
+      age.found <- TRUE
+      out.yaml$variables[[varname]][["subject_age"]] <- TRUE
+    }
+  }
+  if (!subject.found | !age.found) {
+    stop("unable to find subject ID/age in variable names")
+  }
+  out.yaml
+}
 
 #' Convert SurveyCTO configuration data into yaml configuration for this package
 #'
@@ -355,8 +384,11 @@ handle.repeat.variables <- function(out.yaml, cur.varname, name.value,
 #' for variable configuration data
 #' @param out.shared.models character vector; destination filename
 #' for shared categorical model data for this questionnaire
+#' @param subject.id.name character vector; name of variable containing subject ID
+#' @param age.name character vector; name of variable containing subject age
 #' @export
-parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag, out.yaml.filename, out.shared.models) {
+parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag, out.yaml.filename, out.shared.models,
+                            subject.id.name = "pid", age.name = "age") {
   survey <- openxlsx::read.xlsx(in.form.filename, sheet = "survey")
   stopifnot(c("type", "name", "label") %in% colnames(survey))
   choices <- openxlsx::read.xlsx(in.form.filename, sheet = "choices")
@@ -417,6 +449,7 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
     }
     stop("output variable prediction has failed")
   }
+  out.yaml <- flag.required.variables(out.yaml, subject.id.name, age.name)
   yaml::write_yaml(out.yaml, out.yaml.filename, fileEncoding = "UTF-8")
   yaml::write_yaml(choice.list, out.shared.models, fileEncoding = "UTF-8")
 }

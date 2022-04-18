@@ -9,7 +9,9 @@ parse.surveycto(
   in.response.filename,
   dataset.tag,
   out.yaml.filename,
-  out.shared.models
+  out.shared.models,
+  subject.id.name = "pid",
+  age.name = "age"
 )
 }
 \arguments{
@@ -27,6 +29,10 @@ for variable configuration data}
 
 \item{out.shared.models}{character vector; destination filename
 for shared categorical model data for this questionnaire}
+
+\item{subject.id.name}{character vector; name of variable containing subject ID}
+
+\item{age.name}{character vector; name of variable containing subject age}
 }
 \description{
 Convert SurveyCTO configuration data into yaml configuration for this package
