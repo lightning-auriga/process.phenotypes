@@ -208,11 +208,13 @@ add.trailing.metadata <- function(out.yaml, dataset.tag, responses) {
 #' @param survey data.frame; survey tab from SurveyCTO configuration xlsx file
 #' @param dataset.tag character vector; tag for current dataset
 #' @param responses character vector; column names of completed questionnaire csv
+#' @param choice.list list; shared model data
 #' @param i index of repeat start variable in survey configuration table
 #' @return list; input variable yaml configuration with repeat variable block
 #' data added as entry "out.yaml", and incremented global counter as entry "i"
 handle.repeat.variables <- function(out.yaml, cur.varname, name.value,
-                                    label.value, survey, dataset.tag, responses, i) {
+                                    label.value, survey, dataset.tag, responses,
+                                    choice.list, i) {
   out.yaml$variables[[paste(cur.varname, "count", sep = "_")]] <- list(
     "name" = paste(name.value, "count", sep = "_"),
     "type" = "numeric",
@@ -296,7 +298,8 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
     if (type.value == "begin repeat") {
       repeat.result <- handle.repeat.variables(
         out.yaml, cur.varname, name.value,
-        label.value, survey, dataset.tag, responses, i
+        label.value, survey, dataset.tag, responses,
+        choice.list, i
       )
       out.yaml <- repeat.result$out.yaml
       i <- repeat.result$i

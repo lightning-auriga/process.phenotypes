@@ -12,6 +12,7 @@ handle.repeat.variables(
   survey,
   dataset.tag,
   responses,
+  choice.list,
   i
 )
 }
@@ -29,6 +30,8 @@ handle.repeat.variables(
 \item{dataset.tag}{character vector; tag for current dataset}
 
 \item{responses}{character vector; column names of completed questionnaire csv}
+
+\item{choice.list}{list; shared model data}
 
 \item{i}{index of repeat start variable in survey configuration table}
 }
