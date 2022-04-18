@@ -15,6 +15,9 @@ populate.choices <- function(df) {
   res <- list()
   for (list.name in unique.list.names) {
     list.name.values <- df[df[, "list_name"] == list.name, "value"]
+    list.name.values <- as.vector(as.integer(as.numeric(list.name.values) + 0.5),
+      mode = "character"
+    )
     list.name.labels <- df[df[, "list_name"] == list.name, "label"]
     var.levels <- list()
     for (i in seq_len(length(list.name.values))) {
@@ -222,14 +225,19 @@ add.trailing.metadata <- function(out.yaml, dataset.tag, responses) {
 handle.repeat.variables <- function(out.yaml, cur.varname, name.value,
                                     label.value, survey, dataset.tag, responses,
                                     choice.list, i) {
-  out.yaml$variables[[paste(cur.varname, "count", sep = "_")]] <- list(
-    "name" = paste(name.value, "count", sep = "_"),
-    "type" = "numeric",
-    "canonical_name" = paste(label.value,
-      ", count of responses",
-      sep = ""
+  count.var.present <- length(which(responses == paste(cur.varname, "count", sep = "_"))) > 0
+  if (count.var.present) {
+    out.yaml$variables[[paste(cur.varname, "count", sep = "_")]] <- list(
+      "name" = paste(name.value, "count", sep = "_"),
+      "type" = "numeric",
+      "canonical_name" = paste(label.value,
+        ", count of responses",
+        sep = ""
+      )
     )
-  )
+  } else {
+    i <- i - 1
+  }
   repeat.variables <- list(variables = list())
   query.varname <- NULL
   while (TRUE) {
@@ -253,7 +261,11 @@ handle.repeat.variables <- function(out.yaml, cur.varname, name.value,
       repeat.variables$variables[[variable]] <- variable.data$variables[[variable]]
     }
   }
-  n.repeats <- length(which(stringr::str_detect(responses, paste("^", query.varname, "_", sep = ""))))
+  ## initial logic here was not complex enough to handle multiple response variables
+  ## embedded in a repeat block. this now pulls all instances of initial variable
+  ## of a repeat block, does some string reduction, and then parses the repeats from there
+  repeat.obs <- responses[stringr::str_detect(responses, paste("^", query.varname, "_", sep = ""))]
+  n.repeat <- as.integer(stringr::str_replace(responses[length(responses)], "^.*_([0-9]+)$", "\\1"))
   for (n.repeat in seq_len(n.repeats)) {
     for (repeat.variable in names(repeat.variables$variables)) {
       repeat.data <- repeat.variables$variables[[repeat.variable]]
@@ -331,11 +343,11 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
     headers.not.present <- responses[!(responses %in% output.predicted.headers)]
     excess.headers.in.prediction <- output.predicted.headers[!(output.predicted.headers %in% responses)]
     if (length(headers.not.present) > 0) {
-      print("computed result variables are not present in real data")
+      print("computed result variables missing real output variables")
       print(headers.not.present)
     }
     if (length(excess.headers.in.prediction) > 0) {
-      print("computed result variables missing real output variables")
+      print("computed result variables are not present in real data")
       print(excess.headers.in.prediction)
     }
     if (length(excess.headers.in.prediction) == 0 |
