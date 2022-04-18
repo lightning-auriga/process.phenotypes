@@ -1,3 +1,13 @@
+#' Apply standard replacements for certain deprecated terms
+#'
+#' @param input character vector
+#' @return character vector with replacements applied
+apply.replacements <- function(vec) {
+  res <- gsub("tribes", "ancestries", vec, ignore.case = TRUE)
+  res <- gsub("tribe", "ancestry", res, ignore.case = TRUE)
+  res
+}
+
 #' Render SurveyCTO configuration "choices" tab
 #' as a shared_models style yaml list
 #'
@@ -13,6 +23,9 @@ populate.choices <- function(df, survey.type) {
     ncol(df) >= 3,
     c("list_name", "value", "label") %in% colnames(df)
   )
+  df[, "list_name"] <- apply.replacements(df[, "list_name"])
+  df[, "value"] <- apply.replacements(df[, "value"])
+  df[, "label"] <- apply.replacements(df[, "label"])
   unique.list.names <- unique(df[, "list_name"])
   res <- list()
   for (list.name in unique.list.names) {
@@ -397,6 +410,9 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
                             subject.id.name = "pid", age.name = "age") {
   survey <- openxlsx::read.xlsx(in.form.filename, sheet = "survey")
   stopifnot(c("type", "name", "label") %in% colnames(survey))
+  survey$name <- apply.replacements(survey$name)
+  survey$type <- apply.replacements(survey$type)
+  survey$label <- apply.replacements(survey$label)
   choices <- openxlsx::read.xlsx(in.form.filename, sheet = "choices")
   choice.list <- populate.choices(choices, survey$type)
   responses <- colnames(read.table(in.response.filename,
