@@ -79,7 +79,7 @@ populate.choices <- function(df, survey.type) {
         }
       }
       if (list.name.labels[i] != list.name.values[i]) {
-        var.levels[[lvl.tag]][["alternate_patterns"]] <- alternate.patterns
+        var.levels[[lvl.tag]][["alternate_patterns"]] <- tolower(alternate.patterns)
       }
     }
     var.model <- list(
