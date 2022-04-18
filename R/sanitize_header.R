@@ -49,6 +49,7 @@ map.header <- function(df, dataset.tag, config.data,
       length(config.names), " in config)"
     )
   }
+  colnames(df) <- apply.replacements(colnames(df))
   if (!identical(colnames(df), unname(unlist(config.names))) &
     !force.header.mapping) {
     error.data <- cbind(
