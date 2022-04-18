@@ -45,6 +45,10 @@ populate.choices <- function(df, survey.type) {
     list.name.labels <- list.name.labels[!duplicated(list.name.values)]
     list.name.values <- list.name.values[!duplicated(list.name.values)]
 
+    ## remove embedded newlines
+    list.name.labels <- stringr::str_replace_all(list.name.labels, "\\r|\\n", "")
+    list.name.values <- stringr::str_replace_all(list.name.values, "\\r|\\n", "")
+
     var.levels <- list()
     found.names <- c()
     for (i in seq_len(length(list.name.values))) {
