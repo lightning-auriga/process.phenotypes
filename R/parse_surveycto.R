@@ -82,6 +82,8 @@ populate.choices <- function(df, survey.type) {
           }
         }
       }
+      ## escape regex special characters in alternate patterns
+      alternate.patterns <- stringr::str_replace_all(alternate.patterns, "(\\(|\\)|\\|)|\\[|\\]", "\\\\\\1")
       var.levels[[lvl.tag]][["alternate_patterns"]] <- tolower(alternate.patterns)
     }
     var.model <- list(
