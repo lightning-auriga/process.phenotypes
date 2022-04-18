@@ -320,7 +320,25 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
   output.predicted.headers <- unname(sapply(out.yaml$variables, function(i) {
     i$name
   }))
-  stopifnot(identical(output.predicted.headers, responses))
+  if (!identical(output.predicted.headers, responses)) {
+    headers.not.present <- responses[!(responses %in% output.predicted.headers)]
+    excess.headers.in.prediction <- output.predicted.headers[!(output.predicted.headers %in% responses)]
+    if (length(headers.not.present) > 0) {
+      print("computed result variables are not present in real data")
+      print(headers.not.present)
+    }
+    if (length(excess.headers.in.prediction) > 0) {
+      print("computed result variables missing real output variables")
+      print(excess.headers.in.prediction)
+    }
+    if (length(excess.headers.in.prediction) == 0 |
+      length(headers.not.present) == 0) {
+      print("output variables are correct but in the wrong order")
+      aligned <- cbind(responses, output.predicted.headers)
+      print(aligned[aligned[, 1] != aligned[, 2], ])
+    }
+    stop("output variable prediction has failed")
+  }
   yaml::write_yaml(out.yaml, out.yaml.filename, fileEncoding = "UTF-8")
   yaml::write_yaml(choice.list, out.shared.models, fileEncoding = "UTF-8")
 }
