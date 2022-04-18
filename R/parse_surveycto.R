@@ -263,7 +263,7 @@ handle.repeat.variables <- function(out.yaml, cur.varname, name.value,
   ## embedded in a repeat block. this now pulls all instances of initial variable
   ## of a repeat block, does some string reduction, and then parses the repeats from there
   repeat.obs <- responses[stringr::str_detect(responses, paste("^", query.varname, "_", sep = ""))]
-  n.repeats <- as.integer(stringr::str_replace(responses[length(responses)], "^.*_([0-9]+)$", "\\1"))
+  n.repeats <- as.integer(stringr::str_replace(repeat.obs[length(repeat.obs)], "^.*_([0-9]+)$", "\\1"))
   for (n.repeat in seq_len(n.repeats)) {
     for (repeat.variable in names(repeat.variables$variables)) {
       repeat.data <- repeat.variables$variables[[repeat.variable]]
