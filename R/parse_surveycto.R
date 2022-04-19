@@ -208,8 +208,7 @@ build.variable.data <- function(type.value, name.value, label.value, choice.list
       res$variables[[varname]] <- list(
         "name" = name.value,
         "type" = "numeric",
-        "canonical_name" = label.value,
-        "bounds" = list("min" = 0)
+        "canonical_name" = label.value
       )
     } else if (stringr::str_detect(type.value, "^select_one")) {
       shared.model <- stringr::str_replace(type.value, "^select_one +([^ ]+) *$", "\\1")

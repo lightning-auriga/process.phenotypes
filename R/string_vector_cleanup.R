@@ -89,10 +89,10 @@ remove.nonword.chars <- function(df, variable.summary) {
     ## replace leading ">/<" characters meaning "greater/less than" with words
     df[, i] <- stringr::str_replace_all(df[, i], "^ *> *(\\w+)", "greater than \\1")
     df[, i] <- stringr::str_replace_all(df[, i], "^ *< *(\\w+)", "less than \\1")
+    df.orig <- df[, i]
     ## take anything that looks like a negative number and cast it into the void
     df[, i] <- stringr::str_replace_all(df[, i], "^ *- *[0-9]+.*$", "na")
     ## strip nonword characters from extremes
-    df.orig <- df[, i]
     df[, i] <- stringr::str_replace_all(df[, i], "^\\W+|\\W*[^[\\w)}\\]]]$", "")
     ## TODO: remove crappy logging
     diff.data <- cbind(

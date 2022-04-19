@@ -157,7 +157,7 @@ convert.type <- function(vec, var.summary, target.type) {
 #' with information on entries outside the defined bounds)
 #' @seealso load.configuration
 #' @keywords phenotypes yaml
-apply.bounds <- function(phenotype.data, variable.summary, target.derived) {
+apply.bounds <- function(phenotype.data, variable.summary) {
   stopifnot(ncol(phenotype.data) == length(variable.summary$variables))
   for (i in seq_len(length(variable.summary$variables))) {
     target.type <- variable.summary$variables[[i]]$params$type

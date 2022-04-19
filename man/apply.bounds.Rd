@@ -4,7 +4,7 @@
 \alias{apply.bounds}
 \title{Apply range bounds to each variable as defined in yaml config}
 \usage{
-apply.bounds(phenotype.data, variable.summary, target.derived)
+apply.bounds(phenotype.data, variable.summary)
 }
 \arguments{
 \item{phenotype.data}{data frame, loaded phenotype data with
