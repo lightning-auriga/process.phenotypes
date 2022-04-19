@@ -242,6 +242,11 @@ convert.variable.specific.na <- function(phenotype.data, variable.summary) {
         )
       }
     }
+    if (!is.null(variable.summary$variables[[i]]$params[["suppress_output"]])) {
+      if (variable.summary$variables[[i]]$params[["suppress_output"]]) {
+        phenotype.data[, i] <- NA
+      }
+    }
   }
   phenotype.data
 }
