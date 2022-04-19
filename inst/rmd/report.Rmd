@@ -316,7 +316,7 @@ for (name in names(variable.summary$variables)) {
         if (is.null(variable.summary$variables[[name]]$params$bounds$sd)) {
           var.mean <- mean(phenotype.data[, name], na.rm = TRUE)
           var.sd <- sd(phenotype.data[, name], na.rm = TRUE)
-          if (var.sd > 0) {
+          if (!is.na(var.sd)) {
             hist.plot <- hist.plot + geom_vline(xintercept = var.mean + 3 * var.sd, linetype = "dashed")
             hist.plot <- hist.plot + geom_vline(xintercept = var.mean - 3 * var.sd, linetype = "dashed")
           }
