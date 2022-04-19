@@ -284,7 +284,7 @@ for (name in names(variable.summary$variables)) {
               y = "..count../sum(..count..)"
             ),
             data = plot.subset,
-            bins = nbins,
+            bins = nbins + 1,
             binwidth = binwidth,
             fill = hist.plot.colours[i],
             alpha = 0.2
