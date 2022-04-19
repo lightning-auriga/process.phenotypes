@@ -30,6 +30,7 @@ map.header <- function(df, dataset.tag, config.data,
   ## TODO: add yaml checker that makes sure these names
   ## are alphanumeric only
   new.names <- names(config.data$variables)
+  colnames(df) <- apply.replacements(colnames(df))
   res <- list(variables = lapply(colnames(df), function(i) {
     list(original.name = i)
   }))
@@ -49,7 +50,6 @@ map.header <- function(df, dataset.tag, config.data,
       length(config.names), " in config)"
     )
   }
-  colnames(df) <- apply.replacements(colnames(df))
   if (!identical(colnames(df), unname(unlist(config.names))) &
     !force.header.mapping) {
     error.data <- cbind(
