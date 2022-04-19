@@ -428,6 +428,7 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
   survey <- openxlsx::read.xlsx(in.form.filename, sheet = "survey")
   stopifnot(c("type", "name", "label") %in% colnames(survey))
   survey$name <- apply.replacements(survey$name)
+  survey$name <- stringr::str_trim(survey$name, side = "right")
   survey$type <- apply.replacements(survey$type)
   survey$label <- apply.replacements(survey$label)
   choices <- openxlsx::read.xlsx(in.form.filename, sheet = "choices")
