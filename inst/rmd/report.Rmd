@@ -84,6 +84,10 @@ display a histogram and min/max/mean/median/deciles.  Categorical and ordinal ty
 factor level.  All types other than string include a summary of data entries that are not consistent with 
 the indicated data type.  Dependencies, bounds, data types, etc. are defined in the accompanying configuration
 file.  
+<br><br>
+Please note that with few exceptions, the original variable names and descriptions in this report are read
+verbatim from the input data, and have not been edited, to maintain harmonization with the original questionnaire
+definitions.  
 <br>
 `r paste(variable.summary$total.initial.sample.size, ifelse(variable.summary$total.initial.sample.size == 1, " subject was", " subjects were"), " originally present in this dataset.", ifelse(!is.null(variable.summary$globals$consent_inclusion_file), paste(" ", variable.summary$subjects.consent.yes, ifelse(variable.summary$subjects.consent.yes == 1, " subject was", " subjects were"), " included with verified consent.", sep = ""), ""), ifelse(!is.null(variable.summary$globals$consent_exclusion_file), paste(" ", variable.summary$subjects.consent.no, ifelse(variable.summary$subjects.consent.no == 1, " subject was", " subjects were"), " excluded for lacking consent.", sep = ""), ""), ifelse(!is.null(variable.summary$globals$consent_inclusion_file) & !is.null(variable.summary$globals$consent_exclusion_file), paste(" ", length(variable.summary$subjects.ambiguous.consent), ifelse(length(variable.summary$subjects.ambiguous.consent) == 1, " subject was", " subjects were"), " additionally excluded for not being explicitly listed as either having or lacking consent.", sep = ""), ""), " ", variable.summary$subjects.excluded.for.age, ifelse(variable.summary$subjects.excluded.for.age == 1, " subject was ", " subjects were "), "removed for being below the minimum permissible age of ", variable.summary$globals$min_age_for_inclusion, ".", sep = "")`
 
