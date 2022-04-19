@@ -251,6 +251,34 @@ convert.variable.specific.na <- function(phenotype.data, variable.summary) {
   phenotype.data
 }
 
+#' Exclude subjects for whom no ID has been recorded
+#'
+#' @details
+#' This function excludes subjects where their ID is NA, as
+#' we can't really do anything with the phenotype data without
+#' being able to link it to genotypes via IDs.
+#'
+#' @description
+#' TBD
+#'
+#' @param phenotype.data data frame, loaded phenotype data with
+#' standardized headers; all columns should be character vectors
+#' @param variable.summary list, per-column summary information
+#' and parameters from yaml input
+#' @return list, 'phenotype.data' contains phenotype information with
+#' subjects without a subject ID excluded, 'variable.summary' contains
+#' input variable summary with information about excluded subjects.
+exclude.by.missing.subject.id <- function(phenotype.data, variable.summary) {
+  subject.id.index <- find.subject.id.index(variable.summary)
+  na.subjects <- is.na(phenotype.data[, subject.id.index])
+  variable.summary$na.subject.id.count <- length(which(na.subjects))
+  phenotype.data <- phenotype.data[!na.subjects, ]
+  list(
+    phenotype.data = phenotype.data,
+    variable.summary = variable.summary
+  )
+}
+
 #' Exclude subjects below a certain user-defined age threshold
 #'
 #' @details

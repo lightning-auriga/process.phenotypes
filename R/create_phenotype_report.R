@@ -161,6 +161,13 @@ create.phenotype.report <- function(in.filename,
     )
   }
 
+  ## exclude subjects without a subject ID from the dataset
+  if (magic.fix) {
+    reformatted.list <- exclude.by.missing.subject.id(
+      reformatted.list$phenotype.data, reformatted.list$variable.summary
+    )
+  }
+
   ## apply variable-specific range restrictions
   if (magic.fix) {
     reformatted.list <- apply.bounds(
