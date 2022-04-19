@@ -330,6 +330,7 @@ process.unicode.characters <- function(phenotype.data) {
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U203A", ">")
     ## this is technically "care of" but it seems like the one instance of it meant percent for some reason
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2105", "%")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2248", "~=")
   }
   phenotype.data
 }
