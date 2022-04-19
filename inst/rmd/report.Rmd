@@ -265,7 +265,7 @@ for (name in names(variable.summary$variables)) {
       if (length(unique(plot.data$x)) > 0) {
         hist.plot <- ggplot(data = plot.data) + my.theme
         nbins <- get.bins(phenotype.data[!is.na(phenotype.data[, name]), name])
-        binwidth <- diff(range(phenotype.data[!is.na(phenotype.data[, name]), name])) / nbins
+        binwidth <- (diff(range(phenotype.data[!is.na(phenotype.data[, name]), name])) + 1) / nbins
         if (!is.null(variable.summary$variables[[name]]$params$multimodal)) {
           multimodal.varname <- variable.summary$variables[[name]]$params$multimodal
           stopifnot(multimodal.varname %in% colnames(phenotype.data))
@@ -284,7 +284,7 @@ for (name in names(variable.summary$variables)) {
               y = "..count../sum(..count..)"
             ),
             data = plot.subset,
-            bins = nbins + 1,
+            bins = nbins,
             binwidth = binwidth,
             fill = hist.plot.colours[i],
             alpha = 0.2
