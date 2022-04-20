@@ -45,9 +45,9 @@ create.phenotype.report <- function(in.filename,
                                     sep = "\t",
                                     uniq.var.inclusion.prop = 1 / 3,
                                     write.tsv = TRUE,
-                                    write.stata = TRUE,
-                                    write.spss = TRUE,
-                                    write.sas = TRUE,
+                                    write.stata = FALSE,
+                                    write.spss = FALSE,
+                                    write.sas = FALSE,
                                     write.yaml = FALSE) {
   ## sanity check for in.filename param
   stopifnot(
