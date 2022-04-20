@@ -435,7 +435,7 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
   choice.list <- populate.choices(choices, survey$type, na.values)
   responses <- colnames(read.table(in.response.filename,
     sep = ",", comment.char = "",
-    quote = "\"", header = TRUE, nrows = 1
+    quote = "\"", header = TRUE, nrows = 1, check.names = FALSE
   ))
   responses <- apply.replacements(responses)
   out.yaml <- create.config(dataset.tag)
