@@ -348,7 +348,9 @@ handle.repeat.variables <- function(out.yaml, cur.varname, name.value,
     )
     if (is.null(query.varname)) {
       query.varname <- name.value
-    }
+    } # else if () {
+
+    # }
     variable.data <- build.variable.data(type.value, name.value, label.value, choice.list, cur.varname)
     for (variable in names(variable.data$variables)) {
       repeat.variables$variables[[variable]] <- variable.data$variables[[variable]]
@@ -358,16 +360,27 @@ handle.repeat.variables <- function(out.yaml, cur.varname, name.value,
   ## embedded in a repeat block. this now pulls all instances of initial variable
   ## of a repeat block, does some string reduction, and then parses the repeats from there
   repeat.obs <- responses[stringr::str_detect(responses, paste("^", query.varname, "_", sep = ""))]
+  ## if there are names in repeat blocks that are subsets of one another, this will mess
+  ## with the repeat count tracking (e.g. varA_1, varA_2, varA_other_1 will resolve to expecting
+  ## only a single repeat of the varA-containing block).  This logic attempts to restrict the
+  ## name matching by filtering out names of which the query is a subset.
+  filter.values <- survey$name[stringr::str_detect(survey$name, paste("^", query.varname, sep = ""))]
+  filter.values <- filter.values[!(filter.values %in% query.varname)]
+  for (f in filter.values) {
+    repeat.obs <- repeat.obs[!stringr::str_detect(repeat.obs, paste("^", f, sep = ""))]
+  }
   n.repeats <- as.integer(stringr::str_replace(repeat.obs[length(repeat.obs)], "^.*_([0-9]+)$", "\\1"))
-  for (n.repeat in seq_len(n.repeats)) {
-    for (repeat.variable in names(repeat.variables$variables)) {
-      repeat.data <- repeat.variables$variables[[repeat.variable]]
-      repeat.data$name <- paste(repeat.data$name, n.repeat, sep = "_")
-      repeat.data[["canonical_name"]] <- paste(repeat.data[["canonical_name"]],
-        ", repeat observation ", n.repeat,
-        sep = ""
-      )
-      out.yaml$variables[[paste(repeat.variable, n.repeat, sep = "_")]] <- repeat.data
+  if (length(n.repeats) > 0) {
+    for (n.repeat in seq_len(n.repeats)) {
+      for (repeat.variable in names(repeat.variables$variables)) {
+        repeat.data <- repeat.variables$variables[[repeat.variable]]
+        repeat.data$name <- paste(repeat.data$name, n.repeat, sep = "_")
+        repeat.data[["canonical_name"]] <- paste(repeat.data[["canonical_name"]],
+          ", repeat observation ", n.repeat,
+          sep = ""
+        )
+        out.yaml$variables[[paste(repeat.variable, n.repeat, sep = "_")]] <- repeat.data
+      }
     }
   }
   list(
