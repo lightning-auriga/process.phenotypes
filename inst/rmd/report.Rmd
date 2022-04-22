@@ -449,7 +449,7 @@ for (name in names(variable.summary$variables)) {
     )
     variable.summary.df[, 1] <- stringr::str_replace(variable.summary.df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
     variable.summary.df[, 1] <- stringr::str_replace(variable.summary.df[, 1], "^( *)([0-9]+)\\. ", "\\1\\2\\\\. ")
-    variable.summary.df[, 1] <- stringr::str_replace(variable.summary.df[, 1], "^-$", "negative")
+    variable.summary.df[, 1] <- stringr::str_replace(variable.summary.df[, 1], "^-$", "--")
     rownames(variable.summary.df) <- NULL
     colnames(variable.summary.df) <- c("Value", "Summary statistics")
     table.caption <- paste("Summary of ", name, " (", variable.pretty.name, ")", sep = "")
