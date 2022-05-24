@@ -8,9 +8,11 @@ dependencies:
   - mamba
   - nodejs
   - pre-commit
+  - r-base>=4
   - r-devtools
   - r-docopt
   - r-lintr
+  - r-openxlsx
   - r-styler
   - r-haven
   - r-foreign

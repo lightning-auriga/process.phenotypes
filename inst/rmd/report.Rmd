@@ -39,10 +39,10 @@ subj.invalid.type.max <- params$subj.invalid.type.max
 
 ```{r load.packages, eval=TRUE, echo=FALSE}
 #### Load required R packages
-library(ggplot2, quietly = TRUE)
-library(RColorBrewer, quietly = TRUE)
-library(knitr, quietly = TRUE)
-library(kableExtra, quietly = TRUE)
+suppressPackageStartupMessages(library(ggplot2, quietly = TRUE))
+suppressPackageStartupMessages(library(RColorBrewer, quietly = TRUE))
+suppressPackageStartupMessages(library(knitr, quietly = TRUE))
+suppressPackageStartupMessages(library(kableExtra, quietly = TRUE))
 ```
 
 ```{r get.bins, eval=TRUE, echo=FALSE}
@@ -85,7 +85,13 @@ factor level.  All types other than string include a summary of data entries tha
 the indicated data type.  Dependencies, bounds, data types, etc. are defined in the accompanying configuration
 file.  
 <br>
+Please note that with few exceptions, the original variable names and descriptions in this report are read
+verbatim from the input data, and have not been edited, to maintain harmonization with the original questionnaire
+definitions.  
+<br>
 `r paste(variable.summary$total.initial.sample.size, ifelse(variable.summary$total.initial.sample.size == 1, " subject was", " subjects were"), " originally present in this dataset.", ifelse(!is.null(variable.summary$globals$consent_inclusion_file), paste(" ", variable.summary$subjects.consent.yes, ifelse(variable.summary$subjects.consent.yes == 1, " subject was", " subjects were"), " included with verified consent.", sep = ""), ""), ifelse(!is.null(variable.summary$globals$consent_exclusion_file), paste(" ", variable.summary$subjects.consent.no, ifelse(variable.summary$subjects.consent.no == 1, " subject was", " subjects were"), " excluded for lacking consent.", sep = ""), ""), ifelse(!is.null(variable.summary$globals$consent_inclusion_file) & !is.null(variable.summary$globals$consent_exclusion_file), paste(" ", length(variable.summary$subjects.ambiguous.consent), ifelse(length(variable.summary$subjects.ambiguous.consent) == 1, " subject was", " subjects were"), " additionally excluded for not being explicitly listed as either having or lacking consent.", sep = ""), ""), " ", variable.summary$subjects.excluded.for.age, ifelse(variable.summary$subjects.excluded.for.age == 1, " subject was ", " subjects were "), "removed for being below the minimum permissible age of ", variable.summary$globals$min_age_for_inclusion, ".", sep = "")`
+
+`r paste(variable.summary$na.subject.id.count, ifelse(variable.summary$na.subject.id.count == 1, " subject was ", " subjects were "), "removed for lacking a subject ID.", sep = "")`
 
 `r if (length(variable.summary$subjects.ambiguous.consent) > 0) {paste("***\n<br>")}`
 
@@ -131,7 +137,7 @@ due to failed dependencies.
 plot.data <- data.frame(x = nas.by.subject)
 my.hist <- ggplot(aes(x = x, y = ..count.. / sum(..count..)), data = plot.data)
 nbins <- get.bins(nas.by.subject)
-my.hist <- my.hist + my.theme + geom_histogram(bins = nbins, binwidth = diff(range(nas.by.subject)) / nbins)
+my.hist <- my.hist + my.theme + geom_histogram(bins = nbins, binwidth = (diff(range(nas.by.subject)) + 1) / nbins)
 my.hist <- my.hist + xlab("Number of NA Values by Subject") + ylab("Proportion of Subjects")
 cat("\n\n#### Distribution of NA Counts by Subject\n\n")
 print(my.hist)
@@ -140,12 +146,12 @@ knitr::kable(process.phenotypes:::get.top.ten(TRUE, nas.by.subject, "Subjects"),
   kableExtra::kable_styling("condensed", position = "left", full_width = FALSE)
 ```
 
-```{r report.subject.type.failures, eval=TRUE, echo=FALSE, results="asis"}
+```{r report.subject.type.failures, eval=length(subjects.wrong.type) > 0, echo=FALSE, results="asis"}
 ## probably also want a histogram of this one
 plot.data <- data.frame(x = subjects.wrong.type)
 my.hist <- ggplot(aes(x = x, y = ..count.. / nrow(phenotype.data)), data = plot.data)
 nbins <- get.bins(subjects.wrong.type)
-my.hist <- my.hist + my.theme + geom_histogram(bins = nbins, binwidth = diff(range(subjects.wrong.type)) / nbins)
+my.hist <- my.hist + my.theme + geom_histogram(bins = nbins, binwidth = (diff(range(subjects.wrong.type)) + 1) / nbins)
 my.hist <- my.hist + xlab("Number of Invalid Type Datapoints by Subject") + ylab("Proportion of Subjects")
 my.hist <- my.hist + geom_vline(xintercept = subj.invalid.type.max, col = "red", lty = 2)
 cat("\n\n#### Distribution of Invalid Type Datapoints by Subject\n\n")
@@ -158,12 +164,12 @@ knitr::kable(process.phenotypes:::get.top.ten(TRUE, subjects.wrong.type, "Subjec
 ***
 <br>
 
-```{r report.subject.dependency.failures, eval=TRUE, echo=FALSE, results="asis"}
+```{r report.subject.dependency.failures, eval=length(which(subjects.failing.deps > 0)) > 0, echo=FALSE, results="asis"}
 ## histogram time
 plot.data <- data.frame(x = subjects.failing.deps)
 my.hist <- ggplot(aes(x = x, y = ..count.. / nrow(phenotype.data)), data = plot.data)
 nbins <- get.bins(subjects.failing.deps)
-my.hist <- my.hist + my.theme + geom_histogram(bins = nbins, binwidth = diff(range(subjects.failing.deps)) / nbins)
+my.hist <- my.hist + my.theme + geom_histogram(bins = nbins, binwidth = (diff(range(subjects.failing.deps)) + 1) / nbins)
 my.hist <- my.hist + xlab("Number of Variable Dependency Failures by Subject") + ylab("Proportion of Subjects")
 cat("\n\n#### Distribution of Dependency Failures by Subject\n\n")
 print(my.hist)
@@ -172,14 +178,14 @@ print(my.hist)
 ***
 <br>
 
-### Variable level metrics
+`r if (length(which(variables.wrong.type > 0)) > 0) {"### Variable level metrics"}`
 
-```{r report.variable.type.failures, eval=TRUE, echo=FALSE, results="asis"}
+```{r report.variable.type.failures, eval=length(which(variables.wrong.type > 0)) > 0, echo=FALSE, results="asis"}
 ## for now, histogram this too
 plot.data <- data.frame(x = variables.wrong.type)
 my.hist <- ggplot(aes(x = x, y = ..count.. / sum(..count..)), data = plot.data)
 nbins <- get.bins(variables.wrong.type)
-my.hist <- my.hist + my.theme + geom_histogram(bins = nbins, binwidth = diff(range(variables.wrong.type)) / nbins)
+my.hist <- my.hist + my.theme + geom_histogram(bins = nbins, binwidth = (diff(range(variables.wrong.type)) + 1) / nbins)
 my.hist <- my.hist + xlab("Number of Invalid Type Datapoints by Variable") + ylab("Proportion of Variables")
 cat("\n\n#### Distribution of Invalid Type Datapoints by Variable\n\n")
 print(my.hist)
@@ -247,7 +253,7 @@ for (name in names(variable.summary$variables)) {
   }
 
   ## report any indication of residual Excel junk in the variable
-  if (!is.null(variable.summary$variables[[name]]$excel.problem.count)) {
+  if (!is.null(variable.summary$variables[[name]]$excel.problem.count) & !suppress.reporting) {
     if (variable.summary$variables[[name]]$excel.problem.count == 1) {
       cat("\nWARNING: 1 Excel error code detected in this variable.\n")
     } else {
@@ -258,72 +264,76 @@ for (name in names(variable.summary$variables)) {
     }
   }
   ## if the source data type is numeric
-  if (is.vector(phenotype.data[, name], mode = "numeric")) {
+  if (is.vector(phenotype.data[, name], mode = "numeric") & !suppress.reporting) {
     if (length(which(!is.na(phenotype.data[, name])))) {
       ## create data histogram for numeric data
       plot.data <- data.frame(x = phenotype.data[!is.na(phenotype.data[, name]), name])
-      hist.plot <- ggplot(data = plot.data) + my.theme
-      nbins <- get.bins(phenotype.data[!is.na(phenotype.data[, name]), name])
-      binwidth <- diff(range(phenotype.data[!is.na(phenotype.data[, name]), name])) / nbins
-      if (!is.null(variable.summary$variables[[name]]$params$multimodal)) {
-        multimodal.varname <- variable.summary$variables[[name]]$params$multimodal
-        stopifnot(multimodal.varname %in% colnames(phenotype.data))
-        multimodal.values <- unique(phenotype.data[, multimodal.varname])
-        hist.plot.colours <- RColorBrewer::brewer.pal(max(3, length(multimodal.values)), "Dark2")[seq_len(length(multimodal.values))]
-        annotate.y <- max(hist(phenotype.data[, name], breaks = nbins, plot = FALSE)$counts) / nrow(phenotype.data)
-        for (i in seq_len(length(multimodal.values))) {
-          if (length(which(phenotype.data[, multimodal.varname] == multimodal.values[i] &
-            !is.na(phenotype.data[, multimodal.varname]))) == 0) {
-            next
+      if (length(unique(plot.data$x)) > 0) {
+        hist.plot <- ggplot(data = plot.data) + my.theme
+        nbins <- get.bins(phenotype.data[!is.na(phenotype.data[, name]), name])
+        binwidth <- (diff(range(phenotype.data[!is.na(phenotype.data[, name]), name])) + 1) / nbins
+        if (!is.null(variable.summary$variables[[name]]$params$multimodal)) {
+          multimodal.varname <- variable.summary$variables[[name]]$params$multimodal
+          stopifnot(multimodal.varname %in% colnames(phenotype.data))
+          multimodal.values <- unique(phenotype.data[, multimodal.varname])
+          hist.plot.colours <- RColorBrewer::brewer.pal(max(3, length(multimodal.values)), "Dark2")[seq_len(length(multimodal.values))]
+          annotate.y <- max(hist(phenotype.data[, name], breaks = nbins, plot = FALSE)$counts) / nrow(phenotype.data)
+          for (i in seq_len(length(multimodal.values))) {
+            if (length(which(phenotype.data[, multimodal.varname] == multimodal.values[i] &
+              !is.na(phenotype.data[, multimodal.varname]))) == 0) {
+              next
+            }
+            plot.subset <- phenotype.data[phenotype.data[, multimodal.varname] == multimodal.values[i] &
+              !is.na(phenotype.data[, name]) & !is.na(phenotype.data[, multimodal.varname]), ]
+            hist.plot <- hist.plot + geom_histogram(aes_string(
+              x = name,
+              y = "..count../sum(..count..)"
+            ),
+            data = plot.subset,
+            bins = nbins,
+            binwidth = binwidth,
+            fill = hist.plot.colours[i],
+            alpha = 0.2
+            )
+            mode.mean <- mean(plot.subset[, name],
+              na.rm = TRUE
+            )
+            hist.plot <- hist.plot + geom_vline(
+              xintercept = mode.mean,
+              colour = hist.plot.colours[i]
+            )
+            hist.plot <- hist.plot + annotate("text",
+              label = multimodal.values[i],
+              x = mode.mean * 1.15,
+              y = annotate.y * (1 - (i - 1) * 0.05),
+              size = 3,
+              hjust = 0,
+              colour = hist.plot.colours[i]
+            )
           }
-          plot.subset <- phenotype.data[phenotype.data[, multimodal.varname] == multimodal.values[i] &
-            !is.na(phenotype.data[, name]) & !is.na(phenotype.data[, multimodal.varname]), ]
-          hist.plot <- hist.plot + geom_histogram(aes_string(
-            x = name,
-            y = "..count../sum(..count..)"
-          ),
-          data = plot.subset,
-          bins = nbins,
-          binwidth = binwidth,
-          fill = hist.plot.colours[i],
-          alpha = 0.2
-          )
-          mode.mean <- mean(plot.subset[, name],
-            na.rm = TRUE
-          )
-          hist.plot <- hist.plot + geom_vline(
-            xintercept = mode.mean,
-            colour = hist.plot.colours[i]
-          )
-          hist.plot <- hist.plot + annotate("text",
-            label = multimodal.values[i],
-            x = mode.mean * 1.15,
-            y = annotate.y * (1 - (i - 1) * 0.05),
-            size = 3,
-            hjust = 0,
-            colour = hist.plot.colours[i]
+        } else {
+          hist.plot <- hist.plot + geom_histogram(
+            aes(x = x, y = ..count.. / sum(..count..)),
+            bins = nbins,
+            binwidth = binwidth
           )
         }
-      } else {
-        hist.plot <- hist.plot + geom_histogram(
-          aes(x = x, y = ..count.. / sum(..count..)),
-          bins = nbins,
-          binwidth = binwidth
+        hist.plot <- hist.plot + xlab(name) + ylab("proportion of data")
+        if (is.null(variable.summary$variables[[name]]$params$bounds$sd)) {
+          var.mean <- mean(phenotype.data[, name], na.rm = TRUE)
+          var.sd <- sd(phenotype.data[, name], na.rm = TRUE)
+          if (!is.na(var.sd)) {
+            hist.plot <- hist.plot + geom_vline(xintercept = var.mean + 3 * var.sd, linetype = "dashed")
+            hist.plot <- hist.plot + geom_vline(xintercept = var.mean - 3 * var.sd, linetype = "dashed")
+          }
+        }
+        cat(
+          "\n\n#### Histogram of ", name, " (", variable.pretty.name,
+          ") Distribution\n\n",
+          sep = ""
         )
+        print(hist.plot)
       }
-      hist.plot <- hist.plot + xlab(name) + ylab("proportion of data")
-      if (is.null(variable.summary$variables[[name]]$params$bounds$sd)) {
-        var.mean <- mean(phenotype.data[, name], na.rm = TRUE)
-        var.sd <- sd(phenotype.data[, name], na.rm = TRUE)
-        hist.plot <- hist.plot + geom_vline(xintercept = var.mean + 3 * var.sd, linetype = "dashed")
-        hist.plot <- hist.plot + geom_vline(xintercept = var.mean - 3 * var.sd, linetype = "dashed")
-      }
-      cat(
-        "\n\n#### Histogram of ", name, " (", variable.pretty.name,
-        ") Distribution\n\n",
-        sep = ""
-      )
-      print(hist.plot)
     }
     if (!is.null(variable.summary$variables[[name]]$params$bounds)) {
       bound.type <- c()
@@ -356,7 +366,7 @@ for (name in names(variable.summary$variables)) {
   }
   ## if the source data has a linked_date variable, indicating it is an age
   ## that in theory should be derived from a date
-  if (!is.null(variable.summary$variables[[name]]$params$linked_date)) {
+  if (!is.null(variable.summary$variables[[name]]$params$linked_date) & !suppress.reporting) {
     reported.year.varname <- variable.summary$variables[[name]]$params$linked_date$reported_year
     reference.year <- variable.summary$variables[[name]]$params$linked_date$reference_year
     stopifnot(
@@ -386,7 +396,7 @@ for (name in names(variable.summary$variables)) {
   }
   ## if the source data has a computed_bmi variable, indicating it is BMI
   ## that in theory should be derived from height and weight
-  if (!is.null(variable.summary$variables[[name]]$params$computed_bmi)) {
+  if (!is.null(variable.summary$variables[[name]]$params$computed_bmi) & !suppress.reporting) {
     height.varname <- variable.summary$variables[[name]]$params$computed_bmi$height
     weight.varname <- variable.summary$variables[[name]]$params$computed_bmi$weight
     stopifnot(
@@ -414,7 +424,7 @@ for (name in names(variable.summary$variables)) {
   }
   ## if the source data has a computed_bp_ratio variable, plot the ratio
   ## between the systolic and diastolic measurements as indicated
-  if (!is.null(variable.summary$variables[[name]]$params$computed_bp_ratio)) {
+  if (!is.null(variable.summary$variables[[name]]$params$computed_bp_ratio) & !suppress.reporting) {
     systolic.bp <- phenotype.data[, name]
     diastolic.bp.varname <- variable.summary$variables[[name]]$params$computed_bp_ratio$diastolic
     stopifnot(diastolic.bp.varname %in% colnames(phenotype.data))
@@ -431,7 +441,7 @@ for (name in names(variable.summary$variables)) {
   }
   ## original exclusion criterion here is hitting everything for small datasets,
   ## even when the report is not a unique value report
-  if (is.vector(phenotype.data[, name], mode = "numeric") |
+  if ((is.vector(phenotype.data[, name], mode = "numeric") & !suppress.reporting) |
     ((is.factor(phenotype.data[, name]) |
       length(my.summ) < nrow(phenotype.data) * unique.variable.value.inclusion.proportion) & !suppress.reporting)) {
     variable.summary.df <- data.frame(
@@ -439,19 +449,20 @@ for (name in names(variable.summary$variables)) {
     )
     variable.summary.df[, 1] <- stringr::str_replace(variable.summary.df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
     variable.summary.df[, 1] <- stringr::str_replace(variable.summary.df[, 1], "^( *)([0-9]+)\\. ", "\\1\\2\\\\. ")
+    variable.summary.df[, 1] <- stringr::str_replace(variable.summary.df[, 1], "^-$", "--")
     rownames(variable.summary.df) <- NULL
     colnames(variable.summary.df) <- c("Value", "Summary statistics")
     table.caption <- paste("Summary of ", name, " (", variable.pretty.name, ")", sep = "")
     cat(knitr::kable(variable.summary.df, caption = table.caption) %>% kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
-  } else if (length(my.summ) >= nrow(phenotype.data) * unique.variable.value.inclusion.proportion) {
+  } else if (length(my.summ) >= nrow(phenotype.data) * unique.variable.value.inclusion.proportion & !suppress.reporting) {
     cat("\n\nVariable ", name, " (", variable.pretty.name, ") has ", length(my.summ), " unique values, and thus",
       " report output of individual value counts is suppressed.\n\n",
       sep = ""
     )
   } else if (suppress.reporting) {
-    cat("\n\nReporting for this variable was suppressed in the configuration.\n\n")
+    cat("\n\nReporting for variable", name, "was suppressed in the configuration.\n\n")
   }
-  if (!is.null(variable.summary$variables[[name]]$invalid.blood.pressure.entries)) {
+  if (!is.null(variable.summary$variables[[name]]$invalid.blood.pressure.entries) & !suppress.reporting) {
     if (length(variable.summary$variables[[name]]$invalid.blood.pressure.entries) > 0) {
       df <- data.frame(table(variable.summary$variables[[name]]$invalid.blood.pressure.entries, useNA = "ifany"))
       rownames(df) <- NULL
@@ -462,7 +473,7 @@ for (name in names(variable.summary$variables)) {
       cat("\n\nAll values consistent with blood pressure format or missing data.\n\n")
     }
   }
-  if (!is.null(variable.summary$variables[[name]]$invalid.numeric.entries)) {
+  if (!is.null(variable.summary$variables[[name]]$invalid.numeric.entries) & !suppress.reporting) {
     if (length(variable.summary$variables[[name]]$invalid.numeric.entries) > 0) {
       df <- data.frame(table(variable.summary$variables[[name]]$invalid.numeric.entries, useNA = "ifany"))
       rownames(df) <- NULL
@@ -475,7 +486,7 @@ for (name in names(variable.summary$variables)) {
   }
   ## factors
   ## give ancestry factor variable special treatment
-  if (!is.null(variable.summary$variables[[name]]$params$subject_ancestry)) {
+  if (!is.null(variable.summary$variables[[name]]$params$subject_ancestry) & !suppress.reporting) {
     ## instead of reporting failed conversions specifically,
     ## report a table of all imperfect matches to the reference ancestry labels,
     ## and track the outcomes for all of them, even the ones that were eventually
@@ -511,7 +522,7 @@ for (name in names(variable.summary$variables)) {
     df <- df[order(df[, 3], df[, 2], df[, 1]), ]
     rownames(df) <- NULL
     cat(knitr::kable(df, caption = "Handling of all partial match self-reported ancestries.") %>% kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
-  } else if (!is.null(variable.summary$variables[[name]]$invalid.factor.entries)) {
+  } else if (!is.null(variable.summary$variables[[name]]$invalid.factor.entries) & !suppress.reporting) {
     ## other things that are factors
     if (length(variable.summary$variables[[name]]$invalid.factor.entries) > 0) {
       df <- data.frame(table(variable.summary$variables[[name]]$invalid.factor.entries, useNA = "ifany"))
@@ -523,7 +534,7 @@ for (name in names(variable.summary$variables)) {
       cat("\n\nAll values consistent with categorical format or missing data.\n\n")
     }
   }
-  if (!is.null(variable.summary$variables[[name]]$invalid.date.entries)) {
+  if (!is.null(variable.summary$variables[[name]]$invalid.date.entries) & !suppress.reporting) {
     if (length(variable.summary$variables[[name]]$invalid.date.entries) > 0) {
       df <- data.frame(table(variable.summary$variables[[name]]$invalid.date.entries, useNA = "ifany"))
       rownames(df) <- NULL
@@ -534,7 +545,7 @@ for (name in names(variable.summary$variables)) {
       cat("\n\nAll values consistent with date format (year only) or missing data.\n\n")
     }
   }
-  if (!is.null(variable.summary$variables[[name]]$unicode.entries)) {
+  if (!is.null(variable.summary$variables[[name]]$unicode.entries) & !suppress.reporting) {
     unicode.df <- data.frame(
       names(variable.summary$variables[[name]]$unicode.entries),
       as.vector(variable.summary$variables[[name]]$unicode.entries)
@@ -543,7 +554,7 @@ for (name in names(variable.summary$variables)) {
     colnames(unicode.df) <- c("Unicode String", "Observations")
     cat(knitr::kable(unicode.df, caption = "String entries containing unresolved Unicode characters.") %>% kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
   }
-  if (!is.null(variable.summary$variables[[name]]$params$dependencies)) {
+  if (!is.null(variable.summary$variables[[name]]$params$dependencies) & !suppress.reporting) {
     cat("\n\n#### Dependency tracking\n\n")
     dependency.names <- c()
     dependency.conditions <- c()

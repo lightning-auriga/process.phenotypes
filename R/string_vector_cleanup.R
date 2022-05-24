@@ -89,10 +89,10 @@ remove.nonword.chars <- function(df, variable.summary) {
     ## replace leading ">/<" characters meaning "greater/less than" with words
     df[, i] <- stringr::str_replace_all(df[, i], "^ *> *(\\w+)", "greater than \\1")
     df[, i] <- stringr::str_replace_all(df[, i], "^ *< *(\\w+)", "less than \\1")
+    df.orig <- df[, i]
     ## take anything that looks like a negative number and cast it into the void
     df[, i] <- stringr::str_replace_all(df[, i], "^ *- *[0-9]+.*$", "na")
     ## strip nonword characters from extremes
-    df.orig <- df[, i]
     df[, i] <- stringr::str_replace_all(df[, i], "^\\W+|\\W*[^[\\w)}\\]]]$", "")
     ## TODO: remove crappy logging
     diff.data <- cbind(
@@ -284,8 +284,11 @@ process.unicode.characters <- function(phenotype.data) {
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2192", "->")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U1F645", "#error!")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B0", "degrees")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U0394", "Delta")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2206", "Delta")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2018|\U2019", "'")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U201C|\U201D", "\"")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2070", "0")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B2", "2")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B3", "3")
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B9", "1")
@@ -330,6 +333,7 @@ process.unicode.characters <- function(phenotype.data) {
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U203A", ">")
     ## this is technically "care of" but it seems like the one instance of it meant percent for some reason
     phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2105", "%")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2248", "~=")
   }
   phenotype.data
 }
