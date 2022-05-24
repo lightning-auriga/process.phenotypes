@@ -45,9 +45,9 @@ create.phenotype.report <- function(in.filename,
                                     sep = "\t",
                                     uniq.var.inclusion.prop = 1 / 3,
                                     write.tsv = TRUE,
-                                    write.stata = TRUE,
-                                    write.spss = TRUE,
-                                    write.sas = TRUE,
+                                    write.stata = FALSE,
+                                    write.spss = FALSE,
+                                    write.sas = FALSE,
                                     write.yaml = FALSE) {
   ## sanity check for in.filename param
   stopifnot(
@@ -157,6 +157,13 @@ create.phenotype.report <- function(in.filename,
   ## exclude subjects below a given age from the dataset
   if (magic.fix) {
     reformatted.list <- exclude.by.age(
+      reformatted.list$phenotype.data, reformatted.list$variable.summary
+    )
+  }
+
+  ## exclude subjects without a subject ID from the dataset
+  if (magic.fix) {
+    reformatted.list <- exclude.by.missing.subject.id(
       reformatted.list$phenotype.data, reformatted.list$variable.summary
     )
   }

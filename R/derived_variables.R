@@ -24,6 +24,7 @@
 #' @return list, modified version of input variable.summary argument
 #' with augmented phenotype dataset, and variable summary supplemented
 #' with copies of the input configuration for the derived variables.
+#' @importFrom methods is
 create.derived.variables <- function(phenotype.data, variable.summary) {
   not.done.list <- variable.summary$derived
   previous.list.length <- 0
@@ -42,7 +43,7 @@ create.derived.variables <- function(phenotype.data, variable.summary) {
         next
       }
       derived.result <- evaluate.derived.expressions(phenotype.data, derived.exprs)
-      if (class(derived.result) != "try-error") {
+      if (!is(derived.result, "try-error")) {
         not.done.list[[i]] <- NULL
         stopifnot(!is.list(derived.result), length(derived.result) == nrow(phenotype.data))
         phenotype.data[, i] <- derived.result
@@ -86,6 +87,7 @@ create.derived.variables <- function(phenotype.data, variable.summary) {
 #' @return either a vector of length nrow(phenotype.data) representing
 #' the derived variable, or an object of class "try-error" indicating
 #' the failure of the evaluation chain.
+#' @importFrom methods is
 evaluate.derived.expressions <- function(phenotype.data, derived.exprs) {
   my.data.mask <- rlang::as_data_mask(phenotype.data)
   my.env <- rlang::caller_env()
@@ -95,7 +97,7 @@ evaluate.derived.expressions <- function(phenotype.data, derived.exprs) {
     derived.result <- try(
       rlang::eval_tidy(expr, env = my.env, data = my.data.mask)
     )
-    if (class(derived.result) == "try-error") {
+    if (is(derived.result, "try-error")) {
       break
     }
   }

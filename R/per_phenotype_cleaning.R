@@ -30,6 +30,7 @@ apply.type.conversions <- function(phenotype.data, variable.summary) {
     possible.types <- c(
       "string",
       "categorical",
+      "categorical_to_numeric",
       "ordinal",
       "binary",
       "numeric",
@@ -95,12 +96,26 @@ apply.type.conversions <- function(phenotype.data, variable.summary) {
 #' @keywords phenotypes yaml
 convert.type <- function(vec, var.summary, target.type) {
   result.list <- NULL
-  if (grepl("^categorical$|^ordinal$|^binary$", target.type, ignore.case = TRUE)) {
+  if (grepl("^categorical$|^ordinal$|^binary$|^categorical_to_numeric$", target.type, ignore.case = TRUE)) {
     ## categorical or ordinal or binary
     result.list <- reformat.factor(vec, var.summary)
     if (grepl("ordinal", target.type, ignore.case = TRUE)) {
       result.list$phenotype.data <- ordered(result.list$phenotype.data,
         levels = levels(result.list$phenotype.data)
+      )
+    }
+    if (grepl("categorical_to_numeric", target.type, ignore.case = TRUE)) {
+      ## new: allow categoricals that have pure numeric labels
+      ## to be converted to numerics with their labels as values.
+      ## note that this will seemingly suppress categorical conversion
+      ## errors and skip some numeric cleaning; so in theory, this
+      ## should only be performed on variables that have already
+      ## been sufficiently sanitized such that this is not a concern.
+      result.list$phenotype.data <- as.vector(result.list$phenotype.data, mode = "character")
+      result.list$variable.summary$params$type <- "numeric"
+      result.list <- reformat.numerics(
+        result.list$phenotype.data,
+        result.list$variable.summary
       )
     }
   } else if (grepl("numeric", target.type, ignore.case = TRUE)) {
@@ -151,7 +166,7 @@ apply.bounds <- function(phenotype.data, variable.summary) {
         var.min <- variable.summary$variables[[i]]$params$bounds$min
         if (!is.null(var.min)) {
           var.min <- as.numeric(var.min)
-          if (!is.na(var.min)) {
+          if (!is.na(var.min) & is.null(variable.summary$variables[[i]]$num.below.min)) {
             # count and apply min threshold
             num.min <- length(phenotype.data[phenotype.data[, i] < var.min &
               !is.na(phenotype.data[, i]), i])
@@ -163,7 +178,7 @@ apply.bounds <- function(phenotype.data, variable.summary) {
         var.max <- variable.summary$variables[[i]]$params$bounds$max
         if (!is.null(var.max)) {
           var.max <- as.numeric(var.max)
-          if (!is.na(var.max)) {
+          if (!is.na(var.max) & is.null(variable.summary$variables[[i]]$num.above.max)) {
             # count and apply max threshold
             num.max <- length(phenotype.data[phenotype.data[, i] > var.max &
               !is.na(phenotype.data[, i]), i])
@@ -173,7 +188,7 @@ apply.bounds <- function(phenotype.data, variable.summary) {
           }
         }
         var.sd <- variable.summary$variables[[i]]$params$bounds$sd
-        if (!is.null(var.sd)) {
+        if (!is.null(var.sd) & is.null(variable.summary$variables[[i]]$num.beyond.sd)) {
           var.sd <- as.numeric(var.sd)
           stopifnot(var.sd >= 0)
           ## count and apply bidirectional standard deviation threshold
@@ -227,8 +242,41 @@ convert.variable.specific.na <- function(phenotype.data, variable.summary) {
         )
       }
     }
+    if (!is.null(variable.summary$variables[[i]]$params[["suppress_output"]])) {
+      if (variable.summary$variables[[i]]$params[["suppress_output"]]) {
+        phenotype.data[, i] <- NA
+      }
+    }
   }
   phenotype.data
+}
+
+#' Exclude subjects for whom no ID has been recorded
+#'
+#' @details
+#' This function excludes subjects where their ID is NA, as
+#' we can't really do anything with the phenotype data without
+#' being able to link it to genotypes via IDs.
+#'
+#' @description
+#' TBD
+#'
+#' @param phenotype.data data frame, loaded phenotype data with
+#' standardized headers; all columns should be character vectors
+#' @param variable.summary list, per-column summary information
+#' and parameters from yaml input
+#' @return list, 'phenotype.data' contains phenotype information with
+#' subjects without a subject ID excluded, 'variable.summary' contains
+#' input variable summary with information about excluded subjects.
+exclude.by.missing.subject.id <- function(phenotype.data, variable.summary) {
+  subject.id.index <- find.subject.id.index(variable.summary)
+  na.subjects <- is.na(phenotype.data[, subject.id.index])
+  variable.summary$na.subject.id.count <- length(which(na.subjects))
+  phenotype.data <- phenotype.data[!na.subjects, ]
+  list(
+    phenotype.data = phenotype.data,
+    variable.summary = variable.summary
+  )
 }
 
 #' Exclude subjects below a certain user-defined age threshold

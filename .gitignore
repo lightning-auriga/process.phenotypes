@@ -1,3 +1,11 @@
+to_aws
+
+forms
+csvs
+
 node_modules/
 *json
 test_results/
+inputs/
+results/
+*consent*tsv
