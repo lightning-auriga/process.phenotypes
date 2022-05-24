@@ -44,7 +44,7 @@ pages:
 
 run_all:
   stage: check
-  image: barijane/r-dev:latest
+  image: rocker/tidyverse:latest
   script:
     - apt-get update
     - apt-get install -y wget tar
