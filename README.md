@@ -36,7 +36,7 @@ Run the following in [R](https://www.r-project.org/) or [RStudio](https://www.rs
 install.packages("devtools")
 # the following steps are always required when launching R
 library(devtools)
-devtools::install_gitlab("data-analysis5/process.phenotypes@default", auth_token = devtools::github_pat())
+devtools::install_gitlab("data-analysis5/phenotypes/process.phenotypes@default", auth_token = devtools::github_pat())
 ```
 
 #### **Note: Secured Access to GitLab**
@@ -63,7 +63,7 @@ There are various ways to install an R package from a local copy of the project.
 #### **With a tarball**
 
 The easiest way to get a tarball (`.tar.gz`) compressed version of the package is
-to go to the [project GitLab page](https://gitlab.com/data-analysis5/process.phenotypes),
+to go to the [project GitLab page](https://gitlab.com/data-analysis5/phenotypes/process.phenotypes),
 click the download button (to the left of the `Clone` button), select `tar.gz` as
 output format, and save it somewhere on the local drive.
 
@@ -77,9 +77,9 @@ and select the tarball from your local drive.
 With `git` from the command line, depending on whether ssh or https connection is configured
 for your system:
 
-`git clone git@gitlab.com:data-analysis5/process.phenotypes.git`
+`git clone git@gitlab.com:data-analysis5/phenotypes/process.phenotypes.git`
 
-`git clone https://gitlab.com/data-analysis5/process.phenotypes.git`
+`git clone https://gitlab.com/data-analysis5/phenotypes/process.phenotypes.git`
 
 Then, launch `R`. Install and launch `devtools` as needed (see section 
 "Direct Installation from GitLab" as necessary), and run the following commands:
@@ -127,16 +127,10 @@ process.phenotypes::create.phenotype.report("/path/to/CV.export.tsv",
 
 ## YAML Configuration
 
-This section will be expanded in the near future as the configuration feature set is
-completed. For the time being, see existing dataset configuration files in 
-[this directory](https://gitlab.com/data-analysis5/process.phenotypes/-/tree/default/yaml-configuration)
+This section is continually being expanded as the configuration feature set is
+modified. For the time being, see existing dataset configuration files in 
+[this directory](https://gitlab.com/data-analysis5/phenotypes/process.phenotypes/-/tree/default/yaml-configuration)
 for examples.
-
-### Helper script to create config scaffold
-
-```
-bash make_empty_dataset_yaml.bash ../raw_normalized/SO_raw.tsv SO | tr -s “\”” > SO_raw.yaml
-```
 
 ### Top-level YAML sections
 
@@ -159,7 +153,9 @@ Each variable in the dataset is assigned a normalized encoded value (e.g. CV0000
 - `canonical_name`: if desired, a string with a more descriptive variable name than what's present in `name`
 - `bounds`: min, max, and/or sd (standard deviation) bounds for a numeric variable
 - `suppress_reporting`: a boolean to turn off printing a table of unique values and counts in the html report; useful for variables with PII or with many expected unique values like phone numbers
-- `linked_date`: 
+- `linked_date`: for `age` variables, this optionally points to a corresponding date variable for cross-comparison
+  - `reported_year`: standardized name of variable containing corresponding year variable
+  - `reference_year`: which year the age was collected
 - `subject_age`: boolean flag to mark which variable is the accepted age of the subjects
 - `subject_id`: boolean flag to mark which variable is the accepted unique subject ID
 - `na-values`: any non-canonical values to be treated as NA (e.g. nil, not specified, etc.)
@@ -201,6 +197,7 @@ If you are using pre-commit as described below, the yaml configurations will be 
 
 ## Version History
 See changelog for more information.
+ * 24 May 2022: merge CTO dataset configuration files and corresponding added functionality
  * 21 Sep 2021: initial release v1.0.0
  * 27 Aug 2021: derived variables, transformations, many assorted improvements, and better readme
  * 12 Jul 2021: string_cleanup branch merged into default; v0.1.0
@@ -214,9 +211,9 @@ See changelog for more information.
 - Clone a copy of this repo: 
 
 ```
-git clone https://gitlab.com/data-analysis5/process.phenotypes.git
+git clone https://gitlab.com/data-analysis5/phenotypes/process.phenotypes.git
 # or 
-git clone git@gitlab.com:data-analysis5/process.phenotypes.git
+git clone git@gitlab.com:data-analysis5/phenotypes/process.phenotypes.git
 ```
 
 - Navigate into the repo directory: `cd process.phenotypes`
@@ -251,7 +248,7 @@ install.packages("precommit")
 
 ### Step 2: Select an issue to work on, or submit one that you'd like to address
 
-See the current [issues](https://gitlab.com/data-analysis5/process.phenotypes/-/issues) for this project.
+See the current [issues](https://gitlab.com/data-analysis5/phenotypes/process.phenotypes/-/issues) for this project.
 
 ### Step 3: Contribute code
 
@@ -262,4 +259,4 @@ See the current [issues](https://gitlab.com/data-analysis5/process.phenotypes/-/
     - Stage changes with `git add .`
     - Commit code with `git cz`; make sure to cite the issue number you're working on
     - Push your changes to the remote repository with `git push origin <feature_branch>`
-- When you're all done, submit a merge request [here](https://gitlab.com/data-analysis5/process.phenotypes/-/merge_requests).  Other developers will review your code, make comments, and merge in your changes when ready!
+- When you're all done, submit a merge request [here](https://gitlab.com/data-analysis5/phenotypes/process.phenotypes/-/merge_requests).  Other developers will review your code, make comments, and merge in your changes when ready!
