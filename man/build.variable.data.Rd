@@ -20,7 +20,7 @@ build.variable.data(type.value, name.value, label.value, choice.list, varname)
 }
 \value{
 list; contents of variable summary for this variable, under
-variable.summary$variables[\link{varname}]
+variable.summary$variables[[varname]]
 }
 \description{
 Construct variable annotation according to type information

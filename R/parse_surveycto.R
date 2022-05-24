@@ -1,6 +1,6 @@
 #' Apply standard replacements for certain deprecated terms
 #'
-#' @param input character vector
+#' @param vec character vector
 #' @return character vector with replacements applied
 apply.replacements <- function(vec) {
   res <- gsub("tribes", "ancestries", vec, ignore.case = TRUE)
@@ -161,7 +161,7 @@ create.config <- function(dataset.tag) {
 #' @param choice.list list; shared model data for questionnaire
 #' @param varname character vector; constructed name of variable (e.g. DT00001)
 #' @return list; contents of variable summary for this variable, under
-#' variable.summary$variables[[varname]]
+#' variable.summary$variables\[\[varname\]\]
 build.variable.data <- function(type.value, name.value, label.value, choice.list, varname) {
   ## SurveyCTO apparently recognizes a series of builtin types
   ## that can be directly referenced and aliased

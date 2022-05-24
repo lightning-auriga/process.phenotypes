@@ -7,7 +7,7 @@
 apply.replacements(vec)
 }
 \arguments{
-\item{input}{character vector}
+\item{vec}{character vector}
 }
 \value{
 character vector with replacements applied
