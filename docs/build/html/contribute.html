@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to contribute to development &mdash; Python  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="YAML Configuration" href="yaml_config.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Python
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yaml_config.html">YAML Configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to contribute to development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#step-1-set-up-a-development-environment-osx-and-linux-only">Step 1: Set up a development environment (OSX and Linux only)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-2-select-an-issue-to-work-on-or-submit-one-that-you-d-like-to-address">Step 2: Select an issue to work on, or submit one that you’d like to address</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-3-contribute-code">Step 3: Contribute code</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>How to contribute to development</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/contribute.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="how-to-contribute-to-development">
+<h1>How to contribute to development<a class="headerlink" href="#how-to-contribute-to-development" title="Permalink to this headline"></a></h1>
+<section id="step-1-set-up-a-development-environment-osx-and-linux-only">
+<h2>Step 1: Set up a development environment (OSX and Linux only)<a class="headerlink" href="#step-1-set-up-a-development-environment-osx-and-linux-only" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>If needed, install miniconda by following the steps <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">here</a>.</p></li>
+<li><p>If needed, install <a class="reference external" href="https://github.com/mamba-org/mamba">mamba</a>: <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">mamba</span></code></p></li>
+<li><p>Clone a copy of this repo:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">gitlab</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">data</span><span class="o">-</span><span class="n">analysis5</span><span class="o">/</span><span class="n">phenotypes</span><span class="o">/</span><span class="n">process</span><span class="o">.</span><span class="n">phenotypes</span><span class="o">.</span><span class="n">git</span>
+<span class="c1"># or </span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@gitlab</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">data</span><span class="o">-</span><span class="n">analysis5</span><span class="o">/</span><span class="n">phenotypes</span><span class="o">/</span><span class="n">process</span><span class="o">.</span><span class="n">phenotypes</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Navigate into the repo directory: <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">process.phenotypes</span></code></p></li>
+<li><p>Create a conda environment with, minimally, the dependencies defined in <code class="docutils literal notranslate"><span class="pre">r-dev.yaml</span></code>.  Make sure to activate your dev environment whenever you are writing/committing code!</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># create the env</span>
+<span class="n">mamba</span> <span class="n">env</span> <span class="n">create</span> <span class="o">-</span><span class="n">f</span> <span class="n">r</span><span class="o">-</span><span class="n">dev</span><span class="o">.</span><span class="n">yaml</span>
+
+<span class="c1"># activate the env</span>
+<span class="n">conda</span> <span class="n">activate</span> <span class="n">r</span><span class="o">-</span><span class="n">dev</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Install <a class="reference external" href="https://github.com/commitizen/cz-cli">commitizen</a> as follows</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span> <span class="o">-</span><span class="n">g</span> <span class="n">commitizen</span> <span class="n">cz</span><span class="o">-</span><span class="n">conventional</span><span class="o">-</span><span class="n">changelog</span>
+<span class="n">commitizen</span> <span class="n">init</span> <span class="n">cz</span><span class="o">-</span><span class="n">conventional</span><span class="o">-</span><span class="n">changelog</span> <span class="o">--</span><span class="n">save</span><span class="o">-</span><span class="n">dev</span> <span class="o">--</span><span class="n">save</span><span class="o">-</span><span class="n">exact</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Set up pre-commit hook scripts.  This will apply linting and check for some common code formatting errors every time you commit.  See https://pre-commit.com/ for more details.</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Install pre-commit in R (either in an R terminal or in Rstudio):</p></li>
+</ul>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">install.packages</span><span class="p">(</span><span class="s">&quot;precommit&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-select-an-issue-to-work-on-or-submit-one-that-you-d-like-to-address">
+<h2>Step 2: Select an issue to work on, or submit one that you’d like to address<a class="headerlink" href="#step-2-select-an-issue-to-work-on-or-submit-one-that-you-d-like-to-address" title="Permalink to this headline"></a></h2>
+<p>See the current <a class="reference external" href="https://gitlab.com/data-analysis5/phenotypes/process.phenotypes/-/issues">issues</a> for this project.</p>
+</section>
+<section id="step-3-contribute-code">
+<h2>Step 3: Contribute code<a class="headerlink" href="#step-3-contribute-code" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>All development work should branch off of the <code class="docutils literal notranslate"><span class="pre">dev</span></code> branch.  Make sure you’re on the right branch: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">dev</span></code></p></li>
+<li><p>Make sure your repository is up-to-date with the remote: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">pull</span> <span class="pre">origin</span> <span class="pre">dev</span></code></p></li>
+<li><p>Create a new branch named for the feature you’re going to work on: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">&lt;feature_branch&gt;</span></code></p></li>
+<li><p>Write code and commit often!</p>
+<ul>
+<li><p>Stage changes with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">.</span></code></p></li>
+<li><p>Commit code with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">cz</span></code>; make sure to cite the issue number you’re working on</p></li>
+<li><p>Push your changes to the remote repository with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">origin</span> <span class="pre">&lt;feature_branch&gt;</span></code></p></li>
+</ul>
+</li>
+<li><p>When you’re all done, submit a merge request <a class="reference external" href="https://gitlab.com/data-analysis5/phenotypes/process.phenotypes/-/merge_requests">here</a>.  Other developers will review your code, make comments, and merge in your changes when ready!</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="yaml_config.html" class="btn btn-neutral float-left" title="YAML Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, B. Ballew, C. Auriga, 54gene.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

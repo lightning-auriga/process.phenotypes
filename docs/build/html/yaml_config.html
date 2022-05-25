@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YAML Configuration &mdash; Python  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How to contribute to development" href="contribute.html" />
+    <link rel="prev" title="Execution" href="execution.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Python
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">YAML Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#top-level-yaml-sections">Top-level YAML sections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#variables-yaml-section"><code class="docutils literal notranslate"><span class="pre">variables</span></code> YAML section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#derived-yaml-section"><code class="docutils literal notranslate"><span class="pre">derived</span></code> YAML section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yaml-validation">YAML validation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">How to contribute to development</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>YAML Configuration</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/yaml_config.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="yaml-configuration">
+<h1>YAML Configuration<a class="headerlink" href="#yaml-configuration" title="Permalink to this headline"></a></h1>
+<p>This section is continually being expanded as the configuration feature set is
+modified. For the time being, see existing dataset configuration files in
+<a class="reference external" href="https://gitlab.com/data-analysis5/phenotypes/process.phenotypes/-/tree/default/yaml-configuration">this directory</a>
+for examples.</p>
+<section id="top-level-yaml-sections">
+<h2>Top-level YAML sections<a class="headerlink" href="#top-level-yaml-sections" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tag</span></code>: dataset tag name (e.g. “CV”); used minimally but not quite deprecated to continue to support comparison between two datasets</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">globals</span></code>: contains two global settings that are applied across all variables</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">min_age_for_inclusion</span></code>: (required) subjects will be excluded from all histograms etc. in the report and from the cleaned output if their age falls below this threshold</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_invalid_datatypes_per_subject</span></code>: subjects will be excluded from  the cleaned output if they have more than this number of variables that can not be converted to the expected datatypes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">consent_inclusion_file</span></code>: name of file containing subject IDs with confirmed consent approval. format is: plaintext file, no header, one ID per line</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">consent_exclusion_file</span></code>: name of file containing subject IDs without valid consent. format is: plaintext file, no header, one ID per line</p>
+<ul>
+<li><p>the above two files are each optional. the files can be specified but empty. if neither is specified, no subjects will be included or excluded for consent. if one or the other but not both is specified, the included file’s action will be applied alone. if both are specified, both actions will be performed, and additionally any subject ID found in the dataset but in neither list will be excluded and listed in a table in the final report for inspection. IDs cannot be present on both lists at once; if any such IDs are found, the program will complain.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code>: this section contains one block for each variable in the dataset, with a variety of other configuration settings described in the next section</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">derived</span></code>: this section defines variables to be derived from existing variables</p></li>
+</ul>
+</section>
+<section id="variables-yaml-section">
+<h2><code class="docutils literal notranslate"><span class="pre">variables</span></code> YAML section<a class="headerlink" href="#variables-yaml-section" title="Permalink to this headline"></a></h2>
+<p>Each variable in the dataset is assigned a normalized encoded value (e.g. CV00001, CV00002, etc.).  Under each variable block, there are a variety of other possible configuration settings:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: this is the header of the variable in the input dataset</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: (either this or shared_model are required) expected variable type; one of: string, numeric, ordinal, categorical; the variable type dictates what kinds of cleaning are applied to that variable</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shared_model</span></code>: (either this or type are required) expected variable type as defined in <code class="docutils literal notranslate"><span class="pre">yaml-configuration/shared-models.yaml</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">canonical_name</span></code>: if desired, a string with a more descriptive variable name than what’s present in <code class="docutils literal notranslate"><span class="pre">name</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bounds</span></code>: min, max, and/or sd (standard deviation) bounds for a numeric variable</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">suppress_reporting</span></code>: a boolean to turn off printing a table of unique values and counts in the html report; useful for variables with PII or with many expected unique values like phone numbers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">linked_date</span></code>: for <code class="docutils literal notranslate"><span class="pre">age</span></code> variables, this optionally points to a corresponding date variable for cross-comparison</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">reported_year</span></code>: standardized name of variable containing corresponding year variable</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reference_year</span></code>: which year the age was collected</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">subject_age</span></code>: boolean flag to mark which variable is the accepted age of the subjects</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">subject_id</span></code>: boolean flag to mark which variable is the accepted unique subject ID</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">na-values</span></code>: any non-canonical values to be treated as NA (e.g. nil, not specified, etc.)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">multimodal</span></code>: used to define another variable for plotting overlayed histograms, e.g. overlayed plots of BMI by sex</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dependencies</span></code>: test for expected relationships between variables; can also include contingency tables to compare two variables and instructions for setting values to NA if certain dependency tests fail</p></li>
+</ul>
+</section>
+<section id="derived-yaml-section">
+<h2><code class="docutils literal notranslate"><span class="pre">derived</span></code> YAML section<a class="headerlink" href="#derived-yaml-section" title="Permalink to this headline"></a></h2>
+<p>Derived variables are calculated from existing data, e.g. calculating BMI from reported waist and height measurements.  This section allows the user to define arbitrary new variables to derive.</p>
+<ul class="simple">
+<li><p>Most sections here have been previously described, but <code class="docutils literal notranslate"><span class="pre">code</span></code> is where the logic is injected to create the derived variable, written in <code class="docutils literal notranslate"><span class="pre">R</span></code> syntax with access to the normalized variable names</p></li>
+</ul>
+</section>
+<section id="yaml-validation">
+<h2>YAML validation<a class="headerlink" href="#yaml-validation" title="Permalink to this headline"></a></h2>
+<p>Prior to running this tool, you should validate the yaml configurations you’ve set up as follows:</p>
+<p><code class="docutils literal notranslate"><span class="pre">./yaml_validator.py</span> <span class="pre">dataset_file.yaml</span> <span class="pre">shared_model_file.yaml</span></code></p>
+<p>If you are using pre-commit as described below, the yaml configurations will be validated automatically when you commit changes.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="execution.html" class="btn btn-neutral float-left" title="Execution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contribute.html" class="btn btn-neutral float-right" title="How to contribute to development" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, B. Ballew, C. Auriga, 54gene.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

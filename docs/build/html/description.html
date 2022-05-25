@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Description of data cleaning &mdash; Python  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How to contribute to development" href="contribute.html" />
+    <link rel="prev" title="YAML Configuration" href="yaml_config.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Python
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yaml_config.html">YAML Configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Description of data cleaning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#loads-raw-input-phenotype-data">Loads raw input phenotype data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reads-in-configuration-yaml">Reads in configuration yaml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#drops-invalid-columns">Drops invalid columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sanitizes-header-content-in-the-input-phenotype-data">Sanitizes header content in the input phenotype data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#string-cleanup">String cleanup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#converts-to-lowercase">Converts to lowercase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#remove-whitespace">Remove whitespace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#collapse-repeats">Collapse repeats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#process-unicode-characters">Process Unicode characters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#remove-excel-error-codes">Remove Excel error codes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#detects-remaining-unicode-characters">Detects remaining Unicode characters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#removes-non-word-characters">Removes non-word characters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#normalizes-missing-values">Normalizes missing values</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">How to contribute to development</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Description of data cleaning</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/description.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="description-of-data-cleaning">
+<h1>Description of data cleaning<a class="headerlink" href="#description-of-data-cleaning" title="Permalink to this headline"></a></h1>
+<p>Cleaning is orchestrated predominantly through subroutines called by <code class="docutils literal notranslate"><span class="pre">create.phenotype.report</span></code>.</p>
+<p>Cleaning steps are generally performed in the order of the documentation here; this is important to consider for various cascading behaviors.</p>
+<section id="loads-raw-input-phenotype-data">
+<h2>Loads raw input phenotype data<a class="headerlink" href="#loads-raw-input-phenotype-data" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>The package receives comma- or tab-delimited input data, with or without compression</p></li>
+<li><p>Input data is expected to have a header</p></li>
+<li><p>Comments are not respected</p></li>
+<li><p>Quote characters around fields and delimiters between columns are both configurable in the library call (see <code class="docutils literal notranslate"><span class="pre">?process.phenotypes::create.phenotype.report</span></code> for details)</p></li>
+</ul>
+</section>
+<section id="reads-in-configuration-yaml">
+<h2>Reads in configuration yaml<a class="headerlink" href="#reads-in-configuration-yaml" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>The package expects a dataset-specific configuration file and a shared model configuration file</p></li>
+<li><p>The shared model config can be empty if you do not need variables defined across multiple questions</p></li>
+<li><p>Shared models are useful in cases where several questions have identically-structured answers (e.g. yes/no, high/medium/low, etc.), whereas dataset-specific configuration is done per-column of input phenotype data</p></li>
+<li><p>SurveyCTO form definitions can be automatically converted into shared model configurations, which can then be passed into the package</p></li>
+</ul>
+</section>
+<section id="drops-invalid-columns">
+<h2>Drops invalid columns<a class="headerlink" href="#drops-invalid-columns" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>Removes columns that are missing column headers</p></li>
+<li><p>Removes columns for which the header is <code class="docutils literal notranslate"><span class="pre">NA</span></code> or equivalent in R</p></li>
+</ul>
+</section>
+<section id="sanitizes-header-content-in-the-input-phenotype-data">
+<h2>Sanitizes header content in the input phenotype data<a class="headerlink" href="#sanitizes-header-content-in-the-input-phenotype-data" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>All remaining column headers are mapped to alphanumeric values based on the normalized encoded value provided in the dataset-specific config (e.g. <code class="docutils literal notranslate"><span class="pre">NN0001</span></code> in the example dataset-specific config)</p></li>
+</ul>
+</section>
+<section id="string-cleanup">
+<h2>String cleanup<a class="headerlink" href="#string-cleanup" title="Permalink to this headline"></a></h2>
+<section id="converts-to-lowercase">
+<h3>Converts to lowercase<a class="headerlink" href="#converts-to-lowercase" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Uniformly converts all alphabetical characters to lowercase</p></li>
+<li><p>This is to facilitate comparisons between values and accommodate data entry inconsistencies</p></li>
+</ul>
+</section>
+<section id="remove-whitespace">
+<h3>Remove whitespace<a class="headerlink" href="#remove-whitespace" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Collapses any repeated whitespace into a single instance of that whitespace</p></li>
+<li><p>Takes any amount of space surrounding a dash between characters and collapses it down to just the dash (e.g. <code class="docutils literal notranslate"><span class="pre">ABC</span>&#160; <span class="pre">-</span> <span class="pre">123</span></code> is converted to <code class="docutils literal notranslate"><span class="pre">ABC-123</span></code>)</p></li>
+</ul>
+</section>
+<section id="collapse-repeats">
+<h3>Collapse repeats<a class="headerlink" href="#collapse-repeats" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Specifically for back slashes, forward slashes, and periods, collapses repeating adjacent values to a single value</p></li>
+<li><p>Forward and back slashes are harmonized to forward slashes only</p></li>
+</ul>
+</section>
+<section id="process-unicode-characters">
+<h3>Process Unicode characters<a class="headerlink" href="#process-unicode-characters" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Unicode characters are replaced with the most-likely matching non-Unicode intended character</p></li>
+<li><p>Currently hard-coded; flagged for moving into a user-configurable file</p></li>
+</ul>
+</section>
+<section id="remove-excel-error-codes">
+<h3>Remove Excel error codes<a class="headerlink" href="#remove-excel-error-codes" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Takes a series of recognized Excel error codes and converts them into NAs</p></li>
+<li><p>Includes the following Excel error codes, in any case combination, and optionally prepended by an equals sign</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">#DIV/0!</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">#ERROR!</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">#VALUE!</span></code></p></li>
+</ul>
+</li>
+<li><p>Counts the detected instances of these errors and emits this information into the downstream report</p></li>
+</ul>
+</section>
+<section id="detects-remaining-unicode-characters">
+<h3>Detects remaining Unicode characters<a class="headerlink" href="#detects-remaining-unicode-characters" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Searches for anything remaining in the Unicode range and adds it to the downstream report for manual follow-up</p></li>
+</ul>
+</section>
+<section id="removes-non-word-characters">
+<h3>Removes non-word characters<a class="headerlink" href="#removes-non-word-characters" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>For variables that are not designated <code class="docutils literal notranslate"><span class="pre">string</span></code> in the dataset-specific config, do the following:</p>
+<ul>
+<li><p>Prefix entries starting with a period and followed by numbers, prepend with a <code class="docutils literal notranslate"><span class="pre">0</span></code></p></li>
+<li><p>For entries starting with <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">&lt;</span></code>, replace with <code class="docutils literal notranslate"><span class="pre">greater</span> <span class="pre">than</span></code> or <code class="docutils literal notranslate"><span class="pre">less</span> <span class="pre">than</span></code>, respectively</p></li>
+<li><p>For entries that begin with <code class="docutils literal notranslate"><span class="pre">-</span></code> and are followed by at least one numeric character, the value is set to NA</p></li>
+<li><p>Non-word characters are removed from the beginning and end of entries (non-word corresponds to <code class="docutils literal notranslate"><span class="pre">\W</span></code>, aka <code class="docutils literal notranslate"><span class="pre">[^A-Za-z0-9_]</span></code>)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="normalizes-missing-values">
+<h3>Normalizes missing values<a class="headerlink" href="#normalizes-missing-values" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Attempt to capture a wide array of missing value indications, inclusive of common mispellings, and set them to NA</p></li>
+<li><p>This will catch some but not all potential intended NA values; additional NA values can be configured in the relevant section in the dataset-specific config</p></li>
+</ul>
+<p>applies consent exclusions
+applies variable-specific NA values
+applies type conversions
+excludes subjects missing subject IDs
+applies bounds on numeric data
+attempts to harmonize self-reported ancestry labels
+creates derived variables
+re-applies bounds on derived numeric variables
+checks cross-variable dependencies
+handles dependency failures
+computes distribution data for numeric variables
+removes subjects with excess invalid entries across all variables
+emits an html report
+writes out cleaned phenotype data in tsv and/or various other formats</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="yaml_config.html" class="btn btn-neutral float-left" title="YAML Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contribute.html" class="btn btn-neutral float-right" title="How to contribute to development" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, B. Ballew, C. Auriga, 54gene.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
