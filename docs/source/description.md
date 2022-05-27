@@ -4,32 +4,32 @@ Cleaning is orchestrated predominantly through subroutines called by `create.phe
 
 Cleaning steps are generally performed in the order of the documentation here; this is important to consider for various cascading behaviors.
 
-## Loads raw input phenotype data
+## Load raw input phenotype data
 
 - The package receives comma- or tab-delimited input data, with or without compression
 - Input data is expected to have a header
 - Comments are not respected
 - Quote characters around fields and delimiters between columns are both configurable in the library call (see `?process.phenotypes::create.phenotype.report` for details)
 
-## Reads in configuration yaml
+## Read in configuration yaml
 
 - The package expects a dataset-specific configuration file and a shared model configuration file
 - The shared model config can be empty if you do not need variables defined across multiple questions
 - Shared models are useful in cases where several questions have identically-structured answers (e.g. yes/no, high/medium/low, etc.), whereas dataset-specific configuration is done per-column of input phenotype data
 - SurveyCTO form definitions can be automatically converted into shared model configurations, which can then be passed into the package
 
-## Drops invalid columns
+## Drop invalid columns
 
 - Removes columns that are missing column headers
 - Removes columns for which the header is `NA` or equivalent in R
 
-## Sanitizes header content in the input phenotype data
+## Sanitize header content in the input phenotype data
 
 - All remaining column headers are mapped to alphanumeric values based on the normalized encoded value provided in the dataset-specific config (e.g. `NN0001` in the example dataset-specific config)
 
 ## String cleanup
 
-### Converts to lowercase
+### Convert to lowercase
 
 - Uniformly converts all alphabetical characters to lowercase
 - This is to facilitate comparisons between values and accommodate data entry inconsistencies
@@ -58,11 +58,11 @@ Cleaning steps are generally performed in the order of the documentation here; t
   - `#VALUE!`
 - Counts the detected instances of these errors and emits this information into the downstream report
 
-### Detects remaining Unicode characters
+### Detect remaining Unicode characters
 
 - Searches for anything remaining in the Unicode range and adds it to the downstream report for manual follow-up
 
-### Removes non-word characters
+### Remove non-word characters
 
 - For variables that are not designated `string` in the dataset-specific config, do the following:
   - Prefix entries starting with a period and followed by numbers, prepend with a `0`
@@ -70,22 +70,92 @@ Cleaning steps are generally performed in the order of the documentation here; t
   - For entries that begin with `-` and are followed by at least one numeric character, the value is set to NA
   - Non-word characters are removed from the beginning and end of entries (non-word corresponds to `\W`, aka `[^A-Za-z0-9_]`)
 
-### Normalizes missing values
+### Normalize missing values
 
 - Attempt to capture a wide array of missing value indications, inclusive of common mispellings, and set them to NA
 - This will catch some but not all potential intended NA values; additional NA values can be configured in the relevant section in the dataset-specific config
 
-applies consent exclusions
-applies variable-specific NA values
-applies type conversions
-excludes subjects missing subject IDs
-applies bounds on numeric data
-attempts to harmonize self-reported ancestry labels
-creates derived variables
-re-applies bounds on derived numeric variables
-checks cross-variable dependencies
-handles dependency failures
-computes distribution data for numeric variables
-removes subjects with excess invalid entries across all variables
-emits an html report
-writes out cleaned phenotype data in tsv and/or various other formats
+## Apply consent exclusions
+
+- Two optional consent lists can be provided:
+  - Consent inclusion list: subjects on this list will be included in the output
+  - Consent exclusion list: subjects on this list will be excluded from the output
+- If both lists are provided, subjects not present on either will be recorded as missing in the html report and excluded from the output
+- If both lists are provided and a subject is present on both lists, exclusion takes precedence
+- If only one list is provided, subjects not on the list are either included or excluded, depending on whether an exclusion or inclusion list is used
+
+## Apply variable-specific NA values
+
+- Takes NA values enumerated under `na-values` in the dataset-specific config file and substitutes them with NA for a given variable
+- If `suppress_output` is true in the dataset-specific config for a given variable, all entries for that variable are subtituted with NA in the output
+
+## Apply type conversions
+
+- Each variable has a "type" specified either in the dataset-specific config, or in the shared models config.  This step converts the values within a given variable to the type specified
+- If by this point in the cleaning process there are still entries that cannot be successfully converted to the specified type, those values are set to NA, and a count of these instances is emitted in the report for each variable
+- See [this page](variable_types.md) for details on available variable types
+
+## Exclude subjects by age
+
+- In the dataset-specific config, there is a mandatory tag `min_age_for_inclusion`; there is also a tag `subject_age` used to define which variable contains age information
+- The minimum permissible age, as defined above, is applied to the subject age values, and any subject with an age below the minimum is excluded from the output.  The number of subjects excluded here is emitted in the report
+
+## Exclude subjects missing subject IDs
+
+- Excludes subjects from output if they have no value present in the variable marked in the config with the `subject_id` tag
+
+(bounds)=
+## Apply bounds on numeric data
+
+- For numeric or date type variables, there can optionally be bounds applied (min, max, or standard deviation) per variable in the dataset-specific config
+- If any bounds are present, they are applied here.  Values outside the bounds are excluded from the output, and the count of excluded values is emitted in the report
+  - For standard deviation, the bounds applied are the indicated number of deviations above and below the mean
+
+## Attempt to harmonize self-reported ancestry labels
+
+- Placeholder
+
+## Create derived variables
+
+- In the dataset-specific config, there can optionally be a section `derived`, separate from the `variables` section of the config
+- This section defines custom variables that can be constructed from the post-cleaned variables defined in the remainder of the config
+- Derived variables can also be defined based on other derived variables
+  - Dependencies between derived variables must be resolvable; for example, if a derived variable A is created based on derived variable B, and derived variable B is created based on derived variable A, the system will error
+- For more details on creating derived variables, see [this page](derived_vars.md)
+
+## Re-apply bounds on derived numeric variables
+
+- The cleaning described in the [Applies bounds section](bounds) is applied to any derived variables
+
+(dependencies)=
+## Check cross-variable dependencies
+
+- In the dataset-specific config, there can optionally be dependencies derived per-variable.  These dependencies define expected relationships between it and other variables (e.g. to assert that year of birth as derived from age is within a certain window of self-reported year of birth, or that self-reported non-smokers do not also report number of packs per week smoked)
+- Input from SurveyCTO (or other candidate survey systems) may have already had dependencies like this enforced
+
+## Handle dependency failures
+
+- In the dataset-specific config, each dependency (described [here](dependencies)) allows the option `exclude_on_failure` to set a value to NA if it has failed the dependency check (e.g. for subjects where they are self-reported non-smokers but they do list packs per week, you can set the packs per week value to NA for those subjects)
+- The number of values set to NA due to this option is emitted in the report
+
+## Compute distribution data for numeric variables
+
+- For numeric variable types and dates, computes mean, min, max, deciles, and number of NA values, and adds to a table in the report
+
+## Remove subjects with excess invalid entries across all variables
+
+- In the dataset-specific config, there is a threshold `max_invalid_datatypes_per_subjects`.  For any subjects who have more NA values than this threshold, they are excluded from the output
+
+## Emit an html report
+
+- Based on the configurations and the data cleaning performed, a report is emitted that records relevant information
+- The contents of the report are somewhat configurable via the dataset-specific config, and vary by variable type
+- The report is described in more detail [here](report.md)
+
+## Write out cleaned phenotype data in tsv and/or various other formats
+
+- Primarily intended to output cleaned results in tsv format, but does support optional additional output formats, including:
+  - SAS (`.sas7bdat` and supplemental code)
+  - SPSS (`.zsav`)
+  - STATA (`.dta`)
+

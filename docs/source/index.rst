@@ -12,5 +12,9 @@ Documentation of phenotype cleaning at 54gene
    installation.md
    execution.md
    yaml_config.md
+   surveycto_integration.md
    description.md
+   variable_types.md
+   derived_vars.md
+   report.md
    contribute.md

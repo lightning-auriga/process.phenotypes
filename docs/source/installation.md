@@ -14,7 +14,7 @@ library(devtools)
 devtools::install_gitlab("data-analysis5/phenotypes/process.phenotypes@default", auth_token = devtools::github_pat())
 ```
 
-### **Note: Secured Access to GitLab**
+**Note: Secured Access to GitLab**
 
 For security reasons, R must be permitted access to GitLab
 in order to allow remote installation. Please follow the instructions
@@ -30,6 +30,8 @@ this is a strange R quirk). You can do this by including the line
 in your R environment file `~/.Renviron`. Note that if you already have
 an `R` or `RStudio` instance running, you need to restart `R` for the
 `.Renviron` changes to be recognized.
+
+------------------
 
 ## Alternative: Installation from Local Copy
 
@@ -63,6 +65,8 @@ Then, launch `R`. Install and launch `devtools` as needed (see section
 library(devtools)
 devtools::install("/path/to/process.phenotypes")
 ```
+
+------------------
 
 ## Alternative: Installation from Conda (OSX and Linux only)
 
