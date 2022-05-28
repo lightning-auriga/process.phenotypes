@@ -39,7 +39,7 @@ body {
 }
 
 footer {
-    background-image: url("/Users/bariballew/54gene_background.png");
+    background-image: url("images/54gene_background.png");
     background-repeat: no-repeat;
     background-position: 80% 100%;
     background-size: contain;

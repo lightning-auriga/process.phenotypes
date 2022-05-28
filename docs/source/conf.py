@@ -15,4 +15,4 @@ extensions = [
 
 html_theme = "sphinx_rtd_theme"
 
-html_logo = "/Users/bariballew/54gene_logo.png"
+html_logo = "images/54gene_logo.png"
