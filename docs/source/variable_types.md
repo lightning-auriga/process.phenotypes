@@ -6,11 +6,11 @@ Variable types are assigned in the dataset-specific config or the shared models 
 
 ## Enumerated variable types
 
-### `numeric`
+### Numeric
 
 Suitable for numeric values, both float and integer.  Configured by entering `type: numeric` in the config.
 
-### `date`
+### Date
 
 Suitable for date representations in a variety of formats.  Configured by entering `type: date` in the config.  Date formats are matched in hierarchical order as follows:
 
@@ -24,12 +24,12 @@ Suitable for date representations in a variety of formats.  Configured by enteri
   - If the captured year is two digits and less than 100, add 1900
   - If the captured year is less than 1800, set to NA
 
-### `string`
+### String
 
 Suitable for any value that doesn't easily fit into the other variables, e.g. free text responses, doctor's notes, etc.  Configured by entering `type: string` in the config.  The least modified of the data types, with the least summary data in the html report.  If there are fewer than a configurable number of unique values, a table will be included in the report that lists the number of occurrences of each value.
 
 (categorical)=
-### `categorical`
+### Categorical
 
 Suitable for responses that fit in a small number of expected unordered categories.  Configured by entering `type: categorical` in the config, and then by defining levels for the categories.  E.g.:
 
@@ -51,20 +51,20 @@ variables:
 
 Entries in the variable will be matched to the levels defined in the config (see above) based on exact match to name or match to any provided alternate pattern as a regular expression.  Alternate pattern matches are re-mapped to the canonical name in the output.  The first values under `levels`, e.g. `lvl1` above, are arbitrary strings - you can call them whatever you like as long as it's a unique string within the variable.  This was originally intended to hold the numeric encoding to be indicated for STATA, but this is not currently implemented.  The report will show a table of counts of observations of the harmonized level names.
 
-### `ordinal`
+### Ordinal
 
 Suitable for responses that fit in a small number of expected categories with intrinsic ordering.  Configured by entering `type: ordinal` in the config, and then by defining levels as described [here](categorical).
 
-### `blood_pressure`
+### Blood pressure
 
 Suitable for blood pressure entries in the format of SBP/DBP (specifically, `\d+ */ *\d+.*`, to accommodate potential units being included in the entry, e.g. "110/70 mmhg").  Configured by entering `type: blood_pressure` or `type: bp` in the config.  This is intended to then be used as input into two derived variables, one for systolic, the other for diastolic.
 
-### `binary`
+### Binary
 
 This is a convenience alias for [categorical](categorical) variables with only two levels.
 
-### `categorical_to_numeric`
+### Categorical to numeric
 
 _Experimental_
 
-Intended for use when something is received as a categorical encoding, but the levels are numeric values.  For example, if the input has levels 1 week, 2 weeks, and 3 weeks, the use of this type will enable automatic conversion to numerics 1, 2, and 3.
+Intended for use when something is received as a categorical encoding, but the levels are numeric values.  For example, if the input has levels 1 week, 2 weeks, and 3 weeks, the use of this type will enable automatic conversion to numerics 1, 2, and 3.  Configured by entering `type: categorical_to_numeric` in the config.`
