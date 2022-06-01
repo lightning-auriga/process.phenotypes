@@ -85,7 +85,9 @@ remove.nonword.chars <- function(df, variable.summary) {
     if (is.null(variable.summary$variables[[i]]$params$type)) next
     if (grepl("string", variable.summary$variables[[i]]$params$type)) next
     ## prefix entries starting with decimal places with the placeholder 0
-    df[, i] <- stringr::str_replace_all(df[, i], "^\\.([0-9]+)$", "0.\\1")
+    if (grepl("^numeric$", variable.summary$variables[[i]]$params$type)) {
+      df[, i] <- stringr::str_replace_all(df[, i], "^\\.([0-9]+)[ %a-zA-Z\\-]*$", "0.\\1")
+    }
     ## replace leading ">/<" characters meaning "greater/less than" with words
     df[, i] <- stringr::str_replace_all(df[, i], "^ *> *(\\w+)", "greater than \\1")
     df[, i] <- stringr::str_replace_all(df[, i], "^ *< *(\\w+)", "less than \\1")
