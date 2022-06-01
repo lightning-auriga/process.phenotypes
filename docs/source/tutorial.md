@@ -19,6 +19,8 @@ Configuration files have been provided for you to run a small test dataset.  You
 ./yaml-configuration/yaml_validator.py inst/examples/example.dataset.yaml inst/examples/example.shared_models.yaml yaml-configuration/schema.datasets.yaml yaml-configuration/schema.shared-models.yaml
 ```
 
+Note that this requires access to Python 3.x and the jsonschema package.
+
 ## Execution
 
 Within R, load `devtools`, then use it to install `process.phenotypes`.  The example shown here will also pull in any required R dependencies (enumerated in the `DESCRIPTION` file in the source).
