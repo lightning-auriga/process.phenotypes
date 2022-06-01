@@ -113,7 +113,21 @@ Cleaning steps are generally performed in the order of the documentation here; t
 
 ## Attempt to Harmonize Self-reported Ancestry Labels
 
-- Placeholder
+_Experimental_
+
+- This content is **experimental** and subject to change
+- Free-text self-reported ancestry groups are subject to substantial variation in spelling, specificity, etc.
+- This method currently takes variables with the yaml tag `subject_ancestry` and attempts to assign them consensus ancestry labels
+  - First, variable entries are matched against the labels in `inst/external/nigeria.ancestry.tsv`. Exact matches are assigned to the first label in each row of that file
+    - This list is very messy and subject to substantial additional revision
+	- There are not currently lists for other expected ancestry groups from other regions
+  - Next, entries that did _not_ match any tag in the ancestry file is subjected to a very simple language model
+    - The "distance" between the self-reported label and the terms from the ancestry file is computed for all remaining self-reported values
+	- Subjects are assigned to one of the ancestry file labels if:
+	  - the closest match is higher than some specified (though arbitrary) threshold; and
+	  - the next closest match is either the same as the first match, or more distant than some lower (and again arbitrary) threshold
+	- The results of this _ad hoc_ assignment process are reported at length in the markdown report
+- Note that if you don't want this behavior, or if the ancestry variable was specified versus a fixed set of categories (e.g. as a fixed response variable in SurveyCTO), do not use the `subject_ancestry` tag in the dataset-specific configuration file, and this logic will be skipped
 
 ## Create Derived Variables
 

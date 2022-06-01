@@ -34,13 +34,10 @@ Still within R, load the library, then run the command shown to process the test
 
 ```r
 library(process.phenotypes)
-if (!dir.exists("example_output")) {
-    dir.create("example_output")
-}
-process.phenotypes::create.phenotype.report(system.file("examples/example.data.tsv", package = "process.phenotypes"), system.file("examples/example.dataset.yaml", package = "process.phenotypes"), system.file("examples/example.shared_models.yaml", package = "process.phenotypes"), "example_output/example.output.html")
+process.phenotypes::create.phenotype.report("inst/examples/example.data.tsv", "inst/examples/example.dataset.yaml", "inst/examples/example.shared_models.yaml", "inst/examples/example.output.html")
 ```
 
-Look at your output.  You should see both `example_output/example.output.html` and `example_output/example.output.tsv`
+Look at your output.  You should see both `inst/examples/example.output.html` and `inst/examples/example.output.tsv`
 
 ## Modifying the Configuration
 
