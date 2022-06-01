@@ -18,7 +18,7 @@ conda activate process.phenotypes
 R
 ```
 
-## Run Process.phenotypes
+## Run process.phenotypes
 
 First, load the library in an R instance:
 
