@@ -16,7 +16,7 @@ format. this allows the user to specify the [expected data type](variable_types.
 for numeric values, levels and alias for binary/categorical/ordinal variables,
 special values to be encoded as NA (missing) entries, and other restrictions.
 - The entire cleaning process for the file is run with a single R command.
-- After cleaning is complete, an html format report is emitted, reporting 
+- After cleaning is complete, an HTML format report is emitted, reporting 
 summary statistics and data cleaning observations (e.g. invalid values detected
 for categorical variables); this file is both for recordkeeping and for helping
 the user improve configuration for more refined cleaning.

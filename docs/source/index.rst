@@ -16,5 +16,7 @@ Documentation of phenotype cleaning at `54gene <https://54gene.com/>`_
    description.md
    variable_types.md
    derived_vars.md
+   helper_functions.md
    report.md
+   tutorial.md
    contribute.md

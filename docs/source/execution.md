@@ -1,6 +1,8 @@
 # Execution
 
-First, load the library in the current R instance:
+This section assumes you have already installed the package.  If not, please visit the [installation](installation.md) section.
+
+First, load the library in an R instance:
 
 `library(process.phenotypes)`
 
@@ -10,9 +12,9 @@ in the usual R manner: `?process.phenotypes::create.phenotype.report`. An exampl
 run command might be:
 
 ```r
-process.phenotypes::create.phenotype.report("/path/to/CV.export.tsv",
-                                            "yaml-configuration/CV.yaml",
+process.phenotypes::create.phenotype.report("/path/to/HW_input_phenotypes.tsv",
+                                            "yaml-configuration/dataset-specific.yaml",
                                             "yaml-configuration/shared-models.yaml",
-                                            "/path/to/CV-output.html")
+                                            "/path/to/HW_output.html")
 ```
 

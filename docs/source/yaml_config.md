@@ -5,7 +5,7 @@ modified. For the time being, see existing dataset configuration files in
 [this directory](https://gitlab.com/data-analysis5/phenotypes/process.phenotypes/-/tree/default/yaml-configuration)
 for examples.
 
-## Top-level YAML sections
+## Top-level YAML Sections
 
 |Section|Description|
 |---|---|
@@ -18,7 +18,7 @@ for examples.
 |`variables`|This section contains one block for each variable in the dataset,<br>with a variety of other configuration settings described in the next section|
 |`derived`|This section defines variables to be derived from existing variables|
 
-## `variables` YAML section
+## Variables YAML Section
 
 Each variable in the dataset is assigned a normalized encoded value (e.g. CV00001, CV00002, etc.).  Under each variable block, there are a variety of other possible configuration settings:
 
@@ -37,16 +37,16 @@ Each variable in the dataset is assigned a normalized encoded value (e.g. CV0000
 |`multimodal`|Used to define another variable for plotting overlayed histograms,<br>e.g. overlayed plots of BMI by sex|
 |`dependencies`|Test for expected relationships between variables; can also include<br>contingency tables to compare two variables and instructions for setting values<br>to NA if certain dependency tests fail|
 
-## `derived` YAML section
+## Derived YAML Section
 
 Derived variables are calculated from existing data, e.g. calculating BMI from reported waist and height measurements.  This section allows the user to define arbitrary new variables to derive.
 - Most sections here have been previously described, but `code` is where the logic is injected to create the derived variable, written in `R` syntax with access to the normalized variable names
 
-## YAML validation
+## YAML Validation
 
-Prior to running this tool, you should validate the yaml configurations you've set up as follows:
+Prior to running this tool, you should validate the YAML configurations you've set up as follows:
 
 `./yaml_validator.py dataset_file.yaml shared_model_file.yaml`
 
-If you are using pre-commit as described below, the yaml configurations will be validated automatically when you commit changes.
+If you are using pre-commit as described below, the YAML configurations will be validated automatically when you commit changes.
 

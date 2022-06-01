@@ -37,7 +37,7 @@ an `R` or `RStudio` instance running, you need to restart `R` for the
 
 There are various ways to install an R package from a local copy of the project.
 
-### **With a tarball**
+### With a Tarball
 
 The easiest way to get a tarball (`.tar.gz`) compressed version of the package is
 to go to the [project GitLab page](https://gitlab.com/data-analysis5/phenotypes/process.phenotypes),
@@ -49,7 +49,7 @@ Then, choose one of the following methods:
 - from RStudio: `Tools -> Install Packages -> Install from: Package Archive File`,
 and select the tarball from your local drive.
 
-### **From a git clone**
+### From a Git Clone
 
 With `git` from the command line, depending on whether ssh or https connection is configured
 for your system:

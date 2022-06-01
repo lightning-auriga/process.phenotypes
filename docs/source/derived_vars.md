@@ -1,6 +1,6 @@
-# Derived variables
+# Derived Variables
 
-Users can define variables that are derived from existing questionnaire responses in the dataset-specific config file, under a `derived` yaml block.  See the following example, and the explanation below:
+Users can define variables that are derived from existing questionnaire responses in the dataset-specific config file, under a `derived` YAML block.  See the following example, and the explanation below:
 
 ```yaml
 variables:

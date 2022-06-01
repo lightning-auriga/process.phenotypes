@@ -1,10 +1,10 @@
-# Variable types available
+# Variable Types Available
 
-## About variable types
+## About Variable Types
 
-Variable types are assigned in the dataset-specific config or the shared models config.  The type of a variable will influence how it is handled in terms of cleaning and reporting.  For example, a numeric type variable will have leading non-numeric characters stripped, will be displayed in the html report with min/max/mean/deciles, number of NA values, and a histogram.
+Variable types are assigned in the dataset-specific config or the shared models config.  The type of a variable will influence how it is handled in terms of cleaning and reporting.  For example, a numeric type variable will have leading non-numeric characters stripped, will be displayed in the HTML report with min/max/mean/deciles, number of NA values, and a histogram.
 
-## Enumerated variable types
+## Enumerated Variable Types
 
 ### Numeric
 
@@ -26,7 +26,7 @@ Suitable for date representations in a variety of formats.  Configured by enteri
 
 ### String
 
-Suitable for any value that doesn't easily fit into the other variables, e.g. free text responses, doctor's notes, etc.  Configured by entering `type: string` in the config.  The least modified of the data types, with the least summary data in the html report.  If there are fewer than a configurable number of unique values, a table will be included in the report that lists the number of occurrences of each value.
+Suitable for any value that doesn't easily fit into the other variables, e.g. free text responses, doctor's notes, etc.  Configured by entering `type: string` in the config.  The least modified of the data types, with the least summary data in the HTML report.  If there are fewer than a configurable number of unique values, a table will be included in the report that lists the number of occurrences of each value.
 
 (categorical)=
 ### Categorical
@@ -55,7 +55,7 @@ Entries in the variable will be matched to the levels defined in the config (see
 
 Suitable for responses that fit in a small number of expected categories with intrinsic ordering.  Configured by entering `type: ordinal` in the config, and then by defining levels as described [here](categorical).
 
-### Blood pressure
+### Blood Pressure
 
 Suitable for blood pressure entries in the format of SBP/DBP (specifically, `\d+ */ *\d+.*`, to accommodate potential units being included in the entry, e.g. "110/70 mmhg").  Configured by entering `type: blood_pressure` or `type: bp` in the config.  This is intended to then be used as input into two derived variables, one for systolic, the other for diastolic.
 
@@ -63,7 +63,7 @@ Suitable for blood pressure entries in the format of SBP/DBP (specifically, `\d+
 
 This is a convenience alias for [categorical](categorical) variables with only two levels.
 
-### Categorical to numeric
+### Categorical to Numeric
 
 _Experimental_
 
