@@ -29,8 +29,6 @@
 #'
 #' note that this function is primary used for its
 #' side effect, emitting content to screen.
-#'
-#' @export compare.files.report
 compare.files.report <- function(first.filename,
                                  first.config.yaml,
                                  second.filename,
@@ -118,8 +116,6 @@ compare.files.report <- function(first.filename,
 #'
 #' note that this function is primary used for its
 #' side effect, emitting content to screen.
-#'
-#' @export compare.files
 compare.files <- function(first.filename,
                           first.config.yaml,
                           second.filename,
