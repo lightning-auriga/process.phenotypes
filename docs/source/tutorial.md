@@ -5,19 +5,18 @@
 This is a brief example of one method of package installation.  Please see the [installation](installation.md) section for more details.
 
 
-Acquire the library source code, then navigate into the directory, and open an R terminal.
+Acquire the library source code, then navigate into the directory.
 
 ```bash
 git clone git@gitlab.com:data-analysis5/phenotypes/process.phenotypes.git
 cd process.phenotypes/
-R
 ```
 ## Configuration
 
-Configuration files have been provided for you to run a small test dataset.  You can review them at `example/config/`; please see the [YAML Configuration](yaml_config.md) section for details on configuration options.  Run the following to validate the configuration files:
+Configuration files have been provided for you to run a small test dataset.  You can review them at `inst/examples/`; please see the [YAML Configuration](yaml_config.md) section for details on configuration options.  Run the following to validate the configuration files:
 
 ```bash
-./yaml-configuration/yaml_validator.py example/config/HW.dataset-specific.yaml example/config/HW.shared_models.yaml
+./yaml-configuration/yaml_validator.py inst/examples/example.dataset.yaml inst/examples/example.shared_models.yaml yaml-configuration/schema.datasets.yaml yaml-configuration/schema.shared-models.yaml
 ```
 
 ## Execution
@@ -33,10 +32,10 @@ Still within R, load the library, then run the command shown to process the test
 
 ```r
 library(process.phenotypes)
-process.phenoytpes("example/data/HW_phenotypes.tsv", "example/config/HW.dataset-specific.yaml", "example/config/HW.shared-models.yaml", "example/HW_example_output.html")
+process.phenotypes::create.phenotype.report("inst/examples/example.data.tsv", "inst/examples/example.dataset.yaml", "inst/examples/example.shared_models.yaml", "inst/examples/example.output.html")
 ```
 
-Look at your output.  You should see both `example/HW_example_output.html` and `example/HW_example_output.tsv`
+Look at your output.  You should see both `inst/examples/example.output.html` and `inst/examples/example.output.tsv`
 
 ## Modifying the Configuration
 
