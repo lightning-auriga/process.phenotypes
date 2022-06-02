@@ -51,8 +51,8 @@ apply.consent.exclusion <- function(phenotype.data, variable.summary) {
       subj.exc <- remove.whitespace(subj.exc)
     }
   }
-  ## if there are collisions, this is treated as an error
-  stopifnot(length(which(subj.inc %in% subj.exc)) == 0)
+  ## if there are collisions, exclusion takes priority
+  subj.inc <- subj.inc[!(subj.inc %in% subj.exc)]
   subj.id.index <- find.subject.id.index(variable.summary)
   ## step 1: remove subjects who are excluded
   variable.summary$subjects.consent.no <- as.integer(0)
