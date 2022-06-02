@@ -5,6 +5,7 @@ copyright = "2022, B. Ballew, C. Auriga, 54gene"
 project = "process.phenotypes"
 version = "1.1.0"
 
+templates_path = ['_templates']
 html_static_path = ['_static']
 html_css_files = ['custom.css']
 

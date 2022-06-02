@@ -1,6 +1,6 @@
 # Installation
 
-## Direct Installation from GitLab
+## Method 1: Direct Installation from GitLab
 
 R has the capacity to install packages directly from GitLab.
 
@@ -33,7 +33,7 @@ an `R` or `RStudio` instance running, you need to restart `R` for the
 
 ------------------
 
-## Alternative: Installation from Local Copy
+## Method 2: Installation from Local Copy
 
 There are various ways to install an R package from a local copy of the project.
 
@@ -68,7 +68,7 @@ devtools::install("/path/to/process.phenotypes")
 
 ------------------
 
-## Alternative: Installation from Conda (OSX and Linux only)
+## Method 3: Installation from Conda (OSX and Linux only)
 
 Note: this option will only be available slightly after this README goes live, and at that
 time this message will be removed.

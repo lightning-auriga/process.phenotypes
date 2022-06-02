@@ -21,3 +21,4 @@ summary statistics and data cleaning observations (e.g. invalid values detected
 for categorical variables); this file is both for recordkeeping and for helping
 the user improve configuration for more refined cleaning.
 
+Source code is located [here](https://gitlab.com/data-analysis5/phenotypes/process.phenotypes).

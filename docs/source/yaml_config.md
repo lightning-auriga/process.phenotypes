@@ -9,7 +9,7 @@ for examples.
 
 |Section|Description|
 |---|---|
-|`tag`|Dataset tag name (e.g. "CV"); used minimally but not quite <br>deprecated to continue to support comparison between two <br>datasets|
+|`tag`|Dataset tag name (e.g. "HW"); used minimally but not quite <br>deprecated to continue to support comparison between two <br>datasets|
 |`globals`|Contains two global settings that are applied across all variables|
 |`min_age_for_inclusion`|**Required** Subjects will be excluded from all histograms etc. in<br>the report and from the cleaned output if their age falls below<br>this threshold|
 |`max_invalid_datatypes_per_subject`|Subjects will be excluded from the cleaned output if they have<br>more than this number of variables that can not be converted to<br>the expected datatypes|
@@ -20,7 +20,7 @@ for examples.
 
 ## Variables YAML Section
 
-Each variable in the dataset is assigned a normalized encoded value (e.g. CV00001, CV00002, etc.).  Under each variable block, there are a variety of other possible configuration settings:
+Each variable in the dataset is assigned a normalized encoded value (e.g. HW00001, HW00002, etc.).  Under each variable block, there are a variety of other possible configuration settings:
 
 |Section|Description|
 |---|---|

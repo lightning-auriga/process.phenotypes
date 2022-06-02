@@ -54,6 +54,6 @@ Same as numeric.
 
 Derived variables are reported in accordance to their assigned type, except that they also include the code snippet used to define the variable in the configuration.
 
-### Configuration of Report
+## Configuration of Report
 
 Configuration flags can be used to add or suppress report content, as described [here](yaml_config.md).
