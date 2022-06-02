@@ -1,13 +1,10 @@
 #' Apply config-specified R commands as variable sanity checks
 #'
-#' @details
+#' @description
 #' Certain variables in an input dataset should have defined relationships
 #' between one another. This function will evaluate, in a hopefully safe manner,
 #' R syntax expressions from the config yaml files and report their results
 #' to the per-variable summary data, for reporting in the output html.
-#'
-#' @description
-#' TBD
 #'
 #' @param phenotype.data data.frame, input phenotype data
 #' @param variable.summary list, configuration data per variable
@@ -64,14 +61,11 @@ check.variable.dependencies <- function(phenotype.data, variable.summary) {
 
 #' Apply config-specified R commands as variable sanity checks
 #'
-#' @details
+#' @description
 #' Certain variables in an input dataset should have defined relationships
 #' between one another. This function will evaluate, in a hopefully safe manner,
 #' R syntax expressions from the config yaml files and report their results
 #' to the per-variable summary data, for reporting in the output html.
-#'
-#' @description
-#' TBD
 #'
 #' @param phenotype.data data.frame, input phenotype data
 #' @param variable.summary list, configuration data per variable
@@ -121,12 +115,12 @@ dependency.failure.handling <- function(phenotype.data, variable.summary) {
 
 #' Locate a variable in the dataset flagged as subject ID
 #'
-#' @details
+#' @description
 #' the input yaml specification allows a single variable
 #' to be flagged as "subject_id: true" for context-specific
 #' behaviors.
 #'
-#' @description
+#' @details
 #' if this column is not located, stop() is called. in the
 #' future, this column's presence and uniqueness will be
 #' enforced upstream with yaml consistency checking.

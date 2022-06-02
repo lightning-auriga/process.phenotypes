@@ -212,14 +212,11 @@ apply.bounds <- function(phenotype.data, variable.summary) {
 #' Find additional NA aliases in user config and apply them to
 #' particular variables
 #'
-#' @details
+#' @description
 #' User config can optionally contain an 'na-values' sequence
 #' containing entries that should be mapped to NA. This functionality
 #' is only really reliable for factors and strings; numerics may
 #' not match exactly as desired in some cases.
-#'
-#' @description
-#' TBD
 #'
 #' @param phenotype.data data frame, loaded phenotype data with
 #' standardized headers
@@ -253,13 +250,10 @@ convert.variable.specific.na <- function(phenotype.data, variable.summary) {
 
 #' Exclude subjects for whom no ID has been recorded
 #'
-#' @details
+#' @description
 #' This function excludes subjects where their ID is NA, as
 #' we can't really do anything with the phenotype data without
 #' being able to link it to genotypes via IDs.
-#'
-#' @description
-#' TBD
 #'
 #' @param phenotype.data data frame, loaded phenotype data with
 #' standardized headers; all columns should be character vectors
@@ -281,13 +275,10 @@ exclude.by.missing.subject.id <- function(phenotype.data, variable.summary) {
 
 #' Exclude subjects below a certain user-defined age threshold
 #'
-#' @details
+#' @description
 #' This function will exclude subjects whose age, as defined with the
 #' `subject_age: true` flag in the config, falls below the threshold.
 #' This is useful for excluding minors, for example.
-#'
-#' @description
-#' TBD
 #'
 #' @param phenotype.data data frame, loaded phenotype data with
 #' standardized headers; all columns should be character vectors
@@ -328,11 +319,11 @@ exclude.by.age <- function(phenotype.data, variable.summary) {
 
 #' Convert values that should be dates to year
 #'
-#' @details
+#' @description
 #' Given string vector with malformed date entries, attempt
 #' to force conversion to YYYY
 #'
-#' @description
+#' @details
 #' Extracts two or four digit year values from dates of several formats,
 #' assigns likely century (20 or 19), and replaces the original date
 #' with just the four-digit year value.  Also removes extremely low

@@ -18,9 +18,7 @@ list of lists, containing parsed yaml configuration
 information
 }
 \description{
-TBD
-}
-\details{
-TBD
+Load cleaning configurations from yaml file and apply
+shared models.
 }
 \keyword{yaml}

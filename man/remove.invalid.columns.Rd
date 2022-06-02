@@ -14,14 +14,10 @@ modified version of input with certain bad columns
 removed
 }
 \description{
-TBD
-}
-\details{
 Removes columns under the following criteria:
 \itemize{
 \item column name is NA
 \item column name is empty string
-\item others TBD
 }
 }
 \examples{

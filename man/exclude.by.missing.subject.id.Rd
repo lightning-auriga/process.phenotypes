@@ -19,9 +19,6 @@ subjects without a subject ID excluded, 'variable.summary' contains
 input variable summary with information about excluded subjects.
 }
 \description{
-TBD
-}
-\details{
 This function excludes subjects where their ID is NA, as
 we can't really do anything with the phenotype data without
 being able to link it to genotypes via IDs.

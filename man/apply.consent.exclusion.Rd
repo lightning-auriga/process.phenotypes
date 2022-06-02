@@ -25,6 +25,3 @@ subjects based on consent status. Depending on the presence
 or absence of subjects and input lists, report summary
 information about how many people have definitive information.
 }
-\details{
-TBD
-}

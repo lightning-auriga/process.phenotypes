@@ -1,0 +1,47 @@
+tag: HW
+globals:
+  min_age_for_inclusion: 18
+  max_invalid_datatypes_per_subject: 10
+  consent_inclusion_file: ~
+  consent_exclusion_file: ~
+variables:
+  HW0001:
+    name: "subject.ids"
+    canonical_name: "participant ID"
+    type: "string"
+    subject_id: yes
+  HW0002:
+    name: "age"
+    canonical_name: "participant age"
+    type: "numeric"
+    subject_age: yes
+  HW0003:
+    name: "date of birth"
+    canonical_name: "subject date of birth (year)"
+    type: "date"
+  HW0004:
+    name: "height"
+    canonical_name: "subject height (meters)"
+    type: "numeric"
+  HW0005:
+    name: "sex"
+    canonical_name: "subject self-reported sex"
+    shared_model: "sex"
+  HW0006:
+    name: "blood pressure"
+    canonical_name: "subject blood pressure"
+    type: "bp"
+  HW0007:
+    name: "satisfaction rating"
+    canonical_name: "how much does subject like a thing"
+    shared_model: "satis_rating"
+  HW0008:
+    name: "weight"
+    canonical_name: "subject weight (kg)"
+    type: "numeric"
+derived:
+  bmi_derived:
+    name: "bmi, computed from self-reported height and weight"
+    type: "numeric"
+    code: |
+      HW0008 / HW0004 ^ 2
