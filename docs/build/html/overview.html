@@ -4,9 +4,10 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Overview &mdash; Python  documentation</title>
+  <title>Overview &mdash; process.phenotypes  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -27,8 +28,12 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Python
+            <a href="index.html" class="icon icon-home"> process.phenotypes
+            <img src="_static/54gene_logo.png" class="logo" alt="Logo"/>
           </a>
+              <div class="version">
+                1.1.0
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -42,7 +47,14 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yaml_config.html">YAML Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contribute.html">How to contribute to development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surveycto_integration.html">Integration with SurveyCTO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="description.html">Description of Data Cleaning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable_types.html">Variable Types Available</a></li>
+<li class="toctree-l1"><a class="reference internal" href="derived_vars.html">Derived Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html">Helper Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="report.html">HTML Report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">How to Contribute to Development</a></li>
 </ul>
 
         </div>
@@ -51,7 +63,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Python</a>
+          <a href="index.html">process.phenotypes</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -75,7 +87,7 @@
 dataset cleaning be automated, rigorous, and transparent. The overall
 cleaning process is simplified as follows:</p>
 <ul class="simple">
-<li><p>a phenotype spreadsheet is exported to any of several supported formats:</p>
+<li><p>A phenotype spreadsheet is exported to any of several supported formats:</p>
 <ul>
 <li><p>.tsv (plaintext, tab-delimited)</p></li>
 <li><p>.dta (STATA format)</p></li>
@@ -83,18 +95,19 @@ cleaning process is simplified as follows:</p>
 <li><p>.zsav (SPSS format)</p></li>
 </ul>
 </li>
-<li><p>the phenotype dataset is configured in
+<li><p>The phenotype dataset is configured in
 <a class="reference external" href="https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html">YAML</a>
-format. this allows the user to specify the expected data format
+format. this allows the user to specify the <a class="reference internal" href="variable_types.html"><span class="doc std std-doc">expected data type</span></a>
 (binary, categorical, ordinal, numeric, date, blood pressure, string), boundary conditions
 for numeric values, levels and alias for binary/categorical/ordinal variables,
 special values to be encoded as NA (missing) entries, and other restrictions.</p></li>
-<li><p>the entire cleaning process for the file is run with a single R command.</p></li>
-<li><p>after cleaning is complete, an html format report is emitted, reporting
+<li><p>The entire cleaning process for the file is run with a single R command.</p></li>
+<li><p>After cleaning is complete, an HTML format report is emitted, reporting
 summary statistics and data cleaning observations (e.g. invalid values detected
 for categorical variables); this file is both for recordkeeping and for helping
 the user improve configuration for more refined cleaning.</p></li>
 </ul>
+<p>Source code is located <a class="reference external" href="https://gitlab.com/data-analysis5/phenotypes/process.phenotypes">here</a>.</p>
 </section>
 
 
@@ -111,12 +124,11 @@ the user improve configuration for more refined cleaning.</p></li>
     <p>&#169; Copyright 2022, B. Ballew, C. Auriga, 54gene.</p>
   </div>
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
+    
    
-
 </footer>
+
         </div>
       </div>
     </section>

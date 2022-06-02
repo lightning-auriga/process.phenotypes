@@ -1,6 +1,6 @@
 # Installation
 
-## Direct Installation from GitLab
+## Method 1: Direct Installation from GitLab
 
 R has the capacity to install packages directly from GitLab.
 
@@ -14,7 +14,7 @@ library(devtools)
 devtools::install_gitlab("data-analysis5/phenotypes/process.phenotypes@default", auth_token = devtools::github_pat())
 ```
 
-### **Note: Secured Access to GitLab**
+**Note: Secured Access to GitLab**
 
 For security reasons, R must be permitted access to GitLab
 in order to allow remote installation. Please follow the instructions
@@ -31,11 +31,13 @@ in your R environment file `~/.Renviron`. Note that if you already have
 an `R` or `RStudio` instance running, you need to restart `R` for the
 `.Renviron` changes to be recognized.
 
-## Alternative: Installation from Local Copy
+------------------
+
+## Method 2: Installation from Local Copy
 
 There are various ways to install an R package from a local copy of the project.
 
-### **With a tarball**
+### With a Tarball
 
 The easiest way to get a tarball (`.tar.gz`) compressed version of the package is
 to go to the [project GitLab page](https://gitlab.com/data-analysis5/phenotypes/process.phenotypes),
@@ -47,7 +49,7 @@ Then, choose one of the following methods:
 - from RStudio: `Tools -> Install Packages -> Install from: Package Archive File`,
 and select the tarball from your local drive.
 
-### **From a git clone**
+### From a Git Clone
 
 With `git` from the command line, depending on whether ssh or https connection is configured
 for your system:
@@ -64,7 +66,9 @@ library(devtools)
 devtools::install("/path/to/process.phenotypes")
 ```
 
-## Alternative: Installation from Conda (OSX and Linux only)
+------------------
+
+## Method 3: Installation from Conda (OSX and Linux only)
 
 Note: this option will only be available slightly after this README goes live, and at that
 time this message will be removed.

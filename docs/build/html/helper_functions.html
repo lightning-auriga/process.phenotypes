@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Execution &mdash; process.phenotypes  documentation</title>
+  <title>Helper Functions &mdash; process.phenotypes  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -19,8 +19,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="YAML Configuration" href="yaml_config.html" />
-    <link rel="prev" title="Installation" href="installation.html" /> 
+    <link rel="next" title="HTML Report" href="report.html" />
+    <link rel="prev" title="Derived Variables" href="derived_vars.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,17 +45,13 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Execution</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#environment-setup">Environment Setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#run-process-phenotypes">Run process.phenotypes</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yaml_config.html">YAML Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="surveycto_integration.html">Integration with SurveyCTO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="description.html">Description of Data Cleaning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable_types.html">Variable Types Available</a></li>
 <li class="toctree-l1"><a class="reference internal" href="derived_vars.html">Derived Variables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html">Helper Functions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Helper Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="report.html">HTML Report</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contribute.html">How to Contribute to Development</a></li>
@@ -75,9 +71,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Execution</li>
+      <li>Helper Functions</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/execution.md.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/helper_functions.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -85,45 +81,27 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="execution">
-<h1>Execution<a class="headerlink" href="#execution" title="Permalink to this headline"></a></h1>
-<p>This section assumes you have already installed the package.  If not, please visit the <a class="reference internal" href="installation.html"><span class="doc std std-doc">installation</span></a> section.</p>
-<section id="environment-setup">
-<h2>Environment Setup<a class="headerlink" href="#environment-setup" title="Permalink to this headline"></a></h2>
-<p>An environment specification is provided in the repository (<code class="docutils literal notranslate"><span class="pre">environment.yaml</span></code>).  We recommend using <a class="reference external" href="https://docs.conda.io/en/latest/">miniconda</a> to create an environment containing all dependencies needed for this package to run.  If you need to install miniconda, you can find instructions <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">here</a>.  Once miniconda is configured, create the environment:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install mamba
-mamba env create -f environment.yaml
+  <section id="helper-functions">
+<h1>Helper Functions<a class="headerlink" href="#helper-functions" title="Permalink to this headline"></a></h1>
+<p>This package includes a variety of exposed helper functions that can be called from the configuration files, which are generally used either in <a class="reference internal" href="description.html#dependencies"><span class="std std-ref">cross-variable dependencies</span></a> or creation of <a class="reference internal" href="derived_vars.html"><span class="doc std std-doc">derived variables</span></a>.  All of these helper functions can be elaborated in the usual way in an R terminal (e.g. <code class="docutils literal notranslate"><span class="pre">?process.phenotypes::derive.rank.normal.transform</span></code>), but this page provides a brief listing of the functions available.</p>
+<div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="n">process.phenotypes</span><span class="o">::</span><span class="n">derive.rank.normal.transform</span>
+<span class="n">process.phenotypes</span><span class="o">::</span><span class="n">response.depends.on.not.na</span>
+<span class="n">process.phenotypes</span><span class="o">::</span><span class="n">year.is.consistent.with.age</span>
+<span class="n">process.phenotypes</span><span class="o">::</span><span class="n">response.is.duplicate.of</span>
+<span class="n">process.phenotypes</span><span class="o">::</span><span class="n">response.is.computed.bmi</span>
+<span class="n">process.phenotypes</span><span class="o">::</span><span class="n">derive.first.degree</span>
+<span class="n">process.phenotypes</span><span class="o">::</span><span class="n">response.depends.on.yes</span>
+<span class="n">process.phenotypes</span><span class="o">::</span><span class="n">response.is.less.than</span>
 </pre></div>
 </div>
-<p>Activate the environment and launch an R terminal:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda activate process.phenotypes
-R
-</pre></div>
-</div>
-</section>
-<section id="run-process-phenotypes">
-<h2>Run process.phenotypes<a class="headerlink" href="#run-process-phenotypes" title="Permalink to this headline"></a></h2>
-<p>First, load the library in an R instance:</p>
-<p><code class="docutils literal notranslate"><span class="pre">library(process.phenotypes)</span></code></p>
-<p>The entry point for the software is <code class="docutils literal notranslate"><span class="pre">process.phenotypes::create.phenotype.report</span></code>.
-You can get useful help documentation for this function
-in the usual R manner: <code class="docutils literal notranslate"><span class="pre">?process.phenotypes::create.phenotype.report</span></code>. An example
-run command might be:</p>
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">process.phenotypes</span><span class="o">::</span><span class="nf">create.phenotype.report</span><span class="p">(</span><span class="s">&quot;/path/to/input-phenotypes.tsv&quot;</span><span class="p">,</span>
-                                            <span class="s">&quot;yaml-configuration/dataset-specific.yaml&quot;</span><span class="p">,</span>
-                                            <span class="s">&quot;yaml-configuration/shared-models.yaml&quot;</span><span class="p">,</span>
-                                            <span class="s">&quot;/path/to/output.html&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="yaml_config.html" class="btn btn-neutral float-right" title="YAML Configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="derived_vars.html" class="btn btn-neutral float-left" title="Derived Variables" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="report.html" class="btn btn-neutral float-right" title="HTML Report" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

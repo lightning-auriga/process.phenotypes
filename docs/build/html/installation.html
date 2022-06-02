@@ -4,9 +4,10 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; Python  documentation</title>
+  <title>Installation &mdash; process.phenotypes  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -27,8 +28,12 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Python
+            <a href="index.html" class="icon icon-home"> process.phenotypes
+            <img src="_static/54gene_logo.png" class="logo" alt="Logo"/>
           </a>
+              <div class="version">
+                1.1.0
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -40,21 +45,25 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#direct-installation-from-gitlab">Direct Installation from GitLab</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#note-secured-access-to-gitlab"><strong>Note: Secured Access to GitLab</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#method-1-direct-installation-from-gitlab">Method 1: Direct Installation from GitLab</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#method-2-installation-from-local-copy">Method 2: Installation from Local Copy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#with-a-tarball">With a Tarball</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#from-a-git-clone">From a Git Clone</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#alternative-installation-from-local-copy">Alternative: Installation from Local Copy</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#with-a-tarball"><strong>With a tarball</strong></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#from-a-git-clone"><strong>From a git clone</strong></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#alternative-installation-from-conda-osx-and-linux-only">Alternative: Installation from Conda (OSX and Linux only)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#method-3-installation-from-conda-osx-and-linux-only">Method 3: Installation from Conda (OSX and Linux only)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yaml_config.html">YAML Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contribute.html">How to contribute to development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surveycto_integration.html">Integration with SurveyCTO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="description.html">Description of Data Cleaning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable_types.html">Variable Types Available</a></li>
+<li class="toctree-l1"><a class="reference internal" href="derived_vars.html">Derived Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html">Helper Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="report.html">HTML Report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">How to Contribute to Development</a></li>
 </ul>
 
         </div>
@@ -63,7 +72,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Python</a>
+          <a href="index.html">process.phenotypes</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -83,8 +92,8 @@
              
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
-<section id="direct-installation-from-gitlab">
-<h2>Direct Installation from GitLab<a class="headerlink" href="#direct-installation-from-gitlab" title="Permalink to this headline"></a></h2>
+<section id="method-1-direct-installation-from-gitlab">
+<h2>Method 1: Direct Installation from GitLab<a class="headerlink" href="#method-1-direct-installation-from-gitlab" title="Permalink to this headline"></a></h2>
 <p>R has the capacity to install packages directly from GitLab.</p>
 <p>Run the following in <a class="reference external" href="https://www.r-project.org/">R</a> or <a class="reference external" href="https://www.rstudio.com/">RStudio</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># the following step is only required if you don&#39;t have the &#39;devtools&#39; package installed yet</span>
@@ -94,8 +103,7 @@
 <span class="n">devtools</span><span class="p">::</span><span class="n">install_gitlab</span><span class="p">(</span><span class="s2">&quot;data-analysis5/phenotypes/process.phenotypes@default&quot;</span><span class="p">,</span> <span class="n">auth_token</span> <span class="o">=</span> <span class="n">devtools</span><span class="p">::</span><span class="n">github_pat</span><span class="p">())</span>
 </pre></div>
 </div>
-<section id="note-secured-access-to-gitlab">
-<h3><strong>Note: Secured Access to GitLab</strong><a class="headerlink" href="#note-secured-access-to-gitlab" title="Permalink to this headline"></a></h3>
+<p><strong>Note: Secured Access to GitLab</strong></p>
 <p>For security reasons, R must be permitted access to GitLab
 in order to allow remote installation. Please follow the instructions
 <a class="reference external" href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html">here</a>
@@ -108,12 +116,12 @@ this is a strange R quirk). You can do this by including the line</p>
 an <code class="docutils literal notranslate"><span class="pre">R</span></code> or <code class="docutils literal notranslate"><span class="pre">RStudio</span></code> instance running, you need to restart <code class="docutils literal notranslate"><span class="pre">R</span></code> for the
 <code class="docutils literal notranslate"><span class="pre">.Renviron</span></code> changes to be recognized.</p>
 </section>
-</section>
-<section id="alternative-installation-from-local-copy">
-<h2>Alternative: Installation from Local Copy<a class="headerlink" href="#alternative-installation-from-local-copy" title="Permalink to this headline"></a></h2>
+<hr class="docutils" />
+<section id="method-2-installation-from-local-copy">
+<h2>Method 2: Installation from Local Copy<a class="headerlink" href="#method-2-installation-from-local-copy" title="Permalink to this headline"></a></h2>
 <p>There are various ways to install an R package from a local copy of the project.</p>
 <section id="with-a-tarball">
-<h3><strong>With a tarball</strong><a class="headerlink" href="#with-a-tarball" title="Permalink to this headline"></a></h3>
+<h3>With a Tarball<a class="headerlink" href="#with-a-tarball" title="Permalink to this headline"></a></h3>
 <p>The easiest way to get a tarball (<code class="docutils literal notranslate"><span class="pre">.tar.gz</span></code>) compressed version of the package is
 to go to the <a class="reference external" href="https://gitlab.com/data-analysis5/phenotypes/process.phenotypes">project GitLab page</a>,
 click the download button (to the left of the <code class="docutils literal notranslate"><span class="pre">Clone</span></code> button), select <code class="docutils literal notranslate"><span class="pre">tar.gz</span></code> as
@@ -126,7 +134,7 @@ and select the tarball from your local drive.</p></li>
 </ul>
 </section>
 <section id="from-a-git-clone">
-<h3><strong>From a git clone</strong><a class="headerlink" href="#from-a-git-clone" title="Permalink to this headline"></a></h3>
+<h3>From a Git Clone<a class="headerlink" href="#from-a-git-clone" title="Permalink to this headline"></a></h3>
 <p>With <code class="docutils literal notranslate"><span class="pre">git</span></code> from the command line, depending on whether ssh or https connection is configured
 for your system:</p>
 <p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">git&#64;gitlab.com:data-analysis5/phenotypes/process.phenotypes.git</span></code></p>
@@ -139,8 +147,9 @@ for your system:</p>
 </div>
 </section>
 </section>
-<section id="alternative-installation-from-conda-osx-and-linux-only">
-<h2>Alternative: Installation from Conda (OSX and Linux only)<a class="headerlink" href="#alternative-installation-from-conda-osx-and-linux-only" title="Permalink to this headline"></a></h2>
+<hr class="docutils" />
+<section id="method-3-installation-from-conda-osx-and-linux-only">
+<h2>Method 3: Installation from Conda (OSX and Linux only)<a class="headerlink" href="#method-3-installation-from-conda-osx-and-linux-only" title="Permalink to this headline"></a></h2>
 <p>Note: this option will only be available slightly after this README goes live, and at that
 time this message will be removed.</p>
 <p>This package has been added to the 54gene <a class="reference external" href="https://docs.conda.io/en/latest/">Conda</a> channel.
@@ -169,12 +178,11 @@ Then add the following to your <code class="docutils literal notranslate"><span 
     <p>&#169; Copyright 2022, B. Ballew, C. Auriga, 54gene.</p>
   </div>
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
+    
    
-
 </footer>
+
         </div>
       </div>
     </section>

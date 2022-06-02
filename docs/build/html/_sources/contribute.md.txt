@@ -1,4 +1,4 @@
-# How to contribute to development
+# How to Contribute to Development
 
 ## Step 1: Set up a development environment (OSX and Linux only)
 
