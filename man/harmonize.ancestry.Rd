@@ -42,9 +42,6 @@ impossible to perfectly recapture the underlying data due
 to high string similarity and short length of distinct labels,
 it's worth a shot.
 }
-\details{
-TBD
-}
 \seealso{
 load.ancestry.linker
 }

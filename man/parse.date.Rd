@@ -15,6 +15,10 @@ parse.date(vec, var.summary)
 modified version of input with values cleaned as described above
 }
 \description{
+Given string vector with malformed date entries, attempt
+to force conversion to YYYY
+}
+\details{
 Extracts two or four digit year values from dates of several formats,
 assigns likely century (20 or 19), and replaces the original date
 with just the four-digit year value.  Also removes extremely low
@@ -25,8 +29,4 @@ With new data, new support for the following data formats:
 \item YYYY
 \item YYYY-##-##
 }
-}
-\details{
-Given string vector with malformed date entries, attempt
-to force conversion to YYYY
 }

@@ -14,9 +14,6 @@ create.phenotype.report run}
 to which to write yaml-format configuration data}
 }
 \description{
-Report final configuration data to file
-}
-\details{
 Configuration data from input config.yaml are modified on load,
 and some information is lost. Before reporting, the variable
 summary information from the run needs to be somewhat reformatted

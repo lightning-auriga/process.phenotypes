@@ -39,8 +39,8 @@ in YAML format; currently not tested}
 }
 \description{
 This function contains handlers for the primary supported output formats
-for this package: plaintext tab-delimited, STAT (.dta), SAS (.xpt only),
-SPSS (TBD), and YAML (for final configuration; TBD). Additional control
+for this package: plaintext tab-delimited, STAT (.dta), SAS (.sas7bdat),
+SPSS (.zsav), and YAML (experimental). Additional control
 parameters are likely to be added at a later data. Any number of outputs
 can be selected and they will all be reported sequentially.
 }

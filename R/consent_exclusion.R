@@ -6,9 +6,6 @@
 #' or absence of subjects and input lists, report summary
 #' information about how many people have definitive information.
 #'
-#' @details
-#' TBD
-#'
 #' @param phenotype.data data.frame, input phenotype information
 #' with a subject ID column
 #' @param variable.summary list, dataset configuration information

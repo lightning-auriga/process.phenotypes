@@ -19,9 +19,6 @@ subjects below the age threshold excluded, 'variable.summary' contains
 input variable summary with information about excluded subjects.
 }
 \description{
-TBD
-}
-\details{
 This function will exclude subjects whose age, as defined with the
 \code{subject_age: true} flag in the config, falls below the threshold.
 This is useful for excluding minors, for example.

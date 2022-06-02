@@ -1,10 +1,13 @@
 #' Create markdown report summarizing phenotype data in file
 #'
-#' @details
-#' Given phenotype information in tsv file, run some TBD reporting/cleaning
-#' and emit summary information.
 #' @description
-#' TBD
+#' Given phenotype information in tsv file, run reporting/cleaning
+#' and emit summary information.
+#'
+#' @details
+#' This function is the main entry point for phenotype data cleaning.
+#' For details on exactly what cleaning is performed, please see
+#' \url{http://54gene-processphenotypes-docs.s3-website.us-east-2.amazonaws.com/index.html}
 #'
 #' @param in.filename character vector, name of input phenotype tsv file
 #' @param dataset.yaml character vector, yaml configuration for project
@@ -278,7 +281,6 @@ create.phenotype.report <- function(in.filename,
     )
   )
   ## report "cleaned" data as assorted output formats
-  ## TODO(lightning.auriga): implement handlers for SPSS, SAS
   out.prefix <- stringr::str_replace(out.filename, ".html$", "")
   write.output.formats(
     phenotype.data, variable.summary, out.prefix,

@@ -16,9 +16,6 @@ list, modified version of input variable.summary argument
 with some reporting information about dependency check success/failure
 }
 \description{
-TBD
-}
-\details{
 Certain variables in an input dataset should have defined relationships
 between one another. This function will evaluate, in a hopefully safe manner,
 R syntax expressions from the config yaml files and report their results
