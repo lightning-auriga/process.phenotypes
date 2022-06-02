@@ -1,10 +1,15 @@
 Package: process.phenotypes
 Title: Process audited phenotype datasets and report
 Version: 1.1.0
-Authors@R: c(
-    person("Bari", "Ballew", , "bari.ballew@54gene.com", role = "aut"),
-    person("Lightning", "Auriga", , "cameron.palmer@54gene.com", role = c("aut", "cre"))
-  )
+Authors@R: 
+    c(person(given = "Bari",
+             family = "Ballew",
+             role = "aut",
+             email = "bari.ballew@54gene.com"),
+      person(given = "Lightning",
+             family = "Auriga",
+             role = c("aut", "cre"),
+             email = "cameron.palmer@54gene.com"))
 Description: TBD.
 License: MIT + file LICENSE
 Imports:
