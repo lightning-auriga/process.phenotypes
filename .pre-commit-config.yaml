@@ -13,6 +13,6 @@ repos:
   - id: deps-in-desc
   - id: use-tidy-description
 - repo: .
-  rev: '019e056b0ee1294cc5e7d4f0906cbe0b6f14d21e'
+  rev: '98b82461ff40023050d5c29eba8275dbbc70e037'
   hooks:
     - id: yaml-validation
