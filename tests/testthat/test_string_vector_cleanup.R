@@ -83,15 +83,18 @@ test_that("all leading and trailing non-word characters are removed", {
 test_that("remove.nonword.chars preserves decimal values with leading '.'", {
   in.df <- data.frame(
     A = c(".1", "other"),
-    B = c(".AAB", ";thing:")
+    B = c(".AAB", ";thing:"),
+    C = c(".1", ".2m")
   )
   var.summary <- list(variables = list(
     A = list(params = list(type = "categorical")),
-    B = list(params = list(type = "categorical"))
+    B = list(params = list(type = "categorical")),
+    C = list(params = list(type = "numeric"))
   ))
   out.df <- data.frame(
-    A = c("0.1", "other"),
-    B = c("AAB", "thing")
+    A = c("1", "other"),
+    B = c("AAB", "thing"),
+    C = c("0.1", "0.2")
   )
   expect_identical(
     remove.nonword.chars(in.df, var.summary),

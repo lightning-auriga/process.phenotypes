@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>process.phenotypes: automated phenotype standardization and reporting &mdash; process.phenotypes  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Overview" href="overview.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> process.phenotypes
+            <img src="_static/54gene_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yaml_config.html">YAML Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surveycto_integration.html">Integration with SurveyCTO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="description.html">Description of Data Cleaning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable_types.html">Variable Types Available</a></li>
+<li class="toctree-l1"><a class="reference internal" href="derived_vars.html">Derived Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html">Helper Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="report.html">HTML Report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">How to Contribute to Development</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">process.phenotypes</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li>process.phenotypes: automated phenotype standardization and reporting</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="process-phenotypes-automated-phenotype-standardization-and-reporting">
+<h1>process.phenotypes: automated phenotype standardization and reporting<a class="headerlink" href="#process-phenotypes-automated-phenotype-standardization-and-reporting" title="Permalink to this headline"></a></h1>
+<section id="documentation-of-phenotype-cleaning-at-54gene">
+<h2>Documentation of phenotype cleaning at <a class="reference external" href="https://54gene.com/">54gene</a><a class="headerlink" href="#documentation-of-phenotype-cleaning-at-54gene" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#method-1-direct-installation-from-gitlab">Method 1: Direct Installation from GitLab</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#method-2-installation-from-local-copy">Method 2: Installation from Local Copy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#method-3-installation-from-conda-osx-and-linux-only">Method 3: Installation from Conda (OSX and Linux only)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="execution.html#environment-setup">Environment Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="execution.html#run-process-phenotypes">Run process.phenotypes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="yaml_config.html">YAML Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yaml_config.html#top-level-yaml-sections">Top-level YAML Sections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="yaml_config.html#variables-yaml-section">Variables YAML Section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="yaml_config.html#derived-yaml-section">Derived YAML Section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="yaml_config.html#yaml-validation">YAML Validation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="surveycto_integration.html">Integration with SurveyCTO</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="surveycto_integration.html#retrieve-data-from-surveycto">Retrieve Data from SurveyCTO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surveycto_integration.html#convert-forms-to-process-phenotypes-configurations">Convert Forms to process.phenotypes Configurations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="description.html">Description of Data Cleaning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="description.html#load-raw-input-phenotype-data">Load Raw Input Phenotype Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#read-in-configuration-yaml">Read in Configuration YAML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#drop-invalid-columns">Drop Invalid Columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#sanitize-header-content-in-the-input-phenotype-data">Sanitize Header Content in the Input Phenotype Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#string-cleanup">String Cleanup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#apply-consent-exclusions">Apply Consent Exclusions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#apply-variable-specific-na-values">Apply Variable-specific NA Values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#apply-type-conversions">Apply Type Conversions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#exclude-subjects-by-age">Exclude Subjects by Age</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#exclude-subjects-missing-subject-ids">Exclude Subjects Missing Subject IDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#apply-bounds-on-numeric-data">Apply Bounds on Numeric Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#attempt-to-harmonize-self-reported-ancestry-labels">Attempt to Harmonize Self-reported Ancestry Labels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#create-derived-variables">Create Derived Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#re-apply-bounds-on-derived-numeric-variables">Re-apply Bounds on Derived Numeric Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#check-cross-variable-dependencies">Check Cross-variable Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#handle-dependency-failures">Handle Dependency Failures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#compute-distribution-data-for-numeric-variables">Compute Distribution Data for Numeric Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#remove-subjects-with-excess-invalid-entries-across-all-variables">Remove Subjects with Excess Invalid Entries Across All Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#emit-an-html-report">Emit an HTML Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="description.html#write-out-cleaned-phenotype-data-in-tsv-and-or-various-other-formats">Write Out Cleaned Phenotype Data in TSV and/or Various Other Formats</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="variable_types.html">Variable Types Available</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="variable_types.html#about-variable-types">About Variable Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="variable_types.html#enumerated-variable-types">Enumerated Variable Types</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="derived_vars.html">Derived Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html">Helper Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="report.html">HTML Report</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="report.html#summary-and-overall-metrics">Summary and overall metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="report.html#linker-table">Linker table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="report.html#variable-summaries">Variable summaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="report.html#configuration-of-report">Configuration of Report</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#execution">Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#modifying-the-configuration">Modifying the Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">How to Contribute to Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#step-1-set-up-a-development-environment-osx-and-linux-only">Step 1: Set up a development environment (OSX and Linux only)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#step-2-select-an-issue-to-work-on-or-submit-one-that-you-d-like-to-address">Step 2: Select an issue to work on, or submit one that you’d like to address</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#step-3-contribute-code">Step 3: Contribute code</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="overview.html" class="btn btn-neutral float-right" title="Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, B. Ballew, C. Auriga, 54gene.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
+    
+   
+</footer>
+
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

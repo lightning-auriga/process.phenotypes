@@ -1,0 +1,23 @@
+models:
+  sex:
+    type: "categorical"
+    levels:
+      "1":
+        name: "male"
+        alternate_patterns:
+          - "^[mM]$"
+          - "^Male$"
+      "2":
+        name: "female"
+        alternate_patterns:
+          - "^[fF]$"
+          - "^Female"
+  satis_rating:
+    type: "ordinal"
+    levels:
+      "1":
+        name: "dissatisfied"
+      "2":
+        name: "neutral"
+      "3":
+        name: "satisfied"

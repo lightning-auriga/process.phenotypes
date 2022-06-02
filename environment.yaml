@@ -1,0 +1,21 @@
+name: process.phenotypes
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - r-base>=4
+  - r-devtools
+  - r-openxlsx
+  - r-haven
+  - r-foreign
+  - r-usethis
+  - r-testthat
+  - r-rmarkdown
+  - r-knitr
+  - r-ggplot2
+  - r-rcolorbrewer 
+  - r-viridis
+  - jsonschema
+  - argparse
+  - r-kableextra

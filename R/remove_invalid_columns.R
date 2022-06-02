@@ -1,16 +1,9 @@
 #' Remove bad columns from a phenotype data frame
 #'
-#' @details
-#' Removes columns under the following criteria:
-#'
-#' - column name is NA
-#'
-#' - column name is empty string
-#'
-#' - others TBD
-#'
 #' @description
-#' TBD
+#' Removes columns under the following criteria:
+#' - column name is NA
+#' - column name is empty string
 #'
 #' @param df data frame, input phenotype content
 #' @return modified version of input with certain bad columns

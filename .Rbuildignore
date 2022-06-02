@@ -11,3 +11,5 @@ yaml-configuration
 .lintr
 .pre-commit-config.yaml
 .pre-commit-hooks.yaml
+environment.yaml
+docs
