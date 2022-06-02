@@ -13,12 +13,12 @@ find.subject.id.index(variable.summary)
 integer, index of subject ID column in input data
 }
 \description{
-if this column is not located, stop() is called. in the
-future, this column's presence and uniqueness will be
-enforced upstream with yaml consistency checking.
-}
-\details{
 the input yaml specification allows a single variable
 to be flagged as "subject_id: true" for context-specific
 behaviors.
+}
+\details{
+if this column is not located, stop() is called. in the
+future, this column's presence and uniqueness will be
+enforced upstream with yaml consistency checking.
 }

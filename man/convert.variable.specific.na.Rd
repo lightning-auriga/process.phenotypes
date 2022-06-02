@@ -19,9 +19,6 @@ data frame containing phenotype information with
 subjects containing specified values set to NA
 }
 \description{
-TBD
-}
-\details{
 User config can optionally contain an 'na-values' sequence
 containing entries that should be mapped to NA. This functionality
 is only really reliable for factors and strings; numerics may

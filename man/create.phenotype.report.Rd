@@ -53,11 +53,13 @@ along with a source .sas file that needs to be run to assign category levels and
 in YAML format; currently not tested}
 }
 \description{
-TBD
+Given phenotype information in tsv file, run reporting/cleaning
+and emit summary information.
 }
 \details{
-Given phenotype information in tsv file, run some TBD reporting/cleaning
-and emit summary information.
+This function is the main entry point for phenotype data cleaning.
+For details on exactly what cleaning is performed, please see
+\url{http://54gene-processphenotypes-docs.s3-website.us-east-2.amazonaws.com/index.html}
 }
 \examples{
 \dontrun{

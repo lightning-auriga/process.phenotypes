@@ -1,10 +1,8 @@
 #' Load yaml configuration from file, integrating global models
 #'
 #' @description
-#' TBD
-#'
-#' @details
-#' TBD
+#' Load cleaning configurations from yaml file and apply
+#' shared models.
 #'
 #' @param dataset.parameter.filename character vector, filename
 #' of dataset-specific variable parameters
@@ -79,7 +77,7 @@ load.configuration <- function(dataset.parameter.filename,
 
 #' Report final configuration data to file
 #'
-#' @details
+#' @description
 #' Configuration data from input config.yaml are modified on load,
 #' and some information is lost. Before reporting, the variable
 #' summary information from the run needs to be somewhat reformatted

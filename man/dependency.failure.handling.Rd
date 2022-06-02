@@ -17,9 +17,6 @@ with requested subject/variable entries replaced with NA on
 dependency failure
 }
 \description{
-TBD
-}
-\details{
 Certain variables in an input dataset should have defined relationships
 between one another. This function will evaluate, in a hopefully safe manner,
 R syntax expressions from the config yaml files and report their results
