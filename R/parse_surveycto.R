@@ -31,6 +31,10 @@ populate.choices <- function(df, survey.type, na.values) {
   unique.list.names <- unique(df[, "list_name"])
   res <- list()
   for (list.name in unique.list.names) {
+    ## fix: apparently there can be blank lines in the choices tab
+    if (is.na(list.name)) {
+      next
+    }
     list.name.values <- df[df[, "list_name"] == list.name, "value"]
     value.is.number <- stringr::str_detect(list.name.values, "^[0-9]+\\.0$")
     list.name.values[value.is.number] <- stringr::str_replace(
