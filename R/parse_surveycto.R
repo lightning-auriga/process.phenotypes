@@ -26,7 +26,7 @@ populate.choices <- function(df, survey.type, na.values) {
     c("list_name", "value", "label") %in% colnames(df)
   )
   ## fix: apparently there can be blank lines in the choices tab
-  df <- df[!is.na(df[, "list_name"]) & !is.na(df[, "value"]) & !is.na(df[, "label"]), ]
+  df <- df[!is.na(df[, "list_name"]) & !is.na(df[, "value"]), ]
   df[, "list_name"] <- apply.replacements(df[, "list_name"])
   df[, "value"] <- apply.replacements(df[, "value"])
   df[, "label"] <- apply.replacements(df[, "label"])
