@@ -1,6 +1,6 @@
 Package: process.phenotypes
 Title: automated phenotype standardization and reporting
-Version: 1.1.0
+Version: 1.1.2
 Authors@R: c(
     person("Bari", "Ballew", , "bari.ballew@54gene.com", role = "aut"),
     person("Lightning", "Auriga", , "cameron.palmer@54gene.com", role = c("aut", "cre"))

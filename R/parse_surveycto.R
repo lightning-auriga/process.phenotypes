@@ -25,6 +25,8 @@ populate.choices <- function(df, survey.type, na.values) {
     ncol(df) >= 3,
     c("list_name", "value", "label") %in% colnames(df)
   )
+  ## fix: apparently there can be blank lines in the choices tab
+  df <- df[!is.na(df[, "list_name"]) & !is.na(df[, "value"]) & !is.na(df[, "label"]), ]
   df[, "list_name"] <- apply.replacements(df[, "list_name"])
   df[, "value"] <- apply.replacements(df[, "value"])
   df[, "label"] <- apply.replacements(df[, "label"])
@@ -440,6 +442,7 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
                             na.values = c("I don't know/not sure", "Prefer not to answer")) {
   survey <- openxlsx::read.xlsx(in.form.filename, sheet = "survey")
   stopifnot(c("type", "name", "label") %in% colnames(survey))
+  survey <- survey[!is.na(survey$type) & !is.na(survey$name), ]
   survey$name <- apply.replacements(survey$name)
   survey$name <- stringr::str_trim(survey$name, side = "right")
   survey$type <- apply.replacements(survey$type)
