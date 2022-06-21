@@ -16,6 +16,7 @@ Imports:
     rlang,
     rmarkdown,
     stringdist,
+    stringi,
     stringr,
     yaml
 Suggests: 

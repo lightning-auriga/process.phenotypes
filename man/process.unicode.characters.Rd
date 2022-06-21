@@ -17,6 +17,9 @@ into more manageable equivalents.
 Note that there's something particularly strange going on with
 Excel's "=#ERROR!" code, as in one instance it's getting converted
 into, of all things, an emoji.
+
+The functionality of this method is now controlled by a plaintext
+configuration file located in inst/unicode_pattern_replacements.tsv.
 }
 \details{
 Sporadic Unicode characters are being inserted into the dataset by

@@ -277,65 +277,20 @@ reformat.factor <- function(vec, variable.summary) {
 #' Excel's "=#ERROR!" code, as in one instance it's getting converted
 #' into, of all things, an emoji.
 #'
+#' The functionality of this method is now controlled by a plaintext
+#' configuration file located in inst/unicode_pattern_replacements.tsv.
+#'
 #' @param phenotype.data data.frame, input phenotype data
 #' @return data.frame input data with Unicode characters converted
 #' into more manageable equivalents.
 process.unicode.characters <- function(phenotype.data) {
+  pattern.replacements <- read.table(system.file("unicode_pattern_replacements.tsv", package = "process.phenotypes"),
+    header = TRUE, stringsAsFactors = FALSE, comment.char = "", quote = "", sep = "\t"
+  )
+  pattern.replacement.vec <- pattern.replacements[, 2]
+  names(pattern.replacement.vec) <- stringi::stri_unescape_unicode(pattern.replacements[, 1])
   for (i in seq_len(ncol(phenotype.data))) {
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B1", "+/-")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2192", "->")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U1F645", "#error!")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B0", "degrees")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U0394", "Delta")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2206", "Delta")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2018|\U2019", "'")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U201C|\U201D", "\"")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2070", "0")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B2", "2")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B3", "3")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00B9", "1")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2715", "x")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00D7", "x")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00E7", "c")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2022", "*")
-    phenotype.data[, i] <- stringr::str_replace_all(
-      phenotype.data[, i],
-      paste("\U2028",
-        "\U2029",
-        "\U202A",
-        "\U202B",
-        "\U202C",
-        "\U202D",
-        "\U202E",
-        "\U202F",
-        sep = "|"
-      ),
-      ""
-    )
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\UFEFF", "")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U1F4AF", "100")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00A3", "")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00F9", "u")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U20A9", "")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\UFE64", "")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00E0", "a")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00E8", "e")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U200E", "")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00F1", "n")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2153", "1/3")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U215C", "3/8")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2026", "...")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2079", "9")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U207F", "n")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U00AE", "")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2713", "")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U1D50", "m")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U141F|\U2E0D", "/")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2039", "<")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U203A", ">")
-    ## this is technically "care of" but it seems like the one instance of it meant percent for some reason
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2105", "%")
-    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], "\U2248", "~=")
+    phenotype.data[, i] <- stringr::str_replace_all(phenotype.data[, i], pattern.replacement.vec)
   }
   phenotype.data
 }
