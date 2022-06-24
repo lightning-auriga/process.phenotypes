@@ -8,6 +8,18 @@ apply.replacements <- function(vec) {
   res
 }
 
+#' Determine from a set of variables what the last
+#' variable number was and return as integer
+#'
+#' @param variables list of previously added variables,
+#' with names of the format "TAG#####.*"
+#' @return numeric part of final named entry as integer
+get.last.variable.number <- function(variables) {
+  last.name <- names(variables)[length(names(variables))]
+  last.num <- stringr::str_replace(last.name, "^.*(\\d{5}).*$", "\\1")
+  as.integer(last.num)
+}
+
 #' Render SurveyCTO configuration "choices" tab
 #' as a shared_models style yaml list
 #'
@@ -296,7 +308,7 @@ add.trailing.metadata <- function(out.yaml, dataset.tag, responses) {
     required.tags <- sort(response.indices[varnames])
     for (varname in names(required.tags)) {
       out.yaml$variables[[paste(dataset.tag,
-        stringr::str_pad(length(out.yaml$variables) + 1, 5, pad = "0"),
+        stringr::str_pad(get.last.variable.number(out.yaml$variables) + 1, 5, pad = "0"),
         sep = ""
       )]] <- list(
         "name" = varname,
@@ -338,14 +350,16 @@ handle.repeat.variables <- function(out.yaml, cur.varname, name.value,
   }
   repeat.variables <- list(variables = list())
   query.varname <- NULL
+  repeat.increment <- 0
   while (TRUE) {
     i <- i + 1
+    repeat.increment <- repeat.increment + 1
     type.value <- survey[i, "type"]
     if (type.value == "end repeat") break
     name.value <- survey[i, "name"]
     label.value <- survey[i, "label"]
     cur.varname <- paste(dataset.tag,
-      stringr::str_pad(length(out.yaml$variables) + length(repeat.variables$variables) + 1,
+      stringr::str_pad(get.last.variable.number(out.yaml$variables) + repeat.increment,
         5,
         pad = "0"
       ),
@@ -472,7 +486,10 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
     type.value <- survey[i, "type"]
     name.value <- survey[i, "name"]
     label.value <- survey[i, "label"]
-    cur.varname <- paste(dataset.tag, stringr::str_pad(length(out.yaml$variables) + 1, 5, pad = "0"), sep = "")
+    cur.varname <- paste(dataset.tag,
+      stringr::str_pad(get.last.variable.number(out.yaml$variables) + 1, 5, pad = "0"),
+      sep = ""
+    )
     if (type.value == "begin repeat") {
       repeat.result <- handle.repeat.variables(
         out.yaml, cur.varname, name.value,
