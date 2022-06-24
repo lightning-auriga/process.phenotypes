@@ -254,7 +254,10 @@ build.variable.data <- function(type.value, name.value, label.value, choice.list
         )
       }
     } else {
-      warning("unrecognized CTO type flag detected: \"", type.value, "\"")
+      warning(
+        "unrecognized CTO type flag detected: \"", type.value,
+        "\", for name \"", name.value, "\" and label \"", label.value, "\""
+      )
       res <- NULL
     }
   }
@@ -442,7 +445,16 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
                             na.values = c("I don't know/not sure", "Prefer not to answer")) {
   survey <- openxlsx::read.xlsx(in.form.filename, sheet = "survey")
   stopifnot(c("type", "name", "label") %in% colnames(survey))
-  survey <- survey[!is.na(survey$type) & !is.na(survey$name), ]
+  ## as we don't know the formatting requirements for form specifications, the set of entries
+  ## that can be safely skipped keeps changing. an "end repeat" entry with blank "name" entry has
+  ## been detected in a valid survey configuration; therefore, at least the repeat block delimiters
+  ## seem to permit null names. intuitively, this probably also extends to groups, as they seem
+  ## to work somewhat similarly (in the sense that their name is not actually used?)
+  survey <- survey[(!is.na(survey$type) & !is.na(survey$name)) |
+    (!is.na(survey$type) & survey$type %in% c(
+      "begin repeat", "end repeat",
+      "begin group", "end group"
+    )), ]
   survey$name <- apply.replacements(survey$name)
   survey$name <- stringr::str_trim(survey$name, side = "right")
   survey$type <- apply.replacements(survey$type)
@@ -461,7 +473,6 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
     name.value <- survey[i, "name"]
     label.value <- survey[i, "label"]
     cur.varname <- paste(dataset.tag, stringr::str_pad(length(out.yaml$variables) + 1, 5, pad = "0"), sep = "")
-
     if (type.value == "begin repeat") {
       repeat.result <- handle.repeat.variables(
         out.yaml, cur.varname, name.value,
