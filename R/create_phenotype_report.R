@@ -278,7 +278,9 @@ create.phenotype.report <- function(in.filename,
       nas.by.subject = nas.by.subject,
       subjects.failing.deps = subjects.failing.deps,
       subj.invalid.type.max = variable.summary$globals$max_invalid_datatypes_per_subject
-    )
+    ),
+    intermediates_dir = tempdir(),
+    knit_root_dir = tempdir()
   )
   ## report "cleaned" data as assorted output formats
   out.prefix <- stringr::str_replace(out.filename, ".html$", "")
