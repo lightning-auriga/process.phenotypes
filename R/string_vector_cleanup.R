@@ -162,7 +162,7 @@ is.blood.pressure <- function(vec, allow.trailing = FALSE) {
   # 100/80.98181818 to 100/80, for example.  What is the desired
   # behavior in this case?  Also, this won't allow decimals in
   # systolic.
-  pattern <- "^\\d+ */ *\\d+"
+  pattern <- "^\\d+ *[-/,] *\\d+"
   if (allow.trailing) {
     pattern <- paste(pattern, ".*$", sep = "")
   } else {
@@ -217,7 +217,7 @@ reformat.blood.pressure <- function(vec, var.summary) {
   res <- rep(NA, length(vec))
   res[possible.blood.pressure] <- stringr::str_replace(
     vec[possible.blood.pressure],
-    "^(\\d+) */ *(\\d+).*$",
+    "^(\\d+) *[-/,] *(\\d+).*$",
     "\\1/\\2"
   )
   var.summary$invalid.blood.pressure.entries <- vec[!possible.blood.pressure & !is.na(vec)]
