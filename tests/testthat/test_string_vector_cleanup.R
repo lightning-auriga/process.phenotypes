@@ -143,8 +143,8 @@ test_that("normalize.missing.values normalizes all missing values", {
 })
 
 test_that("is.blood.pressure successfully discerns SBP/DBP-style data", {
-  in.vec <- c("100/80", "1.0/20", "100    /    40", "100/", "/40", "100/40mmhg")
-  out.vec <- c(TRUE, FALSE, TRUE, FALSE, FALSE, FALSE)
+  in.vec <- c("100/80", "1.0/20", "100    /    40", "100/", "/40", "100/40mmhg", "18090")
+  out.vec <- c(TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE)
   expect_identical(
     is.blood.pressure(in.vec, FALSE),
     out.vec
@@ -158,6 +158,12 @@ test_that("is.blood.pressure can understand suffixes when requested", {
     is.blood.pressure(in.vec, TRUE),
     out.vec
   )
+})
+
+test_that("is.blood.pressure can understand undelimited values when requested", {
+  in.vec <- c("1000", "10010", "100100", "100/100", "1000000", "100")
+  out.vec <- c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE)
+  expect_identical(is.blood.pressure(in.vec, FALSE, TRUE), out.vec)
 })
 
 test_that("reformat.numerics casts all numbers and number-like values to numeric", {
@@ -196,21 +202,25 @@ test_that("reformat.blood.pressure identifies and reformats SBP/DBP measures", {
     "1", "2.3", "a", NA,
     "1cm", "-4.0mmhg", "1", "1",
     "not", "a", "numeric", "100/80",
-    "100/80", "120/90", "130/85", "110 / 80"
+    "100/80", "120/90", "130/85", "110 / 80",
+    "1010", "10010", "100200"
   )
   out.vec <- c(
     NA, NA, NA, NA,
     NA, NA, NA, NA,
     NA, NA, NA, "100/80",
-    "100/80", "120/90", "130/85", "110/80"
+    "100/80", "120/90", "130/85", "110/80",
+    "10/10", "100/10", "100/200"
   )
   in.summary <- list(
     original.name = "testname",
-    summary = c(q1 = 0.2, q2 = 0.5, mean = 0.3)
+    summary = c(q1 = 0.2, q2 = 0.5, mean = 0.3),
+    params = list("allow_undelimited_bp" = TRUE)
   )
   out.summary <- list(
     original.name = "testname",
     summary = c(q1 = 0.2, q2 = 0.5, mean = 0.3),
+    params = list("allow_undelimited_bp" = TRUE),
     invalid.blood.pressure.entries = c(
       "1", "2.3", "a", "1cm",
       "-4.0mmhg", "1", "1",
