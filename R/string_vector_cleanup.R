@@ -155,9 +155,14 @@ normalize.missing.values <- function(df) {
 #' @param allow.trailing logical, whether a blood pressure-like
 #' entry with arbitrary trailing text should be considered possibly
 #' a good result
+#' @param allow.undelimited logical, whether a 4-6 digit
+#' integer should be considered a two-part blood pressure measurement
+#' with no valid delimiter. format will be (S: systolic; D: diastolic):
+#' SSDD, SSSDD, SSSDDD. note that this is disabled by default and expected
+#' to be noisy, and should be avoided if possible
 #' @return logical vector, one per input value, whether the input
 #' matches blood pressure format
-is.blood.pressure <- function(vec, allow.trailing = FALSE) {
+is.blood.pressure <- function(vec, allow.trailing = FALSE, allow.undelimited = FALSE) {
   # TODO: Note that this currently will massage values like
   # 100/80.98181818 to 100/80, for example.  What is the desired
   # behavior in this case?  Also, this won't allow decimals in
@@ -168,7 +173,12 @@ is.blood.pressure <- function(vec, allow.trailing = FALSE) {
   } else {
     pattern <- paste(pattern, "$", sep = "")
   }
-  stringr::str_detect(vec, pattern)
+  res <- stringr::str_detect(vec, pattern)
+  if (allow.undelimited) {
+    pattern <- "^\\d{4}\\d?\\d?$"
+    res <- res | stringr::str_detect(vec, pattern)
+  }
+  res
 }
 
 #' Aggressively convert malformed numeric vector
@@ -213,13 +223,44 @@ reformat.numerics <- function(vec, var.summary) {
 reformat.blood.pressure <- function(vec, var.summary) {
   ## treat this as BP, eliminate anything else
   ## if the prefix of a value looks like BP, strip its suffix
-  possible.blood.pressure <- is.blood.pressure(vec, allow.trailing = TRUE) & !is.na(vec)
+  allow.undelimited <- var.summary$params$allow.undelimited.bp
+  if (is.null(allow.undelimited)) {
+    allow.undelimited <- FALSE
+  }
+  possible.blood.pressure <- is.blood.pressure(vec,
+    allow.trailing = TRUE,
+    allow.undelimited = allow.undelimited
+  ) & !is.na(vec)
   res <- rep(NA, length(vec))
-  res[possible.blood.pressure] <- stringr::str_replace(
-    vec[possible.blood.pressure],
-    "^(\\d+) *[-/,] *(\\d+).*$",
-    "\\1/\\2"
-  )
+  undelimited.format <- stringr::str_detect(vec[possible.blood.pressure], "^\\d{4}\\d?\\d?$")
+  if (allow.undelimited) {
+    four.digit <- possible.blood.pressure & stringr::str_detect(vec, "^\\d{4}$")
+    five.digit <- possible.blood.pressure & stringr::str_detect(vec, "^\\d{5}$")
+    six.digit <- possible.blood.pressure & stringr::str_detect(vec, "^\\d{6}$")
+    other.bp <- possible.blood.pressure & !four.digit & !five.digit & !six.digit
+    res[four.digit] <- stringr::str_replace(
+      vec[four.digit],
+      "^(\\d{2})(\\d{2})$",
+      "\\1/\\2"
+    )
+    res[five.digit] <- stringr::str_replace(
+      vec[five.digit],
+      "^(\\d{3})(\\d{2})$",
+      "\\1/\\2"
+    )
+    res[six.digit] <- stringr::str_replace(
+      vec[six.digit],
+      "^(\\d{3})(\\d{3})$",
+      "\\1/\\2"
+    )
+    res[other.bp] <- stringr::str_replace(vec[other.bp], "^(\\d+) *[-/,] *(\\d+).*$", "\\1/\\2")
+  } else {
+    res[possible.blood.pressure] <- stringr::str_replace(
+      vec[possible.blood.pressure],
+      "^(\\d+) *[-/,] *(\\d+).*$",
+      "\\1/\\2"
+    )
+  }
   var.summary$invalid.blood.pressure.entries <- vec[!possible.blood.pressure & !is.na(vec)]
   list(phenotype.data = res, variable.summary = var.summary)
 }

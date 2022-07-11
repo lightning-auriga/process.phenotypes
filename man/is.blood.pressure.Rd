@@ -4,7 +4,7 @@
 \alias{is.blood.pressure}
 \title{Detect whether strings look like SBP/DBP measurements}
 \usage{
-is.blood.pressure(vec, allow.trailing = FALSE)
+is.blood.pressure(vec, allow.trailing = FALSE, allow.undelimited = FALSE)
 }
 \arguments{
 \item{vec}{character vector, input candidate values}
@@ -12,6 +12,12 @@ is.blood.pressure(vec, allow.trailing = FALSE)
 \item{allow.trailing}{logical, whether a blood pressure-like
 entry with arbitrary trailing text should be considered possibly
 a good result}
+
+\item{allow.undelimited}{logical, whether a 4-6 digit
+integer should be considered a two-part blood pressure measurement
+with no valid delimiter. format will be (S: systolic; D: diastolic):
+SSDD, SSSDD, SSSDDD. note that this is disabled by default and expected
+to be noisy, and should be avoided if possible}
 }
 \value{
 logical vector, one per input value, whether the input
