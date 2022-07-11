@@ -160,6 +160,7 @@ Each variable in the dataset is assigned a normalized encoded value (e.g. CV0000
 - `subject_id`: boolean flag to mark which variable is the accepted unique subject ID
 - `na-values`: any non-canonical values to be treated as NA (e.g. nil, not specified, etc.)
 - `multimodal`: used to define another variable for plotting overlayed histograms, e.g. overlayed plots of BMI by sex
+- `allow_undelimited_bp`: only for variables of type `bp` (blood pressure): enable recognition of systolic and diastolic blood pressure specified exactly as: `^\d{4}\d?\d?$`, where systolic will use three digits preferentially if 5 or 6 digits are specified. this behavior is imperfect given the lack of delimiter, and is not recommended in most circumstances.
 - `dependencies`: test for expected relationships between variables; can also include contingency tables to compare two variables and instructions for setting values to NA if certain dependency tests fail
 
 ### `derived` YAML section
