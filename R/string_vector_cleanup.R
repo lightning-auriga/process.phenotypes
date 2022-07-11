@@ -178,6 +178,7 @@ is.blood.pressure <- function(vec, allow.trailing = FALSE, allow.undelimited = F
     pattern <- "^\\d{4}\\d?\\d?$"
     res <- res | stringr::str_detect(vec, pattern)
   }
+  print("current version of blood pressure handling")
   res
 }
 
@@ -223,7 +224,7 @@ reformat.numerics <- function(vec, var.summary) {
 reformat.blood.pressure <- function(vec, var.summary) {
   ## treat this as BP, eliminate anything else
   ## if the prefix of a value looks like BP, strip its suffix
-  allow.undelimited <- var.summary$params$allow.undelimited.bp
+  allow.undelimited <- var.summary$params$allow_undelimited_bp
   if (is.null(allow.undelimited)) {
     allow.undelimited <- FALSE
   }

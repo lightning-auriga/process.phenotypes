@@ -215,12 +215,12 @@ test_that("reformat.blood.pressure identifies and reformats SBP/DBP measures", {
   in.summary <- list(
     original.name = "testname",
     summary = c(q1 = 0.2, q2 = 0.5, mean = 0.3),
-    params = list(allow.undelimited.bp = TRUE)
+    params = list("allow_undelimited_bp" = TRUE)
   )
   out.summary <- list(
     original.name = "testname",
     summary = c(q1 = 0.2, q2 = 0.5, mean = 0.3),
-    params = list(allow.undelimited.bp = TRUE),
+    params = list("allow_undelimited_bp" = TRUE),
     invalid.blood.pressure.entries = c(
       "1", "2.3", "a", "1cm",
       "-4.0mmhg", "1", "1",
