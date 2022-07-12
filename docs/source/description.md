@@ -150,6 +150,7 @@ _Experimental_
 ## Handle Dependency Failures
 
 - In the dataset-specific config, each dependency (described [here](dependencies)) allows the option `exclude_on_failure` to set a value to NA if it has failed the dependency check (e.g. for subjects where they are self-reported non-smokers but they do list packs per week, you can set the packs per week value to NA for those subjects)
+- Another option `exclude_all_on_failure` is available for when a dependency check failure necessitates setting all values for a certain subject to NA.  For example, if multiple input tables (e.g. output from SurveyCTO and an additional tsv with lab test results) were combined upstream, there may be duplicated columns that can be used to confirm correct linking between the two initial inputs.  Let's say both files contained information on sex.  We could write a dependency to check that the sex column from each of the two input files is identical, and if not, set all values for that subject to NA.
 - The number of values set to NA due to this option is emitted in the report
 
 ## Compute Distribution Data for Numeric Variables
