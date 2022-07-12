@@ -35,6 +35,7 @@ Each variable in the dataset is assigned a normalized encoded value (e.g. HW0000
 |`subject_id`|Boolean flag to mark which variable is the accepted unique subject ID|
 |`na-values`|Any non-canonical values to be treated as NA (e.g. nil, not specified, etc.)|
 |`multimodal`|Used to define another variable for plotting overlayed histograms,<br>e.g. overlayed plots of BMI by sex|
+|`allow_undelimited_bp`|Only for variables of type `bp` (blood pressure): enable<br>recognition of systolic and diastolic blood pressure specified<br>exactly as: `^\d{4}\d?\d?$`, where systolic will use three digits preferentially<br>if 5 or 6 digits are specified. this behavior is imperfect given the<br>lack of delimiter, and is not recommended in most circumstances.|
 |`dependencies`|Test for expected relationships between variables; can also include<br>contingency tables to compare two variables and instructions for setting values<br>to NA if certain dependency tests fail|
 
 ## Derived YAML Section

@@ -78,7 +78,8 @@ test_that("dependency.failure.handling successfully responds to exclusion reques
     TV001 = c("A", "B", "C", "D", "E", "F"),
     TV002 = c("yes", "yes", "yes", "no", NA, "no"),
     TV003 = c(1.001, 2.002, 3.003, 4.04, 5.05, NA),
-    TV004 = c(TRUE, FALSE, TRUE, TRUE, TRUE, FALSE)
+    TV004 = c(TRUE, FALSE, TRUE, TRUE, TRUE, FALSE),
+    TV005 = c(TRUE, FALSE, TRUE, TRUE, TRUE, FALSE)
   )
   in.variable.summary <- list(variables = list(
     TV001 = list(params = list(subject_id = TRUE)),
@@ -130,17 +131,30 @@ test_that("dependency.failure.handling successfully responds to exclusion reques
         "2" = c("B", "D"),
         "3" = c()
       )
+    ),
+    TV005 = list(
+      params = list(dependencies = list(
+        "1" = list(
+          name = "dep4",
+          condition = "thing4",
+          exclude_all_on_failure = TRUE
+        )
+      )),
+      dependency.results = list(
+        "1" = c("B")
+      )
     )
   ))
   out.phenotype.data <- data.frame(
     TV001 = c("A", "B", "C", "D", "E", "F"),
-    TV002 = c(NA, "yes", NA, "no", NA, "no"),
-    TV003 = c(NA, 2.002, NA, 4.04, 5.05, NA),
-    TV004 = c(TRUE, NA, TRUE, NA, TRUE, FALSE)
+    TV002 = c(NA, NA, NA, "no", NA, "no"),
+    TV003 = c(NA, NA, NA, 4.04, 5.05, NA),
+    TV004 = c(TRUE, NA, TRUE, NA, TRUE, FALSE),
+    TV005 = c(TRUE, NA, TRUE, TRUE, TRUE, FALSE)
   )
   out.variable.summary <- in.variable.summary
-  out.variable.summary$actual.nas.from.deps <- as.integer(6)
-  out.variable.summary$possible.nas.from.deps <- as.integer(18)
+  out.variable.summary$actual.nas.from.deps <- as.integer(9)
+  out.variable.summary$possible.nas.from.deps <- as.integer(24)
 
   expect_identical(
     dependency.failure.handling(in.phenotype.data, in.variable.summary),

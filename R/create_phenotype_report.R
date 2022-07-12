@@ -285,7 +285,7 @@ create.phenotype.report <- function(in.filename,
   ## report "cleaned" data as assorted output formats
   out.prefix <- stringr::str_replace(out.filename, ".html$", "")
   write.output.formats(
-    phenotype.data, variable.summary, out.prefix,
+    phenotype.data.na.applied, variable.summary, out.prefix,
     write.tsv, write.stata, write.spss, write.sas, write.yaml
   )
 }
