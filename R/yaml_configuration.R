@@ -107,7 +107,7 @@ write.configuration <- function(variable.summary, out.filename) {
         if (is.null(var.list[[var.name]]$original.name)) {
           var.list[[var.name]]$original.name <- var.list[[var.name]]$name
         }
-        var.list[[name]] <- var.name
+        var.list[[var.name]]$name <- var.name
       }
       res[["variables"]] <- var.list
     } else {
