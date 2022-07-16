@@ -45,18 +45,6 @@ suppressPackageStartupMessages(library(knitr, quietly = TRUE))
 suppressPackageStartupMessages(library(kableExtra, quietly = TRUE))
 ```
 
-```{r get.bins, eval=TRUE, echo=FALSE}
-#### Make sure the number of bins in a histogram isn't too close to the number of unique values!
-get.bins <- function(vec) {
-  n.unique.values <- length(unique(vec))
-  if (n.unique.values > 50) {
-    50
-  } else {
-    n.unique.values
-  }
-}
-```
-
 ***
 <br>
 
@@ -259,9 +247,11 @@ for (name in names(variable.summary$variables)) {
   ## if the source data type is numeric
   report.numeric.summary(
     phenotype.data[, name],
+    phenotype.data,
     variable.summary$variables[[name]],
     name,
     variable.pretty.name,
+    my.theme,
     suppress.reporting
   )
 
@@ -272,6 +262,7 @@ for (name in names(variable.summary$variables)) {
     phenotype.data,
     variable.summary$variables[[name]],
     name,
+    my.theme,
     suppress.reporting
   )
   ## if the source data has a computed_bmi variable, indicating it is BMI
@@ -280,6 +271,7 @@ for (name in names(variable.summary$variables)) {
     phenotype.data,
     variable.summary$variables[[name]],
     name,
+    my.theme,
     suppress.reporting
   )
   ## if the source data has a computed_bp_ratio variable, plot the ratio
@@ -288,6 +280,7 @@ for (name in names(variable.summary$variables)) {
     phenotype.data,
     variable.summary$variables[[name]],
     name,
+    my.theme,
     suppress.reporting
   )
 
@@ -332,6 +325,7 @@ for (name in names(variable.summary$variables)) {
   )
 
   report.dependencies(
+    phenotype.data,
     variable.summary,
     name,
     suppress.reporting

@@ -39,6 +39,7 @@
 #' }
 #' @importFrom stats qnorm quantile sd
 #' @importFrom utils read.table type.convert write.table
+#' @importFrom magrittr `%>%`
 create.phenotype.report <- function(in.filename,
                                     dataset.yaml,
                                     shared.model.yaml,

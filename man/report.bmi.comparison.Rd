@@ -5,7 +5,13 @@
 \title{Helper function to report summary information about reported BMI
 and computed BMI directly from weight and height data}
 \usage{
-report.bmi.comparison(phenotype.data, variable.entry, name, suppress.reporting)
+report.bmi.comparison(
+  phenotype.data,
+  variable.entry,
+  name,
+  my.theme,
+  suppress.reporting
+)
 }
 \arguments{
 \item{phenotype.data}{data.frame; full phenotype data for variable
@@ -14,6 +20,8 @@ selection}
 \item{variable.entry}{list; entry in dataset yaml for this variable}
 
 \item{name}{character; harmonized name of variable in yaml}
+
+\item{my.theme}{ggplot2 accumulated theme settings}
 
 \item{suppress.reporting}{logical; whether variable report data
 should be suppressed}

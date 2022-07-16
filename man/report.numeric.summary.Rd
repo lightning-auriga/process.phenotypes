@@ -7,9 +7,11 @@ variables' distributions}
 \usage{
 report.numeric.summary(
   data.vec,
+  phenotype.data,
   variable.entry,
   name,
   variable.pretty.name,
+  my.theme,
   suppress.reporting
 )
 }
@@ -17,12 +19,17 @@ report.numeric.summary(
 \item{data.vec}{numeric vector; column from phenotype dataframe
 for this variable}
 
+\item{phenotype.data}{data.frame; full phenotype data for selection
+of linked variable contents}
+
 \item{variable.entry}{list; entry in dataset yaml for this variable}
 
 \item{name}{character; harmonized name of variable in yaml}
 
 \item{variable.pretty.name}{character; human-legible name of
 variable with more helpful description}
+
+\item{my.theme}{ggplot2 accumulated theme settings}
 
 \item{suppress.reporting}{logical; whether variable report data
 should be suppressed}

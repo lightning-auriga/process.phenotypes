@@ -10,6 +10,7 @@ report.linked.date(
   phenotype.data,
   variable.entry,
   name,
+  my.theme,
   suppress.reporting
 )
 }
@@ -23,6 +24,8 @@ of linked variable contents}
 \item{variable.entry}{list; entry in dataset yaml for this age variable}
 
 \item{name}{character; harmonized name of variable in yaml}
+
+\item{my.theme}{ggplot2 accumulated theme settings}
 
 \item{suppress.reporting}{logical; whether variable report data
 should be suppressed}

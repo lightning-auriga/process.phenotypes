@@ -5,9 +5,12 @@
 \title{Helper function to report summary information about encoded
 dependency relationships between variables.}
 \usage{
-report.dependencies(variable.summary, name, suppress.reporting)
+report.dependencies(phenotype.data, variable.summary, name, suppress.reporting)
 }
 \arguments{
+\item{phenotype.data}{data.frame; full phenotype data for selection
+of linked variable contents}
+
 \item{variable.summary}{list; input dataset config yaml}
 
 \item{name}{character; harmonized name of variable in yaml}

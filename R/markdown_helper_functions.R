@@ -24,6 +24,20 @@ get.top.ten <- function(decreasing, vec, column.label) {
 }
 
 
+#' Make sure the number of bins in a histogram isn't too close to the
+#' number of unique values!
+#'
+#' @param vec numeric vector; input data to histogram
+get.bins <- function(vec) {
+  n.unique.values <- length(unique(vec))
+  if (n.unique.values > 50) {
+    50
+  } else {
+    n.unique.values
+  }
+}
+
+
 #' Helper function to report tracking information about variable
 #' name and, for derived variables, code creating the variable
 #'
@@ -67,25 +81,31 @@ report.excel.problems <- function(variable.entry, suppress.reporting) {
 #'
 #' @param data.vec numeric vector; column from phenotype dataframe
 #' for this variable
+#' @param phenotype.data data.frame; full phenotype data for selection
+#' of linked variable contents
 #' @param variable.entry list; entry in dataset yaml for this variable
 #' @param name character; harmonized name of variable in yaml
 #' @param variable.pretty.name character; human-legible name of
 #' variable with more helpful description
+#' @param my.theme ggplot2 accumulated theme settings
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
+#' @importFrom graphics hist
 report.numeric.summary <- function(data.vec,
+                                   phenotype.data,
                                    variable.entry,
                                    name,
                                    variable.pretty.name,
+                                   my.theme,
                                    suppress.reporting) {
   if (is.vector(data.vec, mode = "numeric") && !suppress.reporting) {
     if (length(which(!is.na(data.vec)))) {
       ## create data histogram for numeric data
-      plot.data <- data.frame(x = phenotype.data[!is.na(data.vec), name])
+      plot.data <- data.frame(x = data.vec[!is.na(data.vec)])
       if (length(unique(plot.data$x)) > 0) {
-        hist.plot <- ggplot(data = plot.data) + my.theme
-        nbins <- get.bins(phenotype.data[!is.na(data.vec), name])
-        binwidth <- (diff(range(phenotype.data[!is.na(data.vec), name])) + 1) / nbins
+        hist.plot <- ggplot2::ggplot(data = plot.data) + my.theme
+        nbins <- get.bins(data.vec[!is.na(data.vec)])
+        binwidth <- (diff(range(data.vec[!is.na(data.vec)])) + 1) / nbins
         if (!is.null(variable.entry$params$multimodal)) {
           multimodal.varname <- variable.entry$params$multimodal
           stopifnot(multimodal.varname %in% colnames(phenotype.data))
@@ -100,7 +120,7 @@ report.numeric.summary <- function(data.vec,
             }
             plot.subset <- phenotype.data[phenotype.data[, multimodal.varname] == multimodal.values[i] &
               !is.na(data.vec) & !is.na(phenotype.data[, multimodal.varname]), ]
-            hist.plot <- hist.plot + geom_histogram(aes_string(
+            hist.plot <- hist.plot + ggplot2::geom_histogram(ggplot2::aes_string(
               x = name,
               y = "..count../sum(..count..)"
             ),
@@ -113,11 +133,11 @@ report.numeric.summary <- function(data.vec,
             mode.mean <- mean(plot.subset[, name],
               na.rm = TRUE
             )
-            hist.plot <- hist.plot + geom_vline(
+            hist.plot <- hist.plot + ggplot2::geom_vline(
               xintercept = mode.mean,
               colour = hist.plot.colours[i]
             )
-            hist.plot <- hist.plot + annotate("text",
+            hist.plot <- hist.plot + ggplot2::annotate("text",
               label = multimodal.values[i],
               x = mode.mean * 1.15,
               y = annotate.y * (1 - (i - 1) * 0.05),
@@ -127,19 +147,25 @@ report.numeric.summary <- function(data.vec,
             )
           }
         } else {
-          hist.plot <- hist.plot + geom_histogram(
-            aes(x = x, y = ..count.. / sum(..count..)),
+          hist.plot <- hist.plot + ggplot2::geom_histogram(
+            ggplot2::aes_string(x = "x", y = "..count.. / sum(..count..)"),
             bins = nbins,
             binwidth = binwidth
           )
         }
-        hist.plot <- hist.plot + xlab(name) + ylab("proportion of data")
+        hist.plot <- hist.plot + ggplot2::xlab(name) + ggplot2::ylab("proportion of data")
         if (is.null(variable.entry$params$bounds$sd)) {
           var.mean <- mean(data.vec, na.rm = TRUE)
           var.sd <- sd(data.vec, na.rm = TRUE)
           if (!is.na(var.sd)) {
-            hist.plot <- hist.plot + geom_vline(xintercept = var.mean + 3 * var.sd, linetype = "dashed")
-            hist.plot <- hist.plot + geom_vline(xintercept = var.mean - 3 * var.sd, linetype = "dashed")
+            hist.plot <- hist.plot + ggplot2::geom_vline(
+              xintercept = var.mean + 3 * var.sd,
+              linetype = "dashed"
+            )
+            hist.plot <- hist.plot + ggplot2::geom_vline(
+              xintercept = var.mean - 3 * var.sd,
+              linetype = "dashed"
+            )
           }
         }
         cat(
@@ -192,20 +218,22 @@ report.numeric.summary <- function(data.vec,
 #' of linked variable contents
 #' @param variable.entry list; entry in dataset yaml for this age variable
 #' @param name character; harmonized name of variable in yaml
+#' @param my.theme ggplot2 accumulated theme settings
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
 report.linked.date <- function(data.vec,
                                phenotype.data,
                                variable.entry,
                                name,
+                               my.theme,
                                suppress.reporting) {
   if (!is.null(variable.entry$params$linked_date) && !suppress.reporting) {
     reported.year.varname <- variable.entry$params$linked_date$reported_year
     reference.year <- variable.entry$params$linked_date$reference_year
     stopifnot(
-      reported.year.varname %in% names(variable.summary$variables),
+      reported.year.varname %in% colnames(phenotype.data),
       is.numeric(reference.year) |
-        (is.character(reference.year) & reference.year %in% names(variable.summary$variables))
+        (is.character(reference.year) & reference.year %in% colnames(phenotype.data))
     )
     reported.year <- phenotype.data[, reported.year.varname]
     if (is.character(reference.year)) {
@@ -218,9 +246,9 @@ report.linked.date <- function(data.vec,
       y = derived.age
     )
     plot.data <- plot.data[!is.na(plot.data$x) & !is.na(plot.data$y), ]
-    age.plot <- ggplot(aes(x = x, y = y), data = plot.data) + my.theme
-    age.plot <- age.plot + geom_point() + geom_abline(slope = 1, intercept = 0)
-    age.plot <- age.plot + xlab("Reported Age") + ylab("Age Computed from Date")
+    age.plot <- ggplot2::ggplot(ggplot2::aes_string(x = "x", y = "y"), data = plot.data) + my.theme
+    age.plot <- age.plot + ggplot2::geom_point() + ggplot2::geom_abline(slope = 1, intercept = 0)
+    age.plot <- age.plot + ggplot2::xlab("Reported Age") + ggplot2::ylab("Age Computed from Date")
     cat("\n\n#### Comparison between reported age ", name, " and age derived from date ",
       reported.year.varname, "\n\n",
       sep = ""
@@ -236,11 +264,13 @@ report.linked.date <- function(data.vec,
 #' selection
 #' @param variable.entry list; entry in dataset yaml for this variable
 #' @param name character; harmonized name of variable in yaml
+#' @param my.theme ggplot2 accumulated theme settings
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
 report.bmi.comparison <- function(phenotype.data,
                                   variable.entry,
                                   name,
+                                  my.theme,
                                   suppress.reporting) {
   if (!is.null(variable.entry$params$computed_bmi) && !suppress.reporting) {
     height.varname <- variable.entry$params$computed_bmi$height
@@ -258,9 +288,9 @@ report.bmi.comparison <- function(phenotype.data,
       y = computed.bmi
     )
     plot.data <- plot.data[!is.na(plot.data$x) & !is.na(plot.data$y), ]
-    bmi.plot <- ggplot(aes(x = x, y = y), data = plot.data) + my.theme
-    bmi.plot <- bmi.plot + geom_point() + geom_abline(slope = 1, intercept = 0)
-    bmi.plot <- bmi.plot + xlab("Reported BMI") + ylab("BMI Computed from Height/Weight")
+    bmi.plot <- ggplot2::ggplot(ggplot2::aes_string(x = "x", y = "y"), data = plot.data) + my.theme
+    bmi.plot <- bmi.plot + ggplot2::geom_point() + ggplot2::geom_abline(slope = 1, intercept = 0)
+    bmi.plot <- bmi.plot + ggplot2::xlab("Reported BMI") + ggplot2::ylab("BMI Computed from Height/Weight")
     cat("\n\n#### Comparison between reported BMI ", name,
       " and BMI derived from height ", height.varname,
       " and weight ", weight.varname, "\n\n",
@@ -278,11 +308,13 @@ report.bmi.comparison <- function(phenotype.data,
 #' selection
 #' @param variable.entry list; entry in dataset yaml for this variable
 #' @param name character; harmonized name of variable in yaml
+#' @param my.theme ggplot2 accumulated theme settings
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
 report.bp.ratio <- function(phenotype.data,
                             variable.entry,
                             name,
+                            my.theme,
                             suppress.reporting) {
   if (!is.null(variable.entry$params$computed_bp_ratio) && !suppress.reporting) {
     systolic.bp <- phenotype.data[, name]
@@ -290,9 +322,9 @@ report.bp.ratio <- function(phenotype.data,
     stopifnot(diastolic.bp.varname %in% colnames(phenotype.data))
     diastolic.bp <- phenotype.data[, diastolic.bp.varname]
     plot.data <- data.frame(x = systolic.bp, y = diastolic.bp)
-    bp.plot <- ggplot(aes(x = x, y = y), data = plot.data) + my.theme
-    bp.plot <- bp.plot + geom_point() + geom_abline(slope = 1, intercept = 0)
-    bp.plot <- bp.plot + xlab("Reported systolic BP") + ylab("Reported diastolic BP")
+    bp.plot <- ggplot2::ggplot(ggplot2::aes_string(x = "x", y = "y"), data = plot.data) + my.theme
+    bp.plot <- bp.plot + ggplot2::geom_point() + ggplot2::geom_abline(slope = 1, intercept = 0)
+    bp.plot <- bp.plot + ggplot2::xlab("Reported systolic BP") + ggplot2::ylab("Reported diastolic BP")
     cat("\n\n#### Comparison between reported systolic ", name,
       " and diastolic blood pressure ", diastolic.bp.varname, "\n\n",
       sep = ""
@@ -547,11 +579,14 @@ report.unicode.entries <- function(variable.entry,
 #' exclude_on_error or exclude_all_on_error directives. this may
 #' be added in future iterations of the report.
 #'
+#' @param phenotype.data data.frame; full phenotype data for selection
+#' of linked variable contents
 #' @param variable.summary list; input dataset config yaml
 #' @param name character; harmonized name of variable in yaml
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
-report.dependencies <- function(variable.summary,
+report.dependencies <- function(phenotype.data,
+                                variable.summary,
                                 name,
                                 suppress.reporting) {
   if (!is.null(variable.summary$variables[[name]]$params$dependencies) && !suppress.reporting) {
