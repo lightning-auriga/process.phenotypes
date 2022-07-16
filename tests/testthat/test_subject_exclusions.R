@@ -19,6 +19,26 @@ test_that("subject exclusion by metric responds correctly to valid data", {
   )
 })
 
+test_that("subject exclusion by metric tolerates null bound by not removing anything", {
+  df <- data.frame(
+    A = c(1, 2, 3, 4, 5),
+    B = rnorm(5, 0, 1),
+    C = c("A", "B", "C", "D", "E")
+  )
+  var.summary <- list(variables = list(
+    A = list(),
+    B = list(),
+    C = list(params = list(subject_id = TRUE))
+  ))
+  metric <- as.integer(c(10, 5, 6))
+  names(metric) <- c("B", "C", "D")
+  bound <- NULL
+  expect_identical(
+    exclude.subjects.by.metric(df, var.summary, metric, bound),
+    df
+  )
+})
+
 test_that("subject exclusion by metric detects aberrant NAs in metric and bound", {
   df <- data.frame(
     A = rnorm(5),
