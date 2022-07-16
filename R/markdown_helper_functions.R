@@ -22,3 +22,599 @@ get.top.ten <- function(decreasing, vec, column.label) {
   }
   ten.df
 }
+
+
+#' Helper function to report tracking information about variable
+#' name and, for derived variables, code creating the variable
+#'
+#' @param variable.entry list; entry in dataset yaml for this variable
+report.name.and.code <- function(variable.entry) {
+  if (!is.null(variable.entry$params$canonical_name)) {
+    cat(
+      "Official variable identity: \"",
+      variable.entry$params$canonical_name, "\"", "\n\n"
+    )
+  }
+  if (!is.null(variable.entry$params$code)) {
+    cat(
+      "\n\nThe logic to create this derived variable is as follows:\n\n```\n",
+      variable.entry$params$code, "\n```\n\n",
+      sep = ""
+    )
+  }
+}
+
+#' Helper function to report detected excel problems in variable contents
+#'
+#' @param variable.entry list; entry in dataset yaml for this variable
+#' @param suppress.reporting logical; whether variable report data
+#' should be suppressed
+report.excel.problems <- function(variable.entry, suppress.reporting) {
+  if (!is.null(variable.entry$excel.problem.count) && !suppress.reporting) {
+    if (variable.entry$excel.problem.count == 1) {
+      cat("\nWARNING: 1 Excel error code detected in this variable.\n")
+    } else {
+      cat("\nWARNING: ", variable.entry$excel.problem.count,
+        " Excel error codes detected in this variable.\n",
+        sep = ""
+      )
+    }
+  }
+}
+
+#' Helper function to report summary information about numeric
+#' variables' distributions
+#'
+#' @param data.vec numeric vector; column from phenotype dataframe
+#' for this variable
+#' @param variable.entry list; entry in dataset yaml for this variable
+#' @param name character; harmonized name of variable in yaml
+#' @param variable.pretty.name character; human-legible name of
+#' variable with more helpful description
+#' @param suppress.reporting logical; whether variable report data
+#' should be suppressed
+report.numeric.summary <- function(data.vec,
+                                   variable.entry,
+                                   name,
+                                   variable.pretty.name,
+                                   suppress.reporting) {
+  if (is.vector(data.vec, mode = "numeric") && !suppress.reporting) {
+    if (length(which(!is.na(data.vec)))) {
+      ## create data histogram for numeric data
+      plot.data <- data.frame(x = phenotype.data[!is.na(data.vec), name])
+      if (length(unique(plot.data$x)) > 0) {
+        hist.plot <- ggplot(data = plot.data) + my.theme
+        nbins <- get.bins(phenotype.data[!is.na(data.vec), name])
+        binwidth <- (diff(range(phenotype.data[!is.na(data.vec), name])) + 1) / nbins
+        if (!is.null(variable.entry$params$multimodal)) {
+          multimodal.varname <- variable.entry$params$multimodal
+          stopifnot(multimodal.varname %in% colnames(phenotype.data))
+          multimodal.values <- unique(phenotype.data[, multimodal.varname])
+          hist.plot.colours <- RColorBrewer::brewer.pal(max(3, length(multimodal.values)), "Dark2")
+          hist.plot.colours <- hist.plot.colours[seq_len(length(multimodal.values))]
+          annotate.y <- max(hist(data.vec, breaks = nbins, plot = FALSE)$counts) / nrow(phenotype.data)
+          for (i in seq_len(length(multimodal.values))) {
+            if (length(which(phenotype.data[, multimodal.varname] == multimodal.values[i] &
+              !is.na(phenotype.data[, multimodal.varname]))) == 0) {
+              next
+            }
+            plot.subset <- phenotype.data[phenotype.data[, multimodal.varname] == multimodal.values[i] &
+              !is.na(data.vec) & !is.na(phenotype.data[, multimodal.varname]), ]
+            hist.plot <- hist.plot + geom_histogram(aes_string(
+              x = name,
+              y = "..count../sum(..count..)"
+            ),
+            data = plot.subset,
+            bins = nbins,
+            binwidth = binwidth,
+            fill = hist.plot.colours[i],
+            alpha = 0.2
+            )
+            mode.mean <- mean(plot.subset[, name],
+              na.rm = TRUE
+            )
+            hist.plot <- hist.plot + geom_vline(
+              xintercept = mode.mean,
+              colour = hist.plot.colours[i]
+            )
+            hist.plot <- hist.plot + annotate("text",
+              label = multimodal.values[i],
+              x = mode.mean * 1.15,
+              y = annotate.y * (1 - (i - 1) * 0.05),
+              size = 3,
+              hjust = 0,
+              colour = hist.plot.colours[i]
+            )
+          }
+        } else {
+          hist.plot <- hist.plot + geom_histogram(
+            aes(x = x, y = ..count.. / sum(..count..)),
+            bins = nbins,
+            binwidth = binwidth
+          )
+        }
+        hist.plot <- hist.plot + xlab(name) + ylab("proportion of data")
+        if (is.null(variable.entry$params$bounds$sd)) {
+          var.mean <- mean(data.vec, na.rm = TRUE)
+          var.sd <- sd(data.vec, na.rm = TRUE)
+          if (!is.na(var.sd)) {
+            hist.plot <- hist.plot + geom_vline(xintercept = var.mean + 3 * var.sd, linetype = "dashed")
+            hist.plot <- hist.plot + geom_vline(xintercept = var.mean - 3 * var.sd, linetype = "dashed")
+          }
+        }
+        cat(
+          "\n\n#### Histogram of ", name, " (", variable.pretty.name,
+          ") Distribution\n\n",
+          sep = ""
+        )
+        print(hist.plot)
+      }
+    }
+    if (!is.null(variable.entry$params$bounds)) {
+      bound.type <- c()
+      bound.value <- c()
+      bound.count <- c()
+      if (!is.null(variable.entry$params$bounds$min)) {
+        bound.type <- c(bound.type, "minimum")
+        bound.value <- c(bound.value, variable.entry$params$bounds$min)
+        bound.count <- c(bound.count, variable.entry$num.below.min)
+      }
+      if (!is.null(variable.entry$params$bounds$max)) {
+        bound.type <- c(bound.type, "maximum")
+        bound.value <- c(bound.value, variable.entry$params$bounds$max)
+        bound.count <- c(bound.count, variable.entry$num.above.max)
+      }
+      if (!is.null(variable.entry$params$bounds$sd)) {
+        bound.type <- c(bound.type, "standard deviation")
+        bound.value <- c(bound.value, variable.entry$params$bounds$sd)
+        bound.count <- c(bound.count, variable.entry$num.beyond.sd)
+      }
+      bound.df <- data.frame(
+        Type = bound.type,
+        Value = bound.value,
+        Count = bound.count
+      )
+      rownames(bound.df) <- NULL
+      table.caption <- paste("Numeric bounds on ", name, " (", variable.pretty.name, ")", sep = "")
+      cat(knitr::kable(bound.df, caption = table.caption) %>%
+        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+    }
+  }
+}
+
+
+#' Helper function to report relationship between an age variable
+#' and its corresponding date
+#'
+#' @param data.vec numeric vector; column from phenotype dataframe
+#' for this age variable
+#' @param phenotype.data data.frame; full phenotype data for selection
+#' of linked variable contents
+#' @param variable.entry list; entry in dataset yaml for this age variable
+#' @param name character; harmonized name of variable in yaml
+#' @param suppress.reporting logical; whether variable report data
+#' should be suppressed
+report.linked.date <- function(data.vec,
+                               phenotype.data,
+                               variable.entry,
+                               name,
+                               suppress.reporting) {
+  if (!is.null(variable.entry$params$linked_date) && !suppress.reporting) {
+    reported.year.varname <- variable.entry$params$linked_date$reported_year
+    reference.year <- variable.entry$params$linked_date$reference_year
+    stopifnot(
+      reported.year.varname %in% names(variable.summary$variables),
+      is.numeric(reference.year) |
+        (is.character(reference.year) & reference.year %in% names(variable.summary$variables))
+    )
+    reported.year <- phenotype.data[, reported.year.varname]
+    if (is.character(reference.year)) {
+      reference.year <- phenotype.data[, reference.year]
+    }
+    reported.age <- data.vec
+    derived.age <- reference.year - reported.year
+    plot.data <- data.frame(
+      x = reported.age,
+      y = derived.age
+    )
+    plot.data <- plot.data[!is.na(plot.data$x) & !is.na(plot.data$y), ]
+    age.plot <- ggplot(aes(x = x, y = y), data = plot.data) + my.theme
+    age.plot <- age.plot + geom_point() + geom_abline(slope = 1, intercept = 0)
+    age.plot <- age.plot + xlab("Reported Age") + ylab("Age Computed from Date")
+    cat("\n\n#### Comparison between reported age ", name, " and age derived from date ",
+      reported.year.varname, "\n\n",
+      sep = ""
+    )
+    print(age.plot)
+  }
+}
+
+#' Helper function to report summary information about reported BMI
+#' and computed BMI directly from weight and height data
+#'
+#' @param phenotype.data data.frame; full phenotype data for variable
+#' selection
+#' @param variable.entry list; entry in dataset yaml for this variable
+#' @param name character; harmonized name of variable in yaml
+#' @param suppress.reporting logical; whether variable report data
+#' should be suppressed
+report.bmi.comparison <- function(phenotype.data,
+                                  variable.entry,
+                                  name,
+                                  suppress.reporting) {
+  if (!is.null(variable.entry$params$computed_bmi) && !suppress.reporting) {
+    height.varname <- variable.entry$params$computed_bmi$height
+    weight.varname <- variable.entry$params$computed_bmi$weight
+    stopifnot(
+      height.varname %in% colnames(phenotype.data),
+      weight.varname %in% colnames(phenotype.data)
+    )
+    reported.bmi <- phenotype.data[, name]
+    height.var <- phenotype.data[, height.varname]
+    weight.var <- phenotype.data[, weight.varname]
+    computed.bmi <- weight.var / height.var^2
+    plot.data <- data.frame(
+      x = reported.bmi,
+      y = computed.bmi
+    )
+    plot.data <- plot.data[!is.na(plot.data$x) & !is.na(plot.data$y), ]
+    bmi.plot <- ggplot(aes(x = x, y = y), data = plot.data) + my.theme
+    bmi.plot <- bmi.plot + geom_point() + geom_abline(slope = 1, intercept = 0)
+    bmi.plot <- bmi.plot + xlab("Reported BMI") + ylab("BMI Computed from Height/Weight")
+    cat("\n\n#### Comparison between reported BMI ", name,
+      " and BMI derived from height ", height.varname,
+      " and weight ", weight.varname, "\n\n",
+      sep = ""
+    )
+    print(bmi.plot)
+  }
+}
+
+
+#' Helper function to report plot showing relationship between
+#' self-reported systolic and diastolic blood pressure
+#'
+#' @param phenotype.data data.frame; full phenotype data for variable
+#' selection
+#' @param variable.entry list; entry in dataset yaml for this variable
+#' @param name character; harmonized name of variable in yaml
+#' @param suppress.reporting logical; whether variable report data
+#' should be suppressed
+report.bp.ratio <- function(phenotype.data,
+                            variable.entry,
+                            name,
+                            suppress.reporting) {
+  if (!is.null(variable.entry$params$computed_bp_ratio) && !suppress.reporting) {
+    systolic.bp <- phenotype.data[, name]
+    diastolic.bp.varname <- variable.entry$params$computed_bp_ratio$diastolic
+    stopifnot(diastolic.bp.varname %in% colnames(phenotype.data))
+    diastolic.bp <- phenotype.data[, diastolic.bp.varname]
+    plot.data <- data.frame(x = systolic.bp, y = diastolic.bp)
+    bp.plot <- ggplot(aes(x = x, y = y), data = plot.data) + my.theme
+    bp.plot <- bp.plot + geom_point() + geom_abline(slope = 1, intercept = 0)
+    bp.plot <- bp.plot + xlab("Reported systolic BP") + ylab("Reported diastolic BP")
+    cat("\n\n#### Comparison between reported systolic ", name,
+      " and diastolic blood pressure ", diastolic.bp.varname, "\n\n",
+      sep = ""
+    )
+    print(bp.plot)
+  }
+}
+
+
+#' Helper function to report information about observed entries
+#' in text-like variables
+#'
+#' @param phenotype.data data.frame; full phenotype data for variable
+#' selection
+#' @param var.summary table; contingency data about observations
+#' of values in variable
+#' @param unique.var.value.inc.prop numeric; the proportion threshold
+#' above which variables with too many unique values will not have
+#' their value contingency data reported
+#' @param name character; harmonized name of variable in yaml
+#' @param variable.pretty.name character; human-legible name of
+#' variable with more helpful description
+#' @param suppress.reporting logical; whether variable report data
+#' should be suppressed
+report.content.summary <- function(phenotype.data,
+                                   var.summary,
+                                   unique.var.value.inc.prop,
+                                   name,
+                                   variable.pretty.name,
+                                   suppress.reporting) {
+  if ((is.vector(phenotype.data[, name], mode = "numeric") && !suppress.reporting) ||
+    ((is.factor(phenotype.data[, name]) ||
+      length(var.summary) < nrow(phenotype.data) * unique.var.value.inc.prop) && !suppress.reporting)) {
+    variable.summary.df <- data.frame(
+      names(var.summary), as.vector(var.summary)
+    )
+    variable.summary.df[, 1] <- stringr::str_replace(variable.summary.df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
+    variable.summary.df[, 1] <- stringr::str_replace(variable.summary.df[, 1], "^( *)([0-9]+)\\. ", "\\1\\2\\\\. ")
+    variable.summary.df[, 1] <- stringr::str_replace(variable.summary.df[, 1], "^-$", "--")
+    rownames(variable.summary.df) <- NULL
+    colnames(variable.summary.df) <- c("Value", "Summary statistics")
+    table.caption <- paste("Summary of ", name, " (", variable.pretty.name, ")", sep = "")
+    cat(knitr::kable(variable.summary.df, caption = table.caption) %>%
+      kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+  } else if (length(var.summary) >= nrow(phenotype.data) * unique.var.value.inc.prop && !suppress.reporting) {
+    cat("\n\nVariable ", name, " (", variable.pretty.name, ") has ", length(var.summary), " unique values, and thus",
+      " report output of individual value counts is suppressed.\n\n",
+      sep = ""
+    )
+  } else if (suppress.reporting) {
+    cat("\n\nReporting for variable", name, "was suppressed in the configuration.\n\n")
+  }
+}
+
+
+#' Helper function to report information about blood pressure
+#' variable entries that do not match expected blood pressure
+#' systolic/diastolic reporting format.
+#'
+#' @details Many instances of non-compliant blood pressure reporting
+#' formats have been observed in various test datasets. This reporting
+#' information is intended both to record non-compliant data and to
+#' suggest new, "creative" formats that might be supported in patches
+#' to this package
+#'
+#' @param variable.entry list; entry in dataset yaml for this variable
+#' @param name character; harmonized name of variable in yaml
+#' @param suppress.reporting logical; whether variable report data
+#' should be suppressed
+report.noncompliant.bp <- function(variable.entry,
+                                   name,
+                                   suppress.reporting) {
+  if (!is.null(variable.entry$invalid.blood.pressure.entries) && !suppress.reporting) {
+    if (length(variable.entry$invalid.blood.pressure.entries) > 0) {
+      df <- data.frame(table(variable.entry$invalid.blood.pressure.entries, useNA = "ifany"))
+      rownames(df) <- NULL
+      colnames(df) <- c(name, "Count")
+      df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
+      cat(knitr::kable(df, caption = "Values that were not consistent with blood pressure measurement format.") %>%
+        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+    } else {
+      cat("\n\nAll values consistent with blood pressure format or missing data.\n\n")
+    }
+  }
+}
+
+#' Helper function to report information about entries in
+#' expected-numeric variables that do not match supported
+#' numeric format.
+#'
+#' @details substantial processing is applied to string representations
+#' of input data before numeric conversion is attempted. this report
+#' covers entries that fail conversion after such string cleaning
+#' is attempted.
+#'
+#' @param variable.entry list; entry in dataset yaml for this variable
+#' @param name character; harmonized name of variable in yaml
+#' @param suppress.reporting logical; whether variable report data
+#' should be suppressed
+report.noncompliant.numerics <- function(variable.entry,
+                                         name,
+                                         suppress.reporting) {
+  if (!is.null(variable.entry$invalid.numeric.entries) && !suppress.reporting) {
+    if (length(variable.entry$invalid.numeric.entries) > 0) {
+      df <- data.frame(table(variable.entry$invalid.numeric.entries, useNA = "ifany"))
+      rownames(df) <- NULL
+      colnames(df) <- c(name, "Count")
+      df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
+      cat(knitr::kable(df, caption = "Values that were not consistent with numeric format.") %>%
+        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+    } else {
+      cat("\n\nAll values consistent with numeric format or missing data.\n\n")
+    }
+  }
+}
+
+
+#' Helper function to report summary information about uncertain
+#' values in expected categorical variables.
+#'
+#' @details this function has hybrid functionality. it was originally
+#' intended to report entries of factor variables that do not match
+#' defined levels/shared model data. later on, functionality was added
+#' to try to ad hoc harmonize self-reported ancestry labels, and at
+#' that point this function was expanded to provide a detailed summary
+#' of resolution status for such ancestry variables as well.
+#'
+#' @param variable.entry list; entry in dataset yaml for this variable
+#' @param name character; harmonized name of variable in yaml
+#' @param suppress.reporting logical; whether variable report data
+#' should be suppressed
+report.factor.summary <- function(variable.entry,
+                                  name,
+                                  suppress.reporting) {
+  ## give ancestry factor variable special treatment
+  if (!is.null(variable.entry$params$subject_ancestry) && !suppress.reporting) {
+    ## instead of reporting failed conversions specifically,
+    ## report a table of all imperfect matches to the reference ancestry labels,
+    ## and track the outcomes for all of them, even the ones that were eventually
+    ## called. this behavior may be updated later once this method has been
+    ## improved
+    df <- data.frame(
+      variable.entry$ancestry.conversion.before,
+      variable.entry$ancestry.conversion.after,
+      variable.entry$ancestry.reasoning,
+      variable.entry$ancestry.best.match,
+      round(variable.entry$ancestry.best.value, 2),
+      variable.entry$ancestry.second.match,
+      round(variable.entry$ancestry.second.value, 2)
+    )
+    colnames(df) <- c(
+      "Input",
+      "Output",
+      "Reasoning",
+      "Best Match",
+      "Best Score",
+      "Second Match",
+      "Second Score"
+    )
+    df$Count <- rep(0, nrow(df))
+    for (query in unique(df[, 1])) {
+      df$Count[df[, 1] == query] <- length(which(df[, 1] == query))
+    }
+
+    ## clean up table: for large datasets, this gets unwieldy
+    ## first remove duplicate queries, as the resolution is always the same
+    df <- df[!duplicated(df[, 1]), ]
+    ## then sort first by reasoning, then by output, then by query
+    df <- df[order(df[, 3], df[, 2], df[, 1]), ]
+    rownames(df) <- NULL
+    cat(knitr::kable(df, caption = "Handling of all partial match self-reported ancestries.") %>%
+      kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+  } else if (!is.null(variable.entry$invalid.factor.entries) && !suppress.reporting) {
+    ## other things that are factors
+    if (length(variable.entry$invalid.factor.entries) > 0) {
+      df <- data.frame(table(variable.entry$invalid.factor.entries, useNA = "ifany"))
+      rownames(df) <- NULL
+      colnames(df) <- c(name, "Count")
+      df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
+      cat(knitr::kable(df, caption = "Values that were not consistent with categorical format.") %>%
+        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+    } else {
+      cat("\n\nAll values consistent with categorical format or missing data.\n\n")
+    }
+  }
+}
+
+#' Helper function to report summary information about values
+#' in date variables that do not match expected date formats.
+#'
+#' @details free-text date variables typically contain a wide variety
+#' of input formats. the package heuristically supports a variety of
+#' date formats, but still many observed values are ultimately not
+#' reasonably convertable to year specifications. this function reports
+#' such values, both for reporting purposes and to suggest possible
+#' extensions to the supported date format regex (or not).
+#'
+#' @param variable.entry list; entry in dataset yaml for this variable
+#' @param name character; harmonized name of variable in yaml
+#' @param suppress.reporting logical; whether variable report data
+#' should be suppressed
+report.noncompliant.dates <- function(variable.entry,
+                                      name,
+                                      suppress.reporting) {
+  if (!is.null(variable.entry$invalid.date.entries) && !suppress.reporting) {
+    if (length(variable.entry$invalid.date.entries) > 0) {
+      df <- data.frame(table(variable.entry$invalid.date.entries, useNA = "ifany"))
+      rownames(df) <- NULL
+      colnames(df) <- c(name, "Count")
+      df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
+      cat(knitr::kable(df, caption = "Values that were not consistent with date (year only) format.") %>%
+        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+    } else {
+      cat("\n\nAll values consistent with date format (year only) or missing data.\n\n")
+    }
+  }
+}
+
+#' Helper function to report summary information about Unicode
+#' characters that are not removed by upstream cleaning.
+#'
+#' @details Unicode characters often sneak by the ad hoc conversion
+#' logic used in this package. the linking between Unicode character
+#' and desired ASCII representation has been exposed to config space.
+#' this reporting function includes tracking information about the
+#' observed Unicode character, in the hopes that the user can expand
+#' the mapping table to convert such characters into compliant values.
+#'
+#' @param variable.entry list; entry in dataset yaml for this variable
+#' @param suppress.reporting logical; whether variable report data
+#' should be suppressed
+report.unicode.entries <- function(variable.entry,
+                                   suppress.reporting) {
+  if (!is.null(variable.entry$unicode.entries) && !suppress.reporting) {
+    unicode.df <- data.frame(
+      names(variable.entry$unicode.entries),
+      as.vector(variable.entry$unicode.entries)
+    )
+    rownames(unicode.df) <- NULL
+    colnames(unicode.df) <- c("Unicode String", "Observations")
+    cat(knitr::kable(unicode.df, caption = "String entries containing unresolved Unicode characters.") %>%
+      kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+  }
+}
+
+#' Helper function to report summary information about encoded
+#' dependency relationships between variables.
+#'
+#' @details this function handles all reporting of variable dependencies
+#' from the input config yaml dependency blocks. currently, the report
+#' does not contain direct information about the downstream effects of
+#' exclude_on_error or exclude_all_on_error directives. this may
+#' be added in future iterations of the report.
+#'
+#' @param variable.summary list; input dataset config yaml
+#' @param name character; harmonized name of variable in yaml
+#' @param suppress.reporting logical; whether variable report data
+#' should be suppressed
+report.dependencies <- function(variable.summary,
+                                name,
+                                suppress.reporting) {
+  if (!is.null(variable.summary$variables[[name]]$params$dependencies) && !suppress.reporting) {
+    cat("\n\n#### Dependency tracking\n\n")
+    dependency.names <- c()
+    dependency.conditions <- c()
+    dependency.results <- c()
+    dependencies <- variable.summary$variables[[name]]$params$dependencies
+    for (dependency.index in names(dependencies)) {
+      dependency.names <- c(dependency.names, dependencies[[dependency.index]]$name)
+      dependency.conditions <- c(dependency.conditions, dependencies[[dependency.index]]$condition)
+      dependency.result <- variable.summary$variables[[name]]$dependency.results[[dependency.index]]
+      if (length(dependency.result) == 0) {
+        dependency.result <- "all subjects pass"
+      } else if (length(dependency.result) > 1) {
+        dependency.result <- paste(sort(dependency.result), collapse = ", ")
+      }
+      dependency.results <- c(dependency.results, dependency.result)
+
+
+      ## allow table_comparisons for simple contingency tables between this and other variables
+      if (!is.null(dependencies[[dependency.index]]$table_comparisons)) {
+        for (table.target in dependencies[[dependency.index]]$table_comparisons) {
+          stopifnot(table.target %in% colnames(phenotype.data))
+          comp.var.pretty.name <- variable.summary$variables[[table.target]]$original.name
+          if (!is.null(variable.summary$variables[[table.target]]$params$canonical_name)) {
+            comp.var.pretty.name <- paste(comp.var.pretty.name,
+              " (",
+              variable.summary$variables[[table.target]]$params$canonical_name,
+              ")",
+              sep = ""
+            )
+          }
+          table.data <- table(
+            phenotype.data[, table.target],
+            phenotype.data[, name],
+            useNA = "ifany"
+          )
+          cat(knitr::kable(table.data,
+            caption = paste("Contingency table for ",
+              table.target,
+              " (",
+              comp.var.pretty.name,
+              ") [rows] versus ",
+              name,
+              " [columns]",
+              sep = ""
+            )
+          ) %>% kableExtra::kable_styling("condensed"))
+        }
+      }
+    }
+    dependency.df <- data.frame(
+      Name = dependency.names,
+      Condition = dependency.conditions,
+      Count = sapply(strsplit(dependency.results, ","), function(i) {
+        ifelse(identical(i, "all subjects pass"), 0, length(i))
+      }),
+      Result = dependency.results
+    )
+    rownames(dependency.df) <- NULL
+    cat(knitr::kable(dependency.df,
+      caption = "Results of cross-variable dependency tests."
+    ) %>% kableExtra::kable_styling("condensed"))
+  }
+}
