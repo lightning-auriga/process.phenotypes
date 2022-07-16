@@ -86,11 +86,11 @@ dependency.failure.handling <- function(phenotype.data, variable.summary) {
     for (j in seq_len(length(dependencies))) {
       exclude.on.failure <- dependencies[[j]]$exclude_on_failure
       exclude.all.on.failure <- dependencies[[j]]$exclude_all_on_failure
-      print(paste("hey look it's the new flag: ", exclude.all.on.failure, sep=""))
+      print(paste("hey look it's the new flag: ", exclude.all.on.failure, sep = ""))
       if (!is.null(exclude.all.on.failure)) {
-        if(exclude.all.on.failure) {
+        if (exclude.all.on.failure) {
           print("hey this worked!")
-            exclude.on.failure <- colnames(phenotype.data)[-subject.id.column.index]
+          exclude.on.failure <- colnames(phenotype.data)[-subject.id.column.index]
         }
       }
       all.targeted.variables <- c(
@@ -98,7 +98,7 @@ dependency.failure.handling <- function(phenotype.data, variable.summary) {
         exclude.on.failure
       )
       exclude.subjects <- results[[j]]
-      if (is.null(exclude.on.failure) |
+      if (is.null(exclude.on.failure) ||
         is.null(exclude.subjects)) {
         next
       }

@@ -15,7 +15,7 @@
 get.top.ten <- function(decreasing, vec, column.label) {
   ten.df <- data.frame(c(), c())
   if (length(vec) > 0) {
-    vec.sorted <- sort(vec, decreasing = decreasing)[1:min(10, length(vec))]
+    vec.sorted <- sort(vec, decreasing = decreasing)[seq_len(min(10, length(vec)))]
     ten.df <- data.frame(names(vec.sorted), vec.sorted)
     colnames(ten.df) <- c(column.label, "Counts")
     rownames(ten.df) <- NULL

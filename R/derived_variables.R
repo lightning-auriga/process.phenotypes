@@ -28,7 +28,7 @@
 create.derived.variables <- function(phenotype.data, variable.summary) {
   not.done.list <- variable.summary$derived
   previous.list.length <- 0
-  while (length(not.done.list) > 0 & length(not.done.list) != previous.list.length) {
+  while (length(not.done.list) > 0 && length(not.done.list) != previous.list.length) {
     previous.list.length <- length(not.done.list)
     for (i in names(not.done.list)) {
       if (i %in% colnames(phenotype.data)) {
