@@ -119,6 +119,58 @@ test_that("apply.type.conversions minimally functions for all types", {
   )
 })
 
+
+test_that("apply.type.conversions correctly skips over null type entries", {
+  in.phenotype.data <- data.frame(
+    TN001 = c("freeform", "text", "entry", "field")
+  )
+  out.phenotype.data <- data.frame(
+    TN001 = c("freeform", "text", "entry", "field")
+  )
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts"
+        )
+      )
+    )
+  )
+  out.var.summary <- in.var.summary
+  output <- NULL
+  expected <- list(
+    phenotype.data = out.phenotype.data,
+    variable.summary = out.var.summary
+  )
+  expect_warning(output <- apply.type.conversions(in.phenotype.data, in.var.summary))
+  expect_identical(output, expected)
+})
+
+
+test_that("apply.type.conversions correctly errors when it finds unhandled type specification", {
+  in.phenotype.data <- data.frame(
+    TN001 = c("freeform", "text", "entry", "field")
+  )
+  out.phenotype.data <- data.frame(
+    TN001 = c("freeform", "text", "entry", "field")
+  )
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts",
+          type = "invalid_type"
+        )
+      )
+    )
+  )
+  out.var.summary <- in.var.summary
+  expect_error(apply.type.conversions(in.phenotype.data, in.var.summary))
+})
+
+
 test_that("apply.bounds changes values below/above the provided min/max to NA", {
   in.var.summary <- list(
     variables = list(

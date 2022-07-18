@@ -26,7 +26,10 @@ apply.type.conversions <- function(phenotype.data, variable.summary) {
     if (is.null(variable.summary$variables[[i]]$params$type)) {
       warning(paste("variable \"", names(variable.summary$variables)[i], "\" has null type specification", sep = ""))
     }
-    target.type <- tolower(variable.summary$variables[[i]]$params$type)
+    target.type <- NULL
+    if (!is.null(variable.summary$variables[[i]]$params$type)) {
+      target.type <- tolower(variable.summary$variables[[i]]$params$type)
+    }
     possible.types <- c(
       "string",
       "categorical",
