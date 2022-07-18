@@ -460,7 +460,9 @@ report.factor.summary <- function(variable.entry,
                                   name,
                                   suppress.reporting) {
   ## give ancestry factor variable special treatment
-  if (!is.null(variable.entry$params$subject_ancestry) && !suppress.reporting) {
+  if (!is.null(variable.entry$params$subject_ancestry) &&
+    length(variable.entry$ancestry.reasoning) > 0 &&
+    !suppress.reporting) {
     ## instead of reporting failed conversions specifically,
     ## report a table of all imperfect matches to the reference ancestry labels,
     ## and track the outcomes for all of them, even the ones that were eventually
