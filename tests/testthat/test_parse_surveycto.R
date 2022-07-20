@@ -160,3 +160,10 @@ test_that("populate.choices warns when impossible multiple choice configurations
   expect_warning(expect_warning(output <- populate.choices(in.df, in.survey.type, in.na.values)))
   expect_identical(output, expected)
 })
+
+test_that("create.config creates correctly formatted initial placeholder yaml config", {
+  expected.filename <- "files/parse_surveycto/initial_placeholder.yaml"
+  expected <- yaml::read_yaml(expected.filename)
+  output <- create.config("HW")
+  expect_equal(output, expected)
+})

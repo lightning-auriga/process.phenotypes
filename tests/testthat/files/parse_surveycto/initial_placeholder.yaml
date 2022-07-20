@@ -1,0 +1,12 @@
+tag: HW
+globals:
+  min_age_for_inclusion: 18
+  max_invalid_datatypes_per_subject: 10
+  consent_inclusion_file: ~
+  consent_exclusion_file: ~
+variables:
+  HW00001:
+    name: "SubmissionDate"
+    type: "string"
+    suppress_reporting: yes
+    canonical_name: "SubmissionDate"
