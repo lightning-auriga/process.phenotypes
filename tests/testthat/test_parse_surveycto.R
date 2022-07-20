@@ -167,3 +167,73 @@ test_that("create.config creates correctly formatted initial placeholder yaml co
   output <- create.config("HW")
   expect_equal(output, expected)
 })
+
+test_that("handle.multiple.levels correctly expands existing yaml config with onehots", {
+  choice.list <- list(models = list(
+    "model1" = list(
+      "type" = "categorical",
+      "levels" = list(
+        "1" = list(
+          "name" = "lvl1",
+          "alternate_patterns" = c("1", "1")
+        ),
+        "2" = list(
+          "name" = "lvl2",
+          "alternate_patterns" = c("2", "2")
+        )
+      )
+    ),
+    "model2" = list(
+      "type" = "categorical",
+      "levels" = list(
+        "1" = list(
+          "name" = "lvl3",
+          "alternate_patterns" = c("1", "1")
+        ),
+        "2" = list(
+          "name" = "lvl4",
+          "alternate_patterns" = c("2", "2")
+        ),
+        "3" = list(
+          "name" = "lvl5",
+          "alternate_patterns" = c("3", "3")
+        )
+      )
+    )
+  ))
+  shared.model <- "model2"
+  varname <- "HW00003"
+  name.value <- "my name"
+  label.value <- "my value"
+  res <- list("variables" = list(
+    "HW00001" = list(
+      "name" = "name1",
+      "type" = "string"
+    ),
+    "HW00002" = list(
+      "name" = "name2",
+      "type" = "string"
+    )
+  ))
+  output <- handle.multiple.levels(
+    choice.list, shared.model, varname,
+    name.value, label.value, res
+  )
+  expected <- res
+  expected$variables[["HW00003_1"]] <- list(
+    "name" = "my name_1",
+    "shared_model" = "yesno",
+    "canonical_name" = "my value, indicator response for level lvl3"
+  )
+  expected$variables[["HW00003_2"]] <- list(
+    "name" = "my name_2",
+    "shared_model" = "yesno",
+    "canonical_name" = "my value, indicator response for level lvl4"
+  )
+  expected$variables[["HW00003_3"]] <- list(
+    "name" = "my name_3",
+    "shared_model" = "yesno",
+    "canonical_name" = "my value, indicator response for level lvl5"
+  )
+  expect_equal(output, expected)
+})
