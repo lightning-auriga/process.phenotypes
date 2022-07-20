@@ -237,3 +237,46 @@ test_that("handle.multiple.levels correctly expands existing yaml config with on
   )
   expect_equal(output, expected)
 })
+
+test_that("add.trailing.metadata appends SurveyCTO special metadata columns", {
+  in.filename <- "files/parse_surveycto/add_trailing_metadata_input.yaml"
+  out.filename <- "files/parse_surveycto/add_trailing_metadata_output.yaml"
+  in.list <- yaml::read_yaml(in.filename)
+  expected <- yaml::read_yaml(out.filename)
+  output <- add.trailing.metadata(
+    in.list,
+    "HW",
+    c(
+      "instanceID",
+      "instanceName",
+      "formdef_version",
+      "KEY",
+      "review_quality",
+      "review_comments",
+      "review_status",
+      "review_corrections"
+    )
+  )
+  expect_equal(output, expected)
+})
+
+test_that("add.trailing.metadata respects missing trailing metadata columns", {
+  in.filename <- "files/parse_surveycto/add_trailing_metadata_input.yaml"
+  out.filename <- "files/parse_surveycto/add_trailing_metadata_output_reduced.yaml"
+  in.list <- yaml::read_yaml(in.filename)
+  expected <- yaml::read_yaml(out.filename)
+  output <- add.trailing.metadata(
+    in.list,
+    "HW",
+    c(
+      "instanceID",
+      "instanceName",
+      "formdef_version",
+      "KEY",
+      "review_comments",
+      "review_status",
+      "review_corrections"
+    )
+  )
+  expect_equal(output, expected)
+})

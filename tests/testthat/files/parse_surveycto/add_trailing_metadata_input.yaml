@@ -1,0 +1,8 @@
+variables:
+  HW00001:
+    name: "var1"
+    type: "string"
+  HW00002:
+    name: "var2"
+    type: "string"
+
