@@ -280,3 +280,73 @@ test_that("add.trailing.metadata respects missing trailing metadata columns", {
   )
   expect_equal(output, expected)
 })
+
+bvd.string.example.gen <- function(stringtype) {
+  type.value <- stringtype
+  name.value <- paste("my_example_", stringtype, sep = "")
+  label.value <- paste("my example ", stringtype, sep = "")
+  choice.list <- list(models = list())
+  varname <- "HW00002"
+  output <- build.variable.data(
+    type.value,
+    name.value,
+    label.value,
+    choice.list,
+    varname
+  )
+  expected <- list(variables = list("HW00002" = list(
+    "name" = paste("my_example_", stringtype, sep = ""),
+    "type" = "string",
+    "suppress_reporting" = TRUE,
+    "canonical_name" = paste("my example ", stringtype, sep = "")
+  )))
+  list(
+    output = output,
+    expected = expected
+  )
+}
+
+test_that("build.variable.data primary functionality: start", {
+  res <- bvd.string.example.gen("start")
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: end", {
+  res <- bvd.string.example.gen("end")
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: deviceid", {
+  res <- bvd.string.example.gen("deviceid")
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: subscriberid", {
+  res <- bvd.string.example.gen("subscriberid")
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: simserial", {
+  res <- bvd.string.example.gen("simserial")
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: phonenumber", {
+  res <- bvd.string.example.gen("phonenumber")
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: username", {
+  res <- bvd.string.example.gen("username")
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: caseid", {
+  res <- bvd.string.example.gen("caseid")
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: image", {
+  res <- bvd.string.example.gen("image")
+  expect_equal(res$output, res$expected)
+})
