@@ -350,3 +350,84 @@ test_that("build.variable.data primary functionality: image", {
   res <- bvd.string.example.gen("image")
   expect_equal(res$output, res$expected)
 })
+
+test_that("build.variable.data primary functionality: text", {
+  res <- bvd.string.example.gen("text")
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: datetime", {
+  res <- bvd.string.example.gen("datetime")
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: group boundaries", {
+  expect_null(build.variable.data(
+    "begin group", "placeholder_name",
+    "placeholder_label", list(models = list()), "HW00001"
+  ))
+  expect_null(build.variable.data(
+    "end group", "placeholder_name",
+    "placeholder_label", list(models = list()), "HW00001"
+  ))
+})
+
+test_that("build.variable.data primary functionality: NA type", {
+  expect_null(build.variable.data(
+    NA, "placeholder_name",
+    "placeholder_label", list(models = list()), "HW00001"
+  ))
+})
+
+test_that("build.variable.data primary functionality: empty type vector", {
+  expect_null(build.variable.data(
+    c(), "placeholder_name",
+    "placeholder_label", list(models = list()), "HW00001"
+  ))
+})
+
+test_that("build.variable.data primary functionality: note", {
+  expect_null(build.variable.data(
+    "note", "placeholder_name",
+    "placeholder_label", list(models = list()), "HW00001"
+  ))
+})
+
+test_that("build.variable.data primary functionality: calculate", {
+  ## override simple generator function
+  res <- bvd.string.example.gen("calculate")
+  res$expected$variables$HW00002$suppress_reporting <- NULL
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: date", {
+  ## override simple generator function
+  res <- bvd.string.example.gen("date")
+  res$expected$variables$HW00002$type <- "date"
+  res$expected$variables$HW00002$suppress_reporting <- NULL
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: integer", {
+  ## override simple generator function
+  res <- bvd.string.example.gen("integer")
+  res$expected$variables$HW00002$type <- "numeric"
+  res$expected$variables$HW00002$suppress_reporting <- NULL
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: decimal", {
+  ## override simple generator function
+  res <- bvd.string.example.gen("decimal")
+  res$expected$variables$HW00002$type <- "numeric"
+  res$expected$variables$HW00002$suppress_reporting <- NULL
+  expect_equal(res$output, res$expected)
+})
+
+test_that("build.variable.data primary functionality: unrecognized type flag", {
+  expect_warning(output <- build.variable.data(
+    "FAKENAME", "placeholder_name",
+    "placeholder_label", list(models = list()), "HW00001"
+  ))
+  expect_true(is.null(output))
+})
