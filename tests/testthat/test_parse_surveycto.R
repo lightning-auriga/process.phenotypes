@@ -706,3 +706,49 @@ test_that("flag.required.variables complains when subject age is missing", {
   ))
   expect_error(flag.required.variables(out.yaml, "subjectid", "R99"))
 })
+
+test_that("flag.required.variables complains when subject ID is duplicated", {
+  out.yaml <- list(variables = list(
+    HW00001 = list(
+      "name" = "subjectid",
+      "type" = "string",
+      "suppress_reporting" = TRUE,
+      "canonical_name" = "subject id"
+    ),
+    HW00002 = list(
+      "name" = "subjectid",
+      "type" = "string",
+      "suppress_reporting" = TRUE,
+      "canonical_name" = "other thing"
+    ),
+    HW00003 = list(
+      "name" = "subjectage",
+      "type" = "numeric",
+      "canonical_name" = "subject age"
+    )
+  ))
+  expect_error(flag.required.variables(out.yaml, "subjectid", "subjectage"))
+})
+
+test_that("flag.required.variables complains when subject age is duplicated", {
+  out.yaml <- list(variables = list(
+    HW00001 = list(
+      "name" = "subjectid",
+      "type" = "string",
+      "suppress_reporting" = TRUE,
+      "canonical_name" = "subject id"
+    ),
+    HW00002 = list(
+      "name" = "subjectage",
+      "type" = "string",
+      "suppress_reporting" = TRUE,
+      "canonical_name" = "other thing"
+    ),
+    HW00003 = list(
+      "name" = "subjectage",
+      "type" = "numeric",
+      "canonical_name" = "subject age"
+    )
+  ))
+  expect_error(flag.required.variables(out.yaml, "subjectid", "subjectage"))
+})
