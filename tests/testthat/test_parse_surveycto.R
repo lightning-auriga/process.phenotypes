@@ -431,3 +431,70 @@ test_that("build.variable.data primary functionality: unrecognized type flag", {
   ))
   expect_true(is.null(output))
 })
+
+test_that("build.variable.data primary functionality: select_one", {
+  type.value <- "select_one mymodel"
+  name.value <- "my_example_select_one"
+  label.value <- "my example select_one"
+  choice.list <- list(models = list())
+  varname <- "HW00002"
+  output <- build.variable.data(
+    type.value,
+    name.value,
+    label.value,
+    choice.list,
+    varname
+  )
+  expected <- list(variables = list("HW00002" = list(
+    "name" = "my_example_select_one",
+    "shared_model" = "mymodel",
+    "canonical_name" = "my example select_one"
+  )))
+  expect_equal(output, expected)
+})
+
+test_that("build.variable.data primary functionality: select_multiple", {
+  type.value <- "select_multiple mymodel"
+  name.value <- "my_example_select_multiple"
+  label.value <- "my example select_multiple"
+  choice.list <- list(models = list("mymodel" = list(
+    "type" = "categorical",
+    "levels" = list(
+      "1" = list(
+        "name" = "lvl1",
+        "alternate_patterns" = c("1", "1")
+      ),
+      "2" = list(
+        "name" = "lvl2",
+        "alternate_patterns" = c("2", "2")
+      )
+    )
+  )))
+  varname <- "HW00002"
+  output <- build.variable.data(
+    type.value,
+    name.value,
+    label.value,
+    choice.list,
+    varname
+  )
+  expected <- list(variables = list(
+    "HW00002" = list(
+      "name" = "my_example_select_multiple",
+      "type" = "string",
+      "suppress_reporting" = TRUE,
+      "canonical_name" = "my example select_multiple"
+    ),
+    "HW00002_1" = list(
+      "name" = "my_example_select_multiple_1",
+      "shared_model" = "yesno",
+      "canonical_name" = "my example select_multiple, indicator response for level lvl1"
+    ),
+    "HW00002_2" = list(
+      "name" = "my_example_select_multiple_2",
+      "shared_model" = "yesno",
+      "canonical_name" = "my example select_multiple, indicator response for level lvl2"
+    )
+  ))
+  expect_equal(output, expected)
+})
