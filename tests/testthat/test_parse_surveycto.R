@@ -498,3 +498,138 @@ test_that("build.variable.data primary functionality: select_multiple", {
   ))
   expect_equal(output, expected)
 })
+
+test_that("handle.repeat.variables can handle the most toxic of test cases", {
+  out.yaml <- list(variables = list("HW00001" = list(
+    "name" = "subject_id",
+    "type" = "string",
+    "suppress_reporting" = TRUE,
+    "canonical_name" = "subject id",
+    "subject_id" = TRUE
+  )))
+  cur.varname <- "HW00002"
+  name.value <- "model_base"
+  label.value <- "my repeat group"
+  survey <- data.frame(
+    "type" = c(
+      "text",
+      "begin repeat",
+      "select_multiple model1",
+      "end repeat",
+      "select_one model1"
+    ),
+    "name" = c(
+      "subject_id",
+      "model_base",
+      "model",
+      NA,
+      "model_1"
+    ),
+    "label" = c(
+      "subject id",
+      "my repeat group",
+      "model1 select_multiple",
+      NA,
+      "model1 select_one"
+    )
+  )
+  dataset.tag <- "HW"
+  responses <- c(
+    "subject_id", "model_base_count",
+    "model_1", "model_1_1", "model_2_1",
+    "model_2", "model_1_2", "model_2_2",
+    "model_3", "model_1_3", "model_2_3",
+    "model_1"
+  )
+  choice.list <- list("models" = list("model1" = list(
+    "type" = "categorical",
+    "levels" = list(
+      "1" = list(
+        "name" = "lvl1",
+        "alternate_patterns" = c("1", "1")
+      ),
+      "2" = list(
+        "name" = "lvl2",
+        "alternate_patterns" = c("2", "2")
+      )
+    )
+  )))
+  i <- 2
+
+  res <- handle.repeat.variables(
+    out.yaml,
+    cur.varname,
+    name.value,
+    label.value,
+    survey,
+    dataset.tag,
+    responses,
+    choice.list,
+    i
+  )
+  expected.yaml <- list("variables" = list(
+    "HW00001" = list(
+      "name" = "subject_id",
+      "type" = "string",
+      "suppress_reporting" = TRUE,
+      "canonical_name" = "subject id",
+      "subject_id" = TRUE
+    ),
+    "HW00002_count" = list(
+      "name" = "model_base_count",
+      "type" = "numeric",
+      "canonical_name" = "my repeat group, count of responses"
+    ),
+    "HW00003_1" = list(
+      "name" = "model_1",
+      "type" = "string",
+      "suppress_reporting" = TRUE,
+      "canonical_name" = "model1 select_multiple, repeat observation 1"
+    ),
+    "HW00003_1_1" = list(
+      "name" = "model_1_1",
+      "shared_model" = "yesno",
+      "canonical_name" = "model1 select_multiple, indicator response for level lvl1, repeat observation 1"
+    ),
+    "HW00003_2_1" = list(
+      "name" = "model_2_1",
+      "shared_model" = "yesno",
+      "canonical_name" = "model1 select_multiple, indicator response for level lvl2, repeat observation 1"
+    ),
+    "HW00003_2" = list(
+      "name" = "model_2",
+      "type" = "string",
+      "suppress_reporting" = TRUE,
+      "canonical_name" = "model1 select_multiple, repeat observation 2"
+    ),
+    "HW00003_1_2" = list(
+      "name" = "model_1_2",
+      "shared_model" = "yesno",
+      "canonical_name" = "model1 select_multiple, indicator response for level lvl1, repeat observation 2"
+    ),
+    "HW00003_2_2" = list(
+      "name" = "model_2_2",
+      "shared_model" = "yesno",
+      "canonical_name" = "model1 select_multiple, indicator response for level lvl2, repeat observation 2"
+    ),
+    "HW00003_3" = list(
+      "name" = "model_3",
+      "type" = "string",
+      "suppress_reporting" = TRUE,
+      "canonical_name" = "model1 select_multiple, repeat observation 3"
+    ),
+    "HW00003_1_3" = list(
+      "name" = "model_1_3",
+      "shared_model" = "yesno",
+      "canonical_name" = "model1 select_multiple, indicator response for level lvl1, repeat observation 3"
+    ),
+    "HW00003_2_3" = list(
+      "name" = "model_2_3",
+      "shared_model" = "yesno",
+      "canonical_name" = "model1 select_multiple, indicator response for level lvl2, repeat observation 3"
+    )
+  ))
+  expected.i <- 4
+  expect_equal(res$out.yaml, expected.yaml)
+  expect_equal(res$i, expected.i)
+})
