@@ -188,7 +188,7 @@ test_that("handle.multiple.levels correctly expands existing yaml config with on
       "levels" = list(
         "1" = list(
           "name" = "lvl3",
-          "alternate_patterns" = c("1", "1")
+          "alternate_patterns" = c("L1", "L1")
         ),
         "2" = list(
           "name" = "lvl4",
@@ -220,8 +220,8 @@ test_that("handle.multiple.levels correctly expands existing yaml config with on
     name.value, label.value, res
   )
   expected <- res
-  expected$variables[["HW00003_1"]] <- list(
-    "name" = "my name_1",
+  expected$variables[["HW00003_L1"]] <- list(
+    "name" = "my name_L1",
     "shared_model" = "yesno",
     "canonical_name" = "my value, indicator response for level lvl3"
   )
@@ -536,9 +536,9 @@ test_that("handle.repeat.variables can handle the most toxic of test cases", {
   dataset.tag <- "HW"
   responses <- c(
     "subject_id", "model_base_count",
-    "model_1", "model_1_1", "model_2_1",
-    "model_2", "model_1_2", "model_2_2",
-    "model_3", "model_1_3", "model_2_3",
+    "model_1", "model_1_1", "model_LV_1",
+    "model_2", "model_1_2", "model_LV_2",
+    "model_3", "model_1_3", "model_LV_3",
     "model_1"
   )
   choice.list <- list("models" = list("model1" = list(
@@ -550,7 +550,7 @@ test_that("handle.repeat.variables can handle the most toxic of test cases", {
       ),
       "2" = list(
         "name" = "lvl2",
-        "alternate_patterns" = c("2", "2")
+        "alternate_patterns" = c("LV", "LV")
       )
     )
   )))
@@ -591,8 +591,8 @@ test_that("handle.repeat.variables can handle the most toxic of test cases", {
       "shared_model" = "yesno",
       "canonical_name" = "model1 select_multiple, indicator response for level lvl1, repeat observation 1"
     ),
-    "HW00003_2_1" = list(
-      "name" = "model_2_1",
+    "HW00003_LV_1" = list(
+      "name" = "model_LV_1",
       "shared_model" = "yesno",
       "canonical_name" = "model1 select_multiple, indicator response for level lvl2, repeat observation 1"
     ),
@@ -607,8 +607,8 @@ test_that("handle.repeat.variables can handle the most toxic of test cases", {
       "shared_model" = "yesno",
       "canonical_name" = "model1 select_multiple, indicator response for level lvl1, repeat observation 2"
     ),
-    "HW00003_2_2" = list(
-      "name" = "model_2_2",
+    "HW00003_LV_2" = list(
+      "name" = "model_LV_2",
       "shared_model" = "yesno",
       "canonical_name" = "model1 select_multiple, indicator response for level lvl2, repeat observation 2"
     ),
@@ -623,8 +623,8 @@ test_that("handle.repeat.variables can handle the most toxic of test cases", {
       "shared_model" = "yesno",
       "canonical_name" = "model1 select_multiple, indicator response for level lvl1, repeat observation 3"
     ),
-    "HW00003_2_3" = list(
-      "name" = "model_2_3",
+    "HW00003_LV_3" = list(
+      "name" = "model_LV_3",
       "shared_model" = "yesno",
       "canonical_name" = "model1 select_multiple, indicator response for level lvl2, repeat observation 3"
     )
@@ -751,4 +751,20 @@ test_that("flag.required.variables complains when subject age is duplicated", {
     )
   ))
   expect_error(flag.required.variables(out.yaml, "subjectid", "subjectage"))
+})
+
+test_that("parse.surveycto runs end to end with primary conformant logic", {
+
+})
+
+test_that("parse.surveycto correctly detects header prediction failure: extra expected variables", {
+
+})
+
+test_that("parse.surveycto correctly detects header prediction failure: extra observed variables", {
+
+})
+
+test_that("parse.surveycto correctly detects header prediction failure: correct variables but wrong order", {
+
 })

@@ -120,7 +120,7 @@ populate.choices <- function(df, survey.type, na.values) {
       }
       ## escape regex special characters in alternate patterns
       alternate.patterns <- stringr::str_replace_all(alternate.patterns, "(\\(|\\)|\\|)|\\[|\\]", "\\\\\\1")
-      var.levels[[lvl.tag]][["alternate_patterns"]] <- tolower(alternate.patterns)
+      var.levels[[lvl.tag]][["alternate_patterns"]] <- alternate.patterns
     }
     var.model <- list(
       "type" = "categorical",
@@ -534,5 +534,10 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
   }
   out.yaml <- flag.required.variables(out.yaml, subject.id.name, age.name)
   yaml::write_yaml(out.yaml, out.yaml.filename, fileEncoding = "UTF-8")
+  ## after column name resolution is complete, only then set categorical
+  ## levels to lowercase versions
+  for (model.name in names(choice.list$models)) {
+    choice.list$models[[model.name]]$alternate_patterns <- tolower(choice.list$models[[model.name]]$alternate_patterns)
+  }
   yaml::write_yaml(choice.list, out.shared.models, fileEncoding = "UTF-8")
 }
