@@ -870,7 +870,6 @@ test_that("parse.surveycto runs end to end with primary conformant logic", {
       )
     )
   )))
-  print(out.shared.models)
   expect_equal(out.shared.models, expected.shared.models)
 })
 
