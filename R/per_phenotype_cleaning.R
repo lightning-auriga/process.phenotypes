@@ -286,7 +286,6 @@ exclude.by.age <- function(phenotype.data, variable.summary) {
   stopifnot(!is.null(variable.summary$globals$min_age_for_inclusion), !is.na(min.age))
   flag <- 0
   for (i in seq_len(length(variable.summary$variables))) {
-    # TODO look for variable marked as subject age
     if (!is.null(variable.summary$variables[[i]]$params$subject_age)) {
       if (variable.summary$variables[[i]]$params$subject_age) {
         flag <- i
@@ -295,7 +294,7 @@ exclude.by.age <- function(phenotype.data, variable.summary) {
     }
   }
   if (flag) {
-    ## TODO: recognize date of birth column and attempt to rescue NA ages
+    ## possible future feature: recognize date of birth column and attempt to rescue NA ages
     subjects.dropped <- length(which(phenotype.data[, flag] < min.age | is.na(phenotype.data[, flag])))
     variable.summary$subjects.excluded.for.age <- subjects.dropped
     phenotype.data <- phenotype.data[phenotype.data[, flag] >= min.age & !is.na(phenotype.data[, flag]), ]

@@ -488,6 +488,32 @@ test_that("exclude.by.age correctly removes subjects with ages below the given t
   ))
 })
 
+test_that("exclude.by.age complains when subject age is not specified in yaml", {
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "age",
+        params = list(
+          name = "age",
+          type = "numeric"
+        )
+      ),
+      TN002 = list(
+        original.name = "not age",
+        params = list(
+          name = "not age",
+          type = "numeric"
+        )
+      )
+    ),
+    globals = list(
+      min_age_for_inclusion = 16
+    )
+  )
+  in.phenotype.data <- data.frame(TN001 = c(15:20), TN002 = 12:17)
+  expect_error(exclude.by.age(in.phenotype.data, in.var.summary))
+})
+
 test_that("parse.date extracts year and infers century correctly", {
   in.vec <- c("10/20/19", "1/2/95", "2/3/1993", "1/6/123", "21 March 2002", "5-4-04")
   in.var.summary <- list()
