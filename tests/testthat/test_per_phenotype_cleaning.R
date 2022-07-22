@@ -379,6 +379,42 @@ test_that("convert.variable.specific.na sets instances of strings to NA", {
   )
 })
 
+test_that("convert.variable.specific.na enforces suppress.output override", {
+  in.phenotype.data <- data.frame(
+    TN001 = c("apple", "banana", "river", "cranberry"),
+    TN002 = c("redmeat", "chicken", "fish", "pork")
+  )
+  in.variable.summary <- list(variables = list(
+    TN001 = list(
+      original.name = "something",
+      params = list(
+        type = "categorical",
+        levels = list(
+          "1" = list(name = "apple"),
+          "2" = list(name = "banana"),
+          "3" = list(name = "cranberry")
+        ),
+        "na-values" = c("window", "river", "Austria"),
+        suppress_output = FALSE
+      )
+    ),
+    TN002 = list(original.name = "meattypes", params = list(
+      name = "meattypes",
+      type = "string",
+      suppress_output = TRUE
+    ))
+  ))
+  out.phenotype.data <- data.frame(
+    TN001 = c("apple", "banana", NA, "cranberry"),
+    TN002 = rep(NA, 4)
+  )
+  out.variable.summary <- in.variable.summary
+  expect_identical(
+    convert.variable.specific.na(in.phenotype.data, in.variable.summary),
+    out.phenotype.data
+  )
+})
+
 test_that("exclude.by.age correctly removes subjects with ages below the given threshold", {
   in.var.summary <- list(
     variables = list(

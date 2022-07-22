@@ -231,16 +231,7 @@ convert.variable.specific.na <- function(phenotype.data, variable.summary) {
   for (i in seq_len(length(variable.summary$variables))) {
     na.values <- variable.summary$variables[[i]]$params[["na-values"]]
     if (!is.null(na.values)) {
-      if (is.vector(na.values)) {
-        phenotype.data[phenotype.data[, i] %in% as.character(na.values), i] <- NA
-      } else {
-        stop(
-          "for variable \"",
-          variable.summary[[i]]$original.name,
-          "\", na-values configuration option has ",
-          "unrecognized type ", typeof(na.values)
-        )
-      }
+      phenotype.data[phenotype.data[, i] %in% as.character(na.values), i] <- NA
     }
     if (!is.null(variable.summary$variables[[i]]$params[["suppress_output"]])) {
       if (variable.summary$variables[[i]]$params[["suppress_output"]]) {
