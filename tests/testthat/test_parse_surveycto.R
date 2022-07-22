@@ -888,15 +888,25 @@ test_that("parse.surveycto correctly detects header prediction failure: extra ex
 })
 
 test_that("parse.surveycto correctly detects header prediction failure: extra observed variables", {
-
+  in.xlsx <- "files/parse_surveycto/parse_surveycto_example3.xlsx"
+  in.csv <- "files/parse_surveycto/parse_surveycto_example1.csv"
+  in.tag <- "HW"
+  out.dataset.yaml.fname <- tempfile("parse_surveycto_extra_observed_dataset", fileext = "yaml")
+  out.shared.models.fname <- tempfile("parse_surveycto_extra_observed_shared_models", fileext = "yaml")
+  expect_snapshot(parse.surveycto(in.xlsx, in.csv, in.tag, out.dataset.yaml.fname, out.shared.models.fname,
+    subject.id.name = "subjectid_1",
+    age.name = "subjectage"
+  ),
+  error = TRUE
+  )
 })
 
 test_that("parse.surveycto correctly detects header prediction failure: correct variables but wrong order", {
   in.xlsx <- "files/parse_surveycto/parse_surveycto_example1.xlsx"
   in.csv <- "files/parse_surveycto/parse_surveycto_example4.csv"
   in.tag <- "HW"
-  out.dataset.yaml.fname <- tempfile("parse_surveycto_extra_expected_dataset", fileext = "yaml")
-  out.shared.models.fname <- tempfile("parse_surveycto_extra_expected_shared_models", fileext = "yaml")
+  out.dataset.yaml.fname <- tempfile("parse_surveycto_shuffled_dataset", fileext = "yaml")
+  out.shared.models.fname <- tempfile("parse_surveycto_shuffled_shared_models", fileext = "yaml")
   expect_snapshot(parse.surveycto(in.xlsx, in.csv, in.tag, out.dataset.yaml.fname, out.shared.models.fname,
     subject.id.name = "subjectid_1",
     age.name = "subjectage"

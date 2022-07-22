@@ -9,6 +9,17 @@
     Error <simpleError>
       output variable prediction has failed
 
+# parse.surveycto correctly detects header prediction failure: extra observed variables
+
+    Code
+      parse.surveycto(in.xlsx, in.csv, in.tag, out.dataset.yaml.fname,
+        out.shared.models.fname, subject.id.name = "subjectid_1", age.name = "subjectage")
+    Output
+      [1] "computed result variables missing real output variables"
+      [1] "deviceid"
+    Error <simpleError>
+      output variable prediction has failed
+
 # parse.surveycto correctly detects header prediction failure: correct variables but wrong order
 
     Code

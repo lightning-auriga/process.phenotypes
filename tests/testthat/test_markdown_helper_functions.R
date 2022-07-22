@@ -96,10 +96,82 @@ test_that("report.excel.problems respects no errors", {
   )
 })
 
-test_that("report.excel.problems respected suppress.reporting", {
+test_that("report.excel.problems respects suppress.reporting", {
   variable.entry <- list(excel.problem.count = 4200)
   suppress.reporting <- TRUE
   expect_output(report.excel.problems(variable.entry, suppress.reporting),
     regexp = NA
   )
+})
+
+rns.valid.phenotype.data <- data.frame(
+  HW00001 = 1:50,
+  HW00002 = rep(c("group1", "group2"), each = 25)
+)
+rns.invalid.phenotype.data <- data.frame(
+  HW00001 = as.numeric(rep(NA, 22)),
+  HW00002 = rep("notanumber", 22)
+)
+rns.variable.entry <- list(
+  params = list(
+    name = "myname",
+    canonical_name = "canonname",
+    bounds = list(
+      "min" = 10,
+      "max" = 40,
+      "sd" = 1
+    )
+  ),
+  num.below.min = 9,
+  num.above.max = 10,
+  num.beyond.sd = 12
+)
+rns.name <- "HW00001"
+rns.pretty.name <- "such a nice variable"
+my.theme <- ggplot2::theme_light() + ggplot2::theme(
+  plot.title = ggplot2::element_text(hjust = 0.5, size = 16),
+  axis.title = ggplot2::element_text(size = 14),
+  axis.text = ggplot2::element_text(size = 12)
+)
+test_that("report.numeric.summary respects suppress.reporting", {
+  expect_output(report.numeric.summary(
+    rns.valid.phenotype.data[, 1],
+    rns.valid.phenotype.data,
+    rns.variable.entry,
+    rns.name,
+    rns.pretty.name,
+    my.theme,
+    TRUE
+  ),
+  regexp = NA
+  )
+})
+
+test_that("report.numeric.summary suppresses plot when all entries are NA", {
+  expect_output(output <- report.numeric.summary(
+    rns.invalid.phenotype.data[, 1],
+    rns.invalid.phenotype.data,
+    rns.variable.entry,
+    rns.name,
+    rns.pretty.name,
+    my.theme,
+    FALSE
+  ),
+  regexp = NA
+  )
+  expect_true(is.null(output$hist.plot))
+  expect_true(inherits(output$tab.summary, "knitr_kable"))
+  expect_equal(attr(output$tab.summary, "format"), "html")
+  expect_true(stringr::str_detect(
+    output$tab.summary,
+    stringr::regex(paste("<caption>Numeric bounds on HW00001 \\(such a nice variable\\)</caption>",
+      ".*> Type <.*> Value <.*> Count <",
+      ".*> minimum <.*> 10 <.*> 9 <",
+      ".*> maximum <.*> 40 <.*> 10 <",
+      ".*> standard deviation <.*> 1 <.*> 12 <",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
 })
