@@ -9,3 +9,17 @@ test_that("get.top.ten returns the top ten named and values from a named vector 
   )
   expect_identical(get.top.ten(decreasing = FALSE, input.vec, "Subjects"), output.df)
 })
+
+test_that("get.bins handles vectors with greater than 50 unique values", {
+  in.vec <- rnorm(1000)
+  expected <- 50
+  output <- get.bins(in.vec)
+  expect_equal(output, expected)
+})
+
+test_that("get.bins handles vectors with at most 50 unique values", {
+  in.vec <- rep(1:48, 2)
+  expected <- 48
+  output <- get.bins(in.vec)
+  expect_equal(output, expected)
+})
