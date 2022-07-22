@@ -1,3 +1,43 @@
+test_that("exclude.by.missing.subject.id functions excludes appropriate targets", {
+  in.phenotype.data <- data.frame(
+    TN001 = c("A", NA, "B", "C", NA, "D"),
+    TN002 = 1:6,
+    TN003 = 7:12
+  )
+  in.var.summary <- list(variables = list(
+    TN001 = list(
+      original.name = "name1",
+      params = list(
+        name = "name1",
+        type = "string",
+        suppress_reporting = TRUE,
+        subject_id = TRUE
+      )
+    ),
+    TN002 = list(
+      original.name = "name2",
+      params = list(
+        name = "name2",
+        type = "numeric",
+        subject_id = FALSE
+      )
+    ),
+    TN003 = list(
+      original.name = "name3",
+      params = list(
+        name = "name3",
+        type = "numeric"
+      )
+    )
+  ))
+  expected.df <- in.phenotype.data[c(1, 3, 4, 6), ]
+  expected.list <- in.var.summary
+  expected.list$na.subject.id.count <- 2
+  res <- exclude.by.missing.subject.id(in.phenotype.data, in.var.summary)
+  expect_equal(res$phenotype.data, expected.df)
+  expect_equal(res$variable.summary, expected.list)
+})
+
 test_that("apply.type.conversions minimally functions for all types", {
   in.phenotype.data <- data.frame(
     TN001 = c("freeform", "text", "entry", "field"),
