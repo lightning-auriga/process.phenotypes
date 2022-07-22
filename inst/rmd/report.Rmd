@@ -245,7 +245,7 @@ for (name in names(variable.summary$variables)) {
 
 
   ## if the source data type is numeric
-  report.numeric.summary(
+  num.summary.res <- report.numeric.summary(
     phenotype.data[, name],
     phenotype.data,
     variable.summary$variables[[name]],
@@ -254,6 +254,12 @@ for (name in names(variable.summary$variables)) {
     my.theme,
     suppress.reporting
   )
+  if (!is.null(num.summary.res$hist.plot)) {
+    print(num.summary.res$hist.plot)
+  }
+  if (!is.null(num.summary.res$tab.summary)) {
+    print(num.summary.res$tab.summary)
+  }
 
   ## if the source data has a linked_date variable, indicating it is an age
   ## that in theory should be derived from a date

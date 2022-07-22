@@ -99,6 +99,8 @@ report.numeric.summary <- function(data.vec,
                                    variable.pretty.name,
                                    my.theme,
                                    suppress.reporting) {
+  hist.plot <- NULL
+  tab.summary <- NULL
   if (is.vector(data.vec, mode = "numeric") && !suppress.reporting) {
     if (length(which(!is.na(data.vec)))) {
       ## create data histogram for numeric data
@@ -174,7 +176,6 @@ report.numeric.summary <- function(data.vec,
           ") Distribution\n\n",
           sep = ""
         )
-        print(hist.plot)
       }
     }
     if (!is.null(variable.entry$params$bounds)) {
@@ -203,10 +204,14 @@ report.numeric.summary <- function(data.vec,
       )
       rownames(bound.df) <- NULL
       table.caption <- paste("Numeric bounds on ", name, " (", variable.pretty.name, ")", sep = "")
-      cat(knitr::kable(bound.df, caption = table.caption) %>%
-        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+      tab.summary <- knitr::kable(bound.df, caption = table.caption) %>%
+        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE)
     }
   }
+  list(
+    hist.plot = hist.plot,
+    tab.summary = tab.summary
+  )
 }
 
 
