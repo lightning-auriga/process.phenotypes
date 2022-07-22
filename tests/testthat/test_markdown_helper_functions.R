@@ -68,3 +68,38 @@ test_that("report.name.and.code does nothing if name and code both missing", {
     regexp = NA
   )
 })
+
+test_that("report.excel.problems reports single error", {
+  variable.entry <- list(excel.problem.count = 1)
+  suppress.reporting <- FALSE
+  expect_output(report.excel.problems(variable.entry, suppress.reporting),
+    regexp = "^\nWARNING: 1 Excel error code detected in this variable.$"
+  )
+})
+
+test_that("report.excel.problems reports multiple errors", {
+  variable.entry <- list(excel.problem.count = 55)
+  suppress.reporting <- FALSE
+  expect_output(report.excel.problems(variable.entry, suppress.reporting),
+    regexp = "^\nWARNING: 55 Excel error codes detected in this variable.$"
+  )
+})
+
+test_that("report.excel.problems respects no errors", {
+  variable.entry <- list(params = list(
+    name = "myname",
+    canonical_name = "canonname"
+  ))
+  suppress.reporting <- FALSE
+  expect_output(report.excel.problems(variable.entry, suppress.reporting),
+    regexp = NA
+  )
+})
+
+test_that("report.excel.problems respected suppress.reporting", {
+  variable.entry <- list(excel.problem.count = 4200)
+  suppress.reporting <- TRUE
+  expect_output(report.excel.problems(variable.entry, suppress.reporting),
+    regexp = NA
+  )
+})
