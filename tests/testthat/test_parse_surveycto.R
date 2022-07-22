@@ -765,8 +765,8 @@ test_that("parse.surveycto runs end to end with primary conformant logic", {
   ))
   expect_true(file.exists(out.dataset.yaml.fname))
   expect_true(file.exists(out.shared.models.fname))
-  out.dataset.yaml <- read_yaml(out.dataset.yaml.fname)
-  out.shared.models <- read_yaml(out.shared.models.fname)
+  out.dataset.yaml <- yaml::read_yaml(out.dataset.yaml.fname)
+  out.shared.models <- yaml::read_yaml(out.shared.models.fname)
   expected.dataset.yaml <- list(
     tag = in.tag,
     globals = list(
