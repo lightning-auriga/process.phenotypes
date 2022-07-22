@@ -6,7 +6,9 @@ test_that("apply.type.conversions minimally functions for all types", {
     TN004 = c("orange", "orange", "pineapple", "banana"),
     TN005 = c("1.05", "4.44mm", "3.21", "169 / 100"),
     TN006 = c("100/90", "100 / 80mhg", "200/ 100", "40"),
-    TN007 = c("A", "B", "C", "D")
+    TN007 = c("A", "B", "C", "D"),
+    TN008 = c("2004", "12/8/08", "April 2012", "hello_world"),
+    TN009 = c("1", "4", "2", "3")
   )
   out.phenotype.data <- data.frame(
     TN001 = c("freeform", "text", "entry", "field"),
@@ -26,7 +28,9 @@ test_that("apply.type.conversions minimally functions for all types", {
     ),
     TN005 = c(1.05, 4.44, 3.21, NA),
     TN006 = c("100/90", "100/80", "200/100", NA),
-    TN007 = c("A", "B", "C", "D")
+    TN007 = c("A", "B", "C", "D"),
+    TN008 = c(2004, 2008, 2012, NA),
+    TN009 = c(1, NA, 2, 3)
   )
   in.var.summary <- list(
     variables = list(
@@ -96,6 +100,25 @@ test_that("apply.type.conversions minimally functions for all types", {
           type = "string",
           subject_id = TRUE
         )
+      ),
+      TN008 = list(
+        original.name = "fundate",
+        params = list(
+          name = "fundate",
+          type = "date"
+        )
+      ),
+      TN009 = list(
+        original.name = "weirdcat",
+        params = list(
+          name = "weirdcat",
+          type = "categorical_to_numeric",
+          levels = list(
+            "1" = list("name" = "1"),
+            "2" = list("name" = "2"),
+            "3" = list("name" = "3")
+          )
+        )
       )
     )
   )
@@ -110,6 +133,12 @@ test_that("apply.type.conversions minimally functions for all types", {
   out.var.summary$variables$TN005$subjects.wrong.type <- c("D")
   out.var.summary$variables$TN006$invalid.blood.pressure.entries <- c("40")
   out.var.summary$variables$TN006$subjects.wrong.type <- c("D")
+  out.var.summary$variables$TN008$invalid.date.entries <- c("hello_world")
+  out.var.summary$variables$TN008$subjects.wrong.type <- c("D")
+  out.var.summary$variables$TN009$params$type <- "numeric"
+  out.var.summary$variables$TN009$invalid.factor.entries <- c("4")
+  out.var.summary$variables$TN009$invalid.numeric.entries <- character()
+  out.var.summary$variables$TN009$subjects.wrong.type <- c("B")
   expect_identical(
     apply.type.conversions(in.phenotype.data, in.var.summary),
     list(
@@ -119,6 +148,34 @@ test_that("apply.type.conversions minimally functions for all types", {
   )
 })
 
+test_that("convert.type recognizes and complains about unexpected types", {
+  in.phenotype.data <- data.frame(
+    TN001 = c("A", "B"),
+    TN002 = c("val1", "val2")
+  )
+  in.var.summary <- list(variables = list(
+    TN001 = list(
+      original.name = "name1",
+      params = list(
+        name = "name1",
+        type = "string",
+        subject_id = TRUE
+      )
+    ),
+    TN002 = list(
+      original.name = "name2",
+      params = list(
+        name = "name2",
+        type = "alien_type"
+      )
+    )
+  ))
+  expect_error(convert.type(
+    in.phenotype.data,
+    in.var.summary,
+    "alien_type"
+  ))
+})
 
 test_that("apply.type.conversions correctly skips over null type entries", {
   in.phenotype.data <- data.frame(
