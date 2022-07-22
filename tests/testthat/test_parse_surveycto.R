@@ -754,7 +754,124 @@ test_that("flag.required.variables complains when subject age is duplicated", {
 })
 
 test_that("parse.surveycto runs end to end with primary conformant logic", {
-
+  in.xlsx <- "files/parse_surveycto/parse_surveycto_example1.xlsx"
+  in.csv <- "files/parse_surveycto/parse_surveycto_example1.csv"
+  in.tag <- "HW"
+  out.dataset.yaml.fname <- tempfile("parse_surveycto_endtoend_dataset", fileext = "yaml")
+  out.shared.models.fname <- tempfile("parse_surveycto_endtoend_shared_models", fileext = "yaml")
+  expect_null(parse.surveycto(in.xlsx, in.csv, in.tag, out.dataset.yaml.fname, out.shared.models.fname,
+    subject.id.name = "subjectid_1",
+    age.name = "subjectage"
+  ))
+  expect_true(file.exists(out.dataset.yaml.fname))
+  expect_true(file.exists(out.shared.models.fname))
+  out.dataset.yaml <- read_yaml(out.dataset.yaml.fname)
+  out.shared.models <- read_yaml(out.shared.models.fname)
+  expected.dataset.yaml <- list(
+    tag = in.tag,
+    globals = list(
+      min_age_for_inclusion = 18,
+      max_invalid_datatypes_per_subject = 10,
+      consent_inclusion_file = NULL,
+      consent_exclusion_file = NULL
+    ),
+    variables = list(
+      HW00001 = list(
+        name = "SubmissionDate",
+        type = "string",
+        suppress_reporting = TRUE,
+        canonical_name = "SubmissionDate"
+      ),
+      HW00002 = list(
+        name = "starttime",
+        type = "string",
+        suppress_reporting = TRUE,
+        canonical_name = NA
+      ),
+      HW00003 = list(
+        name = "endtime",
+        type = "string",
+        suppress_reporting = TRUE,
+        canonical_name = NA
+      ),
+      HW00004 = list(
+        name = "deviceid",
+        type = "string",
+        suppress_reporting = TRUE,
+        canonical_name = NA
+      ),
+      HW00005 = list(
+        name = "subscriberid",
+        type = "string",
+        suppress_reporting = TRUE,
+        canonical_name = NA
+      ),
+      HW00006 = list(
+        name = "simid",
+        type = "string",
+        suppress_reporting = TRUE,
+        canonical_name = NA
+      ),
+      HW00007 = list(
+        name = "devicephonenum",
+        type = "string",
+        suppress_reporting = TRUE,
+        canonical_name = NA
+      ),
+      HW00008 = list(
+        name = "username",
+        type = "string",
+        suppress_reporting = TRUE,
+        canonical_name = NA
+      ),
+      HW00009 = list(
+        name = "caseid",
+        type = "string",
+        suppress_reporting = TRUE,
+        canonical_name = NA
+      ),
+      HW00010 = list(
+        name = "option",
+        shared_model = "yesno",
+        canonical_name = "do you want the thing"
+      ),
+      HW00011_1 = list(
+        name = "subjectid_1",
+        type = "string",
+        suppress_reporting = TRUE,
+        canonical_name = "enter subject id, repeat observation 1",
+        subject_id = TRUE
+      ),
+      HW00012 = list(
+        name = "subjectage",
+        type = "numeric",
+        canonical_name = "how old are you",
+        subject_age = TRUE
+      ),
+      HW00013 = list(
+        name = "formdef_version",
+        type = "string",
+        suppress_reporting = TRUE,
+        canonical_name = "formdef_version"
+      )
+    )
+  )
+  expect_equal(out.dataset.yaml, expected.dataset.yaml)
+  expected.shared.models <- list(models = list(yesno = list(
+    type = "categorical",
+    levels = list(
+      "lvl1" = list(
+        name = "Yes",
+        alternate_patterns = c("1", "1")
+      ),
+      "lvl2" = list(
+        name = "No",
+        alternate_patterns = c("0", "0")
+      )
+    )
+  )))
+  print(out.shared.models)
+  expect_equal(out.shared.models, expected.shared.models)
 })
 
 test_that("parse.surveycto correctly detects header prediction failure: extra expected variables", {
