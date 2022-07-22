@@ -46,7 +46,8 @@ report.name.and.code <- function(variable.entry) {
   if (!is.null(variable.entry$params$canonical_name)) {
     cat(
       "Official variable identity: \"",
-      variable.entry$params$canonical_name, "\"", "\n\n"
+      variable.entry$params$canonical_name, "\"", "\n\n",
+      sep = ""
     )
   }
   if (!is.null(variable.entry$params$code)) {

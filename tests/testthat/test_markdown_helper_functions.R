@@ -23,3 +23,48 @@ test_that("get.bins handles vectors with at most 50 unique values", {
   output <- get.bins(in.vec)
   expect_equal(output, expected)
 })
+
+test_that("report.name.and.code reports name only if code missing", {
+  var.summary <- list(params = list(
+    name = "placeholder",
+    canonical_name = "myname"
+  ))
+  expect_output(report.name.and.code(var.summary),
+    regexp = "^Official variable identity: \"myname\"\n$"
+  )
+})
+
+test_that("report.name.and.code reports code only if name missing", {
+  var.summary <- list(params = list(
+    name = "placeholder",
+    code = "mycode"
+  ))
+  expect_output(report.name.and.code(var.summary),
+    regexp = paste("^\n\nThe logic to create this derived variable is ",
+      "as follows:\n\n```\nmycode\n```\n$",
+      sep = ""
+    )
+  )
+})
+
+test_that("report.name.and.code reports name and code both", {
+  var.summary <- list(params = list(
+    name = "placeholder",
+    canonical_name = "myname",
+    code = "mycode"
+  ))
+  expect_output(report.name.and.code(var.summary),
+    regexp = paste("^Official variable identity: \"myname\"\n\n\n\n",
+      "The logic to create this derived variable is ",
+      "as follows:\n\n```\nmycode\n```\n$",
+      sep = ""
+    )
+  )
+})
+
+test_that("report.name.and.code does nothing if name and code both missing", {
+  var.summary <- list(params = list(name = "dummyname"))
+  expect_output(report.name.and.code(var.summary),
+    regexp = NA
+  )
+})
