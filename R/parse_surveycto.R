@@ -537,7 +537,10 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
   ## after column name resolution is complete, only then set categorical
   ## levels to lowercase versions
   for (model.name in names(choice.list$models)) {
-    choice.list$models[[model.name]]$alternate_patterns <- tolower(choice.list$models[[model.name]]$alternate_patterns)
+    for (model.lvl in names(choice.list$models[[model.name]]$levels)) {
+      choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns <-
+        tolower(choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns)
+    }
   }
   yaml::write_yaml(choice.list, out.shared.models, fileEncoding = "UTF-8")
 }
