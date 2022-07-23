@@ -275,3 +275,63 @@ test_that("report.numeric.summary reports multimodal distribution", {
     )
   ))
 })
+
+linked.year.phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = 2000:2003,
+  HW00003 = 18:21
+)
+linked.year.variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "var1",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(params = list(
+    name = "var2",
+    type = "date"
+  )),
+  HW00003 = list(params = list(
+    name = "var3",
+    type = "numeric",
+    subject_age = TRUE,
+    linked_date = list(
+      reported_year = "HW00002",
+      reference_year = 2020
+    )
+  ))
+))
+test_that("report.linked.date respects suppress.reporting", {
+  expect_output(output <- report.linked.date(
+    linked.year.phenotype.data[, 3],
+    linked.year.phenotype.data,
+    linked.year.variable.summary$variables$HW00003,
+    "HW00003",
+    my.theme,
+    TRUE
+  ),
+  regexp = NA
+  )
+  expect_null(output)
+})
+
+test_that("report.linked.date emits a plot of expected type", {
+  expect_output(output <- report.linked.date(
+    linked.year.phenotype.data[, 3],
+    linked.year.phenotype.data,
+    linked.year.variable.summary$variables$HW00003,
+    "HW00003",
+    my.theme,
+    FALSE
+  ),
+  regexp = "^\n\n#### Comparison between reported age HW00003 and age derived from date HW00002\n"
+  )
+  ## check that standard theme has been applied
+  expect_true(!is.null(output$theme))
+  expect_equal(output$theme$plot.title$hjust, 0.5)
+  ## check that it's a geom_point with a geom_abline on top
+  expect_true(!is.null(output$layers))
+  expect_equal(length(output$layers), 2)
+  expect_true(inherits(output$layers[[1]]$geom, "GeomPoint"))
+  expect_true(inherits(output$layers[[2]]$geom, "GeomAbline"))
+})
