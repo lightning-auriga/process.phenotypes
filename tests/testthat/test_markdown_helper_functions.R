@@ -105,8 +105,8 @@ test_that("report.excel.problems respects suppress.reporting", {
 })
 
 rns.valid.phenotype.data <- data.frame(
-  HW00001 = 1:50,
-  HW00002 = rep(c("group1", "group2"), each = 25)
+  HW00001 = c(1:50, NA),
+  HW00002 = c(rep(c("group1", "group2"), each = 25), "group3")
 )
 rns.invalid.phenotype.data <- data.frame(
   HW00001 = as.numeric(rep(NA, 22)),
@@ -160,6 +160,106 @@ test_that("report.numeric.summary suppresses plot when all entries are NA", {
   regexp = NA
   )
   expect_true(is.null(output$hist.plot))
+  expect_true(inherits(output$tab.summary, "knitr_kable"))
+  expect_equal(attr(output$tab.summary, "format"), "html")
+  expect_true(stringr::str_detect(
+    output$tab.summary,
+    stringr::regex(paste("<caption>Numeric bounds on HW00001 \\(such a nice variable\\)</caption>",
+      ".*> Type <.*> Value <.*> Count <",
+      ".*> minimum <.*> 10 <.*> 9 <",
+      ".*> maximum <.*> 40 <.*> 10 <",
+      ".*> standard deviation <.*> 1 <.*> 12 <",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
+})
+
+test_that("report.numeric.summary reports plot and bounds table", {
+  ## test automatic sd bounds by nullifying that entry from input
+  var.entry <- rns.variable.entry
+  var.entry$params$bounds$sd <- NULL
+  var.entry$num.beyond.sd <- NULL
+  expect_output(output <- report.numeric.summary(
+    rns.valid.phenotype.data[, 1],
+    rns.valid.phenotype.data,
+    var.entry,
+    rns.name,
+    rns.pretty.name,
+    my.theme,
+    FALSE
+  ),
+  regexp = "^\n\n#### Histogram of HW00001 \\(such a nice variable\\) Distribution\n"
+  )
+  ## check that standard theme has been applied
+  expect_true(!is.null(output$hist.plot$theme))
+  expect_equal(output$hist.plot$theme$plot.title$hjust, 0.5)
+  ## check that it's a geom_histogram
+  expect_true(!is.null(output$hist.plot$layers))
+  expect_true(inherits(output$hist.plot$layers[[1]]$geom, "GeomBar"))
+  ## check that it has three layers: histogram, -sd bound, +sd bound
+  expect_equal(length(output$hist.plot$layers), 3)
+  expect_true(inherits(output$hist.plot$layers[[2]]$geom, "GeomVline"))
+  expect_true(inherits(output$hist.plot$layers[[3]]$geom, "GeomVline"))
+  ## check that bounds still report as normal
+  expect_true(inherits(output$tab.summary, "knitr_kable"))
+  expect_equal(attr(output$tab.summary, "format"), "html")
+  expect_true(stringr::str_detect(
+    output$tab.summary,
+    stringr::regex(paste("<caption>Numeric bounds on HW00001 \\(such a nice variable\\)</caption>",
+      ".*> Type <.*> Value <.*> Count <",
+      ".*> minimum <.*> 10 <.*> 9 <",
+      ".*> maximum <.*> 40 <.*> 10 <",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
+  ## be sure that dropping sd bound dropped that entry from the bounds table
+  expect_false(stringr::str_detect(
+    output$tab.summary,
+    stringr::regex(".*> standard deviation <.*> 1 <.*> 12 <",
+      dotall = TRUE
+    )
+  ))
+})
+
+test_that("report.numeric.summary reports multimodal distribution", {
+  ## override basic test with multimodal test
+  var.entry <- rns.variable.entry
+  var.entry$params$multimodal <- "HW00002"
+  expect_output(output <- report.numeric.summary(
+    rns.valid.phenotype.data[, 1],
+    rns.valid.phenotype.data,
+    var.entry,
+    rns.name,
+    rns.pretty.name,
+    my.theme,
+    FALSE
+  ),
+  regexp = "^\n\n#### Histogram of HW00001 \\(such a nice variable\\) Distribution\n"
+  )
+  ## check that standard theme has been applied
+  expect_true(!is.null(output$hist.plot$theme))
+  expect_equal(output$hist.plot$theme$plot.title$hjust, 0.5)
+  ## check that it's a geom_histogram
+  expect_true(!is.null(output$hist.plot$layers))
+  expect_true(inherits(output$hist.plot$layers[[1]]$geom, "GeomBar"))
+  ## check that it has even more layers:
+  ##   - first distribution histogram
+  ##   - first distribution mean
+  ##   - first distribution text annotation
+  ##   - second distribution histogram
+  ##   - second distribution mean
+  ##   - second distribution text annotation
+  expect_equal(length(output$hist.plot$layers), 6)
+  expect_true(inherits(output$hist.plot$layers[[2]]$geom, "GeomVline"))
+  expect_true(inherits(output$hist.plot$layers[[3]]$geom, "GeomText"))
+  expect_true(inherits(output$hist.plot$layers[[4]]$geom, "GeomBar"))
+  expect_true(inherits(output$hist.plot$layers[[5]]$geom, "GeomVline"))
+  expect_true(inherits(output$hist.plot$layers[[6]]$geom, "GeomText"))
+  ## check that bounds still report as normal
   expect_true(inherits(output$tab.summary, "knitr_kable"))
   expect_equal(attr(output$tab.summary, "format"), "html")
   expect_true(stringr::str_detect(
