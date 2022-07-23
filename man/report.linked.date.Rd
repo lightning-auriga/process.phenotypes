@@ -30,6 +30,9 @@ of linked variable contents}
 \item{suppress.reporting}{logical; whether variable report data
 should be suppressed}
 }
+\value{
+formatted ggplot for rendering, or nothing if reporting suppressed
+}
 \description{
 Helper function to report relationship between an age variable
 and its corresponding date

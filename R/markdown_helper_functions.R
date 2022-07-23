@@ -91,6 +91,9 @@ report.excel.problems <- function(variable.entry, suppress.reporting) {
 #' @param my.theme ggplot2 accumulated theme settings
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
+#' @return list; 'hist.plot' distribution plot, 'tab.summary'
+#' distribution table. either entry can be null based on conditional
+#' logic
 #' @importFrom graphics hist
 report.numeric.summary <- function(data.vec,
                                    phenotype.data,
@@ -227,6 +230,7 @@ report.numeric.summary <- function(data.vec,
 #' @param my.theme ggplot2 accumulated theme settings
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
+#' @return formatted ggplot for rendering, or nothing if reporting suppressed
 report.linked.date <- function(data.vec,
                                phenotype.data,
                                variable.entry,
@@ -259,7 +263,7 @@ report.linked.date <- function(data.vec,
       reported.year.varname, "\n\n",
       sep = ""
     )
-    print(age.plot)
+    age.plot
   }
 }
 

@@ -34,6 +34,11 @@ variable with more helpful description}
 \item{suppress.reporting}{logical; whether variable report data
 should be suppressed}
 }
+\value{
+list; 'hist.plot' distribution plot, 'tab.summary'
+distribution table. either entry can be null based on conditional
+logic
+}
 \description{
 Helper function to report summary information about numeric
 variables' distributions
