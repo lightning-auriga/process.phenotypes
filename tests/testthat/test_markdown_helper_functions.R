@@ -381,7 +381,7 @@ test_that("report.bmi.comparison respects suppress.reporting", {
 })
 
 test_that("report.bmi.comparison emits a plot of expected type", {
-  expect_output(output <- report.linked.date(
+  expect_output(output <- report.bmi.comparison(
     bmicomp.phenotype.data,
     bmicomp.variable.summary$variables$HW00002,
     "HW00002",
