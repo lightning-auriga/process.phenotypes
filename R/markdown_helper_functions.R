@@ -112,13 +112,13 @@ report.numeric.summary <- function(data.vec,
         if (!is.null(variable.entry$params$multimodal)) {
           multimodal.varname <- variable.entry$params$multimodal
           stopifnot(multimodal.varname %in% colnames(phenotype.data))
-          multimodal.values <- unique(phenotype.data[, multimodal.varname])
+          multimodal.values <- unique(phenotype.data[!is.na(phenotype.data[, multimodal.varname]), multimodal.varname])
           hist.plot.colours <- RColorBrewer::brewer.pal(max(3, length(multimodal.values)), "Dark2")
           hist.plot.colours <- hist.plot.colours[seq_len(length(multimodal.values))]
           annotate.y <- max(hist(data.vec, breaks = nbins, plot = FALSE)$counts) / nrow(phenotype.data)
           for (i in seq_len(length(multimodal.values))) {
             if (length(which(phenotype.data[, multimodal.varname] == multimodal.values[i] &
-              !is.na(phenotype.data[, multimodal.varname]))) == 0) {
+              !is.na(data.vec))) == 0) {
               next
             }
             plot.subset <- phenotype.data[phenotype.data[, multimodal.varname] == multimodal.values[i] &
