@@ -276,13 +276,16 @@ for (name in names(variable.summary$variables)) {
   }
   ## if the source data has a computed_bmi variable, indicating it is BMI
   ## that in theory should be derived from height and weight
-  report.bmi.comparison(
+  bmi.comparison.plot <- report.bmi.comparison(
     phenotype.data,
     variable.summary$variables[[name]],
     name,
     my.theme,
     suppress.reporting
   )
+  if (!is.null(bmi.comparison.plot)) {
+    print(bmi.comparison.plot)
+  }
   ## if the source data has a computed_bp_ratio variable, plot the ratio
   ## between the systolic and diastolic measurements as indicated
   report.bp.ratio(

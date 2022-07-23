@@ -26,6 +26,9 @@ selection}
 \item{suppress.reporting}{logical; whether variable report data
 should be suppressed}
 }
+\value{
+formatted ggplot for rendering, or nothing if reporting suppressed
+}
 \description{
 Helper function to report summary information about reported BMI
 and computed BMI directly from weight and height data

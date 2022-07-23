@@ -301,6 +301,7 @@ linked.year.variable.summary <- list(variables = list(
     )
   ))
 ))
+
 test_that("report.linked.date respects suppress.reporting", {
   expect_output(output <- report.linked.date(
     linked.year.phenotype.data[, 3],
@@ -325,6 +326,72 @@ test_that("report.linked.date emits a plot of expected type", {
     FALSE
   ),
   regexp = "^\n\n#### Comparison between reported age HW00003 and age derived from date HW00002\n"
+  )
+  ## check that standard theme has been applied
+  expect_true(!is.null(output$theme))
+  expect_equal(output$theme$plot.title$hjust, 0.5)
+  ## check that it's a geom_point with a geom_abline on top
+  expect_true(!is.null(output$layers))
+  expect_equal(length(output$layers), 2)
+  expect_true(inherits(output$layers[[1]]$geom, "GeomPoint"))
+  expect_true(inherits(output$layers[[2]]$geom, "GeomAbline"))
+})
+
+bmicomp.phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = seq(25, 40, 5),
+  HW00003 = c(1.5, 1.4, 1.3, 1.5),
+  HW00004 = seq(65, 80, 5)
+)
+bmicomp.variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "var1",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(params = list(
+    name = "var2",
+    type = "numeric",
+    computed_bmi = list(
+      height = "HW00003",
+      weight = "HW00004"
+    )
+  )),
+  HW00003 = list(params = list(
+    name = "var3",
+    type = "numeric"
+  )),
+  HW00004 = list(params = list(
+    name = "var4",
+    type = "numeric"
+  ))
+))
+
+test_that("report.bmi.comparison respects suppress.reporting", {
+  expect_output(output <- report.bmi.comparison(
+    bmicomp.phenotype.data,
+    bmicomp.variable.summary$variables$HW00002,
+    "HW00002",
+    my.theme,
+    TRUE
+  ),
+  regexp = NA
+  )
+  expect_null(output)
+})
+
+test_that("report.bmi.comparison emits a plot of expected type", {
+  expect_output(output <- report.linked.date(
+    bmicomp.phenotype.data,
+    bmicomp.variable.summary$variables$HW00002,
+    "HW00002",
+    my.theme,
+    FALSE
+  ),
+  regexp = paste(
+    "^\n\n#### Comparison between reported BMI HW00002 and",
+    "BMI derived from height HW00003 and weight HW00004\n"
+  )
   )
   ## check that standard theme has been applied
   expect_true(!is.null(output$theme))

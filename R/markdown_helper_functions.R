@@ -277,6 +277,7 @@ report.linked.date <- function(data.vec,
 #' @param my.theme ggplot2 accumulated theme settings
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
+#' @return formatted ggplot for rendering, or nothing if reporting suppressed
 report.bmi.comparison <- function(phenotype.data,
                                   variable.entry,
                                   name,
@@ -306,7 +307,7 @@ report.bmi.comparison <- function(phenotype.data,
       " and weight ", weight.varname, "\n\n",
       sep = ""
     )
-    print(bmi.plot)
+    bmi.plot
   }
 }
 
