@@ -21,7 +21,7 @@ Andoni
 Anioma
 Ankwei
 Anyima
-Atyap [Atyap (Kataf), Kataf, Katab, Katab (Kataf), Attakar, Atakar, Attakar (Ataka), Attakar (Kaura), Atyap (Kagoro), Kagoro, Kagaro, Kafanchan, Fantswam, Fanswam (Kafanchan), Marwa, Manchok]
+Atyap [Atyap (Attakar), Atyap (Kafanchan), Atyap (Kataf/Katab), Atyap (Marwa/Manchok), Atyap (Kataf), Kataf, Katab, Katab (Kataf), Attakar, Atakar, Attakar (Ataka), Attakar (Kaura), Atyap (Kagoro), Kagoro, Kagaro, Kafanchan, Fantswam, Fanswam (Kafanchan), Marwa, Manchok]
 Auyoka [Sub-Hausa]
 Awori
 Ayu
@@ -35,14 +35,14 @@ Bakulu [Ikolu, Ikulu, Bekulu, Bakulung]
 Bali
 Bambora [Bambora (Bambarawa), Bambarawa]
 Bambuko
-Bajju [Kaje, Kajji]
+Bajju [Kaje, Kajji, Bajju (Kaje), Bajju (Kajji)]
 Banda [Banda (Bandawa), Bandawa]
 Banka [Bankalawa]
 Banso [Panso, Banso (Panso)]
-Bara [Barawa]
+Bara [Barawa, Bara (Barawa)]
 Baribari [Barebari, Barebare, Bare-Bari, Bare Bari, Bare Bare, Beri Beri, Beriberi]
 Barke
-Baruba [Baruba (Barba), Batonu, Burgu]
+Baruba [Baruba (Barba), Batonu, Burgu, Baruba (Batonu)]
 Bashiri [Bashirawa]
 Bassa
 Batta
@@ -50,7 +50,7 @@ Baushi
 Baya
 Bekwarra
 Bele [Buli, Belewa]
-Berom [Birom]
+Berom [Birom, Berom (Birom)]
 Betso [Betso (Bete), Bete]
 Bette
 Biase
@@ -61,7 +61,7 @@ Bini [Bini (Edo), Edo]
 Bobua
 Boki [Nki, Boki (Nki), Bokki]
 Bokkos
-Boko [Bussawa, Bargawa]
+Boko [Bussawa, Bargawa, Boko (Bargawa)]
 Bole [Bole (Bolewa), Bolewa, Bolawa]
 Botlere
 Boma [Bomawa, Burmano]
@@ -107,13 +107,14 @@ Efik [Calabar (Efik)]
 Egbema
 Egede [Egede (Igedde), Igedde]
 Eggon
-Egun [Gu]
+Egun [Gu, Egun (Gu)]
 Ejagham
 Ekajuk
 Eket
 Ekoi
 Ekpeye
 Engenni [Engenni (Ngene), Ngene]
+English
 Epie
 Esan [Esan (Ishan), Ishan]
 Esit Ekid
@@ -123,7 +124,7 @@ Etsako
 Etung
 Etuno
 Palli
-Fulani [Fulbe]
+Fulani [Fulbe, Fulani (Fulbe)]
 Fyam [Fyem, Fyam (Fyem), Pyem]
 Fyer [Fyer (Fer), Fer]
 Ga'anda [Gaanda]
@@ -141,7 +142,7 @@ Gingwak
 Gira
 Gizigz
 Goemai [Geomai]
-Gokana [Kana]
+Gokana [Kana, Gokana (Kana)]
 Gombi
 Gornun [Gmun]
 Gonia
@@ -160,7 +161,7 @@ Gwong [Gwong (Kagoma), Kagoma]
 Gwom
 Gwoza [Gwoza (Waha), Waha]
 Gyem
-Ham [Hyam, Jaba, Jabba, Chori (Jaba), Ham (Hyam)]
+Ham [Hyam, Jaba, Jabba, Chori (Jaba), Ham (Hyam), Ham (Jaba), Ham (Jabba)]
 Hausa
 Holma
 Hona
@@ -180,6 +181,7 @@ Irigwe
 Iman
 Isoko [Isako]
 Isekiri [Isekiri (Itsekiri), Itsekiri]
+Ishibori
 Itu
 Itu Mbio Uso
 Iyala [Iyala (Iyalla), Iyalla]
@@ -187,7 +189,7 @@ Izon [Izon (Ijaw), Ijaw]
 Jahuna [Jahunawa]
 Jaku
 Jara [Jaar, Jarawa, Jarawa-Dutse, Jara (Jaar Jarawa Jarawa-Dutse)]
-Jere [Jare, Jere (Jare), Jera, Jerawa]
+Jere [Jare, Jere (Jare), Jera, Jerawa, Jere (Jare Jera Jera Jerawa)]
 Jero
 Jibu
 Jidda-Abu
@@ -198,9 +200,9 @@ Jonjo [Jonjo (Jenjo), Jenjo]
 Jukun
 Kaba [Kabawa, Kaba (Kabawa), Kabba]
 Kalabari [Calabar, Calabar municipal, Calabari]
-Kajuru [Kajurawa]
+Kajuru [Kajurawa, Kajuru (Kajurawa)]
 Kaka
-Kamaku [Karnukawa]
+Kamaku [Karnukawa, Kamaku (Karnukawa)]
 Kambari
 Kambu
 Kamwe
@@ -227,7 +229,7 @@ Kugama
 Kugbo
 Kulere [Kulere (Kaler), Kaler]
 Kunini
-Kurama [Akurmi]
+Kurama [Akurmi, Kurama (Akurmi)]
 Kurdul
 Kushi
 Kuteb
@@ -265,16 +267,16 @@ Milighili [Mighili]
 Miya [Miyawa]
 Mobber
 Montol
-Moruwa [Moro'a, Morwa, Moruwa (Moro'a Morwa), Maro'a]
+Moruwa [Moro'a, Morwa, Moruwa (Moro'a Morwa), Maro'a, Moruwa (Moro'a), Moruwa (Morwa)]
 Muchaila
 Mumuye
 Mundang
-Munga [Lelau, Munga (Lelau), Mupang]
+Munga [Lelau, Munga (Lelau), Mupang, Munga (Mupang)]
 Mupun
 Mushere
 Mwahavul [Mwahavul (Mwaghavul), Mwaghavul]
 Ndoro
-Ngas [Angas]
+Ngas [Angas, Ngas (Angas)]
 Ngizim
 Ngweshe [Ndhang, Ngoshe-Ndhang]
 Nyiffon
@@ -329,9 +331,9 @@ Sakbe
 Sate
 Saya [Saya (Sayawa Za'ar), Sayawa Za'ar, Sayawa, Saiyawa, Siyawa]
 Segidi [Sigidawa]
-Shanga [Shangawa ShanKadunagau]
+Shanga [Shangawa ShanKadunagau, Shanga (Shangawa)]
 Shan-Shan
-Shira
+Shira [Shira (Shira)]
 Shomo
 Shuwa
 Sikdi
@@ -340,7 +342,7 @@ Srubu [Srubu (Surubu), Surubu]
 Sukur
 Sura
 Tangale
-Tarok [Yergam]
+Tarok [Yergam, Tarok (Yergam)]
 Teme
 Tera [Tera (Terawa), Terawa, Tarawa]
 Teshena [Teshenawa]
@@ -359,7 +361,7 @@ Uneme [Uneme (Ineme), Ineme]
 Ura [Ula]
 Urhobo
 Utonkong
-Uwanno [Weppa-Wanno]
+Uwanno [Weppa-Wanno, Uwanno (Weppa-Wanno)]
 Uyanga
 Vemgo
 Verre
