@@ -73,6 +73,59 @@ test_that("check.variable.dependencies evaluates simple dependencies (2)", {
   )
 })
 
+test_that("check.variable.dependencies evaluates simple dependencies (length 1 result)", {
+  in.phenotype.data <- data.frame(
+    TN001 = c("A", "B", "C"),
+    TN002 = 1:3,
+    TN003 = 4:6
+  )
+  in.variable.summary <- list(variables = list(
+    TN001 = list(
+      name = "subject ID",
+      params = list(subject_id = TRUE)
+    ),
+    TN002 = list(name = "first number"),
+    TN003 = list(
+      name = "second number",
+      params = list(dependencies = list("1" = list(
+        name = "first dependency",
+        condition = "all(TN003 == TN002 + 3)"
+      )))
+    )
+  ))
+  out.variable.summary <- in.variable.summary
+  out.variable.summary$variables$TN003$dependency.results[["1"]] <- TRUE
+  expect_identical(
+    check.variable.dependencies(in.phenotype.data, in.variable.summary),
+    out.variable.summary
+  )
+})
+
+test_that("check.variable.dependencies evaluates simple dependencies (invalid return vector length)", {
+  in.phenotype.data <- data.frame(
+    TN001 = c("A", "B", "C"),
+    TN002 = 1:3,
+    TN003 = 4:6
+  )
+  in.variable.summary <- list(variables = list(
+    TN001 = list(
+      name = "subject ID",
+      params = list(subject_id = TRUE)
+    ),
+    TN002 = list(name = "first number"),
+    TN003 = list(
+      name = "second number",
+      params = list(dependencies = list("1" = list(
+        name = "first dependency",
+        condition = "c(TRUE, FALSE)"
+      )))
+    )
+  ))
+  expect_error(
+    check.variable.dependencies(in.phenotype.data, in.variable.summary)
+  )
+})
+
 test_that("dependency.failure.handling successfully responds to exclusion requests", {
   in.phenotype.data <- data.frame(
     TV001 = c("A", "B", "C", "D", "E", "F"),
