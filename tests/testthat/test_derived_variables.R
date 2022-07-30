@@ -118,3 +118,49 @@ test_that("derived variable blocks with bugs crash gracefully", {
     create.derived.variables(in.phenotype.data, in.variable.summary)
   )
 })
+
+test_that("create.derived.variables refrains from reevaluating existing columns", {
+  in.phenotype.data <- data.frame(
+    "PPB001" = 1:5,
+    "PPB001_derived" = 1:5
+  )
+  in.variable.summary <- list(
+    variables = list("PPB001" = list(
+      name = "example variable 1",
+      type = "numeric"
+    )),
+    derived = list("PPB001_derived" = list(
+      name = "derived variable 5",
+      type = "numeric",
+      code = "6:10"
+    ))
+  )
+  res <- create.derived.variables(in.phenotype.data, in.variable.summary)
+  expect_identical(res, list(
+    phenotype.data = in.phenotype.data,
+    variable.summary = in.variable.summary
+  ))
+})
+
+test_that("create.derived.variables skips code blocks that do nothing", {
+  in.phenotype.data <- data.frame(
+    "PPB001" = 1:5,
+    "PPB001_derived" = 1:5
+  )
+  in.variable.summary <- list(
+    variables = list("PPB001" = list(
+      name = "example variable 1",
+      type = "numeric"
+    )),
+    derived = list("PPB001_derived" = list(
+      name = "derived variable 5",
+      type = "numeric",
+      code = ""
+    ))
+  )
+  res <- create.derived.variables(in.phenotype.data, in.variable.summary)
+  expect_identical(res, list(
+    phenotype.data = in.phenotype.data,
+    variable.summary = in.variable.summary
+  ))
+})
