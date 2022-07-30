@@ -459,7 +459,7 @@ test_that("report.bp.ratio respects suppress.reporting", {
   expect_output(output <- report.bp.ratio(
     bp.ratio.phenotype.data,
     bp.ratio.variable.summary$variables$HW00003,
-    "HW00002",
+    "HW00003",
     my.theme,
     TRUE
   ),
@@ -603,4 +603,68 @@ test_that("report.content.summary reports factor summary", {
     dotall = TRUE
     )
   ))
+})
+
+
+
+
+
+noncomp.bp.variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "var1",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(
+    params = list(
+      name = "bp",
+      type = "bp"
+    ),
+    invalid.blood.pressure.entries = "noice"
+  )
+))
+
+test_that("report.noncompliant.bp respects suppress.reporting", {
+  expect_output(output <- report.noncompliant.bp(
+    noncomp.bp.variable.summary$variables$HW00002,
+    "HW00002",
+    TRUE
+  ),
+  regexp = NA
+  )
+  expect_null(output)
+})
+
+test_that("report.noncompliant.bp emits expected kable", {
+  expect_output(output <- report.noncompliant.bp(
+    noncomp.bp.variable.summary$variables$HW00002,
+    "HW00002",
+    FALSE
+  ),
+  regexp = NA
+  )
+  expect_true(stringr::str_detect(
+    output,
+    stringr::regex(paste("<caption>Values that were not consistent with ",
+      "blood pressure measurement format.</caption>",
+      ".*> HW00002 <.*> Count <",
+      ".*> noice <.*> 1 <",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
+})
+
+test_that("report.noncompliant.bp understands when all values were well formatted", {
+  in.var.summary <- noncomp.bp.variable.summary$variables$HW00002
+  in.var.summary$invalid.blood.pressure.entries <- character()
+  expect_output(output <- report.noncompliant.bp(
+    in.var.summary,
+    "HW00002",
+    FALSE
+  ),
+  regexp = "\n\nAll values consistent with blood pressure format or missing data.\n"
+  )
+  expect_null(output)
 })
