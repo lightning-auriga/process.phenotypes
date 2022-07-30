@@ -432,3 +432,61 @@ test_that("report.bmi.comparison emits a plot of expected type", {
   expect_true(inherits(output$layers[[1]]$geom, "GeomPoint"))
   expect_true(inherits(output$layers[[2]]$geom, "GeomAbline"))
 })
+
+bp.ratio.phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = c(180, 170, 160, 150),
+  HW00003 = c(90, 80, 75, 65)
+)
+bp.ratio.variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "var1",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(params = list(
+    name = "var2",
+    type = "numeric",
+    computed_bp_ratio = list(diastolic = "HW00003")
+  )),
+  HW00003 = list(params = list(
+    name = "var3",
+    type = "numeric"
+  ))
+))
+
+test_that("report.bp.ratio respects suppress.reporting", {
+  expect_output(output <- report.bp.ratio(
+    bp.ratio.phenotype.data,
+    bp.ratio.variable.summary$variables$HW00003,
+    "HW00002",
+    my.theme,
+    TRUE
+  ),
+  regexp = NA
+  )
+  expect_null(output)
+})
+
+test_that("report.bp.ratio emits a plot of expected type", {
+  expect_output(output <- report.bp.ratio(
+    bp.ratio.phenotype.data,
+    bp.ratio.variable.summary$variables$HW00002,
+    "HW00002",
+    my.theme,
+    FALSE
+  ),
+  regexp = paste(
+    "^\n\n#### Comparison between reported systolic HW00002 and",
+    "diastolic blood pressure HW00003\n"
+  )
+  )
+  ## check that standard theme has been applied
+  expect_true(!is.null(output$theme))
+  expect_equal(output$theme$plot.title$hjust, 0.5)
+  ## check that it's a geom_point with a geom_abline on top
+  expect_true(!is.null(output$layers))
+  expect_equal(length(output$layers), 2)
+  expect_true(inherits(output$layers[[1]]$geom, "GeomPoint"))
+  expect_true(inherits(output$layers[[2]]$geom, "GeomAbline"))
+})
