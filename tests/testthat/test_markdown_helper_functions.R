@@ -668,3 +668,65 @@ test_that("report.noncompliant.bp understands when all values were well formatte
   )
   expect_null(output)
 })
+
+
+
+noncomp.num.variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "var1",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(
+    params = list(
+      name = "numeric",
+      type = "numeric"
+    ),
+    invalid.numeric.entries = "bummer"
+  )
+))
+
+test_that("report.noncompliant.numerics respects suppress.reporting", {
+  expect_output(output <- report.noncompliant.numerics(
+    noncomp.num.variable.summary$variables$HW00002,
+    "HW00002",
+    TRUE
+  ),
+  regexp = NA
+  )
+  expect_null(output)
+})
+
+test_that("report.noncompliant.numerics emits expected kable", {
+  expect_output(output <- report.noncompliant.numerics(
+    noncomp.num.variable.summary$variables$HW00002,
+    "HW00002",
+    FALSE
+  ),
+  regexp = NA
+  )
+  expect_true(stringr::str_detect(
+    output,
+    stringr::regex(paste("<caption>Values that were not consistent with ",
+      "numeric format.</caption>",
+      ".*> HW00002 <.*> Count <",
+      ".*> bummer <.*> 1 <",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
+})
+
+test_that("report.noncompliant.numerics understands when all values were well formatted", {
+  in.var.summary <- noncomp.num.variable.summary$variables$HW00002
+  in.var.summary$invalid.numeric.entries <- character()
+  expect_output(output <- report.noncompliant.numerics(
+    in.var.summary,
+    "HW00002",
+    FALSE
+  ),
+  regexp = "\n\nAll values consistent with numeric format or missing data.\n"
+  )
+  expect_null(output)
+})
