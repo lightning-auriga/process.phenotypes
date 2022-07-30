@@ -337,6 +337,36 @@ test_that("report.linked.date emits a plot of expected type", {
   expect_true(inherits(output$layers[[2]]$geom, "GeomAbline"))
 })
 
+test_that("report.linked.date can access dynamic reference year in data frame", {
+  in.phenotype.data <- linked.year.phenotype.data
+  in.variable.summary <- linked.year.variable.summary
+  in.phenotype.data$HW00004 <- 1998:2001
+  in.variable.summary$variables$HW00003$params$linked_date$reference_year <- "HW00004"
+  in.variable.summary$variables$HW00004 <- list(params = list(
+    name = "var4",
+    type = "numeric"
+  ))
+
+  expect_output(output <- report.linked.date(
+    in.phenotype.data[, 3],
+    in.phenotype.data,
+    in.variable.summary$variables$HW00003,
+    "HW00003",
+    my.theme,
+    FALSE
+  ),
+  regexp = "^\n\n#### Comparison between reported age HW00003 and age derived from date HW00002\n"
+  )
+  ## check that standard theme has been applied
+  expect_true(!is.null(output$theme))
+  expect_equal(output$theme$plot.title$hjust, 0.5)
+  ## check that it's a geom_point with a geom_abline on top
+  expect_true(!is.null(output$layers))
+  expect_equal(length(output$layers), 2)
+  expect_true(inherits(output$layers[[1]]$geom, "GeomPoint"))
+  expect_true(inherits(output$layers[[2]]$geom, "GeomAbline"))
+})
+
 bmicomp.phenotype.data <- data.frame(
   HW00001 = c("A", "B", "C", "D"),
   HW00002 = seq(25, 40, 5),
