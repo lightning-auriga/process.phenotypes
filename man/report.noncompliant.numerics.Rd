@@ -16,6 +16,9 @@ report.noncompliant.numerics(variable.entry, name, suppress.reporting)
 \item{suppress.reporting}{logical; whether variable report data
 should be suppressed}
 }
+\value{
+formatted kable for rendering, or nothing if reporting suppressed
+}
 \description{
 Helper function to report information about entries in
 expected-numeric variables that do not match supported

@@ -26,6 +26,9 @@ selection}
 \item{suppress.reporting}{logical; whether variable report data
 should be suppressed}
 }
+\value{
+formatted ggplot for rendering, or nothing if reporting suppressed
+}
 \description{
 Helper function to report plot showing relationship between
 self-reported systolic and diastolic blood pressure

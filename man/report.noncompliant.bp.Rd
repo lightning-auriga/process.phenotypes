@@ -16,6 +16,9 @@ report.noncompliant.bp(variable.entry, name, suppress.reporting)
 \item{suppress.reporting}{logical; whether variable report data
 should be suppressed}
 }
+\value{
+formatted kable for rendering, or nothing if reporting suppressed
+}
 \description{
 Helper function to report information about blood pressure
 variable entries that do not match expected blood pressure

@@ -13,6 +13,9 @@ report.unicode.entries(variable.entry, suppress.reporting)
 \item{suppress.reporting}{logical; whether variable report data
 should be suppressed}
 }
+\value{
+formatted kable for rendering, or nothing if reporting suppressed
+}
 \description{
 Helper function to report summary information about Unicode
 characters that are not removed by upstream cleaning.

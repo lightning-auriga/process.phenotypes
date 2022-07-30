@@ -11,5 +11,5 @@
 }
 \description{
 If the passed value is null, no action is taken; otherwise,
-the thing is emitted wrapped in a print() statement
+the thing is emitted wrapped in a print() or cat() statement
 }

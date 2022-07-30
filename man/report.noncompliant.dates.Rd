@@ -15,6 +15,9 @@ report.noncompliant.dates(variable.entry, name, suppress.reporting)
 \item{suppress.reporting}{logical; whether variable report data
 should be suppressed}
 }
+\value{
+formatted kable for rendering, or nothing if reporting suppressed
+}
 \description{
 Helper function to report summary information about values
 in date variables that do not match expected date formats.

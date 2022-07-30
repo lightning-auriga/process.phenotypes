@@ -282,17 +282,18 @@ for (name in names(variable.summary$variables)) {
 
   ## if the source data has a computed_bp_ratio variable, plot the ratio
   ## between the systolic and diastolic measurements as indicated
-  report.bp.ratio(
+  bp.ratio.plot <- report.bp.ratio(
     phenotype.data,
     variable.summary$variables[[name]],
     name,
     my.theme,
     suppress.reporting
   )
+  print.conditionally(bp.ratio.plot)
 
   ## original exclusion criterion here is hitting everything for small datasets,
   ## even when the report is not a unique value report
-  report.content.summary(
+  content.table <- report.content.summary(
     phenotype.data,
     my.summ,
     unique.var.value.inc.prop,
@@ -300,42 +301,53 @@ for (name in names(variable.summary$variables)) {
     variable.pretty.name,
     suppress.reporting
   )
+  print.conditionally(content.table)
+
   ## blood pressure entries not matching expected format are generally reported,
   ## as deviations from accepted formats are very common
-  report.noncompliant.bp(
+  noncompliant.bp.table <- report.noncompliant.bp(
     variable.summary$variables[[name]],
     name,
     suppress.reporting
   )
+  print.conditionally(noncompliant.bp.table)
 
-  report.noncompliant.numerics(
+  noncompliant.num.table <- report.noncompliant.numerics(
     variable.summary$variables[[name]],
     name,
     suppress.reporting
   )
+  print.conditionally(noncompliant.num.table)
+
   ## factors
-  report.factor.summary(
+  factor.table <- report.factor.summary(
     variable.summary$variables[[name]],
     name,
     suppress.reporting
   )
+  print.conditionally(factor.table)
 
-  report.noncompliant.dates(
+  noncompliant.date.table <- report.noncompliant.dates(
     variable.summary$variables[[name]],
     name,
     suppress.reporting
   )
-  report.unicode.entries(
+  print.conditionally(noncompliant.date.table)
+
+  unicode.table <- report.unicode.entries(
     variable.summary$variables[[name]],
     suppress.reporting
   )
+  print.conditionally(unicode.table)
 
-  report.dependencies(
+  dependency.tables <- report.dependencies(
     phenotype.data,
     variable.summary,
     name,
     suppress.reporting
   )
+  print.conditionally(dependency.tables$contingency)
+  print.conditionally(dependency.tables$cross)
 
   cat("\n***\n<br>\n")
 }

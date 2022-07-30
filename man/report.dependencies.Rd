@@ -18,6 +18,11 @@ of linked variable contents}
 \item{suppress.reporting}{logical; whether variable report data
 should be suppressed}
 }
+\value{
+list; entries 'contingency' and 'cross', for kables describing
+contingency table of results and cross-variable comparisons; or null,
+if reporting suppressed or the relevant features not configured
+}
 \description{
 Helper function to report summary information about encoded
 dependency relationships between variables.

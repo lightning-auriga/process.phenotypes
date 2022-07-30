@@ -41,12 +41,16 @@ get.bins <- function(vec) {
 #' Helper function to conditionally print output content
 #'
 #' If the passed value is null, no action is taken; otherwise,
-#' the thing is emitted wrapped in a print() statement
+#' the thing is emitted wrapped in a print() or cat() statement
 #'
 #' @param val thing to be conditionally printed
 print.conditionally <- function(val) {
   if (!is.null(val)) {
-    print(val)
+    if (inherits(val, "knitr_kable")) {
+      cat(val)
+    } else {
+      print(val)
+    }
   }
 }
 
@@ -334,6 +338,7 @@ report.bmi.comparison <- function(phenotype.data,
 #' @param my.theme ggplot2 accumulated theme settings
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
+#' @return formatted ggplot for rendering, or nothing if reporting suppressed
 report.bp.ratio <- function(phenotype.data,
                             variable.entry,
                             name,
@@ -352,7 +357,7 @@ report.bp.ratio <- function(phenotype.data,
       " and diastolic blood pressure ", diastolic.bp.varname, "\n\n",
       sep = ""
     )
-    print(bp.plot)
+    bp.plot
   }
 }
 
@@ -372,6 +377,7 @@ report.bp.ratio <- function(phenotype.data,
 #' variable with more helpful description
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
+#' @return formatted kable for rendering, or nothing if reporting suppressed
 report.content.summary <- function(phenotype.data,
                                    var.summary,
                                    unique.var.value.inc.prop,
@@ -390,8 +396,8 @@ report.content.summary <- function(phenotype.data,
     rownames(variable.summary.df) <- NULL
     colnames(variable.summary.df) <- c("Value", "Summary statistics")
     table.caption <- paste("Summary of ", name, " (", variable.pretty.name, ")", sep = "")
-    cat(knitr::kable(variable.summary.df, caption = table.caption) %>%
-      kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+    knitr::kable(variable.summary.df, caption = table.caption) %>%
+      kableExtra::kable_styling("condensed", position = "left", full_width = FALSE)
   } else if (length(var.summary) >= nrow(phenotype.data) * unique.var.value.inc.prop && !suppress.reporting) {
     cat("\n\nVariable ", name, " (", variable.pretty.name, ") has ", length(var.summary), " unique values, and thus",
       " report output of individual value counts is suppressed.\n\n",
@@ -417,6 +423,7 @@ report.content.summary <- function(phenotype.data,
 #' @param name character; harmonized name of variable in yaml
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
+#' @return formatted kable for rendering, or nothing if reporting suppressed
 report.noncompliant.bp <- function(variable.entry,
                                    name,
                                    suppress.reporting) {
@@ -426,8 +433,8 @@ report.noncompliant.bp <- function(variable.entry,
       rownames(df) <- NULL
       colnames(df) <- c(name, "Count")
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
-      cat(knitr::kable(df, caption = "Values that were not consistent with blood pressure measurement format.") %>%
-        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+      knitr::kable(df, caption = "Values that were not consistent with blood pressure measurement format.") %>%
+        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE)
     } else {
       cat("\n\nAll values consistent with blood pressure format or missing data.\n\n")
     }
@@ -447,6 +454,7 @@ report.noncompliant.bp <- function(variable.entry,
 #' @param name character; harmonized name of variable in yaml
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
+#' @return formatted kable for rendering, or nothing if reporting suppressed
 report.noncompliant.numerics <- function(variable.entry,
                                          name,
                                          suppress.reporting) {
@@ -456,8 +464,8 @@ report.noncompliant.numerics <- function(variable.entry,
       rownames(df) <- NULL
       colnames(df) <- c(name, "Count")
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
-      cat(knitr::kable(df, caption = "Values that were not consistent with numeric format.") %>%
-        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+      knitr::kable(df, caption = "Values that were not consistent with numeric format.") %>%
+        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE)
     } else {
       cat("\n\nAll values consistent with numeric format or missing data.\n\n")
     }
@@ -479,6 +487,7 @@ report.noncompliant.numerics <- function(variable.entry,
 #' @param name character; harmonized name of variable in yaml
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
+#' @return formatted kable for rendering, or nothing if reporting suppressed
 report.factor.summary <- function(variable.entry,
                                   name,
                                   suppress.reporting) {
@@ -520,8 +529,8 @@ report.factor.summary <- function(variable.entry,
     ## then sort first by reasoning, then by output, then by query
     df <- df[order(df[, 3], df[, 2], df[, 1]), ]
     rownames(df) <- NULL
-    cat(knitr::kable(df, caption = "Handling of all partial match self-reported ancestries.") %>%
-      kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+    knitr::kable(df, caption = "Handling of all partial match self-reported ancestries.") %>%
+      kableExtra::kable_styling("condensed", position = "left", full_width = FALSE)
   } else if (!is.null(variable.entry$invalid.factor.entries) && !suppress.reporting) {
     ## other things that are factors
     if (length(variable.entry$invalid.factor.entries) > 0) {
@@ -529,8 +538,8 @@ report.factor.summary <- function(variable.entry,
       rownames(df) <- NULL
       colnames(df) <- c(name, "Count")
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
-      cat(knitr::kable(df, caption = "Values that were not consistent with categorical format.") %>%
-        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+      knitr::kable(df, caption = "Values that were not consistent with categorical format.") %>%
+        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE)
     } else {
       cat("\n\nAll values consistent with categorical format or missing data.\n\n")
     }
@@ -551,6 +560,7 @@ report.factor.summary <- function(variable.entry,
 #' @param name character; harmonized name of variable in yaml
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
+#' @return formatted kable for rendering, or nothing if reporting suppressed
 report.noncompliant.dates <- function(variable.entry,
                                       name,
                                       suppress.reporting) {
@@ -560,8 +570,8 @@ report.noncompliant.dates <- function(variable.entry,
       rownames(df) <- NULL
       colnames(df) <- c(name, "Count")
       df[, 1] <- stringr::str_replace(df[, 1], "^( *)([\\+\\*])", "\\1\\\\\\2")
-      cat(knitr::kable(df, caption = "Values that were not consistent with date (year only) format.") %>%
-        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+      knitr::kable(df, caption = "Values that were not consistent with date (year only) format.") %>%
+        kableExtra::kable_styling("condensed", position = "left", full_width = FALSE)
     } else {
       cat("\n\nAll values consistent with date format (year only) or missing data.\n\n")
     }
@@ -581,6 +591,7 @@ report.noncompliant.dates <- function(variable.entry,
 #' @param variable.entry list; entry in dataset yaml for this variable
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
+#' @return formatted kable for rendering, or nothing if reporting suppressed
 report.unicode.entries <- function(variable.entry,
                                    suppress.reporting) {
   if (!is.null(variable.entry$unicode.entries) && !suppress.reporting) {
@@ -590,8 +601,8 @@ report.unicode.entries <- function(variable.entry,
     )
     rownames(unicode.df) <- NULL
     colnames(unicode.df) <- c("Unicode String", "Observations")
-    cat(knitr::kable(unicode.df, caption = "String entries containing unresolved Unicode characters.") %>%
-      kableExtra::kable_styling("condensed", position = "left", full_width = FALSE))
+    knitr::kable(unicode.df, caption = "String entries containing unresolved Unicode characters.") %>%
+      kableExtra::kable_styling("condensed", position = "left", full_width = FALSE)
   }
 }
 
@@ -610,10 +621,14 @@ report.unicode.entries <- function(variable.entry,
 #' @param name character; harmonized name of variable in yaml
 #' @param suppress.reporting logical; whether variable report data
 #' should be suppressed
+#' @return list; entries 'contingency' and 'cross', for kables describing
+#' contingency table of results and cross-variable comparisons; or null,
+#' if reporting suppressed or the relevant features not configured
 report.dependencies <- function(phenotype.data,
                                 variable.summary,
                                 name,
                                 suppress.reporting) {
+  result.tables <- list()
   if (!is.null(variable.summary$variables[[name]]$params$dependencies) && !suppress.reporting) {
     cat("\n\n#### Dependency tracking\n\n")
     dependency.names <- c()
@@ -650,7 +665,7 @@ report.dependencies <- function(phenotype.data,
             phenotype.data[, name],
             useNA = "ifany"
           )
-          cat(knitr::kable(table.data,
+          result.tables$contingency <- knitr::kable(table.data,
             caption = paste("Contingency table for ",
               table.target,
               " (",
@@ -660,7 +675,7 @@ report.dependencies <- function(phenotype.data,
               " [columns]",
               sep = ""
             )
-          ) %>% kableExtra::kable_styling("condensed"))
+          ) %>% kableExtra::kable_styling("condensed")
         }
       }
     }
@@ -673,8 +688,9 @@ report.dependencies <- function(phenotype.data,
       Result = dependency.results
     )
     rownames(dependency.df) <- NULL
-    cat(knitr::kable(dependency.df,
+    result.tables$cross <- knitr::kable(dependency.df,
       caption = "Results of cross-variable dependency tests."
-    ) %>% kableExtra::kable_styling("condensed"))
+    ) %>% kableExtra::kable_styling("condensed")
   }
+  result.tables
 }
