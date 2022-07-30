@@ -490,3 +490,117 @@ test_that("report.bp.ratio emits a plot of expected type", {
   expect_true(inherits(output$layers[[1]]$geom, "GeomPoint"))
   expect_true(inherits(output$layers[[2]]$geom, "GeomAbline"))
 })
+
+rcs.phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = 1:4,
+  HW00003 = factor(rep(c("cat1", "cat2"), each = 2), levels = c("cat1", "cat2"))
+)
+
+rcs.uniq.prop <- 0.6
+
+test_that("report.content.summary respects suppress.reporting", {
+  var.summary <- table(rcs.phenotype.data[, 1])
+  expect_output(output <- report.content.summary(
+    rcs.phenotype.data,
+    var.summary,
+    rcs.uniq.prop,
+    "HW00001",
+    "first variable",
+    TRUE
+  ),
+  regexp = "^\n\nReporting for variable HW00001 was suppressed in the configuration."
+  )
+  expect_null(output)
+})
+
+test_that("report.content.summary respect variable unique proportion threshold", {
+  var.summary <- table(rcs.phenotype.data[, 1])
+  expect_output(output <- report.content.summary(
+    rcs.phenotype.data,
+    var.summary,
+    rcs.uniq.prop,
+    "HW00001",
+    "first variable",
+    FALSE
+  ),
+  regexp = paste(
+    "^\n\nVariable HW00001 \\(first variable\\) has 4 unique values,",
+    "and thus report output of individual value counts is suppressed."
+  )
+  )
+  expect_null(output)
+})
+
+test_that("report.content.summary reports numeric summary", {
+  var.summary <- c(
+    "Mean" = 2.5,
+    "Min" = 1.0,
+    "10%" = 1.3,
+    "20%" = 1.6,
+    "30%" = 1.9,
+    "40%" = 2.2,
+    "Median" = 2.5,
+    "60%" = 2.8,
+    "70%" = 3.1,
+    "80%" = 3.4,
+    "90%" = 3.7,
+    "Max" = 4.0
+  )
+  expect_output(output <- report.content.summary(
+    rcs.phenotype.data,
+    var.summary,
+    rcs.uniq.prop,
+    "HW00002",
+    "second variable",
+    FALSE
+  ),
+  regexp = NA
+  )
+  expect_true(stringr::str_detect(
+    output,
+    stringr::regex(paste("<caption>Summary of HW00002 \\(second variable\\)</caption>",
+      ".*> Value <.*> Summary statistics <",
+      ".*> Mean <.*> 2.5 <",
+      ".*> Min <.*> 1.0 <",
+      ".*> 10% <.*> 1.3 <",
+      ".*> 20% <.*> 1.6 <",
+      ".*> 30% <.*> 1.9 <",
+      ".*> 40% <.*> 2.2 <",
+      ".*> Median <.*> 2.5 <",
+      ".*> 60% <.*> 2.8 <",
+      ".*> 70% <.*> 3.1 <",
+      ".*> 80% <.*> 3.4 <",
+      ".*> 90% <.*> 3.7 <",
+      ".*> Max <.*> 4.0 <",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
+})
+
+test_that("report.content.summary reports factor summary", {
+  var.summary <- table(rcs.phenotype.data[, 3])
+  expect_output(output <- report.content.summary(
+    rcs.phenotype.data,
+    var.summary,
+    rcs.uniq.prop,
+    "HW00003",
+    "third variable",
+    FALSE
+  ),
+  regexp = NA
+  )
+  expect_true(stringr::str_detect(
+    output,
+    stringr::regex(paste("<caption>Summary of HW00003 \\(third variable\\)</caption>",
+      ".*> Value <.*> Summary statistics <",
+      ".*> cat1 <.*> 2 <",
+      ".*> cat2 <.*> 2 <",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
+})
