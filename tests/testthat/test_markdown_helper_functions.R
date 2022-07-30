@@ -730,3 +730,67 @@ test_that("report.noncompliant.numerics understands when all values were well fo
   )
   expect_null(output)
 })
+
+
+
+
+
+noncomp.dates.variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "var1",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(
+    params = list(
+      name = "date",
+      type = "date"
+    ),
+    invalid.date.entries = "one-teenth of march-tember"
+  )
+))
+
+test_that("report.noncompliant.dates respects suppress.reporting", {
+  expect_output(output <- report.noncompliant.dates(
+    noncomp.dates.variable.summary$variables$HW00002,
+    "HW00002",
+    TRUE
+  ),
+  regexp = NA
+  )
+  expect_null(output)
+})
+
+test_that("report.noncompliant.dates emits expected kable", {
+  expect_output(output <- report.noncompliant.dates(
+    noncomp.dates.variable.summary$variables$HW00002,
+    "HW00002",
+    FALSE
+  ),
+  regexp = NA
+  )
+  expect_true(stringr::str_detect(
+    output,
+    stringr::regex(paste("<caption>Values that were not consistent with ",
+      "date \\(year only\\) format.</caption>",
+      ".*> HW00002 <.*> Count <",
+      ".*> one-teenth of march-tember <.*> 1 <",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
+})
+
+test_that("report.noncompliant.dates understands when all values were well formatted", {
+  in.var.summary <- noncomp.dates.variable.summary$variables$HW00002
+  in.var.summary$invalid.date.entries <- character()
+  expect_output(output <- report.noncompliant.dates(
+    in.var.summary,
+    "HW00002",
+    FALSE
+  ),
+  regexp = "\n\nAll values consistent with date format \\(year only\\) or missing data.\n"
+  )
+  expect_null(output)
+})
