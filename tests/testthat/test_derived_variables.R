@@ -144,8 +144,7 @@ test_that("create.derived.variables refrains from reevaluating existing columns"
 
 test_that("create.derived.variables skips code blocks that do nothing", {
   in.phenotype.data <- data.frame(
-    "PPB001" = 1:5,
-    "PPB001_derived" = 1:5
+    "PPB001" = 1:5
   )
   in.variable.summary <- list(
     variables = list("PPB001" = list(
