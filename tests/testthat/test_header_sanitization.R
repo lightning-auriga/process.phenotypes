@@ -105,3 +105,84 @@ test_that("duplicate header names are handled correctly in sanitization", {
   colnames(expected.df) <- c("DF00001", "DF00002", "DF00003", "DF00004")
   expect_identical(sanitize.header(test.data, mapped.variables), expected.df)
 })
+
+test_that("map.header correctly errors when phenotype data and variable config mismatch length", {
+  in.phenotype.data <- data.frame(
+    var1 = 1:4,
+    var2 = 5:8
+  )
+  in.variable.summary <- list(variables = list(HW00001 = list(
+    name = "var1",
+    type = "numeric"
+  )))
+  expect_error(map.header(in.phenotype.data, "HW", in.variable.summary))
+})
+
+test_that("map.header reports an informative message and errors when column names mismatch", {
+  in.phenotype.data <- data.frame(
+    var1 = 1:4,
+    var2 = 5:8
+  )
+  in.variable.summary <- list(variables = list(
+    HW00001 = list(
+      name = "VAR1",
+      type = "numeric"
+    ),
+    HW00002 = list(
+      name = "VAR2",
+      type = "numeric"
+    )
+  ))
+  expect_snapshot(map.header(in.phenotype.data, "HW", in.variable.summary), error = TRUE)
+})
+
+test_that("map.header respects request to override variable name sanity check", {
+  in.phenotype.data <- data.frame(
+    var1 = 1:4,
+    var2 = 5:8
+  )
+  in.variable.summary <- list(
+    globals = list(consent.inclusion.file = "filename"),
+    variables = list(
+      HW00001 = list(
+        name = "VAR1",
+        type = "numeric"
+      ),
+      HW00002 = list(
+        name = "VAR2",
+        type = "numeric"
+      )
+    ),
+    derived = list(dervar1 = list(
+      name = "dervar1",
+      type = "string",
+      code = "c(\"A\", \"B\", \"C\", \"D\")"
+    ))
+  )
+  out.variable.summary <- list(
+    variables = list(
+      HW00001 = list(
+        original.name = "var1",
+        params = list(
+          name = "VAR1",
+          type = "numeric"
+        )
+      ),
+      HW00002 = list(
+        original.name = "var2",
+        params = list(
+          name = "VAR2",
+          type = "numeric"
+        )
+      )
+    ),
+    globals = list(consent.inclusion.file = "filename"),
+    derived = list(dervar1 = list(
+      name = "dervar1",
+      type = "string",
+      code = "c(\"A\", \"B\", \"C\", \"D\")"
+    ))
+  )
+  res <- map.header(in.phenotype.data, "HW", in.variable.summary, TRUE)
+  expect_identical(res, out.variable.summary)
+})
