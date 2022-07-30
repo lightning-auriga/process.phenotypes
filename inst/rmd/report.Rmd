@@ -254,12 +254,8 @@ for (name in names(variable.summary$variables)) {
     my.theme,
     suppress.reporting
   )
-  if (!is.null(num.summary.res$hist.plot)) {
-    print(num.summary.res$hist.plot)
-  }
-  if (!is.null(num.summary.res$tab.summary)) {
-    print(num.summary.res$tab.summary)
-  }
+  print.conditionally(num.summary.res$hist.plot)
+  print.conditionally(num.summary.res$tab.summary)
 
   ## if the source data has a linked_date variable, indicating it is an age
   ## that in theory should be derived from a date
@@ -271,9 +267,8 @@ for (name in names(variable.summary$variables)) {
     my.theme,
     suppress.reporting
   )
-  if (!is.null(linked.date.plot)) {
-    print(linked.date.plot)
-  }
+  print.conditionally(linked.date.plot)
+
   ## if the source data has a computed_bmi variable, indicating it is BMI
   ## that in theory should be derived from height and weight
   bmi.comparison.plot <- report.bmi.comparison(
@@ -283,9 +278,8 @@ for (name in names(variable.summary$variables)) {
     my.theme,
     suppress.reporting
   )
-  if (!is.null(bmi.comparison.plot)) {
-    print(bmi.comparison.plot)
-  }
+  print.conditionally(bmi.comparison.plot)
+
   ## if the source data has a computed_bp_ratio variable, plot the ratio
   ## between the systolic and diastolic measurements as indicated
   report.bp.ratio(

@@ -38,6 +38,18 @@ get.bins <- function(vec) {
 }
 
 
+#' Helper function to conditionally print output content
+#'
+#' If the passed value is null, no action is taken; otherwise,
+#' the thing is emitted wrapped in a print() statement
+#'
+#' @param val thing to be conditionally printed
+print.conditionally <- function(val) {
+  if (!is.null(val)) {
+    print(val)
+  }
+}
+
 #' Helper function to report tracking information about variable
 #' name and, for derived variables, code creating the variable
 #'
