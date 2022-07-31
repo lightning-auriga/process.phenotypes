@@ -794,3 +794,48 @@ test_that("report.noncompliant.dates understands when all values were well forma
   )
   expect_null(output)
 })
+
+unicode.variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "var1",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(
+    params = list(
+      name = "string",
+      type = "string"
+    ),
+    unicode.entries = table(rep("h\u0228llo", 2))
+  )
+))
+
+test_that("report.unicode.entries respects suppress.reporting", {
+  expect_output(output <- report.unicode.entries(
+    unicode.variable.summary$variables$HW00002,
+    TRUE
+  ),
+  regexp = NA
+  )
+  expect_null(output)
+})
+
+test_that("report.unicode.entries emits expected kable", {
+  expect_output(output <- report.unicode.entries(
+    unicode.variable.summary$variables$HW00002,
+    FALSE
+  ),
+  regexp = NA
+  )
+  expect_true(stringr::str_detect(
+    output,
+    stringr::regex(paste("<caption>String entries containing unresolved Unicode characters.",
+      "</caption>",
+      ".*> Unicode String <.*> Observations <",
+      ".*> h\u0228llo <.*> 2 <",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
+})
