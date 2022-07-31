@@ -989,3 +989,113 @@ test_that("report.factor.summary understands no invalid factor entries", {
   )
   expect_null(output)
 })
+
+repdep.phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = 1:4,
+  HW00003 = 5:8
+)
+
+repdep.variable.summary <- list(
+  variables = list(
+    HW00001 = list(
+      original.name = "var1",
+      params = list(
+        name = "var1",
+        type = "string",
+        canonical_name = "subjectID",
+        subject_id = TRUE
+      )
+    ),
+    HW00002 = list(
+      original.name = "var2",
+      params = list(
+        name = "var2",
+        type = "numeric",
+        canonical_name = "num1",
+        dependencies = list(
+          "1" = list(
+            name = "dep1",
+            condition = "cond1"
+          ),
+          "2" = list(
+            name = "dep2",
+            condition = "cond2"
+          ),
+          "3" = list(
+            name = "dep3",
+            condition = "cond3",
+            table_comparisons = c("HW00003")
+          )
+        )
+      ),
+      dependency.results = list(
+        "1" = c("B", "A"),
+        "2" = c("B", "C"),
+        "3" = character()
+      )
+    ),
+    HW00003 = list(
+      original.name = "var3",
+      params = list(
+        name = "var3",
+        type = "numeric",
+        canonical_name = "num2"
+      )
+    )
+  )
+)
+
+test_that("report.dependencies respects suppress.reporting", {
+  expect_output(output <- report.dependencies(
+    repdep.phenotype.data,
+    repdep.variable.summary,
+    "HW00002",
+    TRUE
+  ),
+  regexp = NA
+  )
+  expect_true(is.list(output))
+  expect_equal(length(output), 0)
+})
+
+test_that("report.dependencies prints summary information about processed dependencies", {
+  expect_output(output <- report.dependencies(
+    repdep.phenotype.data,
+    repdep.variable.summary,
+    "HW00002",
+    FALSE
+  ),
+  regexp = "\n\n#### Dependency tracking\n"
+  )
+  expect_true(is.list(output))
+  expect_equal(length(output), 2)
+  expect_identical(names(output), c("contingency", "cross"))
+  expect_true(stringr::str_detect(
+    output$contingency,
+    stringr::regex(paste("<caption>Contingency table for HW00003 ",
+      "\\(var3 \\(num2\\)\\) \\[rows\\] ",
+      "versus HW00002 \\[columns\\]</caption>",
+      ".*> 1 <.*> 2 <.*> 3 <.*> 4 <",
+      ".*> 5 <.*> 1 <.*> 0 <.*> 0 <.*> 0 <",
+      ".*> 6 <.*> 0 <.*> 1 <.*> 0 <.*> 0 <",
+      ".*> 7 <.*> 0 <.*> 0 <.*> 1 <.*> 0 <",
+      ".*> 8 <.*> 0 <.*> 0 <.*> 0 <.*> 1 <",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
+  expect_true(stringr::str_detect(
+    output$cross,
+    stringr::regex(paste("<caption>Results of cross-variable dependency tests.</caption>",
+      ".*> Name <.*> Condition <.*> Count <.*> Result <",
+      ".*> dep1 <.*> cond1 <.*> 2 <.*> A, B <",
+      ".*> dep2 <.*> cond2 <.*> 2 <.*> B, C <",
+      ".*> dep3 <.*> cond3 <.*> 0 <.*> all subjects pass <",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
+})
