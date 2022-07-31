@@ -839,3 +839,153 @@ test_that("report.unicode.entries emits expected kable", {
     )
   ))
 })
+
+
+
+
+rfs.variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "var1",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(
+    params = list(
+      name = "ancvar1",
+      type = "string",
+      subject_ancestry = TRUE
+    ),
+    ancestry.conversion.before = c("lvl1", "lvl2"),
+    ancestry.conversion.after = c("lvl3", NA),
+    ancestry.reasoning = c("rsn1", "rsn2"),
+    ancestry.best.match = c("lvl3", "lvl4"),
+    ancestry.best.value = c(0.955, 0.612),
+    ancestry.second.match = c("lvl5", "lvl6"),
+    ancestry.second.value = c(0.444, 0.337)
+  ),
+  HW00003 = list(
+    params = list(
+      name = "ancvar2",
+      type = "string",
+      subject_ancestry = TRUE
+    ),
+    ancestry.conversion.before = c(),
+    ancestry.conversion.after = c(),
+    ancestry.reasoning = c(),
+    ancestry.best.match = c(),
+    ancestry.best.value = numeric(),
+    ancestry.second.match = c(),
+    ancestry.second.value = numeric()
+  ),
+  HW00004 = list(
+    params = list(
+      name = "factor1",
+      type = "categorical",
+      levels = list(
+        "1" = list(name = "lvl1"),
+        "2" = list(name = "lvl2")
+      )
+    ),
+    invalid.factor.entries = c("thing1", "thing2", "thing1")
+  ),
+  HW00005 = list(
+    params = list(
+      name = "factor2",
+      type = "categorical",
+      levels = list(
+        "1" = list(name = "lvl1"),
+        "2" = list(name = "lvl2")
+      )
+    ),
+    invalid.factor.entries = character()
+  )
+))
+
+test_that("report.factor.summary respects suppress.reporting, vs ancestry", {
+  expect_output(output <- report.factor.summary(
+    rfs.variable.summary$variables$HW00002,
+    "HW00002",
+    TRUE
+  ),
+  regexp = NA
+  )
+  expect_null(output)
+})
+
+test_that("report.factor.summary respects suppress.reporting, vs factor", {
+  expect_output(output <- report.factor.summary(
+    rfs.variable.summary$variables$HW00004,
+    "HW00004",
+    TRUE
+  ),
+  regexp = NA
+  )
+  expect_null(output)
+})
+
+test_that("report.factor.summary emits expected kable, vs ancestry", {
+  expect_output(output <- report.factor.summary(
+    rfs.variable.summary$variables$HW00002,
+    "HW00002",
+    FALSE
+  ),
+  regexp = NA
+  )
+  expect_true(stringr::str_detect(
+    output,
+    stringr::regex(paste("<caption>Handling of all partial match self-reported ancestries.",
+      "</caption>",
+      ".*> Input <.*> Output <.*> Reasoning <.*> Best Match <.*> Best Score ",
+      "<.*> Second Match <.*> Second Score <",
+      ".*> lvl1 <.*> lvl3 <.*> rsn1 <.*> lvl3 <.*> 0.96 <.*> lvl5 <.*> 0.44 <",
+      ".*> lvl2 <.*> NA <.*> rsn2 <.*> lvl4 <.*> 0.61 <.*> lvl6 <.*> 0.34 <",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
+})
+
+test_that("report.factor.summary understands no ancestry comparison data", {
+  expect_output(output <- report.factor.summary(
+    rfs.variable.summary$variables$HW00003,
+    "HW00003",
+    FALSE
+  ),
+  regexp = NA
+  )
+  expect_null(output)
+})
+
+test_that("report.factor.summary emits expected kable, vs factor", {
+  expect_output(output <- report.factor.summary(
+    rfs.variable.summary$variables$HW00004,
+    "HW00004",
+    FALSE
+  ),
+  regexp = NA
+  )
+  expect_true(stringr::str_detect(
+    output,
+    stringr::regex(paste("<caption>Values that were not consistent with categorical format.",
+      "</caption>",
+      ".*> HW00004 <.*> Count <",
+      ".*> thing1 <.*> 2 <",
+      ".*> thing2 <.*> 1 <",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
+})
+
+test_that("report.factor.summary understands no invalid factor entries", {
+  expect_output(output <- report.factor.summary(
+    rfs.variable.summary$variables$HW00005,
+    "HW00005",
+    FALSE
+  ),
+  regexp = "\n\nAll values consistent with categorical format or missing data.\n"
+  )
+  expect_null(output)
+})
