@@ -1,0 +1,23 @@
+---
+title: "create-phenotype-report"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{create-phenotype-report}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(process.phenotypes)
+```
+
+This vignette walks through the process of generating a phenotype report for a dataset.
+
+## Stuff goes here

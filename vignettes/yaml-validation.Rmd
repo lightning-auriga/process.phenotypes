@@ -1,0 +1,93 @@
+---
+title: "yaml-validation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{yaml-validation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(process.phenotypes)
+```
+
+To facilitate the process of creating configuration files for a phenotype dataset,
+`process.phenotypes` contains a python-based yaml validation script. This step
+is completely optional, but can help catch some of the most common discrepancies
+in manually configuration.
+
+## Validator overview
+
+The yaml validator will not catch all possible discrepancies in configuration
+files, but it will flag the following:
+
+- `tag`
+- missing required properties from globals
+- missing required properties from each variable definition in `variables` and `derived`
+- malformed types
+  - accepted types are: `string`, `binary`, `categorical`, `categorical_to_numeric`, `ordinal`,
+    `numeric`, `blood pressure` or `blood_pressure` or `bloodpressure` or `bp`, `date`
+  - any capitalization of any type name is accepted
+- invalid variable configuration with either `type` or `shared_model`
+
+The yaml validator will *not* catch instances of duplicate keys in yaml maps (e.g. names of entries
+in `variables`, `derived`, or `levels`). These will instead flag as an error when executing
+`process.phenotypes::create.phenotype.report`, and can be corrected at that time.
+
+## Install necessary packages
+
+A minimal `python3` environment is required to run the schema validation script.
+The necessary packages can be installed in conda as follows:
+
+```{bash}
+## if you don't already have a conda environment
+mamba create -n validation -c conda-forge python3 pyyaml argparse jsonschema
+## alternatively, you can install to an already active environment
+mamba install -c conda-forge python3 pyyaml argparse jsonschema
+```
+
+## Validator usage
+
+Assume that you have a dataset configuration yaml named `dataset.yaml` and a shared models
+configuration yaml named `shared-models.yaml`. Then schema validation can be run as follows:
+
+```{bash}
+python3 validator/yaml_validator.py dataset.yaml shared-models.yaml validator/schema.dataset.yaml validator/schema.shared-models.yaml
+```
+
+If the configuration files conform to expectation, you should see output as follows:
+
+```{bash}
+File shared-models.yaml passes schema validation!
+File dataset.yaml passes schema validation!
+```
+
+### Interpretation of validation errors
+
+If either of the above notifications is missing, then something about one of the configuration
+files does not match expectation. The informative message will be somewhere near the top of the
+error, followed by a verbose rendering of the schema structure that triggered the failure.
+
+```{bash}
+File shared-models.yaml passes yaml validation!
+Traceback (most recent call last):
+  File "validator/yaml_validator.py", line 58, in <module>
+    validate(instance=x, schema=dataset_schema)
+  File "miniconda3/envs/dev/lib/python3.10/site-packages/jsonschema/validators.py", line 1022, in validate
+    raise error
+jsonschema.exceptions.ValidationError: Additional properties are not allowed ('shared-model' was unexpected)
+
+Failed validating 'additionalProperties' in schema[0]:
+
+## more verbose content emitted here
+```
+
+In this case, the error is `Additional properties are not allowed ('shared-model' was unexpected)`.
+The key `shared-model` is not recognized as a valid alias for `shared_model`.

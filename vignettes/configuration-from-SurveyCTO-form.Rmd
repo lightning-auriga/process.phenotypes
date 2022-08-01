@@ -1,0 +1,19 @@
+---
+title: "configuration-from-SurveyCTO-form"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{configuration-from-SurveyCTO-form}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(process.phenotypes)
+```
