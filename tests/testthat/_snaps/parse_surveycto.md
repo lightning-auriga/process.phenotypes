@@ -14,6 +14,8 @@
     Code
       parse.surveycto(in.xlsx, in.csv, in.tag, out.dataset.yaml.fname,
         out.shared.models.fname, subject.id.name = "subjectid_1", age.name = "subjectage")
+    Warning <simpleWarning>
+      unrecognized CTO type flag detected: "alientype", for name "alienname" and label "this shouldn’t exist"
     Output
       [1] "computed result variables missing real output variables"
       [1] "deviceid"
