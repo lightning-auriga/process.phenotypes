@@ -1,0 +1,42 @@
+models:
+  yesno:
+    type: "categorical"
+    levels:
+      "1":
+        name: "no"
+        alternate_patterns:
+          - "^0$"
+          - "^[nN][oO]$"
+      "2":
+        name: "yes"
+        alternate_patterns:
+          - "^1$"
+          - "^[yY][eE][sS]$"
+  sex:
+    type: "categorical"
+    levels:
+      "1":
+        name: "female"
+        alternate_patterns:
+          - "^[fF][eE][mM][aA][lL][eE]$"
+          - "^[fF]$"
+      "2":
+        name: "male"
+        alternate_patterns:
+          - "^[mM][aA][lL][eE]$"
+          - "^[mM]$"
+  problem_number:
+    type: "categorical_to_numeric"
+    levels:
+      "1":
+        name: "10"
+        alternate_patterns:
+          - "1"
+      "2":
+        name: "20"
+        alternate_patterns:
+          - "2"
+      "3":
+        name: "30"
+        alternate_patterns:
+          - "3"

@@ -1,0 +1,42 @@
+tag: "HW"
+globals:
+  min_age_for_inclusion: 16
+  max_invalid_datatypes_per_subject: 10
+  consent_inclusion_file: ~
+  consent_exclusion_file: ~
+variables:
+  HW00001:
+    name: "var1"
+    type: "string"
+    suppress_reporting: yes
+    subject_id: yes
+  HW00002:
+    name: "var2"
+    type: "numeric"
+  HW00003:
+    name: "var3"
+    shared_model: "sex"
+  HW00004:
+    name: "var4"
+    type: "date"
+  HW00005:
+    name: "var5"
+    type: "numeric"
+    subject_age: yes
+  HW00006:
+    name: "var6"
+    shared_model: "yesno"
+  HW00007:
+    name: "var7"
+    type: "bp"
+  HW00008:
+    name: "var8"
+    shared_model: "problem_number"
+  HW00009:
+    name: "var9"
+    type: "string"
+    subject_ancestry: yes
+  HW00010:
+    name: "var10"
+    type: "string"
+    suppress_reporting: yes
