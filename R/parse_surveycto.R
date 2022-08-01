@@ -87,7 +87,7 @@ populate.choices <- function(df, survey.type, na.values) {
       } else {
         found.names <- c(found.names, list.name.labels[i])
       }
-      if (length(variable.select.multiple) == 0 &
+      if (length(variable.select.multiple) == 0 &&
         tolower(list.name.labels[i]) %in% tolower(na.values)) {
         na.levels <- c(na.levels, list.name.values[i])
         next
@@ -120,7 +120,7 @@ populate.choices <- function(df, survey.type, na.values) {
       }
       ## escape regex special characters in alternate patterns
       alternate.patterns <- stringr::str_replace_all(alternate.patterns, "(\\(|\\)|\\|)|\\[|\\]", "\\\\\\1")
-      var.levels[[lvl.tag]][["alternate_patterns"]] <- tolower(alternate.patterns)
+      var.levels[[lvl.tag]][["alternate_patterns"]] <- alternate.patterns
     }
     var.model <- list(
       "type" = "categorical",
@@ -166,6 +166,43 @@ create.config <- function(dataset.tag) {
   res
 }
 
+#' Populate variables list with multiple response onehot variables
+#'
+#' @param choice.list data.frame; xlsx choices tab
+#' @param shared.model character; name of categorical model from xlsx choices tab
+#' @param varname character; harmonized variable name for multiple response group
+#' @param name.value character; name entry for variable from xlsx survey tab
+#' @param label.value character; label entry for variable from xlsx survey tab
+#' @param res list; output yaml list in progress of being built
+#' @return list; input res variable with variables extended with new entries
+handle.multiple.levels <- function(choice.list, shared.model, varname, name.value, label.value, res) {
+  for (level.num in seq_len(length(names(choice.list$models[[shared.model]]$levels)))) {
+    ## due to possible removal of redundancy in name/alternate_patterns of shared.models,
+    ## assign name as the tag but only if alternate_patterns is null
+    lvl.tag <- choice.list$models[[shared.model]]$levels[[level.num]][["name"]]
+    if (!is.null(choice.list$models[[shared.model]]$levels[[level.num]][["alternate_patterns"]])) {
+      lvl.tag <- choice.list$models[[shared.model]]$levels[[level.num]][["alternate_patterns"]][1]
+    }
+    sub.varname <- paste(varname,
+      lvl.tag,
+      sep = "_"
+    )
+    res$variables[[sub.varname]] <- list(
+      "name" = paste(name.value,
+        lvl.tag,
+        sep = "_"
+      ),
+      "shared_model" = "yesno",
+      "canonical_name" = paste(label.value,
+        ", indicator response for level ",
+        choice.list$models[[shared.model]]$levels[[level.num]][["name"]],
+        sep = ""
+      )
+    )
+  }
+  res
+}
+
 #' Construct variable annotation according to type information
 #' from a SurveyCTO configuration row
 #'
@@ -185,11 +222,11 @@ build.variable.data <- function(type.value, name.value, label.value, choice.list
     "caseid", "image"
   )
   res <- list(variables = list())
-  if (length(type.value) < 1 | is.na(type.value) | type.value == "note" |
-    type.value == "begin group" | type.value == "end group") {
+  if (length(type.value) < 1 || is.na(type.value) || type.value == "note" ||
+    type.value == "begin group" || type.value == "end group") {
     res <- NULL
   } else {
-    if (type.value %in% cto.specials) {
+    if (type.value %in% c(cto.specials, "text", "datetime")) {
       ## these all are ignorable strings for the moment
       res$variables[[varname]] <- list(
         "name" = name.value,
@@ -197,31 +234,15 @@ build.variable.data <- function(type.value, name.value, label.value, choice.list
         "suppress_reporting" = TRUE,
         "canonical_name" = ifelse(label.value == "", NA, label.value)
       )
-    } else if (type.value == "calculate") {
+    } else if (type.value %in% c("calculate", "date", "integer", "decimal")) {
       ## calculate variables have variable type,
       ## and will be set by default to string
-      res$variables[[varname]] <- list(
-        "name" = name.value,
-        "type" = "string",
-        "canonical_name" = label.value
+      yaml.type <- ifelse(type.value == "calculate", "string",
+        ifelse(type.value == "date", "date", "numeric")
       )
-    } else if (type.value %in% c("text", "datetime")) {
       res$variables[[varname]] <- list(
         "name" = name.value,
-        "type" = "string",
-        "suppress_reporting" = TRUE,
-        "canonical_name" = label.value
-      )
-    } else if (type.value == "date") {
-      res$variables[[varname]] <- list(
-        "name" = name.value,
-        "type" = "date",
-        "canonical_name" = label.value
-      )
-    } else if (type.value %in% c("integer", "decimal")) {
-      res$variables[[varname]] <- list(
-        "name" = name.value,
-        "type" = "numeric",
+        "type" = yaml.type,
         "canonical_name" = label.value
       )
     } else if (stringr::str_detect(type.value, "^select_one")) {
@@ -241,30 +262,7 @@ build.variable.data <- function(type.value, name.value, label.value, choice.list
         "suppress_reporting" = TRUE,
         "canonical_name" = label.value
       )
-      for (level.num in seq_len(length(names(choice.list$models[[shared.model]]$levels)))) {
-        ## due to possible removal of redundancy in name/alternate_patterns of shared.models,
-        ## assign name as the tag but only if alternate_patterns is null
-        lvl.tag <- choice.list$models[[shared.model]]$levels[[level.num]][["name"]]
-        if (!is.null(choice.list$models[[shared.model]]$levels[[level.num]][["alternate_patterns"]])) {
-          lvl.tag <- choice.list$models[[shared.model]]$levels[[level.num]][["alternate_patterns"]][1]
-        }
-        sub.varname <- paste(varname,
-          lvl.tag,
-          sep = "_"
-        )
-        res$variables[[sub.varname]] <- list(
-          "name" = paste(name.value,
-            lvl.tag,
-            sep = "_"
-          ),
-          "shared_model" = "yesno",
-          "canonical_name" = paste(label.value,
-            ", indicator response for level ",
-            choice.list$models[[shared.model]]$levels[[level.num]][["name"]],
-            sep = ""
-          )
-        )
-      }
+      res <- handle.multiple.levels(choice.list, shared.model, varname, name.value, label.value, res)
     } else {
       warning(
         "unrecognized CTO type flag detected: \"", type.value,
@@ -432,7 +430,7 @@ flag.required.variables <- function(out.yaml, subject.id.name, age.name) {
       out.yaml$variables[[varname]][["subject_age"]] <- TRUE
     }
   }
-  if (!subject.found | !age.found) {
+  if (!subject.found || !age.found) {
     stop("unable to find subject ID/age in variable names")
   }
   out.yaml
@@ -526,7 +524,7 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
       print("computed result variables are not present in real data")
       print(excess.headers.in.prediction)
     }
-    if (length(excess.headers.in.prediction) == 0 &
+    if (length(excess.headers.in.prediction) == 0 &&
       length(headers.not.present) == 0) {
       print("output variables are correct but in the wrong order")
       aligned <- cbind(responses, output.predicted.headers)
@@ -536,5 +534,13 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
   }
   out.yaml <- flag.required.variables(out.yaml, subject.id.name, age.name)
   yaml::write_yaml(out.yaml, out.yaml.filename, fileEncoding = "UTF-8")
+  ## after column name resolution is complete, only then set categorical
+  ## levels to lowercase versions
+  for (model.name in names(choice.list$models)) {
+    for (model.lvl in names(choice.list$models[[model.name]]$levels)) {
+      choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns <-
+        tolower(choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns)
+    }
+  }
   yaml::write_yaml(choice.list, out.shared.models, fileEncoding = "UTF-8")
 }

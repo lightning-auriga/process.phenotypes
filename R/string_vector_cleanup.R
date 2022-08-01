@@ -178,7 +178,6 @@ is.blood.pressure <- function(vec, allow.trailing = FALSE, allow.undelimited = F
     pattern <- "^\\d{4}\\d?\\d?$"
     res <- res | stringr::str_detect(vec, pattern)
   }
-  print("current version of blood pressure handling")
   res
 }
 

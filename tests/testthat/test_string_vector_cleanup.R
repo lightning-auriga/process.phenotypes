@@ -80,6 +80,17 @@ test_that("all leading and trailing non-word characters are removed", {
   )
 })
 
+test_that("remove.nonword.chars override conditions are recognized", {
+  var.summary <- list(variables = list(
+    A = list(params = list(type = "string")),
+    B = list(params = list())
+  ))
+  expect_identical(
+    remove.nonword.chars(df, var.summary),
+    df
+  )
+})
+
 test_that("remove.nonword.chars preserves decimal values with leading '.'", {
   in.df <- data.frame(
     A = c(".1", "other"),

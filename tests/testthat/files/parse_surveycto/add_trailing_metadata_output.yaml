@@ -1,0 +1,47 @@
+variables:
+  HW00001:
+    name: "var1"
+    type: "string"
+  HW00002:
+    name: "var2"
+    type: "string"
+  HW00003:
+    name: "instanceID"
+    type: "string"
+    suppress_reporting: yes
+    canonical_name: "instanceID"
+  HW00004:
+    name: "instanceName"
+    type: "string"
+    suppress_reporting: yes
+    canonical_name: "instanceName"
+  HW00005:
+    name: "formdef_version"
+    type: "string"
+    suppress_reporting: yes
+    canonical_name: "formdef_version"
+  HW00006:
+    name: "KEY"
+    type: "string"
+    suppress_reporting: yes
+    canonical_name: "KEY"
+  HW00007:
+    name: "review_quality"
+    type: "string"
+    suppress_reporting: yes
+    canonical_name: "review_quality"
+  HW00008:
+    name: "review_comments"
+    type: "string"
+    suppress_reporting: yes
+    canonical_name: "review_comments"
+  HW00009:
+    name: "review_status"
+    type: "string"
+    suppress_reporting: yes
+    canonical_name: "review_status"
+  HW00010:
+    name: "review_corrections"
+    type: "string"
+    suppress_reporting: yes
+    canonical_name: "review_corrections"

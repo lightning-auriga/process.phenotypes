@@ -50,7 +50,7 @@ map.header <- function(df, dataset.tag, config.data,
       length(config.names), " in config)"
     )
   }
-  if (!identical(colnames(df), unname(unlist(config.names))) &
+  if (!identical(colnames(df), unname(unlist(config.names))) &&
     !force.header.mapping) {
     error.data <- cbind(
       colnames(df),
