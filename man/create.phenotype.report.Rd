@@ -9,7 +9,6 @@ create.phenotype.report(
   dataset.yaml,
   shared.model.yaml,
   out.filename,
-  magic.fix = TRUE,
   quote = "",
   sep = "\\t",
   uniq.var.inclusion.prop = 1/3,
@@ -28,10 +27,6 @@ create.phenotype.report(
 \item{shared.model.yaml}{character vector, yaml configuration for shared model specifications}
 
 \item{out.filename}{character vector, name of output report html file}
-
-\item{magic.fix}{logical, whether or not to apply most of the automated fixes
-in this package; used to "turn off" fixes but still generate a parseable dataset
-for comparison purposes}
 
 \item{quote}{character vector, character used to quote string tokens; defaults to null}
 

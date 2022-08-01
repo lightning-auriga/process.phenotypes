@@ -13,9 +13,6 @@
 #' @param dataset.yaml character vector, yaml configuration for project
 #' @param shared.model.yaml character vector, yaml configuration for shared model specifications
 #' @param out.filename character vector, name of output report html file
-#' @param magic.fix logical, whether or not to apply most of the automated fixes
-#' in this package; used to "turn off" fixes but still generate a parseable dataset
-#' for comparison purposes
 #' @param quote character vector, character used to quote string tokens; defaults to null
 #' @param sep character vector, character used to delimit input fields; defaults to tab
 #' @param uniq.var.inclusion.prop numeric, proportion of total values of a string
@@ -44,7 +41,6 @@ create.phenotype.report <- function(in.filename,
                                     dataset.yaml,
                                     shared.model.yaml,
                                     out.filename,
-                                    magic.fix = TRUE,
                                     quote = "",
                                     sep = "\t",
                                     uniq.var.inclusion.prop = 1 / 3,
@@ -121,17 +117,15 @@ create.phenotype.report <- function(in.filename,
 
   ## clean up strings (global functions across all variables)
   phenotype.data <- make.lowercase(phenotype.data)
-  if (magic.fix) {
-    phenotype.data <- remove.whitespace(phenotype.data)
-    phenotype.data <- collapse.repeats(phenotype.data)
-    phenotype.data <- process.unicode.characters(phenotype.data)
-    reformatted.list <- exclude.excel.failures(phenotype.data, variable.summary)
-    phenotype.data <- reformatted.list$phenotype.data
-    variable.summary <- reformatted.list$variable.summary
-    variable.summary <- detect.unicode.characters(phenotype.data, variable.summary)
-    phenotype.data <- remove.nonword.chars(phenotype.data, variable.summary)
-    phenotype.data <- normalize.missing.values(phenotype.data)
-  }
+  phenotype.data <- remove.whitespace(phenotype.data)
+  phenotype.data <- collapse.repeats(phenotype.data)
+  phenotype.data <- process.unicode.characters(phenotype.data)
+  reformatted.list <- exclude.excel.failures(phenotype.data, variable.summary)
+  phenotype.data <- reformatted.list$phenotype.data
+  variable.summary <- reformatted.list$variable.summary
+  variable.summary <- detect.unicode.characters(phenotype.data, variable.summary)
+  phenotype.data <- remove.nonword.chars(phenotype.data, variable.summary)
+  phenotype.data <- normalize.missing.values(phenotype.data)
 
   ## as soon as possible, remove subjects lacking consent
   ## I'd prefer to do this earlier, but without basic cleaning, sane specifications
@@ -144,41 +138,29 @@ create.phenotype.report <- function(in.filename,
   stopifnot(nrow(phenotype.data) > 0)
 
   ## apply variable-specific NA values
-  if (magic.fix) {
-    phenotype.data <- convert.variable.specific.na(
-      phenotype.data,
-      variable.summary
-    )
-  }
+  phenotype.data <- convert.variable.specific.na(
+    phenotype.data,
+    variable.summary
+  )
 
   ## attempt type conversion on post-cleaning string vectors
-  if (magic.fix) {
-    reformatted.list <- apply.type.conversions(phenotype.data, variable.summary)
-  } else {
-    phenotype.data <- type.convert(phenotype.data)
-  }
+  reformatted.list <- apply.type.conversions(phenotype.data, variable.summary)
 
   ## exclude subjects below a given age from the dataset
-  if (magic.fix) {
-    reformatted.list <- exclude.by.age(
-      reformatted.list$phenotype.data, reformatted.list$variable.summary
-    )
-  }
+  reformatted.list <- exclude.by.age(
+    reformatted.list$phenotype.data, reformatted.list$variable.summary
+  )
 
   ## exclude subjects without a subject ID from the dataset
-  if (magic.fix) {
-    reformatted.list <- exclude.by.missing.subject.id(
-      reformatted.list$phenotype.data, reformatted.list$variable.summary
-    )
-  }
+  reformatted.list <- exclude.by.missing.subject.id(
+    reformatted.list$phenotype.data, reformatted.list$variable.summary
+  )
 
   ## apply variable-specific range restrictions
-  if (magic.fix) {
-    reformatted.list <- apply.bounds(
-      reformatted.list$phenotype.data,
-      reformatted.list$variable.summary
-    )
-  }
+  reformatted.list <- apply.bounds(
+    reformatted.list$phenotype.data,
+    reformatted.list$variable.summary
+  )
 
   ## attempt to harmonize ancestry variables using target list of ancestry tags
   reformatted.list <- harmonize.ancestry(
@@ -197,12 +179,10 @@ create.phenotype.report <- function(in.filename,
 
   ## apply variable-specific range restrictions a second time, so that
   ## newly-calculated derived variables will also have bounds applied
-  if (magic.fix) {
-    reformatted.list <- apply.bounds(
-      reformatted.list$phenotype.data,
-      reformatted.list$variable.summary
-    )
-  }
+  reformatted.list <- apply.bounds(
+    reformatted.list$phenotype.data,
+    reformatted.list$variable.summary
+  )
 
   ## enforce yaml-specified variable relationships
   reformatted.list$variable.summary <- check.variable.dependencies(
@@ -219,10 +199,8 @@ create.phenotype.report <- function(in.filename,
   phenotype.data.na.applied <- reformatted.list.na.applied$phenotype.data
   reformatted.list$variable.summary <- reformatted.list.na.applied$variable.summary
 
-  if (magic.fix) {
-    phenotype.data <- reformatted.list$phenotype.data
-    variable.summary <- reformatted.list$variable.summary
-  }
+  phenotype.data <- reformatted.list$phenotype.data
+  variable.summary <- reformatted.list$variable.summary
 
   for (name in names(variable.summary$variables)) {
     if (is.vector(phenotype.data[, name], mode = "numeric")) {
