@@ -19,7 +19,7 @@ library(process.phenotypes)
 ```
 
 To facilitate the process of creating configuration files for a phenotype dataset,
-`process.phenotypes` contains a python-based yaml validation script. This step
+`process.phenotypes` contains a utility function and script for config validation. This step
 is completely optional, but can help catch some of the most common discrepancies
 in manually configuration.
 
@@ -43,51 +43,111 @@ in `variables`, `derived`, or `levels`). These will instead flag as an error whe
 
 ## Install necessary packages
 
-A minimal `python3` environment is required to run the schema validation script.
-The necessary packages can be installed in conda as follows:
+The suggested packages `jsonvalidate` and `rjson` are required for this utility.
+They are available in conda as `r-jsonvalidate` and `r-rjson`.
 
-```{bash}
-## if you don't already have a conda environment
-mamba create -n validation -c conda-forge python3 pyyaml argparse jsonschema
-## alternatively, you can install to an already active environment
-mamba install -c conda-forge python3 pyyaml argparse jsonschema
+```{r load.input.libraries}
+library(jsonvalidate)
+library(rjson)
+library(yaml)
 ```
 
 ## Validator usage
 
-Assume that you have a dataset configuration yaml named `dataset.yaml` and a shared models
-configuration yaml named `shared-models.yaml`. Then schema validation can be run as follows:
+Assume that you have a dataset configuration yaml named `dataset.yaml`:
 
-```{bash}
-python3 validator/yaml_validator.py dataset.yaml shared-models.yaml validator/schema.dataset.yaml validator/schema.shared-models.yaml
+```{yaml}
+tag: "HW"
+globals:
+  "min_age_for_inclusion": 16
+  "max_invalid_datatypes_per_subject": 10
+  "consent_inclusion_file": ~
+  "consent_exclusion_file": ~
+variables:
+  "HW00001":
+    "name": "var1"
+    "type": "string"
+    "canonical_name": "variable 1"
+    "subject_id": yes
+  "HW00002":
+    "name": "var2"
+    "type": "numeric"
+    "canonical_name": "variable 2"
+    "subject_age": yes
+  "HW00003":
+    "name": "var3"
+    "shared_model": "yesno"
+    "canonical_name": "variable 3"
 ```
 
-If the configuration files conform to expectation, you should see output as follows:
+and a shared models configuration yaml named `shared-models.yaml`:
 
-```{bash}
-File shared-models.yaml passes schema validation!
-File dataset.yaml passes schema validation!
+```{yaml}
+models:
+  "yesno":
+    "type": "categorical"
+    "levels":
+      "1":
+        "name": "no"
+      "2":
+        "name": "yes"
+```
+
+Then schema validation can be run as follows:
+
+```{R run.good.validation, eval=TRUE, echo=TRUE}
+process.phenotypes::config.validation(
+  "dataset-valid.yaml", "shared-models-valid.yaml",
+  system.file("validator/schema.datasets.yaml", package = "process.phenotypes"),
+  system.file("validator/schema.shared-models.yaml", package = "process.phenotypes")
+)
 ```
 
 ### Interpretation of validation errors
 
+Validator errors tend to be rather verbose, and require some interpretation.
 If either of the above notifications is missing, then something about one of the configuration
 files does not match expectation. The informative message will be somewhere near the top of the
-error, followed by a verbose rendering of the schema structure that triggered the failure.
+error, likely accompanied by an assortment of tangentially related errors the validator
+encountered when attempting to resolve the configuration file.
 
-```{bash}
-File shared-models.yaml passes yaml validation!
-Traceback (most recent call last):
-  File "validator/yaml_validator.py", line 58, in <module>
-    validate(instance=x, schema=dataset_schema)
-  File "miniconda3/envs/dev/lib/python3.10/site-packages/jsonschema/validators.py", line 1022, in validate
-    raise error
-jsonschema.exceptions.ValidationError: Additional properties are not allowed ('shared-model' was unexpected)
+Consider the following malformed version of the above dataset yaml:
 
-Failed validating 'additionalProperties' in schema[0]:
-
-## more verbose content emitted here
+```{yaml}
+tag: "HW"
+globals:
+  "min_age_for_inclusion": 16
+  "max_invalid_datatypes_per_subject": 10
+  "consent_inclusion_file": ~
+  "consent_exclusion_file": ~
+variables:
+  "HW00001":
+    "name": "var1"
+    "type": "string"
+    "canonical_name": "variable 1"
+    "subject_id": yes
+  "HW00002":
+    "name": "var2"
+    "type": "numeric"
+    "canonical_name": "variable 2"
+    "subject_age": yes
+  "HW00003":
+    "name": "var3"
+    "shared-model": "yesno"
+    "canonical_name": "variable 3"
 ```
 
-In this case, the error is `Additional properties are not allowed ('shared-model' was unexpected)`.
-The key `shared-model` is not recognized as a valid alias for `shared_model`.
+The tag `shared-model` is incorrect; the schema expects `shared_model`. If we run
+this configuration file through the validator:
+
+```{R run.bad.validation, eval=TRUE, echo=TRUE, error=TRUE}
+process.phenotypes::config.validation(
+  "dataset-invalid.yaml", "shared-models-valid.yaml",
+  system.file("validator/schema.datasets.yaml", package = "process.phenotypes"),
+  system.file("validator/schema.shared-models.yaml", package = "process.phenotypes")
+)
+```
+
+In this case, the error `... must have required property 'shared_model'` indicates
+that the configuration block was unable to match the `shared_model` block specification,
+since the critical tag was malformed.

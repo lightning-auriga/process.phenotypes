@@ -1,0 +1,283 @@
+---
+$schema: "http://json-schema.org/draft-07/schema#"
+description: "configuration specification for per-dataset config yaml"
+type: object
+properties:
+  tag:
+    type: string
+  globals:
+    type: object
+    properties:
+      min_age_for_inclusion:
+        type: integer
+      max_invalid_datatypes_per_subject:
+        type: integer
+      consent_inclusion_file:
+        oneOf:
+          - type: string
+          - type: "null"
+      consent_exclusion_file:
+        oneOf:
+          - type: string
+          - type: "null"
+    additionalProperties: false
+    required:
+      - min_age_for_inclusion
+  variables:
+    type: object
+    patternProperties:
+      "^.*$":
+        oneOf:
+          - type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                pattern: "^[sS][tT][rR][iI][nN][gG]$|^[cC][aA][tT][eE][gG][oO][rR][iI][cC][aA][lL]$|^[cC][aA][tT][eE][gG][oO][rR][iI][cC][aA][lL]_[tT][oO]_[nN][uU][mM][eE][rR][iI][cC]$|^[oO][rR][dD][iI][nN][aA][lL]$|^[nN][uU][mM][eE][rR][iI][cC]$|^[bB][lL][oO][oO][dD][ _]?[pP][rR][eE][sS][sS][uU][rR][eE]$|^[bB][pP]$|^[dD][aA][tT][eE]$|^[bB][iI][nN][aA][rR][yY]$"
+              na-values:
+                type: array
+                items:
+                  type: string
+              bounds:
+                type: object
+                properties:
+                  min:
+                    type: number
+                  max:
+                    type: number
+                  sd:
+                    type: number
+                additionalProperties: false
+              suppress_reporting:
+                type: boolean
+              suppress_output:
+                type: boolean
+              allow_undelimited_bp:
+                type: boolean
+              multimodal:
+                type: string
+              levels:
+                type: object
+                patternProperties:
+                  "^.*$":
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      alternate_patterns:
+                        type: array
+                        items:
+                          type: string
+                    required:
+                      - name
+              subject_id:
+                type: boolean
+              subject_age:
+                type: boolean
+              subject_ancestry:
+                type: boolean
+              linked_date:
+                type: object
+                properties:
+                  reported_year:
+                    type: string
+                  reference_year:
+                    oneOf:
+                      - type: string
+                      - type: number
+                required:
+                  - reported_year
+                  - reference_year
+                additionalProperties: false
+              computed_bmi:
+                type: object
+                properties:
+                  height:
+                    type: string
+                  weight:
+                    type: string
+                required:
+                  - height
+                  - weight
+                additionalProperties: false
+              computed_bp_ratio:
+                type: object
+                properties:
+                  diastolic:
+                    type: string
+                required:
+                  - diastolic
+                additionalProperties: false
+              dependencies:
+                type: object
+                patternProperties:
+                  "^.*$":
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      condition:
+                        type: string
+                      table_comparisons:
+                        type: array
+                        items:
+                          type: string
+                      exclude_on_failure:
+                        type: array
+                        items:
+                          type: string
+                      exclude_all_on_failure:
+                        type: boolean
+                    required:
+                      - name
+                      - condition
+              canonical_name:
+                type: string
+            required:
+              - name
+              - canonical_name
+            additionalProperties: false
+          - type: object
+            properties:
+              name:
+                type: string
+              shared_model:
+                type: string
+              na-values:
+                type: array
+                items:
+                  type: string
+              suppress_reporting:
+                type: boolean
+              suppress_output:
+                type: boolean
+              allow_undelimited_bp:
+                type: boolean
+              bounds:
+                type: object
+                properties:
+                  min:
+                    type: number
+                  max:
+                    type: number
+                  sd:
+                    type: number
+                additionalProperties: false
+              levels:
+                type: object
+                patternProperties:
+                  "^.*$":
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      alternate_patterns:
+                        type: array
+                        items:
+                          type: string
+                    required:
+                      - name
+              multimodal:
+                type: string
+              subject_id:
+                type: boolean
+              subject_age:
+                type: boolean
+              linked_date:
+                type: object
+                properties:
+                  reported_year:
+                    type: string
+                  reference_year:
+                    oneOf:
+                      - type: string
+                      - type: number
+                required:
+                  - reported_year
+                  - reference_year
+                additionalProperties: false
+              computed_bmi:
+                type: object
+                properties:
+                  height:
+                    type: string
+                  weight:
+                    type: string
+                required:
+                  - height
+                  - weight
+                additionalProperties: false
+              computed_bp_ratio:
+                type: object
+                properties:
+                  diastolic:
+                    type: string
+                required:
+                  - diastolic
+                additionalProperties: false
+              dependencies:
+                type: object
+                patternProperties:
+                  "^.*$":
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      condition:
+                        type: string
+                      table_comparisons:
+                        type: array
+                        items:
+                          type: string
+                      exclude_on_failure:
+                        type: array
+                        items:
+                          type: string
+                      exclude_all_on_failure:
+                        type: boolean
+                    required:
+                      - name
+                      - condition
+              canonical_name:
+                type: string
+            required:
+              - name
+              - canonical_name
+              - shared_model
+            additionalProperties: false
+  derived:
+    type: object
+    patternProperties:
+      "^.*$":
+        oneOf:
+          - type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                pattern: "^[sS][tT][rR][iI][nN][gG]$|^[cC][aA][tT][eE][gG][oO][rR][iI][cC][aA][lL]$|^[oO][rR][dD][iI][nN][aA][lL]$|^[nN][uU][mM][eE][rR][iI][cC]$|^[bB][lL][oO][oO][dD][ _]?[pP][rR][eE][sS][sS][uU][rR][eE]$|^[bB][pP]$|^[dD][aA][tT][eE]$|^[bB][iI][nN][aA][rR][yY]$"
+              code:
+                type: string
+            required:
+              - name
+              - type
+              - code
+          - type: object
+            properties:
+              name:
+                type: string
+              shared_model:
+                type: string
+              code:
+                type: string
+            required:
+              - name
+              - shared_model
+              - code
+required:
+  - variables
+  - globals
+  - tag
+additionalProperties: false
