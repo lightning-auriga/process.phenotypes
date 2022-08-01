@@ -2,8 +2,8 @@ tag: "HW"
 globals:
   min_age_for_inclusion: 16
   max_invalid_datatypes_per_subject: 10
-  consent_inclusion_file: ~
-  consent_exclusion_file: ~
+  consent_inclusion_file: "files/create_phenotype_report/consent.in.tsv"
+  consent_exclusion_file: "files/create_phenotype_report/consent.out.tsv"
 variables:
   HW00001:
     name: "var1"

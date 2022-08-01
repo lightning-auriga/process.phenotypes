@@ -1099,3 +1099,40 @@ test_that("report.dependencies prints summary information about processed depend
     )
   ))
 })
+
+test_that("emit.markdown.header correctly formats a header describing dataset metrics", {
+  res <- emit.markdown.header(
+    "my.yaml",
+    100,
+    "consent.in",
+    90,
+    "consent.out",
+    6,
+    c("A", "B", "C", "D"),
+    2,
+    16,
+    4
+  )
+  expect_true(stringr::str_detect(
+    res,
+    stringr::regex(paste("run using the configuration outlined in my\\.yaml",
+      ".*",
+      "100 subjects were originally present in this dataset",
+      ".*",
+      "90 subjects were included with verified consent",
+      ".*",
+      "6 subjects were excluded for lacking consent",
+      ".*",
+      "4 subjects were additionally excluded for not ",
+      "being explicitly listed as either having or lacking consent",
+      ".*",
+      "2 subjects were removed for being below the ",
+      "minimum permissible age of 16",
+      ".*",
+      "4 subjects were removed for lacking a subject ID",
+      sep = ""
+    ),
+    dotall = TRUE
+    )
+  ))
+})
