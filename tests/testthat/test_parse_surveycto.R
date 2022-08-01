@@ -23,7 +23,8 @@ test_that("populate.choices functions correctly on mock surveycto choices tab", 
       rep("model2", 2),
       NA,
       rep("model3", 4),
-      rep("model4", 3)
+      rep("model4", 3),
+      rep("model5", 3)
     ),
     "value" = c(
       "1", "2", "3",
@@ -31,7 +32,8 @@ test_that("populate.choices functions correctly on mock surveycto choices tab", 
       "a", "b",
       NA,
       "lvl1", "lvl2", "lvl3", "lvl4",
-      "lvl1", "lvl2", "lvl1"
+      "lvl1", "lvl2", "lvl1",
+      "lvl1", "lvl2", "lvl3"
     ),
     "label" = c(
       "val1", "val2", "val3",
@@ -39,7 +41,8 @@ test_that("populate.choices functions correctly on mock surveycto choices tab", 
       "val4", "val5",
       NA,
       "val6", "val7", "val8", "val9",
-      "val10", "val11", "val12"
+      "val10", "val11", "val12",
+      "val13", "val14", "val13"
     )
   )
   in.survey.type <- c(
@@ -111,6 +114,19 @@ test_that("populate.choices functions correctly on mock surveycto choices tab", 
         ),
         "lvl2" = list(
           "name" = "val11",
+          "alternate_patterns" = c("lvl2", "lvl2")
+        )
+      )
+    ),
+    "model5" = list(
+      "type" = "categorical",
+      "levels" = list(
+        "lvl1" = list(
+          "name" = "val13",
+          "alternate_patterns" = c("lvl1", "lvl3")
+        ),
+        "lvl2" = list(
+          "name" = "val14",
           "alternate_patterns" = c("lvl2", "lvl2")
         )
       )
