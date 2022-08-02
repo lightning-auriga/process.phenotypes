@@ -98,9 +98,7 @@ populate.choices <- function(df, survey.type, na.values) {
       )
       alternate.patterns <- list.name.values[list.name.labels == list.name.labels[i]]
 
-      if (length(alternate.patterns) == 1) {
-        alternate.patterns <- rep(alternate.patterns, 2)
-      } else {
+      if (length(alternate.patterns) > 1) {
         ## try to deal with invalid level configurations
         if (length(variable.select.multiple) > 0) {
           ## if the variable is always a multiple response, then even the bad
@@ -108,7 +106,7 @@ populate.choices <- function(df, survey.type, na.values) {
           ## CTO one hot convention, it is never actually used as a categorical
           ## encoding
           found.names <- found.names[-length(found.names)]
-          alternate.patterns <- rep(list.name.values[i], 2)
+          alternate.patterns <- list.name.values[i]
           if (length(variable.select.multiple) != length(variable.selections)) {
             warning(
               "for shared model ", list.name, " invalid factor levels exist ",
@@ -128,7 +126,7 @@ populate.choices <- function(df, survey.type, na.values) {
     )
     if (length(na.levels) > 0) {
       if (length(na.levels) == 1) {
-        na.levels <- rep(na.levels, 2)
+        na.levels <- list(na.levels)
       }
       var.model[["na-values"]] <- na.levels
     }
@@ -533,14 +531,23 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
     stop("output variable prediction has failed")
   }
   out.yaml <- flag.required.variables(out.yaml, subject.id.name, age.name)
-  yaml::write_yaml(out.yaml, out.yaml.filename, fileEncoding = "UTF-8")
+  yaml::write_yaml(out.yaml, out.yaml.filename,
+    fileEncoding = "UTF-8",
+    handlers = list(seq = function(x) x)
+  )
   ## after column name resolution is complete, only then set categorical
   ## levels to lowercase versions
   for (model.name in names(choice.list$models)) {
     for (model.lvl in names(choice.list$models[[model.name]]$levels)) {
       choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns <-
-        tolower(choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns)
+        ifelse(length(choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns) == 1,
+          list(tolower(choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns)),
+          tolower(choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns)
+        )
     }
   }
-  yaml::write_yaml(choice.list, out.shared.models, fileEncoding = "UTF-8")
+  yaml::write_yaml(choice.list, out.shared.models,
+    fileEncoding = "UTF-8",
+    handlers = list(seq = function(x) x)
+  )
 }
