@@ -62,15 +62,15 @@ test_that("populate.choices functions correctly on mock surveycto choices tab", 
       "levels" = list(
         "lvl1" = list(
           "name" = "val1",
-          "alternate_patterns" = c("1", "1")
+          "alternate_patterns" = c("1")
         ),
         "lvl2" = list(
           "name" = "val2",
-          "alternate_patterns" = c("2", "2")
+          "alternate_patterns" = c("2")
         ),
         "lvl3" = list(
           "name" = "val3",
-          "alternate_patterns" = c("3", "3")
+          "alternate_patterns" = c("3")
         )
       )
     ),
@@ -79,11 +79,11 @@ test_that("populate.choices functions correctly on mock surveycto choices tab", 
       "levels" = list(
         "lvl1" = list(
           "name" = "val4",
-          "alternate_patterns" = c("a", "a")
+          "alternate_patterns" = c("a")
         ),
         "lvl2" = list(
           "name" = "val5",
-          "alternate_patterns" = c("b", "b")
+          "alternate_patterns" = c("b")
         )
       )
     ),
@@ -92,29 +92,29 @@ test_that("populate.choices functions correctly on mock surveycto choices tab", 
       "levels" = list(
         "lvl1" = list(
           "name" = "val6",
-          "alternate_patterns" = c("lvl1", "lvl1")
+          "alternate_patterns" = c("lvl1")
         ),
         "lvl2" = list(
           "name" = "val7",
-          "alternate_patterns" = c("lvl2", "lvl2")
+          "alternate_patterns" = c("lvl2")
         ),
         "lvl3" = list(
           "name" = "val9",
-          "alternate_patterns" = c("lvl4", "lvl4")
+          "alternate_patterns" = c("lvl4")
         )
       ),
-      "na-values" = c("lvl3", "lvl3")
+      "na-values" = list("lvl3")
     ),
     "model4" = list(
       "type" = "categorical",
       "levels" = list(
         "lvl1" = list(
           "name" = "val10",
-          "alternate_patterns" = c("lvl1", "lvl1")
+          "alternate_patterns" = c("lvl1")
         ),
         "lvl2" = list(
           "name" = "val11",
-          "alternate_patterns" = c("lvl2", "lvl2")
+          "alternate_patterns" = c("lvl2")
         )
       )
     ),
@@ -127,7 +127,7 @@ test_that("populate.choices functions correctly on mock surveycto choices tab", 
         ),
         "lvl2" = list(
           "name" = "val14",
-          "alternate_patterns" = c("lvl2", "lvl2")
+          "alternate_patterns" = c("lvl2")
         )
       )
     )
@@ -160,15 +160,15 @@ test_that("populate.choices warns when impossible multiple choice configurations
       "levels" = list(
         "lvl1" = list(
           "name" = "val1",
-          "alternate_patterns" = c("1", "1")
+          "alternate_patterns" = c("1")
         ),
         "lvl2" = list(
           "name" = "val2",
-          "alternate_patterns" = c("2", "2")
+          "alternate_patterns" = c("2")
         ),
         "lvl3" = list(
           "name" = "val1",
-          "alternate_patterns" = c("3", "3")
+          "alternate_patterns" = c("3")
         )
       )
     )
@@ -191,11 +191,11 @@ test_that("handle.multiple.levels correctly expands existing yaml config with on
       "levels" = list(
         "1" = list(
           "name" = "lvl1",
-          "alternate_patterns" = c("1", "1")
+          "alternate_patterns" = c("1")
         ),
         "2" = list(
           "name" = "lvl2",
-          "alternate_patterns" = c("2", "2")
+          "alternate_patterns" = c("2")
         )
       )
     ),
@@ -204,15 +204,15 @@ test_that("handle.multiple.levels correctly expands existing yaml config with on
       "levels" = list(
         "1" = list(
           "name" = "lvl3",
-          "alternate_patterns" = c("L1", "L1")
+          "alternate_patterns" = c("L1")
         ),
         "2" = list(
           "name" = "lvl4",
-          "alternate_patterns" = c("2", "2")
+          "alternate_patterns" = c("2")
         ),
         "3" = list(
           "name" = "lvl5",
-          "alternate_patterns" = c("3", "3")
+          "alternate_patterns" = c("3")
         )
       )
     )
@@ -478,11 +478,11 @@ test_that("build.variable.data primary functionality: select_multiple", {
     "levels" = list(
       "1" = list(
         "name" = "lvl1",
-        "alternate_patterns" = c("1", "1")
+        "alternate_patterns" = c("1")
       ),
       "2" = list(
         "name" = "lvl2",
-        "alternate_patterns" = c("2", "2")
+        "alternate_patterns" = c("2")
       )
     )
   )))
@@ -562,11 +562,11 @@ test_that("handle.repeat.variables can handle the most toxic of test cases", {
     "levels" = list(
       "1" = list(
         "name" = "lvl1",
-        "alternate_patterns" = c("1", "1")
+        "alternate_patterns" = c("1")
       ),
       "2" = list(
         "name" = "lvl2",
-        "alternate_patterns" = c("LV", "LV")
+        "alternate_patterns" = c("LV")
       )
     )
   )))
@@ -878,11 +878,11 @@ test_that("parse.surveycto runs end to end with primary conformant logic", {
     levels = list(
       "lvl1" = list(
         name = "Yes",
-        alternate_patterns = c("1", "1")
+        alternate_patterns = c("1")
       ),
       "lvl2" = list(
         name = "No",
-        alternate_patterns = c("0", "0")
+        alternate_patterns = c("0")
       )
     )
   )))

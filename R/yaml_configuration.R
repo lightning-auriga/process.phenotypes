@@ -23,11 +23,15 @@ load.configuration <- function(dataset.parameter.filename,
     length(global.parameter.filename) == 1
   )
   ## read global shared model information
-  global.parameters <- yaml::read_yaml(global.parameter.filename)
+  global.parameters <- yaml::read_yaml(global.parameter.filename,
+    handlers = list(seq = function(x) x)
+  )
   ## input format testing for global model parameters
   stopifnot(!is.null(global.parameters$models))
   ## read project-specific variable parameter information
-  dataset.parameters <- yaml::read_yaml(dataset.parameter.filename)
+  dataset.parameters <- yaml::read_yaml(dataset.parameter.filename,
+    handlers = list(seq = function(x) x)
+  )
   ## input format testing for project-specific variable parameters
   stopifnot(
     !is.null(dataset.parameters$tag),
@@ -110,9 +114,11 @@ write.configuration <- function(variable.summary, out.filename) {
         var.list[[var.name]]$name <- var.name
       }
       res[["variables"]] <- var.list
-    } else {
+    } else if (name %in% c("globals", "tag")) {
       res[[name]] <- variable.summary[[name]]
     }
   }
-  yaml::write_yaml(res, out.filename)
+  yaml::write_yaml(res, out.filename,
+    handlers = list(seq = function(x) x)
+  )
 }

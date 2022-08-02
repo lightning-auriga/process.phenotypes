@@ -33,7 +33,7 @@ run_all:
   image: rocker/tidyverse:latest
   script:
     - apt-get update
-    - apt-get install -y wget tar
+    - apt-get install -y wget tar libxt-dev
     - Rscript -e 'install.packages(c("covr", "DT", "openxlsx", "kableExtra", "stringdist"), repos = "https://cran.seoul.go.kr/")'
     - Rscript -e 'devtools::build(binary = TRUE)'
     - Rscript -e 'devtools::check(document = FALSE, args = "--no-tests", error_on = "note")'

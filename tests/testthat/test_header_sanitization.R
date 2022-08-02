@@ -10,6 +10,12 @@ colnames(phenotype.data) <- c(
 
 config.data <- list(
   tag = "testtag",
+  globals = list(
+    "min_age_for_inclusion" = 16,
+    "max_invalid_datatypes_per_subject" = 10,
+    "consent_inclusion_file" = NULL,
+    "consent_exclusion_file" = NULL
+  ),
   variables = list(
     var001 = list(
       name = "weird phenotype name 1",
@@ -23,6 +29,13 @@ config.data <- list(
 )
 
 map.header.expected.output <- list(
+  tag = "testtag",
+  globals = list(
+    "min_age_for_inclusion" = 16,
+    "max_invalid_datatypes_per_subject" = 10,
+    "consent_inclusion_file" = NULL,
+    "consent_exclusion_file" = NULL
+  ),
   variables = list(
     var001 = list(
       original.name = "weird phenotype name 1",
@@ -58,6 +71,12 @@ test_that("duplicate header names don't ruin mapping", {
   colnames(test.data) <- c("a", "b", "c", "b")
   config.data <- list(
     tag = "testtag",
+    globals = list(
+      "min_age_for_inclusion" = 16,
+      "max_invalid_datatypes_per_subject" = 10,
+      "consent_inclusion_file" = NULL,
+      "consent_exclusion_file" = NULL
+    ),
     variables = list(
       var001 = list(name = "a", type = "string"),
       var002 = list(name = "b", type = "string"),
@@ -66,6 +85,13 @@ test_that("duplicate header names don't ruin mapping", {
     )
   )
   expected.output <- list(
+    tag = "testtag",
+    globals = list(
+      "min_age_for_inclusion" = 16,
+      "max_invalid_datatypes_per_subject" = 10,
+      "consent_inclusion_file" = NULL,
+      "consent_exclusion_file" = NULL
+    ),
     variables = list(
       var001 = list(original.name = "a", params = list(name = "a", type = "string")),
       var002 = list(original.name = "b", params = list(name = "b", type = "string")),
@@ -142,6 +168,7 @@ test_that("map.header respects request to override variable name sanity check", 
     var2 = 5:8
   )
   in.variable.summary <- list(
+    tag = "testtag",
     globals = list(consent.inclusion.file = "filename"),
     variables = list(
       HW00001 = list(
@@ -160,6 +187,8 @@ test_that("map.header respects request to override variable name sanity check", 
     ))
   )
   out.variable.summary <- list(
+    tag = "testtag",
+    globals = list(consent.inclusion.file = "filename"),
     variables = list(
       HW00001 = list(
         original.name = "var1",
@@ -176,7 +205,6 @@ test_that("map.header respects request to override variable name sanity check", 
         )
       )
     ),
-    globals = list(consent.inclusion.file = "filename"),
     derived = list(dervar1 = list(
       name = "dervar1",
       type = "string",
