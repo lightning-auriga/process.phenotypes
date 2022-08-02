@@ -1,7 +1,7 @@
 repos:
   ## R support
 - repo: https://github.com/lorenzwalthert/precommit
-  rev: v0.1.3
+  rev: v0.3.2
   hooks:
   - id: style-files
   - id: parsable-R
@@ -10,9 +10,7 @@ repos:
     verbose: true
 ## Note: the following three hooks apply only to R package development
   - id: roxygenize
+    additional_dependencies:
+      - git2r
   - id: deps-in-desc
   - id: use-tidy-description
-- repo: .
-  rev: '98b82461ff40023050d5c29eba8275dbbc70e037'
-  hooks:
-    - id: yaml-validation

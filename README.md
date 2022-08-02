@@ -198,6 +198,7 @@ If you are using pre-commit as described below, the yaml configurations will be 
 
 ## Version History
 See changelog for more information.
+ * 01 Aug 2022: complete unit test coverage; refactor report and assorted minor fixes
  * 24 May 2022: merge CTO dataset configuration files and corresponding added functionality
  * 21 Sep 2021: initial release v1.0.0
  * 27 Aug 2021: derived variables, transformations, many assorted improvements, and better readme

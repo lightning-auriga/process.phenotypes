@@ -13,3 +13,6 @@ yaml-configuration
 .pre-commit-hooks.yaml
 environment.yaml
 docs
+coverage_report.html
+run_tests.r
+^lib/.*

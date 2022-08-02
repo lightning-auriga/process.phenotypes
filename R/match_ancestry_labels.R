@@ -185,12 +185,22 @@ harmonize.ancestry.from.linker <- function(phenotype,
   ## count these perfect matches for downstream reporting
   variable$perfect.ancestry.matches <- length(which(perfect.matches))
   ## handle ancestries with imperfect matches in the linker
-  weak.match.results <- weak.ancestry.match(
-    phenotype[imperfect.matches],
-    ancestry.data,
-    best.match.threshold,
-    best.match.discernment
+  weak.match.results <- list(
+    phenotype = c(),
+    reasoning = c(),
+    top.match = c(),
+    top.value = numeric(),
+    second.match = c(),
+    second.value = numeric()
   )
+  if (length(which(imperfect.matches)) > 0) {
+    weak.match.results <- weak.ancestry.match(
+      phenotype[imperfect.matches],
+      ancestry.data,
+      best.match.threshold,
+      best.match.discernment
+    )
+  }
   partial.match.replacements <- weak.match.results$phenotype
   ## count these imperfect matches for downstream reporting
   variable$imperfect.ancestry.matches <- length(which(!is.na(partial.match.replacements)))

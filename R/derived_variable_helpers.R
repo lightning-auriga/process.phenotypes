@@ -123,7 +123,7 @@ derive.rank.normal.transform <- function(variable,
   }
   ## if stratification was requested, run a final pass to ensure
   ## the overlaid distributions behave correctly
-  if (primary.call & length(stratification.vars) > 0) {
+  if (primary.call && length(stratification.vars) > 0) {
     res <- derive.rank.normal.transform(
       res,
       offset,

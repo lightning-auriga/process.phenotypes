@@ -1,3 +1,43 @@
+test_that("exclude.by.missing.subject.id functions excludes appropriate targets", {
+  in.phenotype.data <- data.frame(
+    TN001 = c("A", NA, "B", "C", NA, "D"),
+    TN002 = 1:6,
+    TN003 = 7:12
+  )
+  in.var.summary <- list(variables = list(
+    TN001 = list(
+      original.name = "name1",
+      params = list(
+        name = "name1",
+        type = "string",
+        suppress_reporting = TRUE,
+        subject_id = TRUE
+      )
+    ),
+    TN002 = list(
+      original.name = "name2",
+      params = list(
+        name = "name2",
+        type = "numeric",
+        subject_id = FALSE
+      )
+    ),
+    TN003 = list(
+      original.name = "name3",
+      params = list(
+        name = "name3",
+        type = "numeric"
+      )
+    )
+  ))
+  expected.df <- in.phenotype.data[c(1, 3, 4, 6), ]
+  expected.list <- in.var.summary
+  expected.list$na.subject.id.count <- 2
+  res <- exclude.by.missing.subject.id(in.phenotype.data, in.var.summary)
+  expect_equal(res$phenotype.data, expected.df)
+  expect_equal(res$variable.summary, expected.list)
+})
+
 test_that("apply.type.conversions minimally functions for all types", {
   in.phenotype.data <- data.frame(
     TN001 = c("freeform", "text", "entry", "field"),
@@ -6,7 +46,9 @@ test_that("apply.type.conversions minimally functions for all types", {
     TN004 = c("orange", "orange", "pineapple", "banana"),
     TN005 = c("1.05", "4.44mm", "3.21", "169 / 100"),
     TN006 = c("100/90", "100 / 80mhg", "200/ 100", "40"),
-    TN007 = c("A", "B", "C", "D")
+    TN007 = c("A", "B", "C", "D"),
+    TN008 = c("2004", "12/8/08", "April 2012", "hello_world"),
+    TN009 = c("1", "4", "2", "3")
   )
   out.phenotype.data <- data.frame(
     TN001 = c("freeform", "text", "entry", "field"),
@@ -26,7 +68,9 @@ test_that("apply.type.conversions minimally functions for all types", {
     ),
     TN005 = c(1.05, 4.44, 3.21, NA),
     TN006 = c("100/90", "100/80", "200/100", NA),
-    TN007 = c("A", "B", "C", "D")
+    TN007 = c("A", "B", "C", "D"),
+    TN008 = c(2004, 2008, 2012, NA),
+    TN009 = c(1, NA, 2, 3)
   )
   in.var.summary <- list(
     variables = list(
@@ -96,6 +140,25 @@ test_that("apply.type.conversions minimally functions for all types", {
           type = "string",
           subject_id = TRUE
         )
+      ),
+      TN008 = list(
+        original.name = "fundate",
+        params = list(
+          name = "fundate",
+          type = "date"
+        )
+      ),
+      TN009 = list(
+        original.name = "weirdcat",
+        params = list(
+          name = "weirdcat",
+          type = "categorical_to_numeric",
+          levels = list(
+            "1" = list("name" = "1"),
+            "2" = list("name" = "2"),
+            "3" = list("name" = "3")
+          )
+        )
       )
     )
   )
@@ -110,6 +173,12 @@ test_that("apply.type.conversions minimally functions for all types", {
   out.var.summary$variables$TN005$subjects.wrong.type <- c("D")
   out.var.summary$variables$TN006$invalid.blood.pressure.entries <- c("40")
   out.var.summary$variables$TN006$subjects.wrong.type <- c("D")
+  out.var.summary$variables$TN008$invalid.date.entries <- c("hello_world")
+  out.var.summary$variables$TN008$subjects.wrong.type <- c("D")
+  out.var.summary$variables$TN009$params$type <- "numeric"
+  out.var.summary$variables$TN009$invalid.factor.entries <- c("4")
+  out.var.summary$variables$TN009$invalid.numeric.entries <- character()
+  out.var.summary$variables$TN009$subjects.wrong.type <- c("B")
   expect_identical(
     apply.type.conversions(in.phenotype.data, in.var.summary),
     list(
@@ -118,6 +187,86 @@ test_that("apply.type.conversions minimally functions for all types", {
     )
   )
 })
+
+test_that("convert.type recognizes and complains about unexpected types", {
+  in.phenotype.data <- data.frame(
+    TN001 = c("A", "B"),
+    TN002 = c("val1", "val2")
+  )
+  in.var.summary <- list(variables = list(
+    TN001 = list(
+      original.name = "name1",
+      params = list(
+        name = "name1",
+        type = "string",
+        subject_id = TRUE
+      )
+    ),
+    TN002 = list(
+      original.name = "name2",
+      params = list(
+        name = "name2",
+        type = "alien_type"
+      )
+    )
+  ))
+  expect_error(convert.type(
+    in.phenotype.data,
+    in.var.summary,
+    "alien_type"
+  ))
+})
+
+test_that("apply.type.conversions correctly skips over null type entries", {
+  in.phenotype.data <- data.frame(
+    TN001 = c("freeform", "text", "entry", "field")
+  )
+  out.phenotype.data <- data.frame(
+    TN001 = c("freeform", "text", "entry", "field")
+  )
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts"
+        )
+      )
+    )
+  )
+  out.var.summary <- in.var.summary
+  output <- NULL
+  expected <- list(
+    phenotype.data = out.phenotype.data,
+    variable.summary = out.var.summary
+  )
+  expect_warning(output <- apply.type.conversions(in.phenotype.data, in.var.summary))
+  expect_identical(output, expected)
+})
+
+
+test_that("apply.type.conversions correctly errors when it finds unhandled type specification", {
+  in.phenotype.data <- data.frame(
+    TN001 = c("freeform", "text", "entry", "field")
+  )
+  out.phenotype.data <- data.frame(
+    TN001 = c("freeform", "text", "entry", "field")
+  )
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "random thoughts",
+        params = list(
+          name = "random thoughts",
+          type = "invalid_type"
+        )
+      )
+    )
+  )
+  out.var.summary <- in.var.summary
+  expect_error(apply.type.conversions(in.phenotype.data, in.var.summary))
+})
+
 
 test_that("apply.bounds changes values below/above the provided min/max to NA", {
   in.var.summary <- list(
@@ -270,6 +419,42 @@ test_that("convert.variable.specific.na sets instances of strings to NA", {
   )
 })
 
+test_that("convert.variable.specific.na enforces suppress.output override", {
+  in.phenotype.data <- data.frame(
+    TN001 = c("apple", "banana", "river", "cranberry"),
+    TN002 = c("redmeat", "chicken", "fish", "pork")
+  )
+  in.variable.summary <- list(variables = list(
+    TN001 = list(
+      original.name = "something",
+      params = list(
+        type = "categorical",
+        levels = list(
+          "1" = list(name = "apple"),
+          "2" = list(name = "banana"),
+          "3" = list(name = "cranberry")
+        ),
+        "na-values" = c("window", "river", "Austria"),
+        suppress_output = FALSE
+      )
+    ),
+    TN002 = list(original.name = "meattypes", params = list(
+      name = "meattypes",
+      type = "string",
+      suppress_output = TRUE
+    ))
+  ))
+  out.phenotype.data <- data.frame(
+    TN001 = c("apple", "banana", NA, "cranberry"),
+    TN002 = rep(NA, 4)
+  )
+  out.variable.summary <- in.variable.summary
+  expect_identical(
+    convert.variable.specific.na(in.phenotype.data, in.variable.summary),
+    out.phenotype.data
+  )
+})
+
 test_that("exclude.by.age correctly removes subjects with ages below the given threshold", {
   in.var.summary <- list(
     variables = list(
@@ -301,6 +486,32 @@ test_that("exclude.by.age correctly removes subjects with ages below the given t
     phenotype.data = out.phenotype.data,
     variable.summary = out.var.summary
   ))
+})
+
+test_that("exclude.by.age complains when subject age is not specified in yaml", {
+  in.var.summary <- list(
+    variables = list(
+      TN001 = list(
+        original.name = "age",
+        params = list(
+          name = "age",
+          type = "numeric"
+        )
+      ),
+      TN002 = list(
+        original.name = "not age",
+        params = list(
+          name = "not age",
+          type = "numeric"
+        )
+      )
+    ),
+    globals = list(
+      min_age_for_inclusion = 16
+    )
+  )
+  in.phenotype.data <- data.frame(TN001 = c(15:20), TN002 = 12:17)
+  expect_error(exclude.by.age(in.phenotype.data, in.var.summary))
 })
 
 test_that("parse.date extracts year and infers century correctly", {

@@ -31,9 +31,13 @@ map.header <- function(df, dataset.tag, config.data,
   ## are alphanumeric only
   new.names <- names(config.data$variables)
   colnames(df) <- apply.replacements(colnames(df))
-  res <- list(variables = lapply(colnames(df), function(i) {
-    list(original.name = i)
-  }))
+  res <- list(
+    tag = config.data$tag,
+    globals = config.data$globals,
+    variables = lapply(colnames(df), function(i) {
+      list(original.name = i)
+    })
+  )
   names(res$variables) <- new.names
   ## for now, to handle duplicate identical header descriptors
   ## in raw input files, enforce identical ordering of variables
@@ -50,7 +54,7 @@ map.header <- function(df, dataset.tag, config.data,
       length(config.names), " in config)"
     )
   }
-  if (!identical(colnames(df), unname(unlist(config.names))) &
+  if (!identical(colnames(df), unname(unlist(config.names))) &&
     !force.header.mapping) {
     error.data <- cbind(
       colnames(df),
@@ -66,7 +70,6 @@ map.header <- function(df, dataset.tag, config.data,
   for (i in seq_len(length(config.data$variables))) {
     res$variables[[i]]$params <- config.data$variables[[i]]
   }
-  res$globals <- config.data$globals
   res$derived <- config.data$derived
   res
 }

@@ -26,7 +26,10 @@ apply.type.conversions <- function(phenotype.data, variable.summary) {
     if (is.null(variable.summary$variables[[i]]$params$type)) {
       warning(paste("variable \"", names(variable.summary$variables)[i], "\" has null type specification", sep = ""))
     }
-    target.type <- tolower(variable.summary$variables[[i]]$params$type)
+    target.type <- NULL
+    if (!is.null(variable.summary$variables[[i]]$params$type)) {
+      target.type <- tolower(variable.summary$variables[[i]]$params$type)
+    }
     possible.types <- c(
       "string",
       "categorical",
@@ -166,7 +169,7 @@ apply.bounds <- function(phenotype.data, variable.summary) {
         var.min <- variable.summary$variables[[i]]$params$bounds$min
         if (!is.null(var.min)) {
           var.min <- as.numeric(var.min)
-          if (!is.na(var.min) & is.null(variable.summary$variables[[i]]$num.below.min)) {
+          if (!is.na(var.min) && is.null(variable.summary$variables[[i]]$num.below.min)) {
             # count and apply min threshold
             num.min <- length(phenotype.data[phenotype.data[, i] < var.min &
               !is.na(phenotype.data[, i]), i])
@@ -178,7 +181,7 @@ apply.bounds <- function(phenotype.data, variable.summary) {
         var.max <- variable.summary$variables[[i]]$params$bounds$max
         if (!is.null(var.max)) {
           var.max <- as.numeric(var.max)
-          if (!is.na(var.max) & is.null(variable.summary$variables[[i]]$num.above.max)) {
+          if (!is.na(var.max) && is.null(variable.summary$variables[[i]]$num.above.max)) {
             # count and apply max threshold
             num.max <- length(phenotype.data[phenotype.data[, i] > var.max &
               !is.na(phenotype.data[, i]), i])
@@ -188,7 +191,7 @@ apply.bounds <- function(phenotype.data, variable.summary) {
           }
         }
         var.sd <- variable.summary$variables[[i]]$params$bounds$sd
-        if (!is.null(var.sd) & is.null(variable.summary$variables[[i]]$num.beyond.sd)) {
+        if (!is.null(var.sd) && is.null(variable.summary$variables[[i]]$num.beyond.sd)) {
           var.sd <- as.numeric(var.sd)
           stopifnot(var.sd >= 0)
           ## count and apply bidirectional standard deviation threshold
@@ -228,16 +231,7 @@ convert.variable.specific.na <- function(phenotype.data, variable.summary) {
   for (i in seq_len(length(variable.summary$variables))) {
     na.values <- variable.summary$variables[[i]]$params[["na-values"]]
     if (!is.null(na.values)) {
-      if (is.vector(na.values)) {
-        phenotype.data[phenotype.data[, i] %in% as.character(na.values), i] <- NA
-      } else {
-        stop(
-          "for variable \"",
-          variable.summary[[i]]$original.name,
-          "\", na-values configuration option has ",
-          "unrecognized type ", typeof(na.values)
-        )
-      }
+      phenotype.data[phenotype.data[, i] %in% as.character(na.values), i] <- NA
     }
     if (!is.null(variable.summary$variables[[i]]$params[["suppress_output"]])) {
       if (variable.summary$variables[[i]]$params[["suppress_output"]]) {
@@ -292,7 +286,6 @@ exclude.by.age <- function(phenotype.data, variable.summary) {
   stopifnot(!is.null(variable.summary$globals$min_age_for_inclusion), !is.na(min.age))
   flag <- 0
   for (i in seq_len(length(variable.summary$variables))) {
-    # TODO look for variable marked as subject age
     if (!is.null(variable.summary$variables[[i]]$params$subject_age)) {
       if (variable.summary$variables[[i]]$params$subject_age) {
         flag <- i
@@ -301,7 +294,7 @@ exclude.by.age <- function(phenotype.data, variable.summary) {
     }
   }
   if (flag) {
-    ## TODO: recognize date of birth column and attempt to rescue NA ages
+    ## possible future feature: recognize date of birth column and attempt to rescue NA ages
     subjects.dropped <- length(which(phenotype.data[, flag] < min.age | is.na(phenotype.data[, flag])))
     variable.summary$subjects.excluded.for.age <- subjects.dropped
     phenotype.data <- phenotype.data[phenotype.data[, flag] >= min.age & !is.na(phenotype.data[, flag]), ]

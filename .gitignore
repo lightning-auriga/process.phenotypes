@@ -1,11 +1,9 @@
-to_aws
-
-forms
-csvs
+coverage_report.html
+lib/
+run_tests.r
 
 node_modules/
 *json
 test_results/
 inputs/
 results/
-*consent*tsv

@@ -10,6 +10,12 @@ colnames(phenotype.data) <- c(
 
 config.data <- list(
   tag = "testtag",
+  globals = list(
+    "min_age_for_inclusion" = 16,
+    "max_invalid_datatypes_per_subject" = 10,
+    "consent_inclusion_file" = NULL,
+    "consent_exclusion_file" = NULL
+  ),
   variables = list(
     var001 = list(
       name = "weird phenotype name 1",
@@ -23,6 +29,13 @@ config.data <- list(
 )
 
 map.header.expected.output <- list(
+  tag = "testtag",
+  globals = list(
+    "min_age_for_inclusion" = 16,
+    "max_invalid_datatypes_per_subject" = 10,
+    "consent_inclusion_file" = NULL,
+    "consent_exclusion_file" = NULL
+  ),
   variables = list(
     var001 = list(
       original.name = "weird phenotype name 1",
@@ -58,6 +71,12 @@ test_that("duplicate header names don't ruin mapping", {
   colnames(test.data) <- c("a", "b", "c", "b")
   config.data <- list(
     tag = "testtag",
+    globals = list(
+      "min_age_for_inclusion" = 16,
+      "max_invalid_datatypes_per_subject" = 10,
+      "consent_inclusion_file" = NULL,
+      "consent_exclusion_file" = NULL
+    ),
     variables = list(
       var001 = list(name = "a", type = "string"),
       var002 = list(name = "b", type = "string"),
@@ -66,6 +85,13 @@ test_that("duplicate header names don't ruin mapping", {
     )
   )
   expected.output <- list(
+    tag = "testtag",
+    globals = list(
+      "min_age_for_inclusion" = 16,
+      "max_invalid_datatypes_per_subject" = 10,
+      "consent_inclusion_file" = NULL,
+      "consent_exclusion_file" = NULL
+    ),
     variables = list(
       var001 = list(original.name = "a", params = list(name = "a", type = "string")),
       var002 = list(original.name = "b", params = list(name = "b", type = "string")),
@@ -104,4 +130,87 @@ test_that("duplicate header names are handled correctly in sanitization", {
   expected.df <- test.data
   colnames(expected.df) <- c("DF00001", "DF00002", "DF00003", "DF00004")
   expect_identical(sanitize.header(test.data, mapped.variables), expected.df)
+})
+
+test_that("map.header correctly errors when phenotype data and variable config mismatch length", {
+  in.phenotype.data <- data.frame(
+    var1 = 1:4,
+    var2 = 5:8
+  )
+  in.variable.summary <- list(variables = list(HW00001 = list(
+    name = "var1",
+    type = "numeric"
+  )))
+  expect_error(map.header(in.phenotype.data, "HW", in.variable.summary))
+})
+
+test_that("map.header reports an informative message and errors when column names mismatch", {
+  in.phenotype.data <- data.frame(
+    var1 = 1:4,
+    var2 = 5:8
+  )
+  in.variable.summary <- list(variables = list(
+    HW00001 = list(
+      name = "VAR1",
+      type = "numeric"
+    ),
+    HW00002 = list(
+      name = "VAR2",
+      type = "numeric"
+    )
+  ))
+  expect_snapshot(map.header(in.phenotype.data, "HW", in.variable.summary), error = TRUE)
+})
+
+test_that("map.header respects request to override variable name sanity check", {
+  in.phenotype.data <- data.frame(
+    var1 = 1:4,
+    var2 = 5:8
+  )
+  in.variable.summary <- list(
+    tag = "testtag",
+    globals = list(consent.inclusion.file = "filename"),
+    variables = list(
+      HW00001 = list(
+        name = "VAR1",
+        type = "numeric"
+      ),
+      HW00002 = list(
+        name = "VAR2",
+        type = "numeric"
+      )
+    ),
+    derived = list(dervar1 = list(
+      name = "dervar1",
+      type = "string",
+      code = "c(\"A\", \"B\", \"C\", \"D\")"
+    ))
+  )
+  out.variable.summary <- list(
+    tag = "testtag",
+    globals = list(consent.inclusion.file = "filename"),
+    variables = list(
+      HW00001 = list(
+        original.name = "var1",
+        params = list(
+          name = "VAR1",
+          type = "numeric"
+        )
+      ),
+      HW00002 = list(
+        original.name = "var2",
+        params = list(
+          name = "VAR2",
+          type = "numeric"
+        )
+      )
+    ),
+    derived = list(dervar1 = list(
+      name = "dervar1",
+      type = "string",
+      code = "c(\"A\", \"B\", \"C\", \"D\")"
+    ))
+  )
+  res <- map.header(in.phenotype.data, "HW", in.variable.summary, TRUE)
+  expect_identical(res, out.variable.summary)
 })

@@ -20,7 +20,7 @@
 #' added on top.
 combine.lists <- function(list1, list2) {
   ## note that this will need to be recursively called
-  if (is.null(names(list1)) |
+  if (is.null(names(list1)) ||
     is.null(names(list2))) {
     return(list2)
   }
@@ -33,7 +33,7 @@ combine.lists <- function(list1, list2) {
       ## and otherwise appended
       name <- names(list2)[i]
       if (!is.null(list1[[name]])) {
-        if (length(list1[[name]]) > 1 |
+        if (length(list1[[name]]) > 1 ||
           length(list2[[name]]) > 1) {
           list1[[name]] <- combine.lists(
             list1[[name]],
