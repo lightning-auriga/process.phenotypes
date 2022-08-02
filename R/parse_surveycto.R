@@ -533,7 +533,10 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
     stop("output variable prediction has failed")
   }
   out.yaml <- flag.required.variables(out.yaml, subject.id.name, age.name)
-  yaml::write_yaml(out.yaml, out.yaml.filename, fileEncoding = "UTF-8")
+  yaml::write_yaml(out.yaml, out.yaml.filename,
+    fileEncoding = "UTF-8",
+    handlers = list(seq = function(x) x)
+  )
   ## after column name resolution is complete, only then set categorical
   ## levels to lowercase versions
   for (model.name in names(choice.list$models)) {
@@ -542,5 +545,8 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
         tolower(choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns)
     }
   }
-  yaml::write_yaml(choice.list, out.shared.models, fileEncoding = "UTF-8")
+  yaml::write_yaml(choice.list, out.shared.models,
+    fileEncoding = "UTF-8",
+    handlers = list(seq = function(x) x)
+  )
 }
