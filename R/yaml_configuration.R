@@ -114,7 +114,7 @@ write.configuration <- function(variable.summary, out.filename) {
         var.list[[var.name]]$name <- var.name
       }
       res[["variables"]] <- var.list
-    } else {
+    } else if (name %in% c("globals", "tag")) {
       res[[name]] <- variable.summary[[name]]
     }
   }
