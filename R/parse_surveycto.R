@@ -125,6 +125,9 @@ populate.choices <- function(df, survey.type, na.values) {
       "levels" = var.levels
     )
     if (length(na.levels) > 0) {
+      if (length(na.levels) == 1) {
+        na.levels <- list(na.levels)
+      }
       var.model[["na-values"]] <- na.levels
     }
     res[[list.name]] <- var.model
@@ -537,7 +540,10 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
   for (model.name in names(choice.list$models)) {
     for (model.lvl in names(choice.list$models[[model.name]]$levels)) {
       choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns <-
-        tolower(choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns)
+        ifelse(length(choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns) == 1,
+          list(tolower(choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns)),
+          tolower(choice.list$models[[model.name]]$levels[[model.lvl]]$alternate_patterns)
+        )
     }
   }
   yaml::write_yaml(choice.list, out.shared.models,
