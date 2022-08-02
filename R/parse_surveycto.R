@@ -98,9 +98,7 @@ populate.choices <- function(df, survey.type, na.values) {
       )
       alternate.patterns <- list.name.values[list.name.labels == list.name.labels[i]]
 
-      if (length(alternate.patterns) == 1) {
-        alternate.patterns <- rep(alternate.patterns, 2)
-      } else {
+      if (length(alternate.patterns) > 1) {
         ## try to deal with invalid level configurations
         if (length(variable.select.multiple) > 0) {
           ## if the variable is always a multiple response, then even the bad
@@ -108,7 +106,7 @@ populate.choices <- function(df, survey.type, na.values) {
           ## CTO one hot convention, it is never actually used as a categorical
           ## encoding
           found.names <- found.names[-length(found.names)]
-          alternate.patterns <- rep(list.name.values[i], 2)
+          alternate.patterns <- list.name.values[i]
           if (length(variable.select.multiple) != length(variable.selections)) {
             warning(
               "for shared model ", list.name, " invalid factor levels exist ",
@@ -127,9 +125,6 @@ populate.choices <- function(df, survey.type, na.values) {
       "levels" = var.levels
     )
     if (length(na.levels) > 0) {
-      if (length(na.levels) == 1) {
-        na.levels <- rep(na.levels, 2)
-      }
       var.model[["na-values"]] <- na.levels
     }
     res[[list.name]] <- var.model
