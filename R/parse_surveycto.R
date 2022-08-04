@@ -922,20 +922,6 @@ expand.surveycto.config <- function(existing.yaml.filename,
     res.variables <- res$res.variables
     max.existing.number <- res$max.existing.number
   }
-  ## final sanity check: the names of the constructed variable set
-  ## should match the names of the new data csv. there is a situation
-  ## in which the old yaml ends with a match but is short a number
-  ## of csv variables that happens to match the number of repeats
-  ## that were added that the above logic misses
-  predicted.names <- unname(unlist(lapply(res.variables, function(i) {
-    i$name
-  })))
-  if (!identical(predicted.names, colnames(new.data))) {
-    stop(
-      "unexpected variables were detected during repeat block expansion",
-      "that cannot be handled:", colnames(new.data)[!(colnames(new.data) %in% predicted.names)]
-    )
-  }
   existing.yaml$variables <- res.variables
   yaml::write_yaml(existing.yaml, new.yaml.filename)
 }

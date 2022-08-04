@@ -261,13 +261,34 @@ test_that("expand.surveycto.config runs end-to-end and correctly adjusts config"
   expect_equal(output, expected)
 })
 
-test_that("expand_surveycto_config correctly errors when it finds a variable it cannot handle", {
+test_that("expand_surveycto_config correctly errors when it finds a variable it cannot handle, at the end", {
   intermediate.dataset <- tempfile("example_cto_intermediate_dataset")
   intermediate.shared.models <- tempfile("example_cto_intermediate_shared_models")
   dataset.yaml <- tempfile("example_cto_dataset_yaml")
   current.form <- "files/expand_surveycto_config/example_cto_draft_reduced_dataset.yaml"
   current.data.pull <- "files/expand_surveycto_config/example_cto_dump.csv"
   current.data.merge <- "files/expand_surveycto_config/example_cto_merge.tsv"
+  current.form.definition <- "files/expand_surveycto_config/example_cto_form.xlsx"
+  expect_snapshot(expand.surveycto.config(
+    current.form,
+    dataset.yaml,
+    current.data.pull,
+    current.form.definition,
+    current.data.merge,
+    intermediate.dataset,
+    intermediate.shared.models
+  ),
+  error = TRUE
+  )
+})
+
+test_that("expand_surveycto_config correctly errors when it finds a variable it cannot handle, in the middle", {
+  intermediate.dataset <- tempfile("example_cto_intermediate_dataset")
+  intermediate.shared.models <- tempfile("example_cto_intermediate_shared_models")
+  dataset.yaml <- tempfile("example_cto_dataset_yaml")
+  current.form <- "files/expand_surveycto_config/example_cto_draft_reduced_dataset.yaml"
+  current.data.pull <- "files/expand_surveycto_config/example_cto_dump_middle.csv"
+  current.data.merge <- "files/expand_surveycto_config/example_cto_merge_middle.tsv"
   current.form.definition <- "files/expand_surveycto_config/example_cto_form.xlsx"
   expect_snapshot(expand.surveycto.config(
     current.form,
