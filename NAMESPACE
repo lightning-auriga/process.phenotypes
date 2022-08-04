@@ -3,6 +3,7 @@
 export(create.phenotype.report)
 export(derive.first.degree)
 export(derive.rank.normal.transform)
+export(expand.surveycto.config)
 export(parse.surveycto)
 export(response.depends.on.not.na)
 export(response.depends.on.yes)

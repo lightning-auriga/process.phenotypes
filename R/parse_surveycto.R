@@ -551,3 +551,391 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
     handlers = list(seq = function(x) x)
   )
 }
+
+
+
+#' For repeat expansion, handle the situation where there
+#' is a repeat variable that was not present in any form
+#' in the original configuration file.
+#'
+#' @param varname string; formatted variable name for predicted
+#' insertion point
+#' @param regenerated.yaml list; loaded dataset yaml corresponding
+#' to current actual wide csv export from SurveyCTO. Expected to
+#' be the loaded output of parse.surveycto
+#' @param max.existing.number numeric; maximum variable number,
+#' expecting variable names of the format "HW#####"
+#' @param res.variables list; accumulator of output variable
+#' configuration with repeats added or extended as needed
+#' @param missing.colname character; encountered column name
+#' that is missing from current configuration. Expected to be
+#' correctly predicted and present in parse.surveycto configuration
+#' based on the current form definition and csv export
+#' @return list; res.variables, updated version of input parameter
+#' with the new resolved variable configuration entry added; max.existing.number,
+#' updated version of input parameter incremented to reflect variable addition
+handle.missing.block <- function(varname,
+                                 regenerated.yaml,
+                                 max.existing.number,
+                                 res.variables,
+                                 missing.colname) {
+  match.first.name <- names(regenerated.yaml$variables)[lapply(regenerated.yaml$variables, function(i) {
+    i$name
+  }) == missing.colname]
+  stopifnot("handle.missing.block found irreconcilable variable" = length(match.first.name) == 1)
+
+  data <- regenerated.yaml$variables[[match.first.name]]
+
+  max.existing.number <- max.existing.number + 1
+  new.varname <- paste(stringr::str_replace(
+    varname,
+    "^([^\\d]+)\\d+.*$",
+    "\\1"
+  ),
+  stringr::str_pad(max.existing.number, 5, pad = "0"),
+  stringr::str_replace(match.first.name, "^[^_]+(_.*)$", "\\1"),
+  sep = ""
+  )
+  res.variables[[new.varname]] <- data
+
+  list(
+    res.variables = res.variables,
+    max.existing.number = max.existing.number
+  )
+}
+
+
+#' For repeat expansion, handle the situation where there
+#' is a repeat variable that was present
+#' in the original configuration file, but that has a higher
+#' number repeat present in the current SurveyCTO export
+#'
+#' @param var.prefix character; shared common prefix of the dataset
+#' yaml configuration for this repeat variable. So for example,
+#' if the existing repeat block was "HW00001_1", "HW00001_2", "HW00001_3",
+#' this would be "HW00001_"
+#' @param trailing.num numeric; instance of the repeat observed
+#' in the new dataset but absent from original configuration
+#' @param res.variables list; accumulator of output variable
+#' configuration with repeats added or extended as needed
+#' @param missing.colname character; encountered column name
+#' that is missing from current configuration. Expected to be
+#' correctly predicted and present in parse.surveycto configuration
+#' based on the current form definition and csv export
+#' @return list; updated version of input parameter 'res.variables'
+#' with the new resolved variable configuration entry added
+handle.existing.block <- function(var.prefix,
+                                  trailing.num,
+                                  res.variables,
+                                  missing.colname) {
+  first.entry <- paste(var.prefix, "1", sep = "")
+  name.match <- lapply(res.variables, function(i) {
+    i$name
+  }) == first.entry
+  match.first.name <- names(res.variables)[name.match]
+  stopifnot("handle.existing.block found irreconcilable variable" = length(match.first.name) == 1)
+  data <- res.variables[[match.first.name]]
+  data$name <- missing.colname
+  data$canonical_name <- stringr::str_replace(
+    data$canonical_name,
+    "repeat observation 1$",
+    paste("repeat observation", trailing.num)
+  )
+  res.variables <- c(res.variables, list(data))
+  names(res.variables)[length(res.variables)] <- stringr::str_replace(
+    match.first.name,
+    "\\d+$",
+    as.character(trailing.num)
+  )
+  res.variables
+}
+
+
+#' For repeat expansion: run an internal pass
+#' of parse.surveycto to reuse the logic for
+#' generating configuration blocks in case new
+#' blocks have magically appeared in new SurveyCTO
+#' exports
+#'
+#' @param existing.yaml list; existing dataset configuration
+#' loaded with read_yaml. Note that the entire configuration
+#' need not be correctly specified, but the variables containing
+#' the mandatory 'subject_id' and 'subject_age' tags should
+#' be correctly specified and ordered
+#' @param form.definition.filename character; name of
+#' SurveyCTO xlsx form definition
+#' @param new.data.filename character; name of wide csv
+#' export from SurveyCTO
+#' @param intermediate.dataset.yaml character; name of
+#' output dataset yaml from parse.surveycto
+#' @param intermediate.shared.models character; name
+#' of output shared models yaml from parse.surveycto
+generate.predicted.yaml <- function(existing.yaml,
+                                    form.definition.filename,
+                                    new.data.filename,
+                                    intermediate.dataset.yaml,
+                                    intermediate.shared.models) {
+  subject.id.name <- ""
+  subject.age.name <- ""
+  for (varname in names(existing.yaml$variables)) {
+    if (!is.null(existing.yaml$variables[[varname]]$subject_id)) {
+      if (existing.yaml$variables[[varname]]$subject_id) {
+        subject.id.name <- existing.yaml$variables[[varname]]$name
+      }
+    }
+    if (!is.null(existing.yaml$variables[[varname]]$subject_age)) {
+      if (existing.yaml$variables[[varname]]$subject_age) {
+        subject.age.name <- existing.yaml$variables[[varname]]$name
+      }
+    }
+  }
+  parse.surveycto(form.definition.filename,
+    new.data.filename,
+    "WHOCARES",
+    intermediate.dataset.yaml,
+    intermediate.shared.models,
+    subject.id.name = subject.id.name,
+    age.name = subject.age.name
+  )
+  yaml::read_yaml(intermediate.dataset.yaml)
+}
+
+#' Utility function to update an existing configuration
+#' file from parse.surveycto, given new SurveyCTO export data
+#'
+#' @details Certain types of output columns in exported SurveyCTO
+#' datasets are unpredictable, in the sense that, with a constant
+#' form definition, the columns may or may not be present, and can
+#' only be predicted with access to the export itself. This creates
+#' challenges when trying to generate a variable specification for
+#' this package from which one can predictably use variable
+#' references, for example with the creation of derived variables,
+#' or in order to generate consensus variables between datasets.
+#'
+#' This function is designed to attempt to address the most
+#' straightforward and yet fiddly versions of these kinds of
+#' unpredictable variables. Repeat variables in SurveyCTO
+#' form definitions expand based on the maximum number of repeat
+#' responses observed in a dataset. Thus, in particular when
+#' a data collection is very small, the set of output variables
+#' can change drastically between data exports. Repeat variables
+#' are not even guaranteed to be reported in the output at all
+#' at first, until at least one respondent fills out at least
+#' a single repeat response.
+#'
+#' Repeat blocks are padded out based on the number of repeat
+#' observations in the current data export. The existing yaml's
+#' repeat content is expanded with consistent naming: if the
+#' repeat block variable prefix is "HW00001_", and repeats
+#' "HW00001_1" and "HW00001_2" were already present, configuration
+#' blocks are injected starting with "HW00001_3".
+#'
+#' In the case that the repeat block was not present *at all*
+#' in the original configuration, the repeat block is configured
+#' with an auxiliary call to parse.surveycto, and the resulting
+#' blocks are relabled and injected into the existing dataset
+#' yaml. Due to the naming conventions in these configuration files,
+#' the block is assigned new base numbers based on the maximum
+#' variable number detected in the existing config's 'variables'
+#' block. This breaks the standard convention of the variable
+#' base numbers being strictly ascending through the file.
+#' However, due to the possibly complex downstream uses of the
+#' variable names, this is the most reliable manner of extending
+#' the configuration file. If other behavior is desired, this
+#' function is probably not suitable for your needs. Note again
+#' that this particular issue only applies when a repeat block
+#' was entirely absent from the original configuration file;
+#' as long as one repeat was originally present, the number ordering
+#' is preserved.
+#'
+#' The raw wide csv output from SurveyCTO should be provided as
+#' 'new.cto.export.filename'. In certain applications, the actual
+#' file used with the existing configuration file may not be
+#' the raw SurveyCTO export; if, for example, other columns
+#' are appended externally before processing, that resulting
+#' csv or tsv should be provided as 'new.processed.export.filename'.
+#' If this application does not apply or makes no sense to you,
+#' that parameter can be excluded and the raw SurveyCTO export
+#' will correctly be used in its place.
+#'
+#' The parameters 'intermediate.dataset.yaml' and
+#' 'intermediate.shared.models' specify where the intermediate
+#' output of parse.surveycto should be emitted. These default
+#' to tempfiles; however, in some instances, these intermediates
+#' might be useful to keep around for some time; and this function
+#' is specifically imagined to be inserted into a pipeline, which
+#' will feature file tracking. If desired, the filenames for
+#' these intermediates can be specified here, and their ultimate
+#' fate can be controlled by e.g. Snakemake or some other controller.
+#'
+#' It is important to emphasize that this function is specifically
+#' designed to handle repeat variables. It will not handle non-repeat
+#' variables that were not present in the original configuration
+#' but that have magically appeared in the new SurveyCTO export.
+#' If such a variable is encountered, the function will error
+#' with informative complaint, and the configuration will have
+#' to be updated manually. Once the configuration is adjusted to
+#' include these non-repeat variables, however, this function might
+#' be called again to handle the repeat variables exclusively.
+#'
+#' @param existing.yaml.filename character; name of dataset yaml
+#' (potentially with custom configuration data) from a run of
+#' parse.surveycto
+#' @param new.yaml.filename character; name of output dataset yaml
+#' @param new.cto.export.filename character; name of most recent
+#' wide-format csv output from SurveyCTO; tested with API output,
+#' though it should work with web-based export as well
+#' @param form.definition.filename character; name of SurveyCTO
+#' form xlsx file that governs the format of the current csv export
+#' @param new.processed.export.filename character; name of csv
+#' output from SurveyCTO with any postprocessed modifications
+#' (see Details)
+#' @param intermediate.dataset.yaml character; name of dataset yaml
+#' the function generates from parse.surveycto for comparison
+#' purposes; if not specified, a generic tempfile
+#' @param intermediate.shared.models character; name of
+#' shared models yaml the file generates from parse.surveycto for
+#' comparison purposes; if not specified, a generic tempfile
+#' @export
+expand.surveycto.config <- function(existing.yaml.filename,
+                                    new.yaml.filename,
+                                    new.cto.export.filename,
+                                    form.definition.filename,
+                                    new.processed.export.filename = new.cto.export.filename,
+                                    intermediate.dataset.yaml = tempfile("expand.surveycto.dataset"),
+                                    intermediate.shared.models = tempfile("expand.surveycto.shared_models")) {
+  stopifnot(
+    !is.null(existing.yaml.filename),
+    !is.null(new.cto.export.filename),
+    !is.null(new.processed.export.filename),
+    !is.null(form.definition.filename),
+    !is.null(intermediate.dataset.yaml),
+    !is.null(intermediate.shared.models),
+    !is.null(new.yaml.filename)
+  )
+  stopifnot(
+    is.character(existing.yaml.filename),
+    is.character(new.cto.export.filename),
+    is.character(new.processed.export.filename),
+    is.character(form.definition.filename),
+    is.character(intermediate.dataset.yaml),
+    is.character(intermediate.shared.models),
+    is.character(new.yaml.filename)
+  )
+  stopifnot(
+    length(existing.yaml.filename) == 1,
+    length(new.cto.export.filename) == 1,
+    length(new.processed.export.filename) == 1,
+    length(form.definition.filename) == 1,
+    length(intermediate.dataset.yaml) == 1,
+    length(intermediate.shared.models) == 1,
+    length(new.yaml.filename) == 1
+  )
+  stopifnot(
+    file.exists(existing.yaml.filename),
+    file.exists(new.cto.export.filename),
+    file.exists(new.processed.export.filename),
+    file.exists(form.definition.filename)
+  )
+
+  existing.yaml <- yaml::read_yaml(existing.yaml.filename)
+  new.data <- read.table(new.processed.export.filename,
+    header = TRUE,
+    stringsAsFactors = FALSE, sep = "\t",
+    comment.char = "", quote = "\"",
+    check.names = FALSE
+  )
+
+  var.index <- 1
+  res.variables <- list()
+
+  regenerated.yaml <- generate.predicted.yaml(
+    existing.yaml,
+    form.definition.filename,
+    new.cto.export.filename,
+    intermediate.dataset.yaml,
+    intermediate.shared.models
+  )
+
+
+  max.existing.number <- max(as.integer(stringr::str_replace(
+    names(existing.yaml$variables),
+    "^[^\\d]+(\\d+).*$",
+    "\\1"
+  )))
+
+  colnames(new.data) <- stringr::str_replace(
+    colnames(new.data),
+    "tribe",
+    "ancestry"
+  )
+  var.index <- 1
+  while (var.index <= length(existing.yaml$variables)) {
+    varname <- names(existing.yaml$variables)[var.index]
+    if (existing.yaml$variables[[varname]]$name != colnames(new.data)[length(res.variables) + 1]) {
+      predicted.colname <- existing.yaml$variables[[varname]]$name
+      missing.colname <- colnames(new.data)[length(res.variables) + 1]
+      if (stringr::str_detect(missing.colname, "_[0-9]+$")) {
+        var.prefix <- stringr::str_replace(missing.colname, "^(.*_)\\d+$", "\\1")
+        trailing.num <- as.integer(stringr::str_replace(
+          missing.colname,
+          "^.*_(\\d+)$",
+          "\\1"
+        ))
+        if (trailing.num == 1) {
+          res <- handle.missing.block(
+            varname,
+            regenerated.yaml,
+            max.existing.number,
+            res.variables,
+            missing.colname
+          )
+          res.variables <- res$res.variables
+          max.existing.number <- res$max.existing.number
+        } else {
+          res.variables <- handle.existing.block(
+            var.prefix,
+            trailing.num,
+            res.variables,
+            missing.colname
+          )
+        }
+      } else {
+        stop("encountered irreconcilable column in data from CTO: ",
+          missing.colname, " (config expected ", predicted.colname, ")",
+          sep = ""
+        )
+      }
+    } else {
+      res.variables[[varname]] <- existing.yaml$variables[[varname]]
+      var.index <- var.index + 1
+    }
+  }
+  while (length(res.variables) < length(regenerated.yaml$variables)) {
+    res <- handle.missing.block(
+      names(existing.yaml$variables[1]),
+      regenerated.yaml,
+      max.existing.number,
+      res.variables,
+      colnames(new.data)[length(res.variables) + 1]
+    )
+    res.variables <- res$res.variables
+    max.existing.number <- res$max.existing.number
+  }
+  ## final sanity check: the names of the constructed variable set
+  ## should match the names of the new data csv. there is a situation
+  ## in which the old yaml ends with a match but is short a number
+  ## of csv variables that happens to match the number of repeats
+  ## that were added that the above logic misses
+  predicted.names <- unname(unlist(lapply(res.variables, function(i) {
+    i$name
+  })))
+  if (!identical(predicted.names, colnames(new.data))) {
+    stop(
+      "unexpected variables were detected during repeat block expansion",
+      "that cannot be handled:", colnames(new.data)[!(colnames(new.data) %in% predicted.names)]
+    )
+  }
+  existing.yaml$variables <- res.variables
+  yaml::write_yaml(existing.yaml, new.yaml.filename)
+}
