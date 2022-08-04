@@ -1,0 +1,43 @@
+tag: WHOCARES
+globals:
+  min_age_for_inclusion: 18.0
+  max_invalid_datatypes_per_subject: 10.0
+  consent_inclusion_file: ~
+  consent_exclusion_file: ~
+variables:
+  WHOCARES00001:
+    name: SubmissionDate
+    type: string
+    suppress_reporting: yes
+    canonical_name: SubmissionDate
+  WHOCARES00002:
+    name: var1
+    type: string
+    suppress_reporting: yes
+    canonical_name: name1
+    subject_id: yes
+  WHOCARES00003_1:
+    name: var2_1
+    type: string
+    suppress_reporting: yes
+    canonical_name: name2, repeat observation 1
+  WHOCARES00003_2:
+    name: var2_2
+    type: string
+    suppress_reporting: yes
+    canonical_name: name2, repeat observation 2
+  WHOCARES00004_1:
+    name: var5_1
+    type: string
+    suppress_reporting: yes
+    canonical_name: name5, repeat observation 1
+  WHOCARES00005:
+    name: var3
+    type: numeric
+    canonical_name: name3
+    subject_age: yes
+  WHOCARES00006_1:
+    name: var4_1
+    type: string
+    suppress_reporting: yes
+    canonical_name: name4, repeat observation 1
