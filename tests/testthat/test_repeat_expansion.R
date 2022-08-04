@@ -224,7 +224,7 @@ test_that("generate.predicted.yaml manages to call process.phenotypes::parse.sur
   intermediate.shared.models <- tempfile("example_cto_intermediate_shared_models")
   generate.predicted.yaml(
     yaml::read_yaml("files/expand_surveycto_config/example_cto_corrected_dataset.yaml"),
-    "files/expand_surveycto_config/example_cto_form_repeat_appended.xlsx",
+    "files/expand_surveycto_config/example_cto_form_repapp.xlsx",
     "files/expand_surveycto_config/example_cto_problematic_dump.csv",
     intermediate.dataset,
     intermediate.shared.models
@@ -240,10 +240,10 @@ test_that("expand.surveycto.config runs end-to-end and correctly adjusts config"
   intermediate.dataset <- tempfile("example_cto_intermediate_dataset")
   intermediate.shared.models <- tempfile("example_cto_intermediate_shared_models")
   dataset.yaml <- tempfile("example_cto_dataset_yaml")
-  current.form <- "files/expand_surveycto_config/example_cto_draft_reduced_dataset.yaml"
+  current.form <- "files/expand_surveycto_config/example_cto_draft_redset.yaml"
   current.data.pull <- "files/expand_surveycto_config/example_cto_problematic_dump.csv"
   current.data.merge <- "files/expand_surveycto_config/example_cto_problematic_merge.tsv"
-  current.form.definition <- "files/expand_surveycto_config/example_cto_form_repeat_appended.xlsx"
+  current.form.definition <- "files/expand_surveycto_config/example_cto_form_repapp.xlsx"
   expand.surveycto.config(
     current.form,
     dataset.yaml,
@@ -265,7 +265,7 @@ test_that("expand_surveycto_config correctly errors when it finds a variable it 
   intermediate.dataset <- tempfile("example_cto_intermediate_dataset")
   intermediate.shared.models <- tempfile("example_cto_intermediate_shared_models")
   dataset.yaml <- tempfile("example_cto_dataset_yaml")
-  current.form <- "files/expand_surveycto_config/example_cto_draft_reduced_dataset.yaml"
+  current.form <- "files/expand_surveycto_config/example_cto_draft_redset.yaml"
   current.data.pull <- "files/expand_surveycto_config/example_cto_dump.csv"
   current.data.merge <- "files/expand_surveycto_config/example_cto_merge.tsv"
   current.form.definition <- "files/expand_surveycto_config/example_cto_form.xlsx"
@@ -286,7 +286,7 @@ test_that("expand_surveycto_config correctly errors when it finds a variable it 
   intermediate.dataset <- tempfile("example_cto_intermediate_dataset")
   intermediate.shared.models <- tempfile("example_cto_intermediate_shared_models")
   dataset.yaml <- tempfile("example_cto_dataset_yaml")
-  current.form <- "files/expand_surveycto_config/example_cto_draft_reduced_dataset.yaml"
+  current.form <- "files/expand_surveycto_config/example_cto_draft_redset.yaml"
   current.data.pull <- "files/expand_surveycto_config/example_cto_dump_middle.csv"
   current.data.merge <- "files/expand_surveycto_config/example_cto_merge_middle.tsv"
   current.form.definition <- "files/expand_surveycto_config/example_cto_form_middle_error.xlsx"
