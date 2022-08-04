@@ -24,12 +24,17 @@ variables:
     name: var2_2
     type: string
     canonical_name: name2, repeat observation 2
+  HW00005_1:
+    name: var5_1
+    type: string
+    suppress_reporting: yes
+    canonical_name: name5, repeat observation 1
   HW00004:
     name: var3
     type: numeric
     canonical_name: name3
     subject_age: yes
-  HW00005_1:
+  HW00006_1:
     name: var4_1
     type: string
     suppress_reporting: yes

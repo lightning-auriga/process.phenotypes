@@ -289,7 +289,7 @@ test_that("expand_surveycto_config correctly errors when it finds a variable it 
   current.form <- "files/expand_surveycto_config/example_cto_draft_reduced_dataset.yaml"
   current.data.pull <- "files/expand_surveycto_config/example_cto_dump_middle.csv"
   current.data.merge <- "files/expand_surveycto_config/example_cto_merge_middle.tsv"
-  current.form.definition <- "files/expand_surveycto_config/example_cto_form.xlsx"
+  current.form.definition <- "files/expand_surveycto_config/example_cto_form_middle_error.xlsx"
   expect_snapshot(expand.surveycto.config(
     current.form,
     dataset.yaml,

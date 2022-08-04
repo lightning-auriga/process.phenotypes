@@ -16,9 +16,6 @@
       expand.surveycto.config(current.form, dataset.yaml, current.data.pull,
         current.form.definition, current.data.merge, intermediate.dataset,
         intermediate.shared.models)
-    Output
-      [1] "computed result variables missing real output variables"
-      [1] "var460"
     Error <simpleError>
-      output variable prediction has failed
+      encountered irreconcilable column in data from CTO: var460 (config expected var3)
 
