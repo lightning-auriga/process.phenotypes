@@ -1,0 +1,41 @@
+tag: HW
+globals:
+  min_age_for_inclusion: 18.0
+  max_invalid_datatypes_per_subject: 10.0
+  consent_inclusion_file: ~
+  consent_exclusion_file: ~
+variables:
+  HW00001:
+    name: SubmissionDate
+    type: string
+    suppress_reporting: yes
+    canonical_name: SubmissionDate
+  HW00002:
+    name: var1
+    type: string
+    suppress_reporting: yes
+    canonical_name: name1
+    subject_id: yes
+  HW00003_1:
+    name: var2_1
+    type: string
+    canonical_name: name2, repeat observation 1
+  HW00003_2:
+    name: var2_2
+    type: string
+    canonical_name: name2, repeat observation 2
+  HW00005_1:
+    name: var5_1
+    type: string
+    suppress_reporting: yes
+    canonical_name: name5, repeat observation 1
+  HW00004:
+    name: var3
+    type: numeric
+    canonical_name: name3
+    subject_age: yes
+  HW00006_1:
+    name: var4_1
+    type: string
+    suppress_reporting: yes
+    canonical_name: name4, repeat observation 1
