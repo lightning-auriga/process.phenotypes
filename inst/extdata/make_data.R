@@ -10,14 +10,21 @@ reformat.dob <- function(years) {
   mode.selection <- sample(1:5, length(years), replace = TRUE)
   res[mode.selection == 1] <- paste(
     years[mode.selection == 1],
-    sample(1:12,
+    stringr::str_pad(as.character(sample(1:12,
       length(which(mode.selection == 1)),
       replace = TRUE
+    )),
+    2,
+    pad = "0"
     ),
-    sample(1:28,
+    stringr::str_pad(as.character(sample(1:28,
       length(which(mode.selection == 1)),
       replace = TRUE
-    )
+    )),
+    2,
+    pad = "0"
+    ),
+    sep = "-"
   )
   res[mode.selection == 2] <- paste(sample(c(
     "jan", "feb", "mar", "apr", "jun",
