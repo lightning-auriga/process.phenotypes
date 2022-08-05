@@ -115,6 +115,8 @@ that each variable must minimally contain either `type:` or `shared_model:`, as 
 
 ### Data Loading
 
+TODO: move?
+
 In order to use this package, the data must be capable of being loaded into a data frame with
 `read.table`. This is usually possible, but in certain instances (most commonly with inconsistent
 quoting in the source file), some additional steps must be conducted upstream before the file
@@ -130,7 +132,7 @@ head(phenotype.data)
 
 ### Subject Identifier
 
-Every dataset must have exactly one variable with the tag `subject_identifier: yes`, indicating
+Every dataset must have exactly one variable with the tag `subject_id: yes`, indicating
 that the variable's entries serve as an identifier for the corresponding row. Note that
 the entries do not have to be unique within the file (that is, multiple rows can have the
 same subject ID without issue). However, the subject ID cannot be something that is interpreted
@@ -148,6 +150,10 @@ VAR00001:
 
 ### Subject Age
 
+Every dataset must have exactly one variable with the tag `subject_age: yes`, indicating
+which variable lists the subjects' age in years at time of consent. If age is not specified,
+the subject will be assumed to not be consented, and will be removed from the output dataset.
+
 ```{yaml}
 
 VAR00002:
@@ -160,12 +166,25 @@ VAR00002:
 
 ### Dates
 
+Dates in a variety of potential input formats are sanitized to a four-digit year.  The
+entirety of the date entry is simplified to year-only to allow a wide variety of input formats,
+and to address the preponderance of rounded entries (e.g. January 1, YYYY).  If other behavior
+is desired, you may want to explore reading in as a string and creating a derived variable.
+
 ```{yaml}
 
 VAR00003:
   name: "dob"
   type: "date"
   canonical_name: "Subject Date of Birth"
+
+```
+
+```{r show.date.conversion}
+
+res <- process.phenotypes:::parse.date(phenotype.data$dob, list())
+df <- data.frame(before = phenotype.data$dob, after = res$phenotype.data$dob)
+head(df)
 
 ```
 
