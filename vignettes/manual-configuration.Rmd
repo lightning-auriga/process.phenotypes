@@ -1,8 +1,12 @@
 ---
-title: "manual-configuration"
-output: rmarkdown::html_vignette
+title: "Manually Configuring a Dataset for process.phenotypes"
+output:
+  rmarkdown::html_vignette:
+    highlight: pygments
+    toc: true
+    fig_width: 5
 vignette: >
-  %\VignetteIndexEntry{manual-configuration}
+  %\VignetteIndexEntry{Manually Configuring a Dataset for process.phenotypes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -10,10 +14,293 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  cache = FALSE,
+  dev = "png"
 )
 ```
 
 ```{r setup}
 library(process.phenotypes)
+```
+
+# Manual Dataset Configuration
+
+## Overview
+
+The goal of `process.phenotypes` is to enable the transparent creation of a "clean"
+data matrix from potentially messy input. In the most common case, someone has handed you
+an undocumented file of variables, and you are left with the unenviable
+task of trying to create order from the chaos.
+
+In order to use `process.phenotypes` for dataset cleaning, you must generate
+a pair of [YAML](https://yaml.org/) configuration files:
+
+	- a dataset-specific configuration with information about consent and age restrictions,
+	summary characteristics of each contained variable, and optionally specifications
+	for new variables to be derived from existing variables after cleaning; and
+	- a (possibly empty) configuration file containing shared model information common
+	to multiple variables, to facilitate the creation of harmonized variables that
+	can later be seamlessly combined or compared.
+	
+This walkthrough will use a test dataset `raw_phenotypes.tsv` from `process.phenotypes`
+as an example, and provide guidance and suggestions for how to evaluate and configure variables from messy input.
+
+```{r example.data}
+example.data <- system.file("extdata", "raw_phenotypes.tsv", package = "process.phenotypes", mustWork = TRUE)
+```
+
+## An Introduction to `process.phenotypes` Configuration Blocks
+
+`process.phenotypes` requires a configuration block `variables:` with one entry per variable (column)
+in the input data matrix. These variable-specific entries have a required minimum structure, and can accept an assortment of optional
+additional values depending on the context. The contextual entries will be discussed below in the walkthrough,
+but the minimum required values are as follows:
+
+```{yaml}
+variables:
+  VAR00001:
+    name: variable_name_1
+    canonical_name: "descriptive text"
+  VAR00002:
+    name: variable_name_2
+    canonical_name: "other text description"
+```
+
+### Variable tag (e.g. `VAR00001`)
+
+Each variable block (here,
+the units under `VAR00001`, `VAR00002`) corresponds to a column in the input data matrix. The tags
+`VAR00001`, `VAR00002`, etc., are arbitrarily specified with the following guidelines:
+
+	- they must be unique in each dataset
+	- they should only consist of characters [A-Za-z0-9_]
+
+These tags are injected into the output report and data tsv as column headers, in place of whatever
+is present in the input dataset (though note that if you really like the values in the input dataset,
+you could just set them as the variable tags and they will be preserved).
+The order of the variable blocks matters: the first block (under `VAR00001`) corresponds to the first
+column of the input matrix; `VAR00002` to the second; and so on.
+
+Users of the utility function `process.phenotypes::parse.surveycto` will end up with a dataset yaml
+that contains variable block names following our internal convention: `TAG#####`. While this is
+not required in manual configuration, we do at least recommend that users consider creating variable
+tags that are never prefixes of one another: `VAR00001` and `VAR00011` are ok, but `VAR0001` and
+`VAR00011` are not. This isn't required for the package to function, but will cause headaches downstream.
+
+### Variable `name:` key/value pair
+
+The `name:` key is required for each variable. The entry should be the (if necessary quoted) column
+header for the variable in the input data matrix. The name is required for two reasons:
+
+  - it is important for transparent recordkeeping: this is how you know that `garbled_input1` corresponds
+  to `pretty_header_1` in the output
+  - it provides a really important sanity check for the package during input, when it confirms that
+  the input data conform to the structure of the specified dataset yaml
+  
+### Variable `canonical_name:` key/value pair
+
+The `canonical_name:` key is required for each variable. This entry is imagined to contain descriptive
+text corresponding to the relevant variable. In certain instances, you may find that you have descriptive
+text for your input data, and you want it to be recapitulated in the cleaning report for clarity; such
+text can be the value here. If no such information is available, we recommend either replicating the
+value of `name:` here, or specifying `.na`, which will be interpreted correctly as `NA` by the package.
+
+### Other entries
+
+Other combinations of optional flags will be mentioned in the full walkthrough. We'll mention in brief
+that each variable must minimally contain either `type:` or `shared_model:`, as described below.
+
+## Step-by-Step Walkthrough
+
+### Data Loading
+
+In order to use this package, the data must be capable of being loaded into a data frame with
+`read.table`. This is usually possible, but in certain instances (most commonly with inconsistent
+quoting in the source file), some additional steps must be conducted upstream before the file
+can be loaded in R. These steps are beyond the scope of this document.
+
+```{r load.input.data}
+phenotype.data <- read.table(example.data,
+  header = TRUE, stringsAsFactors = FALSE, sep = "\t",
+  comment.char = "", quote = "\"", check.names = FALSE
+)
+head(phenotype.data)
+```
+
+### Subject Identifier
+
+Every dataset must have exactly one variable with the tag `subject_identifier: yes`, indicating
+that the variable's entries serve as an identifier for the corresponding row. Note that
+the entries do not have to be unique within the file (that is, multiple rows can have the
+same subject ID without issue). However, the subject ID cannot be something that is interpreted
+by R as `NA` or `NULL`; in that case, the rows will be removed from the file.
+
+```{yaml}
+
+VAR00001:
+  name: "subjid"
+  type: "string"
+  subject_id: yes
+  canonical_name: "Subject Identifier"
+
+```
+
+### Subject Age
+
+```{yaml}
+
+VAR00002:
+  name: "age"
+  type: "numeric"
+  subject_age: yes
+  canonical_name: "Subject Self-Reported Age"
+
+```
+
+### Dates
+
+```{yaml}
+
+VAR00003:
+  name: "dob"
+  type: "date"
+  canonical_name: "Subject Date of Birth"
+
+```
+
+### Numeric Variables
+
+```{yaml}
+
+VAR00004:
+  name: "height"
+  type: "numeric"
+  canonical_name: "Standing Height (meters)"
+
+```
+
+### Bimodal Numerics
+
+```{yaml}
+
+VAR00005:
+  name: "waist_circumference"
+  type: "numeric"
+  canonical_name: "Waist Circumference (centimeters)"
+
+```
+
+### Categorical Variables
+
+```{yaml}
+
+VAR00006:
+  name: "sex"
+  type: "categorical"
+  levels:
+    "1":
+      name: ""
+    "2":
+      name: ""
+
+```
+
+### Specifying Alternate Patterns as `NA`
+
+```{yaml}
+
+VAR00007:
+  name: "fruit"
+  type: "categorical"
+  levels:
+    "1":
+      name: ""
+    "2":
+      name: ""
+
+```
+
+### Reporting and Enforcing Dependencies
+
+```{yaml}
+
+VAR00008:
+  name: "preferred.fruit"
+  type: "categorical"
+  levels:
+    "1":
+      name: ""
+    "2":
+      name: ""
+    "3":
+      name: ""
+    "4":
+      name: ""
+
+```
+
+### Freetext Entries
+
+```{yaml}
+
+VAR00009:
+  name: "letters"
+  type: "string"
+  suppress_reporting: yes
+  suppress_output: yes
+
+```
+
+### Converting Categorical Values to Numerics
+
+```{yaml}
+
+VAR00010:
+  name: "measure"
+  type: "categorical_to_numeric"
+  levels:
+    "1":
+      name: "1.2"
+      alternate_patterns:
+        - ""
+    "2":
+      name: "1.3"
+      alternate_patterns:
+        - ""
+    "3":
+      name: ""
+      alternate_patterns:
+        - ""
+
+```
+
+### Blood Pressure Measurements
+
+```{yaml}
+
+VAR00011:
+  name: "bloodpressure"
+  type: "bp"
+
+```
+
+### Ordinal Variables
+
+```{yaml}
+
+VAR00012:
+  name: "awesomeness"
+  type: "ordinal"
+  levels:
+    "1":
+      name: ""
+    "2":
+      name: ""
+    "3":
+      name: ""
+    "4":
+      name: ""
+    "5":
+      name: ""
 ```
