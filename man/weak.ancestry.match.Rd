@@ -13,32 +13,32 @@ weak.ancestry.match(
 )
 }
 \arguments{
-\item{phenotype}{character vector, input free-text
-self-reported ancestry; only for subjects with no
-perfect match to ancestry dictionary!!}
+\item{phenotype}{Character vector of input free-text
+self-reported ancestry. This should only contain subjects with no
+perfect match to the known ancestry label dictionary.}
 
-\item{ancestry.data}{named character vector, linking from unique
-possible input ancestries to harmonized ancestry label. note that
+\item{ancestry.data}{Named character vector, linking from unique
+possible input ancestries to harmonized ancestry label. Note that
 both entries and names in this vector are assumed to have gone
 through approximately analogous processing as the input free-text
 ancestry group labels, e.g. made lowercase and had whitespace removed.}
 
-\item{best.match.threshold}{numeric, on [0,1], denoting how high
-the best match similarity must be to permit a call}
+\item{best.match.threshold}{Numeric on [0,1], denoting how high
+the best match similarity must be to permit a call.}
 
-\item{best.match.discernment}{numeric, on [0,1] denoting the proportion
+\item{best.match.discernment}{Numeric on [0,1] denoting the proportion
 of the top match the next best match must be less than (assuming the
 next best match does not map to the same harmonized label) in order
-to accept the top match}
+to accept the top match.}
 }
 \value{
-list; first entry is character vector, modified version of
+List; first entry is character vector, a version of
 the input ancestry reports, modified to best guess ancestry, or
 NA if the best match is poor; second entry is character vector
 describing the reasoning for accepting or rejecting partial matches;
 third is best ancestry match regardless of acceptance; fourth is
 quality of best match; fifth is second best ancestry match;
-sixth is quality of second best match
+sixth is quality of second best match.
 }
 \description{
 Self-reported free-text ancestry is messy. If it perfectly
@@ -47,5 +47,18 @@ doesn't, and plenty of them don't, we have to try to guess.
 But guessing is hard, so deliberately fail a lot.
 }
 \details{
-Will report them when I have them.
+See the help documentation of harmonize.ancestry for a discussion
+of the motivation behind this and related functions.
+}
+\examples{
+phenotype <- c("ibibioo")
+anc.file <- system.file("external", "nigeria.ancestry.tsv", package = "process.phenotypes")
+anc.data <- process.phenotypes:::load.ancestry.linker(anc.file)
+result <- process.phenotypes:::weak.ancestry.match(
+  phenotype,
+  anc.data
+)
+}
+\seealso{
+load.ancestry.linker, harmonize.ancestry, harmonize.ancestry.from.linker
 }

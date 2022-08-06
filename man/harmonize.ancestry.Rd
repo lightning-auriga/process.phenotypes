@@ -3,7 +3,7 @@
 \name{harmonize.ancestry}
 \alias{harmonize.ancestry}
 \title{Use external label dictionary to harmonize free-text
-ancestry labels}
+ancestry labels.}
 \usage{
 harmonize.ancestry(
   phenotype.data,
@@ -14,34 +14,120 @@ harmonize.ancestry(
 )
 }
 \arguments{
-\item{phenotype.data}{data frame, input phenotype data}
+\item{phenotype.data}{Data frame containing input phenotype data.}
 
-\item{variable.summary}{list, variable configuration data}
+\item{variable.summary}{List of variable configuration data.}
 
-\item{ancestry.source}{character vector, name of data
+\item{ancestry.source}{Character vector name of data
 source to pull known labels from (e.g. "nigeria"); or
-a file in the format expected by load.ancestry.linker}
+a file in the format expected by load.ancestry.linker.}
 
-\item{best.match.threshold}{numeric, on [0,1], denoting how high
-the best match similarity must be to permit a call}
+\item{best.match.threshold}{Numeric in [0,1], denoting how high
+the best match similarity must be to permit a call.}
 
-\item{best.match.discernment}{numeric, on [0,1] denoting the proportion
+\item{best.match.discernment}{Numeric in [0,1], denoting the proportion
 of the top match the next best match must be less than (assuming the
 next best match does not map to the same harmonized label) in order
-to accept the top match}
+to accept the top match.}
 }
 \value{
-list; first entry is modified phenotype dataset
-with ancestry labels updated, second entry is modified
-variable summary with ancestry label update metrics added
+List; first entry \code{phenotype.data} is modified phenotype dataset
+with ancestry labels updated; second entry \code{variable.summary} is modified
+input variable summary with ancestry label update metrics added.
 }
 \description{
-Ancestry information has been collected as free-text entries
+Ancestry information is often collected as free-text entries
 with little effort at formal harmonization. Though it may be
 impossible to perfectly recapture the underlying data due
 to high string similarity and short length of distinct labels,
 it's worth a shot.
 }
+\details{
+The logic of this method is as follows.
+
+Ideally, the respondents to a study questionnaire are reporting
+repeated responses to what is effectively a categorical ancestry
+variable for which the categories are masked. In the best case,
+we would ask subject matter experts to evaluate
+the input data and construct harmonized mappings that ensure that
+everyone's responses get converted into standard labels and
+groups with concordant labels, at whatever level of granularity
+you're interested in, get grouped together appropriately for
+your downstream modeling.
+
+In reality, very frequently there is insufficient interest
+in this process for people to dedicate the resources necessary
+to get subject matter experts to resolve these labels. And
+so we're left with imperfect data and inadequate options.
+
+This function tries to construct mappings between a known group
+of expected categories and a potentially large pool of imperfect
+typographic representations of those categories by considering
+string distance between the labels and the self-reported data.
+The match settings are configured in an attempt to bias the
+method false negatives; that is, it would prefer to set
+subjects to NA ancestry instead of misassigning them to
+a partial match category that doesn't represent what the respondent
+intended.
+
+In practice, what has worked for this method has been:
+\itemize{
+\item Run first with stringent parameters. Require a high quality
+primary match and a substantially lower secondary match,
+or a secondary match that is an alias of the primary one.
+\item Check the report for every last assignment and guess.
+This information is tabulated with count information representing
+the number of times this particular self-reported value was
+observed in the input data. The idea here is that values
+with really high counts are likely indicative of groups that
+you've overlooked in your backend label set. However, note
+that high count groups might also represent some response
+that isn't quite what you asked (e.g. instead of \code{Polish} you
+get \verb{New York}). We've also observed instances of high count
+responses that are clearly indicative of a single data uploader
+who went a bit wild.
+\item Update the backend table. This step is tedious but critical to
+high quality results. Ultimately this function shouldn't be doing
+much if any reassignment itself; rather, its reporting information
+should guide you to valid aliases for your ancestry labels, which
+you can place in your alias mappings, such that in the future
+those responses will be considered known matches and mapped correctly.
+\item Repeat the above, until the set of failed matches contains only
+response that you in fact don't want to have mapped to categories.
+}
+
+This function is completely experimental, and ymmv. We don't specifically
+recommend its use, and don't expose it directly to configuration, but
+if you're curious, you can in theory call it from the derived variables
+block of a dataset and provide a custom backend file. See
+system.file("external", "nigeria.ancestry.tsv", package = "process.phenotypes")
+as an example of the two column format it expects; in brief, the file
+should be two tab-delimited columns, the first column containing the
+desired group label, and the second column a comma-delimited list
+of verified aliases for the label.
+}
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = c("hausa", "kanuri", "ibibio", "ibibioo")
+)
+variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "subjid",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(params = list(
+    name = "subjanc",
+    type = "string",
+    subject_ancestry = TRUE
+  ))
+))
+result <- process.phenotypes:::harmonize.ancestry(
+  phenotype.data,
+  variable.summary
+)
+}
 \seealso{
-load.ancestry.linker
+load.ancestry.linker, harmonize.ancestry.from.linker, weak.ancestry.match
 }
