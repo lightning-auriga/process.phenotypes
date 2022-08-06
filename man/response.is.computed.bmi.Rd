@@ -2,31 +2,83 @@
 % Please edit documentation in R/dependency_helper_functions.R
 \name{response.is.computed.bmi}
 \alias{response.is.computed.bmi}
-\title{Test consistency of BMI with height and weight}
+\title{Test consistency of BMI with height and weight.}
 \usage{
 response.is.computed.bmi(bmi, weight, height, tolerance)
 }
 \arguments{
-\item{bmi}{numeric vector, reported BMI}
+\item{bmi}{Character vector name of numeric vector of reported BMI.}
 
-\item{weight}{numeric vector, reported weight}
+\item{weight}{Character vector name of numeric vector of
+reported weight in kilograms.}
 
-\item{height}{numeric vector, reported height}
+\item{height}{Character vector name of numeric vector of
+reported height in meters.}
 
-\item{tolerance}{numeric, acceptable deviation
-between computed and reported BMI}
+\item{tolerance}{Numeric acceptable absolute deviation
+between computed and reported BMI.}
 }
 \value{
-a vector of length nrow(phenotype.data) representing
-the results of the dependency test
+Logical vector representing the results
+of the dependency test between the two provided vectors. Test
+represents whether the specified dependency is satisfied.
 }
 \description{
+This is a function designed for use within the user configuration
+file, as a convenience to handle structured comparison between
+a question and its dependent downstream response.
+In the formal parameters, \code{dependent} refers to the logically
+downstream question, and \code{independent} refers to the upstream
+question on which the \code{dependent} question depends.
+
+Note that the input vectors are specified as \emph{names of variables}
+within the input phenotype dataset. At the time the dependencies
+are evaluated, the phenotype dataset has had the user-configured
+variable names applied as its column headers, and as such the
+variables should be referred to by those labels directly.
+}
+\details{
+This dependency test assumes the input vectors are numeric.
 This dependency will enforce BMI ~= weight/height^2,
 with weight in kilograms and height in meters, within
 a certain absolute tolerance.
-}
-\details{
 Large numbers of deviations are expected when the
 reported BMI has been arbitrarily entered by respondents
-and not computed directly from the source data.
+and not computed directly from the source data. If sufficiently
+many dependency failures are encountered, consider either
+generating a derived variable that computes BMI in precisely
+the manner you prefer, or adjusting the tolerance of this test.
+
+As the objective of the function is to flag conclusive dependency
+failures, subjects with NA responses for any of BMI, height, or weight
+are considered to pass this dependency test.
+}
+\examples{
+bmi <- c(35, 54, 40, 40, NA)
+height <- c(1.5, 1.7, NA, 1.23, 1.7)
+weight <- c(80, 90, 70, NA, 90)
+phenotype.data <- data.frame(
+  HW00001 = bmi,
+  HW00002 = height,
+  HW00003 = weight
+)
+## this function is designed as a utility to be
+## deployed in the dependency block of a user configuration
+## file. it requires the bindings of the phenotype data
+## matrix to be available in the current context
+\dontrun{
+dep.test <- response.is.computed.bmi(
+  HW00001,
+  HW00003,
+  HW00002,
+  1.0
+)
+}
+## expected: TRUE FALSE TRUE TRUE TRUE
+}
+\seealso{
+response.depends.on.yes, response.depends.on.not.na,
+response.is.less.than, response.is.greater.than,
+response.is.duplicate.of,
+year.is.consistent.with.age
 }

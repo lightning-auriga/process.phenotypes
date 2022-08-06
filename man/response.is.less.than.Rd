@@ -2,22 +2,67 @@
 % Please edit documentation in R/dependency_helper_functions.R
 \name{response.is.less.than}
 \alias{response.is.less.than}
-\title{Test that one variable is less than the other}
+\title{Test that one variable is less than the other.}
 \usage{
 response.is.less.than(dependent.variable, independent.variable)
 }
 \arguments{
-\item{dependent.variable}{string, name of dependent variable to operate on}
+\item{dependent.variable}{Character vector name of dependent/upstream variable to operate on
+within the package's representation of the input phenotype data. In this context,
+this is the variable that is expected to be less than the other.}
 
-\item{independent.variable}{string, name of independent variable}
+\item{independent.variable}{Character vector name of independent/downstream variable to operate on
+within the package's representation of the input phenotype data. In this context,
+this is the variable that is expected to be greater than the other.}
 }
 \value{
-a vector of length nrow(phenotype.data) representing the results
-of the dependency test
+Logical vector representing the results
+of the dependency test between the two provided vectors. Test
+represents whether the specified dependency is satisfied.
 }
 \description{
-Sanity check to ensure that related variables are behaving as expected.
+This is a function designed for use within the user configuration
+file, as a convenience to handle structured comparison between
+a question and its dependent downstream response.
+In the formal parameters, \code{dependent} refers to the logically
+downstream question, and \code{independent} refers to the upstream
+question on which the \code{dependent} question depends.
+
+Note that the input vectors are specified as \emph{names of variables}
+within the input phenotype dataset. At the time the dependencies
+are evaluated, the phenotype dataset has had the user-configured
+variable names applied as its column headers, and as such the
+variables should be referred to by those labels directly.
 }
 \details{
-This function tests that one variable is less than another.
+This dependency test assumes the input vectors are numeric or support '<'.
+For the purposes of this comparison, NA response in either independent
+or dependent variable leads to the dependency test returning success;
+the goal of the function is to flag explicit situations when the
+dependency definitely fails.
+}
+\examples{
+indep.var <- c(1:5, NA, 5)
+dep.var <- c(5:1, 1, NA)
+phenotype.data <- data.frame(
+  HW00001 = indep.var,
+  HW00002 = dep.var
+)
+## this function is designed as a utility to be
+## deployed in the dependency block of a user configuration
+## file. it requires the bindings of the phenotype data
+## matrix to be available in the current context
+\dontrun{
+dep.test <- response.is.less.than(
+  HW00002,
+  HW00001
+)
+}
+## expected: FALSE FALSE FALSE TRUE TRUE TRUE TRUE
+}
+\seealso{
+response.depends.on.yes, response.depends.on.not.na,
+response.is.greater.than,
+response.is.duplicate.of, response.is.computed.bmi
+year.is.consistent.with.age
 }

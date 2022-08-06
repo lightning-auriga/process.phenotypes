@@ -2,39 +2,107 @@
 % Please edit documentation in R/dependency_helper_functions.R
 \name{year.is.consistent.with.age}
 \alias{year.is.consistent.with.age}
-\title{Test consistency of age and year of birth}
+\title{Test consistency of age and year of birth.}
 \usage{
 year.is.consistent.with.age(
-  dependent.variable,
-  independent.variable,
+  reported.year,
+  reported.age,
   reference.year,
   acceptable.tolerance
 )
 }
 \arguments{
-\item{dependent.variable}{string, name of dependent variable to operate on,
-should represent DOB}
+\item{reported.year}{Character vector name of date variable, for example
+date of birth.}
 
-\item{independent.variable}{string, name of independent variable, should
-represent age}
+\item{reported.age}{Character vector name of age variable, for example
+self-reported age at data collection.}
 
-\item{reference.year}{numeric or string, year from which to subtract year
-of birth to calculate age (either as a constant, or the name of a variable
-containing numeric values')}
+\item{reference.year}{Either character vector name of reference year variable
+indicating a potentially different reference year per subject, or a numeric
+reference year to be used to compute age for all subjects.}
 
-\item{acceptable.tolerance}{numeric, range above or below reported age within
-which to call reported and calculated age consistent}
+\item{acceptable.tolerance}{Numeric absolute range above or below reported age
+within which to call reported and calculated age consistent.}
 }
 \value{
-a vector of length nrow(phenotype.data) representing the results
-of the dependency test
+Logical vector representing the results
+of the dependency test between the two provided vectors. Test
+represents whether the specified dependency is satisfied.
 }
 \description{
-Sanity check to ensure that reported age in years and calculated age from
-reported year of birth are roughly equivalent.  Note that this can also be
-used for other age comparisons, e.g. age at diagnosis vs. date of diagnosis.
+This is a function designed for use within the user configuration
+file, as a convenience to handle structured comparison between
+a question and its dependent downstream response.
+In the formal parameters, \code{dependent} refers to the logically
+downstream question, and \code{independent} refers to the upstream
+question on which the \code{dependent} question depends.
+
+Note that the input vectors are specified as \emph{names of variables}
+within the input phenotype dataset. At the time the dependencies
+are evaluated, the phenotype dataset has had the user-configured
+variable names applied as its column headers, and as such the
+variables should be referred to by those labels directly.
 }
 \details{
+This dependency test assumes the input vectors are numeric.
 This function tests that reported and calculated age is within a certain
-user-defined tolerance.
+user-defined absolute tolerance.
+Large numbers of deviations are sometimes apparent and are often
+correlated with approximate generation of respondent. Sufficiently
+many deviations may indicate delinking between the two dependent variables.
+In our observations, self-reported age tends to be more reliable,
+but that will likely vary by dataset.
+
+Note that while this was originally designed for testing age at collection
+versus date of birth, it can also be
+used for other age comparisons, e.g. age at diagnosis vs. date of diagnosis.
+
+The reference year, used to compute age from reported date, is generally
+the approximate date of data collection. This can either be provided as
+a numeric constant, or as another input vector with a potentially variable
+entry per subject.
+
+As the objective of the function is to flag conclusive dependency
+failures, subjects with NA responses for any of reported year, reported
+age, or reference year are considered to pass this dependency test.
+}
+\examples{
+reported.year <- c(1985, 1990, 1995, 2000, NA)
+reported.age <- c(10, 20, 25, NA, 30)
+reference.year <- c(1995, 2020, NA, 2015, 2010)
+phenotype.data <- data.frame(
+  HW00001 = reported.year,
+  HW00002 = reported.age,
+  HW00003 = reference.age
+)
+## this function is designed as a utility to be
+## deployed in the dependency block of a user configuration
+## file. it requires the bindings of the phenotype data
+## matrix to be available in the current context
+\dontrun{
+dep.test <- year.is.consistent.with.age(
+  HW00001,
+  HW00002,
+  HW00003,
+  4.0
+)
+}
+## expected: TRUE FALSE TRUE TRUE TRUE
+
+## if preferred, use a constant reference year for all subjects
+\dontrun{
+dep.test <- year.is.consistent.with.age(
+  HW00001,
+  HW00002,
+  2022,
+  1.0
+)
+}
+## expected: FALSE FALSE FALSE TRUE TRUE
+}
+\seealso{
+response.depends.on.yes, response.depends.on.not.na,
+response.is.less.than, response.is.greater.than,
+response.is.duplicate.of, response.is.computed.bmi
 }
