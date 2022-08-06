@@ -2,7 +2,7 @@
 % Please edit documentation in R/output_formats.R
 \name{write.output.formats}
 \alias{write.output.formats}
-\title{Report final phenotype dataset after processing}
+\title{Report final phenotype dataset to file after processing.}
 \usage{
 write.output.formats(
   phenotype.data,
@@ -16,31 +16,90 @@ write.output.formats(
 )
 }
 \arguments{
-\item{phenotype.data}{data.frame, stored phenotype dataset with all cleaning
-and filtering applied}
+\item{phenotype.data}{Data frame of stored phenotype dataset with all cleaning
+and filtering applied.}
 
-\item{variable.summary}{list, loaded and modified configuration data at
-the end of a cleaning run}
+\item{variable.summary}{List of loaded and modified configuration data at
+the end of a cleaning run.}
 
-\item{out.prefix}{character vector, prefix for all requested output files.
-will have the relevant format-specific suffixes appended}
+\item{out.prefix}{Character vector prefix for all requested output files.
+This is based on the user-specified html output filename provided to
+create.phenotype.report, and will have the relevant format-specific suffixes appended.}
 
-\item{write.tsv}{logical, whether to emit output phenotype data in tsv tab-delimited plaintext}
+\item{write.tsv}{Logical controlling whether to emit output phenotype data in tsv
+tab-delimited plaintext.}
 
-\item{write.stata}{logical, whether to emit output phenotype data in STATA .dta format}
+\item{write.stata}{Logical controlling whether to emit output phenotype data in STATA
+.dta format.}
 
-\item{write.spss}{logical, whether to emit output phenotype data in SPSS .zsav format}
+\item{write.spss}{Logical controlling whether to emit output phenotype data in SPSS
+.zsav format.}
 
-\item{write.sas}{logical, whether to emit output phenotype data in SAS .sas7bdat format,
-along with a source .sas file that needs to be run to assign category levels and types}
+\item{write.sas}{Logical controlling whether to emit output phenotype data in SAS
+.sas7bdat format, along with a source .sas file that needs to be run to assign category
+levels and types.}
 
-\item{write.yaml}{logical, whether to emit final version of stored configuration data
-in YAML format; currently not tested}
+\item{write.yaml}{Logical controlling whether to emit final version of stored
+configuration data in YAML format. This output is a bit idiosyncratic, and should be
+expected to change somewhat over time.}
 }
 \description{
 This function contains handlers for the primary supported output formats
 for this package: plaintext tab-delimited, STAT (.dta), SAS (.sas7bdat),
 SPSS (.zsav), and YAML (experimental). Additional control
-parameters are likely to be added at a later data. Any number of outputs
+parameters are likely to be added at a later date. Any number of outputs
 can be selected and they will all be reported sequentially.
+}
+\details{
+These files are generated with haven, foreign, and yaml. Each of those
+libraries has its idiosyncracies, and in particular with the SAS/STATA/SPSS
+files, the version restrictions on their proprietary formats make it such
+that these output files may be of limited utility. We generally recommend
+that the end user focus on using the output tsv file, and if the other
+stats languages are desired, just load from tsv first.
+
+The output yaml file is a modified version of the input dataset yaml
+that, in theory, can be used to reload the output tsv into
+process.phenotypes for additional processing. We do not generally recommend
+that use, however, and instead suggest that people iterate on the
+initial input dataset/shared models yaml and rerun as needed. In our experience,
+even fairly large datasets only take some seconds to run end-to-end,
+so the reruns are not overly burdensome.
+}
+\examples{
+outprefix <- tempfile("wof_output_prefix")
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = 20:23
+)
+variable.summary <- list(
+  tag = "HW",
+  globals = list(
+    min_age_for_inclusion = 16,
+    max_invalid_datatypes_per_subject = 10,
+    consent_inclusion_file = NULL,
+    consent_exclusion_file = NULL
+  ),
+  variables = list(
+    HW00001 = list(
+      name = "subjid",
+      type = "string",
+      subject_id = TRUE
+    ),
+    HW00002 = list(
+      name = "subjage",
+      type = "numeric",
+      subject_age = TRUE
+    )
+  )
+)
+process.phenotypes:::write.output.formats(
+  phenotype.data,
+  variable.summary,
+  outprefix,
+  TRUE, TRUE, TRUE, TRUE, TRUE
+)
+}
+\seealso{
+create.phenotype.report
 }
