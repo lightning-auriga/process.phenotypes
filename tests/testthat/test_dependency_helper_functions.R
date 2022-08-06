@@ -647,7 +647,7 @@ test_that("variable greater than comparison works", {
   x1 <- c(1:11, NA, 6)
   x2 <- c(11:1, 5, NA)
   expect_identical(
-    response.greater.than(x1, x2),
+    response.is.greater.than(x1, x2),
     c(
       rep(FALSE, 5),
       rep(TRUE, 8)
@@ -659,7 +659,7 @@ test_that("variable greater than or equal to comparison works", {
   x1 <- c(1:11, NA, 6)
   x2 <- c(11:1, 5, NA)
   expect_identical(
-    response.greater.than(x1, x2, FALSE),
+    response.is.greater.than(x1, x2, FALSE),
     c(
       rep(FALSE, 6),
       rep(TRUE, 7)

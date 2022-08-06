@@ -469,22 +469,22 @@ response.is.computed.bmi <- function(bmi, weight, height, tolerance) {
 #' ## expected: FALSE FALSE FALSE TRUE TRUE
 year.is.consistent.with.age <- function(reported.year, reported.age,
                                         reference.year, acceptable.tolerance) {
-  stopifnot(is.numeric(dependent.variable))
-  stopifnot(is.numeric(independent.variable))
+  stopifnot(is.numeric(reported.year))
+  stopifnot(is.numeric(reported.age))
   stopifnot(is.numeric(reference.year), length(reference.year) > 1 |
     (!is.na(reference.year) & length(reference.year) == 1))
   stopifnot(
     is.numeric(acceptable.tolerance),
     (!is.na(acceptable.tolerance) & length(acceptable.tolerance) == 1)
   )
-  stopifnot(length(dependent.variable) == length(independent.variable))
-  stopifnot(length(independent.variable) >= length(reference.year))
+  stopifnot(length(reported.year) == length(reported.age))
+  stopifnot(length(reported.year) >= length(reference.year))
 
-  is.na(dependent.variable) |
-    is.na(independent.variable) |
+  is.na(reported.year) |
+    is.na(reported.age) |
     is.na(reference.year) |
-    ((reference.year - dependent.variable - acceptable.tolerance) < independent.variable &
-      independent.variable < (reference.year - dependent.variable + acceptable.tolerance))
+    ((reference.year - reported.year - acceptable.tolerance) < reported.age &
+      reported.age < (reference.year - reported.year + acceptable.tolerance))
 }
 
 #' Test that one variable is greater than, or possibly equal to, the other.
