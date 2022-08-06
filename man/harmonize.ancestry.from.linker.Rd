@@ -3,7 +3,7 @@
 \name{harmonize.ancestry.from.linker}
 \alias{harmonize.ancestry.from.linker}
 \title{Update ancestry variable with harmonized ancestry names,
-and report how well you did}
+and report how well you did.}
 \usage{
 harmonize.ancestry.from.linker(
   phenotype,
@@ -14,40 +14,52 @@ harmonize.ancestry.from.linker(
 )
 }
 \arguments{
-\item{phenotype}{character vector, input self-reported ancestry}
+\item{phenotype}{Character vector of input self-reported ancestry.}
 
-\item{variable}{list, configuration data for input phenotype}
+\item{variable}{List of configuration data for input phenotype.}
 
-\item{ancestry.data}{named character vector, linking from unique
-possible input ancestries to harmonized ancestry label. note that
+\item{ancestry.data}{Named character vector, linking from unique
+possible input ancestries to harmonized ancestry label. Note that
 both entries and names in this vector are assumed to have gone
 through approximately analogous processing as the input free-text
 ancestry group labels, e.g. made lowercase and had whitespace removed.}
 
-\item{best.match.threshold}{numeric, on [0,1], denoting how high
-the best match similarity must be to permit a call}
+\item{best.match.threshold}{Numeric on [0,1], denoting how high
+the best match similarity must be to permit a call.}
 
-\item{best.match.discernment}{numeric, on [0,1] denoting the proportion
+\item{best.match.discernment}{Numeric on [0,1], denoting the proportion
 of the top match the next best match must be less than (assuming the
 next best match does not map to the same harmonized label) in order
-to accept the top match}
+to accept the top match.}
 }
 \value{
-list, first entry is harmonized phenotype data as a factor
+List; first entry \code{phenotype} is harmonized phenotype data as a factor
 with levels set to the available ancestry levels in the known ancestry
-input, second entry is input configuration list with added metrics
-about mapping performance
+input, second entry \code{variable} is input configuration list with added metrics
+about mapping performance.
 }
 \description{
 This function attempts to map free-text ancestry data
 to a set of fixed ancestry labels based on an input linker
 between known ancestries and harmonized labels. Exact matches
 are assigned as expected. Then, an attempt is made to harmonize
-partial matches based on closest match. Actual algorithm TBD.
+partial matches based on closest match.
 }
 \details{
-Very much TBD
+See the help documentation of harmonize.ancestry for a discussion
+of the motivation behind this and related functions.
+}
+\examples{
+phenotype <- c("hausa", "kanuri", "fulani", "ibibio", "ibibioo")
+variable <- list()
+anc.file <- system.file("external", "nigeria.ancestry.tsv", package = "process.phenotypes")
+anc.data <- process.phenotypes:::load.ancestry.linker(anc.file)
+result <- process.phenotypes:::harmonize.ancestry.from.linker(
+  phenotype,
+  variable,
+  anc.data
+)
 }
 \seealso{
-load.ancestry.linker
+load.ancestry.linker, harmonize.ancestry, weak.ancestry.match
 }

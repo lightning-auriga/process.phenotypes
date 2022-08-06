@@ -2,18 +2,19 @@
 % Please edit documentation in R/match_ancestry_labels.R
 \name{load.ancestry.linker}
 \alias{load.ancestry.linker}
-\title{Read ancestry linker data and format it for use in R}
+\title{Read ancestry linker data and format it for use in heuristic
+ancestry mapping.}
 \usage{
 load.ancestry.linker(filename)
 }
 \arguments{
-\item{filename}{character vector, name of file containing
-structured linker data}
+\item{filename}{Character vector name of file containing
+structured linker data.}
 }
 \value{
-character vector, named vector of ancestries;
+Named character vector of ancestries;
 names are unique expected inputs in phenotype dataset,
-values are harmonized labels to be applied in the output
+values are harmonized labels to be applied in the output.
 }
 \description{
 Free-text self-reported ancestry is expected to be heterogeneous
@@ -23,14 +24,18 @@ group labels to groups with multiple possible (typically quite
 similar) names.
 }
 \details{
-Input ancestry linker format is based off the source of
-ancestry information from the phase 2 questionnaire, which
-appears to actually be
-https://en.wikipedia.org/wiki/List_of_ethnic_groups_in_Nigeria
-(accessed 17 August 2021). So, in short, the first and only
-column (tab-delimited) should be formatted as
-"Name (Alt1, Alt2, ...)",
-with one row per unique possible group in the output. No
-header should be present. Note that triple colons are not
-allowed in any ancestry group name for the time being.
+See the help documentation of harmonize.ancestry for a discussion
+of the motivation behind this and related functions.
+
+Note that, because this function is goofy nonsense,
+triple colons are not allowed in any ancestry group name
+for the time being.
+}
+\examples{
+test.file <- system.file("external", "nigeria.ancestry.tsv", package = "process.phenotypes")
+anc.data <- process.phenotypes:::load.ancestry.linker(test.file)
+}
+\seealso{
+harmonize.ancestry, harmonize.ancestry.from.linker,
+weak.ancestry.match
 }

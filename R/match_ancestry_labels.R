@@ -1,28 +1,113 @@
+#' @title
 #' Use external label dictionary to harmonize free-text
-#' ancestry labels
+#' ancestry labels.
 #'
 #' @description
-#' Ancestry information has been collected as free-text entries
+#' Ancestry information is often collected as free-text entries
 #' with little effort at formal harmonization. Though it may be
 #' impossible to perfectly recapture the underlying data due
 #' to high string similarity and short length of distinct labels,
 #' it's worth a shot.
 #'
-#' @param phenotype.data data frame, input phenotype data
-#' @param variable.summary list, variable configuration data
-#' @param ancestry.source character vector, name of data
+#' @details
+#' The logic of this method is as follows.
+#'
+#' Ideally, the respondents to a study questionnaire are reporting
+#' repeated responses to what is effectively a categorical ancestry
+#' variable for which the categories are masked. In the best case,
+#' we would ask subject matter experts to evaluate
+#' the input data and construct harmonized mappings that ensure that
+#' everyone's responses get converted into standard labels and
+#' groups with concordant labels, at whatever level of granularity
+#' you're interested in, get grouped together appropriately for
+#' your downstream modeling.
+#'
+#' In reality, very frequently there is insufficient interest
+#' in this process for people to dedicate the resources necessary
+#' to get subject matter experts to resolve these labels. And
+#' so we're left with imperfect data and inadequate options.
+#'
+#' This function tries to construct mappings between a known group
+#' of expected categories and a potentially large pool of imperfect
+#' typographic representations of those categories by considering
+#' string distance between the labels and the self-reported data.
+#' The match settings are configured in an attempt to bias the
+#' method false negatives; that is, it would prefer to set
+#' subjects to NA ancestry instead of misassigning them to
+#' a partial match category that doesn't represent what the respondent
+#' intended.
+#'
+#' In practice, what has worked for this method has been:
+#'
+#' - Run first with stringent parameters. Require a high quality
+#'   primary match and a substantially lower secondary match,
+#'   or a secondary match that is an alias of the primary one.
+#' - Check the report for every last assignment and guess.
+#'   This information is tabulated with count information representing
+#'   the number of times this particular self-reported value was
+#'   observed in the input data. The idea here is that values
+#'   with really high counts are likely indicative of groups that
+#'   you've overlooked in your backend label set. However, note
+#'   that high count groups might also represent some response
+#'   that isn't quite what you asked (e.g. instead of `Polish` you
+#'   get `New York`). We've also observed instances of high count
+#'   responses that are clearly indicative of a single data uploader
+#'   who went a bit wild.
+#' - Update the backend table. This step is tedious but critical to
+#'   high quality results. Ultimately this function shouldn't be doing
+#'   much if any reassignment itself; rather, its reporting information
+#'   should guide you to valid aliases for your ancestry labels, which
+#'   you can place in your alias mappings, such that in the future
+#'   those responses will be considered known matches and mapped correctly.
+#' - Repeat the above, until the set of failed matches contains only
+#'   response that you in fact don't want to have mapped to categories.
+#'
+#' This function is completely experimental, and ymmv. We don't specifically
+#' recommend its use, and don't expose it directly to configuration, but
+#' if you're curious, you can in theory call it from the derived variables
+#' block of a dataset and provide a custom backend file. See
+#' system.file("external", "nigeria.ancestry.tsv", package = "process.phenotypes")
+#' as an example of the two column format it expects; in brief, the file
+#' should be two tab-delimited columns, the first column containing the
+#' desired group label, and the second column a comma-delimited list
+#' of verified aliases for the label.
+#'
+#' @param phenotype.data Data frame containing input phenotype data.
+#' @param variable.summary List of variable configuration data.
+#' @param ancestry.source Character vector name of data
 #' source to pull known labels from (e.g. "nigeria"); or
-#' a file in the format expected by load.ancestry.linker
-#' @param best.match.threshold numeric, on \[0,1\], denoting how high
-#' the best match similarity must be to permit a call
-#' @param best.match.discernment numeric, on \[0,1\] denoting the proportion
+#' a file in the format expected by load.ancestry.linker.
+#' @param best.match.threshold Numeric in \[0,1\], denoting how high
+#' the best match similarity must be to permit a call.
+#' @param best.match.discernment Numeric in \[0,1\], denoting the proportion
 #' of the top match the next best match must be less than (assuming the
 #' next best match does not map to the same harmonized label) in order
-#' to accept the top match
-#' @return list; first entry is modified phenotype dataset
-#' with ancestry labels updated, second entry is modified
-#' variable summary with ancestry label update metrics added
-#' @seealso load.ancestry.linker
+#' to accept the top match.
+#' @return List; first entry `phenotype.data` is modified phenotype dataset
+#' with ancestry labels updated; second entry `variable.summary` is modified
+#' input variable summary with ancestry label update metrics added.
+#' @seealso load.ancestry.linker, harmonize.ancestry.from.linker, weak.ancestry.match
+#' @examples
+#' phenotype.data <- data.frame(
+#'   HW00001 = c("A", "B", "C", "D"),
+#'   HW00002 = c("hausa", "kanuri", "ibibio", "ibibioo")
+#' )
+#' variable.summary <- list(variables = list(
+#'   HW00001 = list(params = list(
+#'     name = "subjid",
+#'     type = "string",
+#'     subject_id = TRUE
+#'   )),
+#'   HW00002 = list(params = list(
+#'     name = "subjanc",
+#'     type = "string",
+#'     subject_ancestry = TRUE
+#'   ))
+#' ))
+#' result <- process.phenotypes:::harmonize.ancestry(
+#'   phenotype.data,
+#'   variable.summary
+#' )
 harmonize.ancestry <- function(phenotype.data,
                                variable.summary,
                                ancestry.source = "nigeria",
@@ -63,7 +148,9 @@ harmonize.ancestry <- function(phenotype.data,
   )
 }
 
-#' Read ancestry linker data and format it for use in R
+#' @title
+#' Read ancestry linker data and format it for use in heuristic
+#' ancestry mapping.
 #'
 #' @description
 #' Free-text self-reported ancestry is expected to be heterogeneous
@@ -73,22 +160,23 @@ harmonize.ancestry <- function(phenotype.data,
 #' similar) names.
 #'
 #' @details
-#' Input ancestry linker format is based off the source of
-#' ancestry information from the phase 2 questionnaire, which
-#' appears to actually be
-#' https://en.wikipedia.org/wiki/List_of_ethnic_groups_in_Nigeria
-#' (accessed 17 August 2021). So, in short, the first and only
-#' column (tab-delimited) should be formatted as
-#' "Name (Alt1, Alt2, ...)",
-#' with one row per unique possible group in the output. No
-#' header should be present. Note that triple colons are not
-#' allowed in any ancestry group name for the time being.
+#' See the help documentation of harmonize.ancestry for a discussion
+#' of the motivation behind this and related functions.
 #'
-#' @param filename character vector, name of file containing
-#' structured linker data
-#' @return character vector, named vector of ancestries;
+#' Note that, because this function is goofy nonsense,
+#' triple colons are not allowed in any ancestry group name
+#' for the time being.
+#'
+#' @param filename Character vector name of file containing
+#' structured linker data.
+#' @return Named character vector of ancestries;
 #' names are unique expected inputs in phenotype dataset,
-#' values are harmonized labels to be applied in the output
+#' values are harmonized labels to be applied in the output.
+#' @seealso harmonize.ancestry, harmonize.ancestry.from.linker,
+#' weak.ancestry.match
+#' @examples
+#' test.file <- system.file("external", "nigeria.ancestry.tsv", package = "process.phenotypes")
+#' anc.data <- process.phenotypes:::load.ancestry.linker(test.file)
 load.ancestry.linker <- function(filename) {
   stopifnot(
     is.character(filename),
@@ -124,37 +212,49 @@ load.ancestry.linker <- function(filename) {
   res
 }
 
+#' @title
 #' Update ancestry variable with harmonized ancestry names,
-#' and report how well you did
+#' and report how well you did.
 #'
 #' @description
 #' This function attempts to map free-text ancestry data
 #' to a set of fixed ancestry labels based on an input linker
 #' between known ancestries and harmonized labels. Exact matches
 #' are assigned as expected. Then, an attempt is made to harmonize
-#' partial matches based on closest match. Actual algorithm TBD.
+#' partial matches based on closest match.
 #'
 #' @details
-#' Very much TBD
+#' See the help documentation of harmonize.ancestry for a discussion
+#' of the motivation behind this and related functions.
 #'
-#' @param phenotype character vector, input self-reported ancestry
-#' @param variable list, configuration data for input phenotype
-#' @param ancestry.data named character vector, linking from unique
-#' possible input ancestries to harmonized ancestry label. note that
+#' @param phenotype Character vector of input self-reported ancestry.
+#' @param variable List of configuration data for input phenotype.
+#' @param ancestry.data Named character vector, linking from unique
+#' possible input ancestries to harmonized ancestry label. Note that
 #' both entries and names in this vector are assumed to have gone
 #' through approximately analogous processing as the input free-text
 #' ancestry group labels, e.g. made lowercase and had whitespace removed.
-#' @param best.match.threshold numeric, on \[0,1\], denoting how high
-#' the best match similarity must be to permit a call
-#' @param best.match.discernment numeric, on \[0,1\] denoting the proportion
+#' @param best.match.threshold Numeric on \[0,1\], denoting how high
+#' the best match similarity must be to permit a call.
+#' @param best.match.discernment Numeric on \[0,1\], denoting the proportion
 #' of the top match the next best match must be less than (assuming the
 #' next best match does not map to the same harmonized label) in order
-#' to accept the top match
-#' @return list, first entry is harmonized phenotype data as a factor
+#' to accept the top match.
+#' @return List; first entry `phenotype` is harmonized phenotype data as a factor
 #' with levels set to the available ancestry levels in the known ancestry
-#' input, second entry is input configuration list with added metrics
-#' about mapping performance
-#' @seealso load.ancestry.linker
+#' input, second entry `variable` is input configuration list with added metrics
+#' about mapping performance.
+#' @seealso load.ancestry.linker, harmonize.ancestry, weak.ancestry.match
+#' @examples
+#' phenotype <- c("hausa", "kanuri", "fulani", "ibibio", "ibibioo")
+#' variable <- list()
+#' anc.file <- system.file("external", "nigeria.ancestry.tsv", package = "process.phenotypes")
+#' anc.data <- process.phenotypes:::load.ancestry.linker(anc.file)
+#' result <- process.phenotypes:::harmonize.ancestry.from.linker(
+#'   phenotype,
+#'   variable,
+#'   anc.data
+#' )
 harmonize.ancestry.from.linker <- function(phenotype,
                                            variable,
                                            ancestry.data,
@@ -237,6 +337,7 @@ harmonize.ancestry.from.linker <- function(phenotype,
   )
 }
 
+#' @title
 #' Attempt to use string similarity to guess what people
 #' meant by their self-reported ancestry.
 #'
@@ -247,29 +348,39 @@ harmonize.ancestry.from.linker <- function(phenotype,
 #' But guessing is hard, so deliberately fail a lot.
 #'
 #' @details
-#' Will report them when I have them.
+#' See the help documentation of harmonize.ancestry for a discussion
+#' of the motivation behind this and related functions.
 #'
-#' @param phenotype character vector, input free-text
-#' self-reported ancestry; only for subjects with no
-#' perfect match to ancestry dictionary!!
-#' @param ancestry.data named character vector, linking from unique
-#' possible input ancestries to harmonized ancestry label. note that
+#' @param phenotype Character vector of input free-text
+#' self-reported ancestry. This should only contain subjects with no
+#' perfect match to the known ancestry label dictionary.
+#' @param ancestry.data Named character vector, linking from unique
+#' possible input ancestries to harmonized ancestry label. Note that
 #' both entries and names in this vector are assumed to have gone
 #' through approximately analogous processing as the input free-text
 #' ancestry group labels, e.g. made lowercase and had whitespace removed.
-#' @param best.match.threshold numeric, on \[0,1\], denoting how high
-#' the best match similarity must be to permit a call
-#' @param best.match.discernment numeric, on \[0,1\] denoting the proportion
+#' @param best.match.threshold Numeric on \[0,1\], denoting how high
+#' the best match similarity must be to permit a call.
+#' @param best.match.discernment Numeric on \[0,1\] denoting the proportion
 #' of the top match the next best match must be less than (assuming the
 #' next best match does not map to the same harmonized label) in order
-#' to accept the top match
-#' @return list; first entry is character vector, modified version of
+#' to accept the top match.
+#' @return List; first entry is character vector, a version of
 #' the input ancestry reports, modified to best guess ancestry, or
 #' NA if the best match is poor; second entry is character vector
 #' describing the reasoning for accepting or rejecting partial matches;
 #' third is best ancestry match regardless of acceptance; fourth is
 #' quality of best match; fifth is second best ancestry match;
-#' sixth is quality of second best match
+#' sixth is quality of second best match.
+#' @seealso load.ancestry.linker, harmonize.ancestry, harmonize.ancestry.from.linker
+#' @examples
+#' phenotype <- c("ibibioo")
+#' anc.file <- system.file("external", "nigeria.ancestry.tsv", package = "process.phenotypes")
+#' anc.data <- process.phenotypes:::load.ancestry.linker(anc.file)
+#' result <- process.phenotypes:::weak.ancestry.match(
+#'   phenotype,
+#'   anc.data
+#' )
 weak.ancestry.match <- function(phenotype,
                                 ancestry.data,
                                 best.match.threshold = 0.9,

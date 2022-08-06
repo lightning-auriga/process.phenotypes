@@ -7,13 +7,13 @@
 \method{aggregate}{subject.dep.failures}(variable.summary)
 }
 \arguments{
-\item{variable.summary}{list, variable configuration
-and summary data}
+\item{variable.summary}{List; variable configuration and
+summary data containing precomputed dependency results.}
 }
 \value{
-named integer vector; values are counts of
+Named integer vector, where values are counts of
 dependency failures for each subject across all variables,
-names are subject IDs
+and names are subject IDs.
 }
 \description{
 Computes a count for each subject of all dependency failures
@@ -21,12 +21,12 @@ across all variables, after all filtering and conversion has
 been applied.
 }
 \details{
-This obviously has a bunch of caveats associated with it.
+This obviously has many caveats associated with it.
 The metric only means as much as the dependencies do.
 Large numbers of dependency failures can be introduced
 with particular discrepancies (not addressing atypical
 "no" responses in some dependent questions, approximate
-BMI deviations, atypical N/A values in string variables)
+BMI deviations, atypical N/A values in string variables, etc.)
 that will inflate these counts without useful meaning.
 Discrepancies in early links in some dependency chains
 can cause the same subject to fail an entire batch
@@ -34,4 +34,20 @@ of related variables (e.g. smoking, alcohol), and
 while it's probably appropriate to penalize that datapoint
 due to this phenomenon, it's not entirely clear
 how many times that penalty should be applied.
+
+Dependency enforcement is envisioned for unstructured
+upstream data sources. In the case that input data are
+generated from some sort of formal data system upstream
+(e.g. SurveyCTO), dependencies may already be enforced,
+in which case the dependency system in process.phenotypes
+is somewhat redundant, thought still a nice sanity
+check in the cleaning report.
+}
+\examples{
+dep.results <- list("1" = c("A", "B"), "2" = c("C", "D"))
+var.sum <- list(variables = list(HW00001 = list(dependency.results = dep.results)))
+dep.failures <- process.phenotypes:::aggregate.subject.dep.failures(var.sum)
+}
+\seealso{
+check.variable.dependencies
 }

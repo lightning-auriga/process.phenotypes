@@ -2,15 +2,26 @@
 % Please edit documentation in R/markdown_helper_functions.R
 \name{get.bins}
 \alias{get.bins}
-\title{Make sure the number of bins in a histogram isn't too close to the
-number of unique values!}
+\title{Try to ensure that the number of bins in a histogram isn't too close to the
+number of unique values.}
 \usage{
 get.bins(vec)
 }
 \arguments{
-\item{vec}{numeric vector; input data to histogram}
+\item{vec}{Numeric vector of input data to histogram.}
+}
+\value{
+Numeric setting for geom_histogram bin count.
 }
 \description{
-Make sure the number of bins in a histogram isn't too close to the
-number of unique values!
+The phenotype report features general purpose histograms that are
+created from a wide array of unstructured numeric information. In
+some contexts, the bin value selected makes a huge difference for
+the utility of such plots. This entirely heuristically attempts
+to generate a bin setting that works \emph{pretty well} for a wide
+array of data configurations. As always, ymmv.
+}
+\examples{
+data <- rnorm(100)
+bin.count <- process.phenotypes:::get.bins(data)
 }

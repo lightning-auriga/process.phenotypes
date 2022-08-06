@@ -2,21 +2,27 @@
 % Please edit documentation in R/derived_variables.R
 \name{evaluate.derived.expressions}
 \alias{evaluate.derived.expressions}
-\title{Evaluate user expressions for computing a derived variable}
-\usage{
-evaluate.derived.expressions(phenotype.data, derived.exprs)
-}
+\title{Evaluate user expressions for computing a derived variable.}
 \arguments{
-\item{phenotype.data}{data.frame, input phenotype data}
+\item{phenotype.data}{Data frame of loaded phenotypes.}
 
-\item{derived.exprs}{list, parsed expressions}
+\item{derived.exprs}{List of parsed expressions from a derived
+variable code block.}
 }
 \value{
-either a vector of length nrow(phenotype.data) representing
+Either a vector of length the number of rows of the working
+phenotype dataset representing
 the derived variable, or an object of class "try-error" indicating
 the failure of the evaluation chain.
 }
 \description{
+An environment and data mask providing access to the phenotype
+dataset column names are created for a specific derived variable,
+and all user calculations are conducted in those quarantined
+environments. This should prevent any accidental overwrites
+of loaded data in the primary environment.
+}
+\details{
 This is an internal utility function, and should not be called
 otherwise. Failure of this evaluation may either be indicative
 of bugs in the input code, or the absence of a required variable
@@ -25,11 +31,4 @@ is calling another derived variable that has not yet been
 computed). The latter situation should be correctly handled
 by calling logic that attempts iterative evaluation of
 derived variable statements.
-}
-\details{
-An environment and data mask providing access to the phenotype
-dataset column names are created for a specific derived variable,
-and all user calculations are conducted in those quarantined
-environments. This should prevent any accidental overwrites
-of loaded data in the primary environment.
 }
