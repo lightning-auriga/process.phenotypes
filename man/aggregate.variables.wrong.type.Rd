@@ -8,12 +8,13 @@ not matching the specified type.}
 \method{aggregate}{variables.wrong.type}(variable.summary)
 }
 \arguments{
-\item{variable.summary}{list, variable configuration and
-summary data}
+\item{variable.summary}{List; variable configuration and
+summary data containing precomputed information about subjects
+with unexpected type data for each variable.}
 }
 \value{
-named integer vector; values are counts of non-compliant
-subjects per variable, names are variable names
+Named integer vector, where values are counts of non-compliant
+subjects per variable, and names are variable names.
 }
 \description{
 This aggregates counts of non-compliant subjects per variable,
@@ -26,4 +27,14 @@ In some instances, inflated counts may reflect either
 corruption of the variable, due to technical reasons or changes
 in questionnaire content midstream, or potentially configuration
 failures in this software.
+}
+\examples{
+var.sum <- list(variables = list(
+  HW00001 = list(subjects.wrong.type = c("A", "B")),
+  HW00002 = list(subjects.wrong.type = character())
+))
+wrong.type.counts <- aggregate.variables.wrong.type(var.sum)
+}
+\seealso{
+apply.type.conversions
 }
