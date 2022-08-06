@@ -1,4 +1,5 @@
-#' Apply consent exclusion to data
+#' @title
+#' Apply consent exclusion to data.
 #'
 #' @description
 #' Load subject list(s) specifying inclusion and exclusion of
@@ -6,14 +7,69 @@
 #' or absence of subjects and input lists, report summary
 #' information about how many people have definitive information.
 #'
-#' @param phenotype.data data.frame, input phenotype information
-#' with a subject ID column
-#' @param variable.summary list, dataset configuration information
-#' with a variable tagged with "subject_id: true"
-#' @return list, first entry modified version of the input
-#' phenotype data with any excluded subjects removed; second
-#' entry modified version of input config data with summary
+#' @details
+#' The concept of applying consent data is integrated directly
+#' into the process.phenotypes logic chain. If either inclusion
+#' or exclusion file (but not both) is provided, the relevant
+#' process will still be conducted. However, if both are specified,
+#' an additional set of subjects with uncertain consent status
+#' will be computed, excluded from output, and reported in the
+#' cleaning report.
+#'
+#' Consent lists can be NULL in the input configuration (e.g.
+#' `consent_inclusion_file: ~` in yaml). This is perfectly
+#' appropriate in contexts where consent is not applicable
+#' (e.g. model organism data, anonymized collection, or just
+#' random files unrelated to human subjects). We nevertheless
+#' recommend its use in all applicable situations.
+#'
+#' If a subject is specified in both the inclusion and exclusion
+#' file, exclusion takes priority. If this behavior is not desired,
+#' preprocess the input files such that the subject is only
+#' present in the inclusion set.
+#'
+#' @param phenotype.data Data frame, containing input phenotype information
+#' with a subject ID column.
+#' @param variable.summary List of dataset configuration information
+#' with a variable tagged with `subject_id = TRUE` to link subject
+#' data to the consent list.
+#' @return List, with first entry `phenotype.data` a modified version of the input
+#' phenotype data with any excluded subjects removed, and second
+#' entry `variable.summary` a modified version of input config data with summary
 #' information included about consent status for report.
+#' @examples
+#' input.consent.inc.file <- tempfile("ace_example_inc")
+#' input.consent.exc.file <- tempfile("ace_example_exc")
+#' consent.inclusion <- c("A", "B")
+#' consent.exclusion <- c("C", "D")
+#' write.table(cbind(consent.inclusion), input.consent.inc.file,
+#'   row.names = FALSE, col.names = FALSE, quote = FALSE
+#' )
+#' write.table(cbind(consent.exclusion), input.consent.exc.file,
+#'   row.names = FALSE, col.names = FALSE, quote = FALSE
+#' )
+#' pheno.data <- data.frame(
+#'   HW00001 = c("A", "B", "C", "D", "E"),
+#'   HW00002 = 1:5
+#' )
+#' var.sum <- list(
+#'   globals = list(
+#'     consent.inclusion.file = input.consent.inc.file,
+#'     consent.exclusion.file = input.consent.exc.file
+#'   ),
+#'   variables = list(
+#'     HW00001 = list(
+#'       name = "subjid",
+#'       type = "string",
+#'       subject_id = TRUE
+#'     ),
+#'     HW00002 = list(
+#'       name = "measure",
+#'       type = "numeric"
+#'     )
+#'   )
+#' )
+#' res <- apply.consent.exclusion(pheno.data, var.sum)
 apply.consent.exclusion <- function(phenotype.data, variable.summary) {
   ## annotate initial sample size
   variable.summary$total.initial.sample.size <- nrow(phenotype.data)
