@@ -7,23 +7,19 @@
 create.derived.variables(phenotype.data, variable.summary)
 }
 \arguments{
-\item{phenotype.data}{data.frame, input phenotype data}
+\item{phenotype.data}{Data frame of loaded phenotypes.}
 
-\item{variable.summary}{list, configuration data per variable}
+\item{variable.summary}{List representation of configuration data
+per variable.}
 }
 \value{
-list, modified version of input variable.summary argument
-with augmented phenotype dataset, and variable summary supplemented
-with copies of the input configuration for the derived variables.
+List, with first entry \code{phenotype.data} a modified version
+of input data frame augmented with resolved derived variables,
+and second entry \code{variable.summary} a modified version of the
+input config list with derived variable entries added in order
+to the \code{variables} block for eventual reporting.
 }
 \description{
-After the first run with a derived variable, that variable will
-be present in the output dataset, and in its output data
-dictionary. Subsequent loads of the data into this software
-will treat the derived variable as a primary variable, and
-it will not be recomputed.
-}
-\details{
 Userspace configuration of a dataset can contain a block of
 derived variables, which are computed dynamically (after
 primary dataset cleaning) from existing variables. This uses
@@ -34,4 +30,56 @@ Evaluation of derived variables may use any variable, either
 raw or derived, from the user config. Evaluation is conducted
 in a restricted environment that prevents modification to the
 primary phenotype dataset.
+}
+\details{
+After the first run with a derived variable, that variable will
+be present in the output dataset, and in its output data
+dictionary. Subsequent loads of the data into this software
+will treat the derived variable as a primary variable, and
+it will not be recomputed.
+
+At this time, errors encountered within the sequestered environment
+that indicate merely that a valid dependency has not yet been
+evaluated are echoed to terminal. As long as the progression
+of the function continues, these errors are expected and
+not indicative of a failure in overall evaluation.
+
+If such sporadic errors are bothersome, the simplest
+solution is to reorder the specification of derived variables in the
+dataset configuration file such that each variable
+in turn can be computed when the variables are evaluated
+from the beginning of the derived block to the end.
+That is to say: make sure your derived variables only depend
+on variables above them in the file.
+
+Otherwise, you can wait until we get around to patching
+this functionality to suppress intermittent errors. Sorry for
+the inconvenience.
+}
+\examples{
+
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = 1:4
+)
+variable.summary <- list(
+  variables = list(
+    HW00001 = list(type = "string"),
+    HW00002 = list(type = "numeric")
+  ),
+  derived = list(
+    DV00001 = list(
+      name = "only depends on variables",
+      code = "2 * HW00002"
+    ),
+    DV00002 = list(
+      name = "variables and derived",
+      code = "2 * HW00002 + DV00001"
+    )
+  )
+)
+solved.data <- process.phenotypes:::create.derived.variables(
+  phenotype.data,
+  variable.summary
+)
 }
