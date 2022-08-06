@@ -1,6 +1,7 @@
+#' @title
 #' Apply config-specified R commands to generate derived variables
 #'
-#' @details
+#' @description
 #' Userspace configuration of a dataset can contain a block of
 #' derived variables, which are computed dynamically (after
 #' primary dataset cleaning) from existing variables. This uses
@@ -12,19 +13,66 @@
 #' in a restricted environment that prevents modification to the
 #' primary phenotype dataset.
 #'
-#' @description
+#' @details
 #' After the first run with a derived variable, that variable will
 #' be present in the output dataset, and in its output data
 #' dictionary. Subsequent loads of the data into this software
 #' will treat the derived variable as a primary variable, and
 #' it will not be recomputed.
 #'
-#' @param phenotype.data data.frame, input phenotype data
-#' @param variable.summary list, configuration data per variable
-#' @return list, modified version of input variable.summary argument
-#' with augmented phenotype dataset, and variable summary supplemented
-#' with copies of the input configuration for the derived variables.
+#' At this time, errors encountered within the sequestered environment
+#' that indicate merely that a valid dependency has not yet been
+#' evaluated are echoed to terminal. As long as the progression
+#' of the function continues, these errors are expected and
+#' not indicative of a failure in overall evaluation.
+#'
+#' If such sporadic errors are bothersome, the simplest
+#' solution is to reorder the specification of derived variables in the
+#' dataset configuration file such that each variable
+#' in turn can be computed when the variables are evaluated
+#' from the beginning of the derived block to the end.
+#' That is to say: make sure your derived variables only depend
+#' on variables above them in the file.
+#'
+#' Otherwise, you can wait until we get around to patching
+#' this functionality to suppress intermittent errors. Sorry for
+#' the inconvenience.
+#'
+#' @param phenotype.data Data frame of loaded phenotypes.
+#' @param variable.summary List representation of configuration data
+#' per variable.
+#' @return List, with first entry `phenotype.data` a modified version
+#' of input data frame augmented with resolved derived variables,
+#' and second entry `variable.summary` a modified version of the
+#' input config list with derived variable entries added in order
+#' to the `variables` block for eventual reporting.
 #' @importFrom methods is
+#' @examples
+#'
+#' phenotype.data <- data.frame(
+#'   HW00001 = c("A", "B", "C", "D"),
+#'   HW00002 = 1:4
+#' )
+#' variable.summary <- list(
+#'   variables = list(
+#'     HW00001 = list(type = "string"),
+#'     HW00002 = list(type = "numeric")
+#'   ),
+#'   derived = list(
+#'     DV00001 = list(
+#'       name = "only depends on variables",
+#'       code = "2 * HW00002"
+#'     ),
+#'     DV00002 = list(
+#'       name = "variables and derived",
+#'       code = "2 * HW00002 + DV00001"
+#'     )
+#'   )
+#' )
+#' solved.data <- process.phenotypes:::create.derived.variables(
+#'   phenotype.data,
+#'   variable.summary
+#' )
 create.derived.variables <- function(phenotype.data, variable.summary) {
   not.done.list <- variable.summary$derived
   previous.list.length <- 0
@@ -63,16 +111,16 @@ create.derived.variables <- function(phenotype.data, variable.summary) {
   )
 }
 
-#' Evaluate user expressions for computing a derived variable
+#' Evaluate user expressions for computing a derived variable.
 #'
-#' @details
+#' @description
 #' An environment and data mask providing access to the phenotype
 #' dataset column names are created for a specific derived variable,
 #' and all user calculations are conducted in those quarantined
 #' environments. This should prevent any accidental overwrites
 #' of loaded data in the primary environment.
 #'
-#' @description
+#' @details
 #' This is an internal utility function, and should not be called
 #' otherwise. Failure of this evaluation may either be indicative
 #' of bugs in the input code, or the absence of a required variable
@@ -82,12 +130,15 @@ create.derived.variables <- function(phenotype.data, variable.summary) {
 #' by calling logic that attempts iterative evaluation of
 #' derived variable statements.
 #'
-#' @param phenotype.data data.frame, input phenotype data
-#' @param derived.exprs list, parsed expressions
-#' @return either a vector of length nrow(phenotype.data) representing
+#' @param phenotype.data Data frame of loaded phenotypes.
+#' @param derived.exprs List of parsed expressions from a derived
+#' variable code block.
+#' @return Either a vector of length the number of rows of the working
+#' phenotype dataset representing
 #' the derived variable, or an object of class "try-error" indicating
 #' the failure of the evaluation chain.
 #' @importFrom methods is
+#' @usage NULL
 evaluate.derived.expressions <- function(phenotype.data, derived.exprs) {
   my.data.mask <- rlang::as_data_mask(phenotype.data)
   my.env <- rlang::caller_env()

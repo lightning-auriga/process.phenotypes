@@ -2,16 +2,23 @@
 % Please edit documentation in R/markdown_helper_functions.R
 \name{report.excel.problems}
 \alias{report.excel.problems}
-\title{Helper function to report detected excel problems in variable contents}
-\usage{
-report.excel.problems(variable.entry, suppress.reporting)
-}
+\title{Helper function to report detected Excel problems in variable contents.}
 \arguments{
-\item{variable.entry}{list; entry in dataset yaml for this variable}
+\item{variable.entry}{List entry in dataset yaml for this variable.}
 
-\item{suppress.reporting}{logical; whether variable report data
-should be suppressed}
+\item{suppress.reporting}{Logical controlling whether variable report data
+should be suppressed.}
 }
 \description{
-Helper function to report detected excel problems in variable contents
+This function exclusively functions to emit formatted information
+in the phenotype Rmarkdown report. It has been
+parametrized out in order to:
+\itemize{
+\item clean up the report proper;
+\item sanitize some of the required hybrid syntax from working with
+R content in markdown; and
+\item expose the results of this function to testthat
+}
+
+You should never need to call this function for any reason.
 }

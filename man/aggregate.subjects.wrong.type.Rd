@@ -8,12 +8,13 @@ which that subject has data of the wrong type.}
 \method{aggregate}{subjects.wrong.type}(variable.summary)
 }
 \arguments{
-\item{variable.summary}{list, variable configuration and
-summary data}
+\item{variable.summary}{List; variable configuration and
+summary data containing precomputed information about subjects
+with unexpected type data for each variable.}
 }
 \value{
-named integer vector; values are counts of non-compliant
-variables per subject, names are subject IDs
+Named integer vector, where values are counts of non-compliant
+variables per subject, and names are subject IDs.
 }
 \description{
 This aggregates non-compliant subject ID information from
@@ -26,4 +27,14 @@ something specifically wrong with a block of related
 variables. This count summary is hopefully a proxy
 for subject-specific data corruption, so they can
 be removed before downstream analysis.
+}
+\examples{
+var.sum <- list(variables = list(
+  HW00001 = list(subjects.wrong.type = c("A")),
+  HW00002 = list(subjects.wrong.type = c("A", "B"))
+))
+all.bad.subjects <- process.phenotypes:::aggregate.subjects.wrong.type(var.sum)
+}
+\seealso{
+apply.type.conversions
 }

@@ -1,13 +1,17 @@
-#' Derive binary yes/no first-degree relatives from family member data
-#'
-#' @details
-#' Logic to convert family member lists to binary variable indicating
-#' whether or not first degree relatives are affected.  Handled through
-#' rlang::eval_tidy, which provides an environment and data mask to
-#' prevent overwriting of data in memory (see functions in
-#' derived_variables.R).
+#' @title
+#' Derive binary yes/no first-degree relatives from family member data.
 #'
 #' @description
+#' This logic converts family member lists to a binary variable indicating
+#' whether or not first degree relatives are affected.
+#'
+#' Note that the input vectors are specified as _names of variables_
+#' within the input phenotype dataset. At the time the dependencies
+#' are evaluated, the phenotype dataset has had the user-configured
+#' variable names applied as its column headers, and as such the
+#' variables should be referred to by those labels directly.
+#'
+#' @details
 #' This helper function allows one to convert variables that are
 #' lists of family members (e.g. "father,mother,grandmother") to
 #' a yes/no variable that simply reports whether first degree
@@ -16,10 +20,26 @@
 #' along the lines of whether or not first-degree relations are
 #' affected.
 #'
-#' @param variable.name string, name of existing variable to operate on
-#' @return a vector of length nrow(phenotype.data) representing the
-#' derived variable
+#' @param variable.name Character vector to be parsed.
+#' This function is intended to be called from the `derived` variable
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` and `derived` (e.g. HW00001) can be called directly.
+#' @return Character vector of yes/no responses indicating whether the
+#' input vector implicated a first degree relationship.
 #' @export derive.first.degree
+#' @seealso create.derived.variables
+#' @examples
+#' data <- c("mother", "grandfather", "child", "stepbrother", NA)
+#' phenotype.data <- data.frame(HW00001 = data)
+#' der.var <- derive.first.degree(phenotype.data$HW00001)
+#' ## this function is designed as a utility to be
+#' ## deployed in the dependency block of a user configuration
+#' ## file. it requires the bindings of the phenotype data
+#' ## matrix to be available in the current context
+#' \dontrun{
+#' derive.first.degree(HW00001)
+#' }
+#' ## expected: TRUE FALSE TRUE FALSE FALSE
 derive.first.degree <- function(variable.name) {
   first.degree <- paste("^mother$", "^father$", "^brother$",
     "^sister$", "^sibling['s]*$", "^parent['s]*$",
@@ -38,13 +58,14 @@ derive.first.degree <- function(variable.name) {
   derived.variable
 }
 
-#' Apply inverse/rank normal transformation to numeric variable
+#' @title
+#' Apply inverse/rank normal transformation to numeric variable.
 #'
-#' @details
+#' @description
 #' Transforms a numeric vector to a normally distributed variable
 #' with certain configurable settings.
 #'
-#' @description
+#' @details
 #' The outcome of this transformation is guaranteed to be normal,
 #' but may not behave as you want it to. Parametric information
 #' about the variable is lost. Ties are resolved by random resolution,
@@ -54,21 +75,65 @@ derive.first.degree <- function(variable.name) {
 #' variables, with the extent of the differences again dependent
 #' on the number of ties.
 #'
-#' @param variable numeric vector, input variable
-#' for transformation; using tidyverse masking, this can be
-#' referred to by the name of a variable in the input config
-#' @param offset numeric, small decimal offset for transform
-#' adjustment
-#' @param stratification.vars list, input variables to be used
+#' We really seek to emphasize here: the presence of an abundance
+#' of ties will cause this function to have extremely undesirable
+#' properties. Please use this with caution.
+#'
+#' The corresponding unit test is only probabilistically passing,
+#' as it uses the Shapiro p-value to determine success. Rerunning
+#' the test even a single time should generally do the trick. We
+#' may reduce the stringency of the test p-value cutoff to prevent
+#' sporadic issues.
+#'
+#' This function was originally intended for use in the derived
+#' variable block of the input configuration file. In practice,
+#' you may find that the intention is to merge your cleaned phenotype
+#' data with other sources. Depending on the context, it may or
+#' may not be appropriate to wait to apply the inverse normal transform
+#' until after the merge operation is complete. Due to the complexity
+#' of making sure variables are actually compatible with one another,
+#' merging is not directly supported in this library. However,
+#' the shared models system was created with the intention of
+#' making data merging possible when appropriate, and should
+#' be favored if possible.
+#'
+#' @param variable Numeric vector to be transformed.
+#' This function is intended to be called from the `derived` variable
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` and `derived` (e.g. HW00001) can be called directly.
+#' @param offset Numeric small decimal offset for transform
+#' adjustment. Generally should be \[0.3, 0.5\].
+#' @param stratification.vars List of input variables from package's
+#' representation of the input phenotype data to be used
 #' as factors for stratifying data before applying inverse
-#' normal transform; using tidyverse masking, these can be
-#' referred to by the names of variables in the input config
-#' @param include.subjects logical vector or NA, indicator vector for
-#' which subjects should be considered for current transformation
-#' @param primary.call logical, whether this is the top-level
-#' call of this function. do not set or change this, unless you want really
-#' awful behavior
+#' normal transform. The most common variable specified here
+#' would be binary genetic sex, as applicable and with appropriate caveats.
+#' @param include.subjects Logical vector or NA. If an indicator vector,
+#' this indicates which subjects should be considered for current transformation.
+#' This parameter is part of recursive transformation, and generally
+#' should not be called by the user. NA indicates all subjects should
+#' be considered in the current transformation.
+#' @param primary.call Logical indicating whether this is the top-level
+#' call of this function. Do not set or change this, unless you want really
+#' awful behavior.
 #' @export derive.rank.normal.transform
+#' @examples
+#' numeric.data <- runif(1000, 0, 1)
+#' strat <- sample(c("yes", "no"), 1000, replace = TRUE)
+#' phenotype.data <- data.frame(
+#'   HW00001 = numeric.data,
+#'   HW00002 = factor(strat)
+#' )
+#' der.var <- derive.rank.normal.transform(phenotype.data$HW00001,
+#'   stratification = list(phenotype.data$HW00002)
+#' )
+#' ## this function is designed as a utility to be
+#' ## deployed in the dependency block of a user configuration
+#' ## file. it requires the bindings of the phenotype data
+#' ## matrix to be available in the current context
+#' \dontrun{
+#' derive.rank.normal.transform(HW00001, stratification = list(HW00002))
+#' }
 derive.rank.normal.transform <- function(variable,
                                          offset = 0.5,
                                          stratification.vars = list(),
