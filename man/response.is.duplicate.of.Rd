@@ -7,11 +7,17 @@
 response.is.duplicate.of(dependent.variable, independent.variable)
 }
 \arguments{
-\item{dependent.variable}{Character vector name of dependent/upstream variable to operate on
-within the package's representation of the input phenotype data.}
+\item{dependent.variable}{Vector for dependent/upstream variable
+in the dependency.
+This function is intended to be called from the \code{dependencies}
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.}
 
-\item{independent.variable}{Character vector name of independent/downstream variable to operate on
-within the package's representation of the input phenotype data.}
+\item{independent.variable}{Vector name of independent/downstream variable
+for the dependency.
+This function is intended to be called from the \code{dependencies}
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.}
 }
 \value{
 Logical vector representing the results
@@ -45,6 +51,10 @@ dep.var <- c("yes", "sometimes", NA, "sometimes", "sometimes")
 phenotype.data <- data.frame(
   HW00001 = indep.var,
   HW00002 = dep.var
+)
+dep.test <- response.is.duplicate.of(
+  phenotype.data$HW00002,
+  phenotype.data$HW00001
 )
 ## this function is designed as a utility to be
 ## deployed in the dependency block of a user configuration

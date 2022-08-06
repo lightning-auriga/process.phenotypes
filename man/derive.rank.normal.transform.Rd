@@ -13,8 +13,10 @@ derive.rank.normal.transform(
 )
 }
 \arguments{
-\item{variable}{Character vector name of input numeric variable
-for transformation.}
+\item{variable}{Numeric vector to be transformed.
+This function is intended to be called from the \code{derived} variable
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} and \code{derived} (e.g. HW00001) can be called directly.}
 
 \item{offset}{Numeric small decimal offset for transform
 adjustment. Generally should be [0.3, 0.5].}
@@ -76,7 +78,10 @@ numeric.data <- runif(1000, 0, 1)
 strat <- sample(c("yes", "no"), 1000, replace = TRUE)
 phenotype.data <- data.frame(
   HW00001 = numeric.data,
-  HW00002 = strat
+  HW00002 = factor(strat)
+)
+der.var <- derive.rank.normal.transform(phenotype.data$HW00001,
+  stratification = list(phenotype.data$HW00002)
 )
 ## this function is designed as a utility to be
 ## deployed in the dependency block of a user configuration

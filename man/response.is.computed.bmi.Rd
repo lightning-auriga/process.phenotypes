@@ -7,13 +7,20 @@
 response.is.computed.bmi(bmi, weight, height, tolerance)
 }
 \arguments{
-\item{bmi}{Character vector name of numeric vector of reported BMI.}
+\item{bmi}{Numeric vector of reported BMI.
+This function is intended to be called from the \code{dependencies}
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.}
 
-\item{weight}{Character vector name of numeric vector of
-reported weight in kilograms.}
+\item{weight}{Numeric vector of reported weight in kilograms.
+This function is intended to be called from the \code{dependencies}
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.}
 
-\item{height}{Character vector name of numeric vector of
-reported height in meters.}
+\item{height}{Numeric vector of reported height in meters.
+This function is intended to be called from the \code{dependencies}
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.}
 
 \item{tolerance}{Numeric acceptable absolute deviation
 between computed and reported BMI.}
@@ -61,6 +68,12 @@ phenotype.data <- data.frame(
   HW00001 = bmi,
   HW00002 = height,
   HW00003 = weight
+)
+dep.test <- response.is.computed.bmi(
+  phenotype.data$HW00001,
+  phenotype.data$HW00003,
+  phenotype.data$HW00002,
+  1.0
 )
 ## this function is designed as a utility to be
 ## deployed in the dependency block of a user configuration

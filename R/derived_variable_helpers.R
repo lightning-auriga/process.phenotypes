@@ -1,7 +1,7 @@
 #' @title
 #' Derive binary yes/no first-degree relatives from family member data.
 #'
-#' @details
+#' @description
 #' This logic converts family member lists to a binary variable indicating
 #' whether or not first degree relatives are affected.
 #'
@@ -11,7 +11,7 @@
 #' variable names applied as its column headers, and as such the
 #' variables should be referred to by those labels directly.
 #'
-#' @description
+#' @details
 #' This helper function allows one to convert variables that are
 #' lists of family members (e.g. "father,mother,grandmother") to
 #' a yes/no variable that simply reports whether first degree
@@ -20,8 +20,10 @@
 #' along the lines of whether or not first-degree relations are
 #' affected.
 #'
-#' @param variable.name Character vector name of existing variable to operate on
-#' within the package's representation of the input phenotype data.
+#' @param variable.name Character vector to be parsed.
+#' This function is intended to be called from the `derived` variable
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` and `derived` (e.g. HW00001) can be called directly.
 #' @return Character vector of yes/no responses indicating whether the
 #' input vector implicated a first degree relationship.
 #' @export derive.first.degree
@@ -29,6 +31,7 @@
 #' @examples
 #' data <- c("mother", "grandfather", "child", "stepbrother", NA)
 #' phenotype.data <- data.frame(HW00001 = data)
+#' der.var <- derive.first.degree(phenotype.data$HW00001)
 #' ## this function is designed as a utility to be
 #' ## deployed in the dependency block of a user configuration
 #' ## file. it requires the bindings of the phenotype data
@@ -94,8 +97,10 @@ derive.first.degree <- function(variable.name) {
 #' making data merging possible when appropriate, and should
 #' be favored if possible.
 #'
-#' @param variable Character vector name of input numeric variable
-#' for transformation.
+#' @param variable Numeric vector to be transformed.
+#' This function is intended to be called from the `derived` variable
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` and `derived` (e.g. HW00001) can be called directly.
 #' @param offset Numeric small decimal offset for transform
 #' adjustment. Generally should be \[0.3, 0.5\].
 #' @param stratification.vars List of input variables from package's
@@ -117,7 +122,10 @@ derive.first.degree <- function(variable.name) {
 #' strat <- sample(c("yes", "no"), 1000, replace = TRUE)
 #' phenotype.data <- data.frame(
 #'   HW00001 = numeric.data,
-#'   HW00002 = strat
+#'   HW00002 = factor(strat)
+#' )
+#' der.var <- derive.rank.normal.transform(phenotype.data$HW00001,
+#'   stratification = list(phenotype.data$HW00002)
 #' )
 #' ## this function is designed as a utility to be
 #' ## deployed in the dependency block of a user configuration

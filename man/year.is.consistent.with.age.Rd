@@ -12,15 +12,28 @@ year.is.consistent.with.age(
 )
 }
 \arguments{
-\item{reported.year}{Character vector name of date variable, for example
-date of birth.}
+\item{reported.year}{Numeric vector of date variable, for example
+date of birth.
+This function is intended to be called from the \code{dependencies}
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.
+An input variable specified as the special \code{date} type will be
+available as numeric year when dependencies are evaluated.}
 
-\item{reported.age}{Character vector name of age variable, for example
-self-reported age at data collection.}
+\item{reported.age}{Numeric vector of age variable, for example
+self-reported age at data collection.
+This function is intended to be called from the \code{dependencies}
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.}
 
-\item{reference.year}{Either character vector name of reference year variable
-indicating a potentially different reference year per subject, or a numeric
-reference year to be used to compute age for all subjects.}
+\item{reference.year}{Either numeric vector of reference year variable
+indicating a potentially different reference year per subject, or a
+single numeric reference year to be used to compute age for all subjects.
+This function is intended to be called from the \code{dependencies}
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.
+An input variable specified as the special \code{date} type will be
+available as numeric year when dependencies are evaluated.}
 
 \item{acceptable.tolerance}{Numeric absolute range above or below reported age
 within which to call reported and calculated age consistent.}
@@ -76,6 +89,12 @@ phenotype.data <- data.frame(
   HW00002 = reported.age,
   HW00003 = reference.year
 )
+dep.test <- year.is.consistent.with.age(
+  phenotype.data$HW00001,
+  phenotype.data$HW00002,
+  phenotype.data$HW00003,
+  4.0
+)
 ## this function is designed as a utility to be
 ## deployed in the dependency block of a user configuration
 ## file. it requires the bindings of the phenotype data
@@ -91,6 +110,14 @@ dep.test <- year.is.consistent.with.age(
 ## expected: TRUE FALSE TRUE TRUE TRUE
 
 ## if preferred, use a constant reference year for all subjects
+dep.test <- year.is.consistent.with.age(
+  phenotype.data$HW00001,
+  phenotype.data$HW00002,
+  2022,
+  1.0
+)
+## as above, this variant is available from the user config
+## with variable name bindings in scope
 \dontrun{
 dep.test <- year.is.consistent.with.age(
   HW00001,

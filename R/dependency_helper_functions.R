@@ -24,10 +24,17 @@
 #' who smoke at least some amount. In this case, setting `yes.aliases`
 #' to `c("daily", "sometimes") triggers the correct dependency test.
 #'
-#' @param dependent.variable Character vector name of dependent/upstream variable to operate on
+#' @param dependent.variable Character vector or factor for dependent/upstream variable
+#' in the dependency.
+#' This function is intended to be called from a `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
+#' @param independent.variable Character vector or factor for independent/downstream variable
+#' in the dependency.
 #' within the package's representation of the input phenotype data.
-#' @param independent.variable Character vector name of independent/downstream variable to operate on
-#' within the package's representation of the input phenotype data.
+#' This function is intended to be called from a `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
 #' @param yes.aliases Character vector values to be interpreted as `yes`
 #' in the independent variable.
 #' @param independent.na.aliases Character vector alternative values to be treated
@@ -50,6 +57,13 @@
 #' phenotype.data <- data.frame(
 #'   HW00001 = indep.var,
 #'   HW00002 = dep.var
+#' )
+#' dep.test <- response.depends.on.yes(
+#'   phenotype.data$HW00002,
+#'   phenotype.data$HW00001,
+#'   c("sometimes"),
+#'   c("no response"),
+#'   c("0")
 #' )
 #' ## this function is designed as a utility to be
 #' ## deployed in the dependency block of a user configuration
@@ -108,10 +122,16 @@ response.depends.on.yes <- function(dependent.variable, independent.variable,
 #' in the dependent variable; an `NA` response in the dependent variable
 #' indicates a subject that did not in fact provide a response in the dependent variable.
 #'
-#' @param dependent.variable Character vector name of dependent/upstream variable to operate on
-#' within the package's representation of the input phenotype data.
-#' @param independent.variable Character vector name of independent/downstream variable to operate on
-#' within the package's representation of the input phenotype data.
+#' @param dependent.variable Character vector or factor for dependent/upstream variable
+#' in the dependency.
+#' This function is intended to be called from the `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
+#' @param independent.variable Character vector or factor for independent/downstream variable
+#' in the dependency.
+#' This function is intended to be called from the `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
 #' @param independent.na.aliases Character vector alternative values to be treated
 #' as NAs in the independent variable. For example, depending on the question,
 #' `0 times` or `none` could be considered non-response.
@@ -133,6 +153,12 @@ response.depends.on.yes <- function(dependent.variable, independent.variable,
 #' phenotype.data <- data.frame(
 #'   HW00001 = indep.var,
 #'   HW00002 = dep.var
+#' )
+#' dep.test <- response.depends.on.not.na(
+#'   phenotype.data$HW00002,
+#'   phenotype.data$HW00001,
+#'   c("no response"),
+#'   c("0")
 #' )
 #' ## this function is designed as a utility to be
 #' ## deployed in the dependency block of a user configuration
@@ -185,12 +211,18 @@ response.depends.on.not.na <- function(dependent.variable, independent.variable,
 #' the goal of the function is to flag explicit situations when the
 #' dependency definitely fails.
 #'
-#' @param dependent.variable Character vector name of dependent/upstream variable to operate on
-#' within the package's representation of the input phenotype data. In this context,
-#' this is the variable that is expected to be less than the other.
-#' @param independent.variable Character vector name of independent/downstream variable to operate on
-#' within the package's representation of the input phenotype data. In this context,
-#' this is the variable that is expected to be greater than the other.
+#' @param dependent.variable Vector for dependent/upstream variable
+#' in the dependency. In this context, this is the value that is
+#' intended to be less than the other.
+#' This function is intended to be called from the `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
+#' @param independent.variable Vector of independent/downstream variable
+#' in the dependency. In this context, this is the value that is
+#' intended to be greater than or equal to the other.
+#' This function is intended to be called from the `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
 #' @return Logical vector representing the results
 #' of the dependency test between the two provided vectors. Test
 #' represents whether the specified dependency is satisfied.
@@ -205,6 +237,10 @@ response.depends.on.not.na <- function(dependent.variable, independent.variable,
 #' phenotype.data <- data.frame(
 #'   HW00001 = indep.var,
 #'   HW00002 = dep.var
+#' )
+#' dep.test <- response.is.less.than(
+#'   phenotype.data$HW00002,
+#'   phenotype.data$HW00001
 #' )
 #' ## this function is designed as a utility to be
 #' ## deployed in the dependency block of a user configuration
@@ -253,10 +289,16 @@ response.is.less.than <- function(dependent.variable, independent.variable) {
 #' that non-NA/NA mismatches are allowed here, to focus on the most
 #' toxic discordant cases.
 #'
-#' @param dependent.variable Character vector name of dependent/upstream variable to operate on
-#' within the package's representation of the input phenotype data.
-#' @param independent.variable Character vector name of independent/downstream variable to operate on
-#' within the package's representation of the input phenotype data.
+#' @param dependent.variable Vector for dependent/upstream variable
+#' in the dependency.
+#' This function is intended to be called from the `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
+#' @param independent.variable Vector name of independent/downstream variable
+#' for the dependency.
+#' This function is intended to be called from the `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
 #' @return Logical vector representing the results
 #' of the dependency test between the two provided vectors. Test
 #' represents whether the specified dependency is satisfied.
@@ -271,6 +313,10 @@ response.is.less.than <- function(dependent.variable, independent.variable) {
 #' phenotype.data <- data.frame(
 #'   HW00001 = indep.var,
 #'   HW00002 = dep.var
+#' )
+#' dep.test <- response.is.duplicate.of(
+#'   phenotype.data$HW00002,
+#'   phenotype.data$HW00001
 #' )
 #' ## this function is designed as a utility to be
 #' ## deployed in the dependency block of a user configuration
@@ -325,11 +371,18 @@ response.is.duplicate.of <- function(dependent.variable, independent.variable) {
 #' failures, subjects with NA responses for any of BMI, height, or weight
 #' are considered to pass this dependency test.
 #'
-#' @param bmi Character vector name of numeric vector of reported BMI.
-#' @param weight Character vector name of numeric vector of
-#' reported weight in kilograms.
-#' @param height Character vector name of numeric vector of
-#' reported height in meters.
+#' @param bmi Numeric vector of reported BMI.
+#' This function is intended to be called from the `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
+#' @param weight Numeric vector of reported weight in kilograms.
+#' This function is intended to be called from the `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
+#' @param height Numeric vector of reported height in meters.
+#' This function is intended to be called from the `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
 #' @param tolerance Numeric acceptable absolute deviation
 #' between computed and reported BMI.
 #' @return Logical vector representing the results
@@ -348,6 +401,12 @@ response.is.duplicate.of <- function(dependent.variable, independent.variable) {
 #'   HW00001 = bmi,
 #'   HW00002 = height,
 #'   HW00003 = weight
+#' )
+#' dep.test <- response.is.computed.bmi(
+#'   phenotype.data$HW00001,
+#'   phenotype.data$HW00003,
+#'   phenotype.data$HW00002,
+#'   1.0
 #' )
 #' ## this function is designed as a utility to be
 #' ## deployed in the dependency block of a user configuration
@@ -418,13 +477,26 @@ response.is.computed.bmi <- function(bmi, weight, height, tolerance) {
 #' failures, subjects with NA responses for any of reported year, reported
 #' age, or reference year are considered to pass this dependency test.
 #'
-#' @param reported.year Character vector name of date variable, for example
+#' @param reported.year Numeric vector of date variable, for example
 #' date of birth.
-#' @param reported.age Character vector name of age variable, for example
+#' This function is intended to be called from the `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
+#' An input variable specified as the special `date` type will be
+#' available as numeric year when dependencies are evaluated.
+#' @param reported.age Numeric vector of age variable, for example
 #' self-reported age at data collection.
-#' @param reference.year Either character vector name of reference year variable
-#' indicating a potentially different reference year per subject, or a numeric
-#' reference year to be used to compute age for all subjects.
+#' This function is intended to be called from the `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
+#' @param reference.year Either numeric vector of reference year variable
+#' indicating a potentially different reference year per subject, or a
+#' single numeric reference year to be used to compute age for all subjects.
+#' This function is intended to be called from the `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
+#' An input variable specified as the special `date` type will be
+#' available as numeric year when dependencies are evaluated.
 #' @param acceptable.tolerance Numeric absolute range above or below reported age
 #' within which to call reported and calculated age consistent.
 #' @return Logical vector representing the results
@@ -443,6 +515,12 @@ response.is.computed.bmi <- function(bmi, weight, height, tolerance) {
 #'   HW00002 = reported.age,
 #'   HW00003 = reference.year
 #' )
+#' dep.test <- year.is.consistent.with.age(
+#'   phenotype.data$HW00001,
+#'   phenotype.data$HW00002,
+#'   phenotype.data$HW00003,
+#'   4.0
+#' )
 #' ## this function is designed as a utility to be
 #' ## deployed in the dependency block of a user configuration
 #' ## file. it requires the bindings of the phenotype data
@@ -458,6 +536,14 @@ response.is.computed.bmi <- function(bmi, weight, height, tolerance) {
 #' ## expected: TRUE FALSE TRUE TRUE TRUE
 #'
 #' ## if preferred, use a constant reference year for all subjects
+#' dep.test <- year.is.consistent.with.age(
+#'   phenotype.data$HW00001,
+#'   phenotype.data$HW00002,
+#'   2022,
+#'   1.0
+#' )
+#' ## as above, this variant is available from the user config
+#' ## with variable name bindings in scope
 #' \dontrun{
 #' dep.test <- year.is.consistent.with.age(
 #'   HW00001,
@@ -511,12 +597,18 @@ year.is.consistent.with.age <- function(reported.year, reported.age,
 #' the goal of the function is to flag explicit situations when the
 #' dependency definitely fails.
 #'
-#' @param dependent.variable Character vector name of dependent/upstream variable to operate on
-#' within the package's representation of the input phenotype data. In this context,
+#' @param dependent.variable Vector for dependent/upstream variable
+#' in the dependency. In this context,
 #' this is the variable that is expected to be greater than the other.
-#' @param independent.variable Character vector name of independent/downstream variable to operate on
-#' within the package's representation of the input phenotype data. In this context,
+#' This function is intended to be called from the `dependencies`
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
+#' @param independent.variable Vector for independent/downstream variable
+#' in the dependency. In this context,
 #' this is the variable that is expected to be less than the other.
+#' This function is intended to be called from the `dependencies` variable
+#' block of a dataset configuration file, in which case the mapping keys
+#' under `variables` (e.g. HW00001) can be called directly.
 #' @param allow.equal Logical indicating whether equal values should be considered to pass.
 #' @return Logical vector representing the results
 #' of the dependency test between the two provided vectors. Test
@@ -533,12 +625,17 @@ year.is.consistent.with.age <- function(reported.year, reported.age,
 #'   HW00001 = indep.var,
 #'   HW00002 = dep.var
 #' )
+#' dep.test <- response.is.greater.than(
+#'   phenotype.data$HW00002,
+#'   phenotype.data$HW00001,
+#'   TRUE
+#' )
 #' ## this function is designed as a utility to be
 #' ## deployed in the dependency block of a user configuration
 #' ## file. it requires the bindings of the phenotype data
 #' ## matrix to be available in the current context
 #' \dontrun{
-#' dep.test <- response.is.less.than(
+#' dep.test <- response.is.greater.than(
 #'   HW00002,
 #'   HW00001,
 #'   TRUE

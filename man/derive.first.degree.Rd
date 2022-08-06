@@ -7,23 +7,16 @@
 derive.first.degree(variable.name)
 }
 \arguments{
-\item{variable.name}{Character vector name of existing variable to operate on
-within the package's representation of the input phenotype data.}
+\item{variable.name}{Character vector to be parsed.
+This function is intended to be called from the \code{derived} variable
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} and \code{derived} (e.g. HW00001) can be called directly.}
 }
 \value{
 Character vector of yes/no responses indicating whether the
 input vector implicated a first degree relationship.
 }
 \description{
-This helper function allows one to convert variables that are
-lists of family members (e.g. "father,mother,grandmother") to
-a yes/no variable that simply reports whether first degree
-relatives are included in the list.  We are assuming that the
-level of granularity required for downstream analysis is more
-along the lines of whether or not first-degree relations are
-affected.
-}
-\details{
 This logic converts family member lists to a binary variable indicating
 whether or not first degree relatives are affected.
 
@@ -33,9 +26,19 @@ are evaluated, the phenotype dataset has had the user-configured
 variable names applied as its column headers, and as such the
 variables should be referred to by those labels directly.
 }
+\details{
+This helper function allows one to convert variables that are
+lists of family members (e.g. "father,mother,grandmother") to
+a yes/no variable that simply reports whether first degree
+relatives are included in the list.  We are assuming that the
+level of granularity required for downstream analysis is more
+along the lines of whether or not first-degree relations are
+affected.
+}
 \examples{
 data <- c("mother", "grandfather", "child", "stepbrother", NA)
 phenotype.data <- data.frame(HW00001 = data)
+der.var <- derive.first.degree(phenotype.data$HW00001)
 ## this function is designed as a utility to be
 ## deployed in the dependency block of a user configuration
 ## file. it requires the bindings of the phenotype data

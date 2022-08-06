@@ -7,13 +7,19 @@
 response.is.less.than(dependent.variable, independent.variable)
 }
 \arguments{
-\item{dependent.variable}{Character vector name of dependent/upstream variable to operate on
-within the package's representation of the input phenotype data. In this context,
-this is the variable that is expected to be less than the other.}
+\item{dependent.variable}{Vector for dependent/upstream variable
+in the dependency. In this context, this is the value that is
+intended to be less than the other.
+This function is intended to be called from the \code{dependencies}
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.}
 
-\item{independent.variable}{Character vector name of independent/downstream variable to operate on
-within the package's representation of the input phenotype data. In this context,
-this is the variable that is expected to be greater than the other.}
+\item{independent.variable}{Vector of independent/downstream variable
+in the dependency. In this context, this is the value that is
+intended to be greater than or equal to the other.
+This function is intended to be called from the \code{dependencies}
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.}
 }
 \value{
 Logical vector representing the results
@@ -47,6 +53,10 @@ dep.var <- c(5:1, 1, NA)
 phenotype.data <- data.frame(
   HW00001 = indep.var,
   HW00002 = dep.var
+)
+dep.test <- response.is.less.than(
+  phenotype.data$HW00002,
+  phenotype.data$HW00001
 )
 ## this function is designed as a utility to be
 ## deployed in the dependency block of a user configuration

@@ -11,13 +11,19 @@ response.is.greater.than(
 )
 }
 \arguments{
-\item{dependent.variable}{Character vector name of dependent/upstream variable to operate on
-within the package's representation of the input phenotype data. In this context,
-this is the variable that is expected to be greater than the other.}
+\item{dependent.variable}{Vector for dependent/upstream variable
+in the dependency. In this context,
+this is the variable that is expected to be greater than the other.
+This function is intended to be called from the \code{dependencies}
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.}
 
-\item{independent.variable}{Character vector name of independent/downstream variable to operate on
-within the package's representation of the input phenotype data. In this context,
-this is the variable that is expected to be less than the other.}
+\item{independent.variable}{Vector for independent/downstream variable
+in the dependency. In this context,
+this is the variable that is expected to be less than the other.
+This function is intended to be called from the \code{dependencies} variable
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.}
 
 \item{allow.equal}{Logical indicating whether equal values should be considered to pass.}
 }
@@ -55,12 +61,17 @@ phenotype.data <- data.frame(
   HW00001 = indep.var,
   HW00002 = dep.var
 )
+dep.test <- response.is.greater.than(
+  phenotype.data$HW00002,
+  phenotype.data$HW00001,
+  TRUE
+)
 ## this function is designed as a utility to be
 ## deployed in the dependency block of a user configuration
 ## file. it requires the bindings of the phenotype data
 ## matrix to be available in the current context
 \dontrun{
-dep.test <- response.is.less.than(
+dep.test <- response.is.greater.than(
   HW00002,
   HW00001,
   TRUE

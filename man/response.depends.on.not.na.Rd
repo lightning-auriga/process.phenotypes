@@ -12,11 +12,17 @@ response.depends.on.not.na(
 )
 }
 \arguments{
-\item{dependent.variable}{Character vector name of dependent/upstream variable to operate on
-within the package's representation of the input phenotype data.}
+\item{dependent.variable}{Character vector or factor for dependent/upstream variable
+in the dependency.
+This function is intended to be called from the \code{dependencies}
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.}
 
-\item{independent.variable}{Character vector name of independent/downstream variable to operate on
-within the package's representation of the input phenotype data.}
+\item{independent.variable}{Character vector or factor for independent/downstream variable
+in the dependency.
+This function is intended to be called from the \code{dependencies}
+block of a dataset configuration file, in which case the mapping keys
+under \code{variables} (e.g. HW00001) can be called directly.}
 
 \item{independent.na.aliases}{Character vector alternative values to be treated
 as NAs in the independent variable. For example, depending on the question,
@@ -61,6 +67,12 @@ dep.var <- 0:4
 phenotype.data <- data.frame(
   HW00001 = indep.var,
   HW00002 = dep.var
+)
+dep.test <- response.depends.on.not.na(
+  phenotype.data$HW00002,
+  phenotype.data$HW00001,
+  c("no response"),
+  c("0")
 )
 ## this function is designed as a utility to be
 ## deployed in the dependency block of a user configuration
