@@ -2,20 +2,20 @@
 % Please edit documentation in R/aggregate_summary_metrics.R
 \name{compute.subject.na.count}
 \alias{compute.subject.na.count}
-\title{Compute per-subject NA count across all variables}
+\title{Compute per-subject NA count across all variables.}
 \usage{
 compute.subject.na.count(phenotype.data, variable.summary)
 }
 \arguments{
-\item{phenotype.data}{data frame, subject data, subjects
-as rows, phenotypes as columns}
+\item{phenotype.data}{Data frame of subject data, with subjects
+as rows and phenotypes as columns.}
 
-\item{variable.summary}{list, variable configuration
-and summary data}
+\item{variable.summary}{List; variable configuration and
+summary data with subject ID variable annotated as \code{subject_id = TRUE}.}
 }
 \value{
-named integer vector; values are counts of NAs
-for each subject across all variables, names are subject IDs
+Named integer vector, where values are counts of NAs
+for each subject across all variables, and names are subject IDs.
 }
 \description{
 Computes a count for each subject of all NAs across
@@ -27,4 +27,33 @@ NAs can be present in input data or introduced at various
 steps, and the overall count can be indicative of various
 phenomena, including expected blockwise NA due to individual
 subjects not completing all questionnaire sections.
+}
+\examples{
+pheno.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = c(1, 2, NA, 3)
+)
+## note that by this stage of the process.phenotypes logic
+## chain, the user-specified configuration entries from the
+## input yaml have been sequestered in a block `params`
+## for each variable.
+var.sum <- list(variables = list(
+  HW00001 = list(
+    params = list(
+      name = "name1",
+      type = "string",
+      subject_id = TRUE
+    )
+  ),
+  HW00002 = list(
+    params = list(
+      name = "name2",
+      type = "string"
+    )
+  )
+))
+subject.na.counts <- process.phenotypes:::compute.subject.na.count(pheno.data, var.sum)
+}
+\seealso{
+apply.type.conversions
 }

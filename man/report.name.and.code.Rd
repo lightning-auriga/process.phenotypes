@@ -3,14 +3,20 @@
 \name{report.name.and.code}
 \alias{report.name.and.code}
 \title{Helper function to report tracking information about variable
-name and, for derived variables, code creating the variable}
-\usage{
-report.name.and.code(variable.entry)
-}
+name and, for derived variables, code creating the variable.}
 \arguments{
-\item{variable.entry}{list; entry in dataset yaml for this variable}
+\item{variable.entry}{List entry in dataset yaml for this variable.}
 }
 \description{
-Helper function to report tracking information about variable
-name and, for derived variables, code creating the variable
+This function exclusively functions to emit formatted information
+in the phenotype Rmarkdown report. It has been
+parametrized out in order to:
+\itemize{
+\item clean up the report proper;
+\item sanitize some of the required hybrid syntax from working with
+R content in markdown; and
+\item expose the results of this function to testthat
+}
+
+You should never need to call this function for any reason.
 }

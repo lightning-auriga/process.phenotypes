@@ -4,33 +4,39 @@
 \alias{report.dependencies}
 \title{Helper function to report summary information about encoded
 dependency relationships between variables.}
-\usage{
-report.dependencies(phenotype.data, variable.summary, name, suppress.reporting)
-}
 \arguments{
-\item{phenotype.data}{data.frame; full phenotype data for selection
-of linked variable contents}
+\item{phenotype.data}{Data frame with full phenotype data for selection
+of linked variable contents.}
 
-\item{variable.summary}{list; input dataset config yaml}
+\item{variable.summary}{List input dataset config yaml.}
 
-\item{name}{character; harmonized name of variable in yaml}
+\item{name}{Character vector of harmonized name of variable in yaml.}
 
-\item{suppress.reporting}{logical; whether variable report data
-should be suppressed}
+\item{suppress.reporting}{Logical controlling whether variable report data
+should be suppressed.}
 }
 \value{
-list; entries 'contingency' and 'cross', for kables describing
-contingency table of results and cross-variable comparisons; or null,
-if reporting suppressed or the relevant features not configured
+List, with entries 'contingency' and 'cross', for kables describing
+contingency table of results and cross-variable comparisons; or NULL,
+if reporting suppressed or the relevant features not configured.
 }
 \description{
-Helper function to report summary information about encoded
-dependency relationships between variables.
+This function exclusively functions to emit formatted information
+in the phenotype Rmarkdown report. It has been
+parametrized out in order to:
+\itemize{
+\item clean up the report proper;
+\item sanitize some of the required hybrid syntax from working with
+R content in markdown; and
+\item expose the results of this function to testthat
+}
+
+You should never need to call this function for any reason.
 }
 \details{
-this function handles all reporting of variable dependencies
-from the input config yaml dependency blocks. currently, the report
+This function handles all reporting of variable dependencies
+from the input config yaml dependency blocks. Currently, the report
 does not contain direct information about the downstream effects of
-exclude_on_error or exclude_all_on_error directives. this may
+\code{exclude_on_error} or \code{exclude_all_on_error} directives. This may
 be added in future iterations of the report.
 }

@@ -3,55 +3,50 @@
 \name{emit.markdown.header}
 \alias{emit.markdown.header}
 \title{Helper function to emit formatted markdown header summarizing
-data cleaning process}
-\usage{
-emit.markdown.header(
-  dataset.yaml,
-  total.initial.sample.size,
-  consent.inclusion.file,
-  subjects.consent.yes,
-  consent.exclusion.file,
-  subjects.consent.no,
-  subjects.ambiguous.consent,
-  subjects.excluded.for.age,
-  min.age.for.inclusion,
-  na.subject.id.count
-)
-}
+data cleaning process.}
 \arguments{
-\item{dataset.yaml}{character; name of input dataset yaml file}
+\item{dataset.yaml}{Character vector name of input dataset yaml file.}
 
-\item{total.initial.sample.size}{numeric; number of lines in initial input file}
+\item{total.initial.sample.size}{Numeric number of lines in initial input data file.}
 
-\item{consent.inclusion.file}{character or NULL; name of input file containing
-consent approved subject list, or NULL}
+\item{consent.inclusion.file}{Character or NULL. Name of input file containing
+consent approved subject list, or NULL if none provided.}
 
-\item{subjects.consent.yes}{numeric; if consent.inclusion.file is not
+\item{subjects.consent.yes}{Numeric; if consent.inclusion.file is not
 NULL, the number of subjects in the input dataset that were present in the
-input consent approved subject list}
+input consent approved subject list.}
 
-\item{consent.exclusion.file}{character or NULL; name of input file containing
-consent rejected subject list, or NULL}
+\item{consent.exclusion.file}{Character or NULL. Name of input file containing
+consent rejected subject list, or NULL if none provided.}
 
-\item{subjects.consent.no}{numeric; if consent.exclusion.file is not
+\item{subjects.consent.no}{Numeric; if consent.exclusion.file is not
 NULL, the number of subjects in the input dataset that were present in the
-input consent rejected subject list}
+input consent rejected subject list.}
 
-\item{subjects.ambiguous.consent}{numeric; if consent.inclusion.file and
+\item{subjects.ambiguous.consent}{Numeric; if consent.inclusion.file and
 consent.exclusion.file are both not NULL, the number of subjects in the
-input dataset that were absent from both consent lists}
+input dataset that were absent from both consent lists.}
 
-\item{subjects.excluded.for.age}{numeric; number of subjects with reported
-age less than the minimum value specified in dataset yaml/globals/min_age_for_inclusion}
+\item{subjects.excluded.for.age}{Numeric number of subjects with reported
+age less than the minimum value specified in dataset yaml/globals/min_age_for_inclusion.}
 
-\item{min.age.for.inclusion}{numeric; entry from dataset yaml/globals/min_age_for_inclusion}
+\item{min.age.for.inclusion}{Numeric entry from dataset yaml/globals/min_age_for_inclusion.}
 
-\item{na.subject.id.count}{numeric; number of subjects with invalid subject ID entries}
+\item{na.subject.id.count}{Numeric number of subjects with invalid subject ID entries.}
 }
 \value{
-character; formatted header content
+Character formatted header content.
 }
 \description{
-Helper function to emit formatted markdown header summarizing
-data cleaning process
+This function exclusively functions to emit formatted information
+for the top of the phenotype Rmarkdown report. It has been
+parametrized out in order to:
+\itemize{
+\item clean up the report proper;
+\item sanitize some of the required hybrid syntax from working with
+R content in markdown; and
+\item expose the results of this function to testthat
+}
+
+You should never need to call this function for any reason.
 }

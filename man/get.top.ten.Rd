@@ -7,20 +7,31 @@
 get.top.ten(decreasing, vec, column.label)
 }
 \arguments{
-\item{decreasing}{logical, passed to sort to control increasing or decreasing order}
+\item{decreasing}{Logical controlling sort order on data to be reported.}
 
-\item{vec}{named vector, containing values and counts}
+\item{vec}{Named vector containing values, generally subject IDs or
+phenotype names, and counts of observations related to those identifiers.}
 
-\item{column.label}{string, name of first column (e.g. Subjects, Variables)}
+\item{column.label}{Character vector name of first column (e.g. Subjects,
+Variables).}
 }
 \value{
-data.frame with ten rows containing values and counts
+Data frame with (at most) ten rows containing values
+and counts.
 }
 \description{
 Takes a named vector containing values (e.g. subjects) and counts,
-sorts by number of counts, takes the top ten, and returns a data.frame
+sorts by number of counts, takes the top ten, and returns tabular
+information about the data in a data frame for potential reporting.
 }
 \details{
 This is a helper function used to grab the highest or lowest ten values
-to print as a table in the markdown report.
+to print as a table in the markdown report. Though it refers to grabbing
+the top ten values, it will return less information if there are fewer
+than ten observations in the input.
+}
+\examples{
+data <- sample(1:20, 20, replace = FALSE)
+names(data) <- letters[1:20]
+result <- process.phenotypes:::get.top.ten(TRUE, data, "Letters")
 }

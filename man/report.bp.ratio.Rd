@@ -4,32 +4,32 @@
 \alias{report.bp.ratio}
 \title{Helper function to report plot showing relationship between
 self-reported systolic and diastolic blood pressure}
-\usage{
-report.bp.ratio(
-  phenotype.data,
-  variable.entry,
-  name,
-  my.theme,
-  suppress.reporting
-)
-}
 \arguments{
-\item{phenotype.data}{data.frame; full phenotype data for variable
-selection}
+\item{phenotype.data}{Data frame of full phenotype data for variable
+selection.}
 
-\item{variable.entry}{list; entry in dataset yaml for this variable}
+\item{variable.entry}{List entry in dataset yaml for this variable.}
 
-\item{name}{character; harmonized name of variable in yaml}
+\item{name}{Character vector harmonized name of variable in yaml.}
 
-\item{my.theme}{ggplot2 accumulated theme settings}
+\item{my.theme}{ggplot2 accumulated theme settings.}
 
-\item{suppress.reporting}{logical; whether variable report data
-should be suppressed}
+\item{suppress.reporting}{Logical controlling whether variable report data
+should be suppressed.}
 }
 \value{
-formatted ggplot for rendering, or nothing if reporting suppressed
+Formatted ggplot for rendering, or NULL if reporting suppressed.
 }
 \description{
-Helper function to report plot showing relationship between
-self-reported systolic and diastolic blood pressure
+This function exclusively functions to emit formatted information
+in the phenotype Rmarkdown report. It has been
+parametrized out in order to:
+\itemize{
+\item clean up the report proper;
+\item sanitize some of the required hybrid syntax from working with
+R content in markdown; and
+\item expose the results of this function to testthat
+}
+
+You should never need to call this function for any reason.
 }
