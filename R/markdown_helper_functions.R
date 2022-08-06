@@ -2,16 +2,26 @@
 #'
 #' @description
 #' Takes a named vector containing values (e.g. subjects) and counts,
-#' sorts by number of counts, takes the top ten, and returns a data.frame
+#' sorts by number of counts, takes the top ten, and returns tabular
+#' information about the data in a data frame for potential reporting.
 #'
 #' @details
 #' This is a helper function used to grab the highest or lowest ten values
-#' to print as a table in the markdown report.
+#' to print as a table in the markdown report. Though it refers to grabbing
+#' the top ten values, it will return less information if there are fewer
+#' than ten observations in the input.
 #'
-#' @param decreasing logical, passed to sort to control increasing or decreasing order
-#' @param vec named vector, containing values and counts
-#' @param column.label string, name of first column (e.g. Subjects, Variables)
-#' @return data.frame with ten rows containing values and counts
+#' @param decreasing Logical controlling sort order on data to be reported.
+#' @param vec Named vector containing values, generally subject IDs or
+#' phenotype names, and counts of observations related to those identifiers.
+#' @param column.label Character vector name of first column (e.g. Subjects,
+#' Variables).
+#' @return Data frame with (at most) ten rows containing values
+#' and counts.
+#' @examples
+#' data <- sample(1:20, 20, replace = FALSE)
+#' names(data) <- letters[1:20]
+#' result <- process.phenotypes:::get.top.ten(TRUE, data, "Letters")
 get.top.ten <- function(decreasing, vec, column.label) {
   ten.df <- data.frame(c(), c())
   if (length(vec) > 0) {
@@ -24,10 +34,23 @@ get.top.ten <- function(decreasing, vec, column.label) {
 }
 
 
-#' Make sure the number of bins in a histogram isn't too close to the
-#' number of unique values!
+#' @title
+#' Try to ensure that the number of bins in a histogram isn't too close to the
+#' number of unique values.
 #'
-#' @param vec numeric vector; input data to histogram
+#' @description
+#' The phenotype report features general purpose histograms that are
+#' created from a wide array of unstructured numeric information. In
+#' some contexts, the bin value selected makes a huge difference for
+#' the utility of such plots. This entirely heuristically attempts
+#' to generate a bin setting that works _pretty well_ for a wide
+#' array of data configurations. As always, ymmv.
+#'
+#' @param vec Numeric vector of input data to histogram.
+#' @return Numeric setting for geom_histogram bin count.
+#' @examples
+#' data <- rnorm(100)
+#' bin.count <- process.phenotypes:::get.bins(data)
 get.bins <- function(vec) {
   n.unique.values <- length(unique(vec))
   if (n.unique.values > 50) {
@@ -38,12 +61,29 @@ get.bins <- function(vec) {
 }
 
 
-#' Helper function to conditionally print output content
+#' @title
+#' Helper function to conditionally print output content.
 #'
+#' @description
 #' If the passed value is null, no action is taken; otherwise,
-#' the thing is emitted wrapped in a print() or cat() statement
+#' the thing is emitted wrapped in a print() or cat() statement.
+#'
+#' @details
+#' Other data types could presumably benefit from conditional
+#' behavior here, but this distinction is the only one that
+#' has had any meaning for the cleaning report as of this writing.
+#'
+#' This function exists almost exclusively to avoid cyclomatic
+#' complexity errors in linting. If that sentence makes no sense
+#' to you, don't worry about it.
 #'
 #' @param val thing to be conditionally printed
+#' @return NULL
+#' @examples
+#' my.data <- data.frame(x = rnorm(1000))
+#' my.plot <- ggplot2::ggplot(ggplot2::aes(x), data = my.data) +
+#'   ggplot2::geom_histogram()
+#' process.phenotypes:::print.conditionally(my.plot)
 print.conditionally <- function(val) {
   if (!is.null(val)) {
     if (inherits(val, "knitr_kable")) {
@@ -54,29 +94,43 @@ print.conditionally <- function(val) {
   }
 }
 
+#' @title
 #' Helper function to emit formatted markdown header summarizing
-#' data cleaning process
+#' data cleaning process.
 #'
-#' @param dataset.yaml character; name of input dataset yaml file
-#' @param total.initial.sample.size numeric; number of lines in initial input file
-#' @param consent.inclusion.file character or NULL; name of input file containing
-#' consent approved subject list, or NULL
-#' @param subjects.consent.yes numeric; if consent.inclusion.file is not
+#' @description
+#' This function exclusively functions to emit formatted information
+#' for the top of the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
+#'
+#' @param dataset.yaml Character vector name of input dataset yaml file.
+#' @param total.initial.sample.size Numeric number of lines in initial input data file.
+#' @param consent.inclusion.file Character or NULL. Name of input file containing
+#' consent approved subject list, or NULL if none provided.
+#' @param subjects.consent.yes Numeric; if consent.inclusion.file is not
 #' NULL, the number of subjects in the input dataset that were present in the
-#' input consent approved subject list
-#' @param consent.exclusion.file character or NULL; name of input file containing
-#' consent rejected subject list, or NULL
-#' @param subjects.consent.no numeric; if consent.exclusion.file is not
+#' input consent approved subject list.
+#' @param consent.exclusion.file Character or NULL. Name of input file containing
+#' consent rejected subject list, or NULL if none provided.
+#' @param subjects.consent.no Numeric; if consent.exclusion.file is not
 #' NULL, the number of subjects in the input dataset that were present in the
-#' input consent rejected subject list
-#' @param subjects.ambiguous.consent numeric; if consent.inclusion.file and
+#' input consent rejected subject list.
+#' @param subjects.ambiguous.consent Numeric; if consent.inclusion.file and
 #' consent.exclusion.file are both not NULL, the number of subjects in the
-#' input dataset that were absent from both consent lists
-#' @param subjects.excluded.for.age numeric; number of subjects with reported
-#' age less than the minimum value specified in dataset yaml/globals/min_age_for_inclusion
-#' @param min.age.for.inclusion numeric; entry from dataset yaml/globals/min_age_for_inclusion
-#' @param na.subject.id.count numeric; number of subjects with invalid subject ID entries
-#' @return character; formatted header content
+#' input dataset that were absent from both consent lists.
+#' @param subjects.excluded.for.age Numeric number of subjects with reported
+#' age less than the minimum value specified in dataset yaml/globals/min_age_for_inclusion.
+#' @param min.age.for.inclusion Numeric entry from dataset yaml/globals/min_age_for_inclusion.
+#' @param na.subject.id.count Numeric number of subjects with invalid subject ID entries.
+#' @return Character formatted header content.
+#' @usage NULL
 emit.markdown.header <- function(dataset.yaml,
                                  total.initial.sample.size,
                                  consent.inclusion.file,
@@ -151,10 +205,25 @@ emit.markdown.header <- function(dataset.yaml,
 }
 
 
+#' @title
 #' Helper function to report tracking information about variable
-#' name and, for derived variables, code creating the variable
+#' name and, for derived variables, code creating the variable.
 #'
-#' @param variable.entry list; entry in dataset yaml for this variable
+#' @description
+#' This function exclusively functions to emit formatted information
+#' in the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
+#'
+#' @param variable.entry List entry in dataset yaml for this variable.
+#' @return NULL
+#' @usage NULL
 report.name.and.code <- function(variable.entry) {
   if (!is.null(variable.entry$params$canonical_name)) {
     cat(
@@ -172,11 +241,26 @@ report.name.and.code <- function(variable.entry) {
   }
 }
 
-#' Helper function to report detected excel problems in variable contents
+#' @title
+#' Helper function to report detected Excel problems in variable contents.
 #'
-#' @param variable.entry list; entry in dataset yaml for this variable
-#' @param suppress.reporting logical; whether variable report data
-#' should be suppressed
+#' @description
+#' This function exclusively functions to emit formatted information
+#' in the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
+#'
+#' @param variable.entry List entry in dataset yaml for this variable.
+#' @param suppress.reporting Logical controlling whether variable report data
+#' should be suppressed.
+#' @return NULL
+#' @usage NULL
 report.excel.problems <- function(variable.entry, suppress.reporting) {
   if (!is.null(variable.entry$excel.problem.count) && !suppress.reporting) {
     if (variable.entry$excel.problem.count == 1) {
@@ -190,24 +274,38 @@ report.excel.problems <- function(variable.entry, suppress.reporting) {
   }
 }
 
+#' @title
 #' Helper function to report summary information about numeric
-#' variables' distributions
+#' variables' distributions.
 #'
-#' @param data.vec numeric vector; column from phenotype dataframe
-#' for this variable
-#' @param phenotype.data data.frame; full phenotype data for selection
-#' of linked variable contents
-#' @param variable.entry list; entry in dataset yaml for this variable
-#' @param name character; harmonized name of variable in yaml
-#' @param variable.pretty.name character; human-legible name of
-#' variable with more helpful description
-#' @param my.theme ggplot2 accumulated theme settings
-#' @param suppress.reporting logical; whether variable report data
-#' should be suppressed
-#' @return list; 'hist.plot' distribution plot, 'tab.summary'
-#' distribution table. either entry can be null based on conditional
-#' logic
+#' @description
+#' This function exclusively functions to emit formatted information
+#' in the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
+#'
+#' @param data.vec Numeric vector of column from phenotype dataframe
+#' for this variable.
+#' @param phenotype.data Data frame of full phenotype data for selection
+#' of linked variable contents.
+#' @param variable.entry List entry in dataset yaml for this variable.
+#' @param name Character vector of harmonized name of variable in yaml.
+#' @param variable.pretty.name Character vector of human-legible name of
+#' variable with more helpful description.
+#' @param my.theme ggplot2 accumulated theme settings.
+#' @param suppress.reporting Logical controlling whether variable report data
+#' should be suppressed.
+#' @return List; first entry 'hist.plot' is the variable distribution plot,
+#' second entry 'tab.summary' distribution table. Either entry can be null
+#' based on conditional .logic
 #' @importFrom graphics hist
+#' @usage NULL
 report.numeric.summary <- function(data.vec,
                                    phenotype.data,
                                    variable.entry,
@@ -331,19 +429,33 @@ report.numeric.summary <- function(data.vec,
 }
 
 
+#' @title
 #' Helper function to report relationship between an age variable
-#' and its corresponding date
+#' and its corresponding date.
 #'
-#' @param data.vec numeric vector; column from phenotype dataframe
-#' for this age variable
-#' @param phenotype.data data.frame; full phenotype data for selection
-#' of linked variable contents
-#' @param variable.entry list; entry in dataset yaml for this age variable
-#' @param name character; harmonized name of variable in yaml
-#' @param my.theme ggplot2 accumulated theme settings
-#' @param suppress.reporting logical; whether variable report data
-#' should be suppressed
-#' @return formatted ggplot for rendering, or nothing if reporting suppressed
+#' @description
+#' This function exclusively functions to emit formatted information
+#' in the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
+#'
+#' @param data.vec Numeric vector of column from phenotype data frame
+#' for this age variable.
+#' @param phenotype.data Data frame of full phenotype data for selection
+#' of linked variable contents.
+#' @param variable.entry List entry in dataset yaml for this age variable.
+#' @param name Character vector harmonized name of variable in yaml.
+#' @param my.theme ggplot2 accumulated theme settings.
+#' @param suppress.reporting Logical controlling whether variable report data
+#' should be suppressed.
+#' @return Formatted ggplot for rendering, or NULL if reporting suppressed.
+#' @usage NULL
 report.linked.date <- function(data.vec,
                                phenotype.data,
                                variable.entry,
@@ -381,16 +493,29 @@ report.linked.date <- function(data.vec,
 }
 
 #' Helper function to report summary information about reported BMI
-#' and computed BMI directly from weight and height data
+#' and computed BMI directly from weight and height data.
 #'
-#' @param phenotype.data data.frame; full phenotype data for variable
-#' selection
-#' @param variable.entry list; entry in dataset yaml for this variable
-#' @param name character; harmonized name of variable in yaml
-#' @param my.theme ggplot2 accumulated theme settings
-#' @param suppress.reporting logical; whether variable report data
-#' should be suppressed
-#' @return formatted ggplot for rendering, or nothing if reporting suppressed
+#' @description
+#' This function exclusively functions to emit formatted information
+#' in the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
+#'
+#' @param phenotype.data Data frame of full phenotype data for variable
+#' selection.
+#' @param variable.entry List entry in dataset yaml for this variable.
+#' @param name Character vector harmonized name of variable in yaml.
+#' @param my.theme ggplot2 accumulated theme settings.
+#' @param suppress.reporting Logical controlling whether variable report data
+#' should be suppressed.
+#' @return Formatted ggplot for rendering, or NULL if reporting suppressed.
+#' @usage NULL
 report.bmi.comparison <- function(phenotype.data,
                                   variable.entry,
                                   name,
@@ -425,17 +550,31 @@ report.bmi.comparison <- function(phenotype.data,
 }
 
 
+#' @title
 #' Helper function to report plot showing relationship between
 #' self-reported systolic and diastolic blood pressure
 #'
-#' @param phenotype.data data.frame; full phenotype data for variable
-#' selection
-#' @param variable.entry list; entry in dataset yaml for this variable
-#' @param name character; harmonized name of variable in yaml
-#' @param my.theme ggplot2 accumulated theme settings
-#' @param suppress.reporting logical; whether variable report data
-#' should be suppressed
-#' @return formatted ggplot for rendering, or nothing if reporting suppressed
+#' @description
+#' This function exclusively functions to emit formatted information
+#' in the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
+#'
+#' @param phenotype.data Data frame of full phenotype data for variable
+#' selection.
+#' @param variable.entry List entry in dataset yaml for this variable.
+#' @param name Character vector harmonized name of variable in yaml.
+#' @param my.theme ggplot2 accumulated theme settings.
+#' @param suppress.reporting Logical controlling whether variable report data
+#' should be suppressed.
+#' @return Formatted ggplot for rendering, or NULL if reporting suppressed.
+#' @usage NULL
 report.bp.ratio <- function(phenotype.data,
                             variable.entry,
                             name,
@@ -459,22 +598,36 @@ report.bp.ratio <- function(phenotype.data,
 }
 
 
+#' @title
 #' Helper function to report information about observed entries
-#' in text-like variables
+#' in text-like variables.
 #'
-#' @param phenotype.data data.frame; full phenotype data for variable
-#' selection
-#' @param var.summary table; contingency data about observations
-#' of values in variable
-#' @param unique.var.value.inc.prop numeric; the proportion threshold
+#' @description
+#' This function exclusively functions to emit formatted information
+#' in the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
+#'
+#' @param phenotype.data Data frame of full phenotype data for variable
+#' selection.
+#' @param var.summary Table contingency data about observations
+#' of values in variable.
+#' @param unique.var.value.inc.prop Numeric representing the proportion threshold
 #' above which variables with too many unique values will not have
-#' their value contingency data reported
-#' @param name character; harmonized name of variable in yaml
-#' @param variable.pretty.name character; human-legible name of
-#' variable with more helpful description
-#' @param suppress.reporting logical; whether variable report data
-#' should be suppressed
-#' @return formatted kable for rendering, or nothing if reporting suppressed
+#' their value contingency data reported.
+#' @param name Character vector of harmonized name of variable in yaml.
+#' @param variable.pretty.name Character vector of human-legible name of
+#' variable with more helpful description.
+#' @param suppress.reporting Logical of whether variable report data
+#' should be suppressed.
+#' @return Formatted kable for rendering, or NULL if reporting suppressed.
+#' @usage NULL
 report.content.summary <- function(phenotype.data,
                                    var.summary,
                                    unique.var.value.inc.prop,
@@ -506,21 +659,35 @@ report.content.summary <- function(phenotype.data,
 }
 
 
+#' @title
 #' Helper function to report information about blood pressure
 #' variable entries that do not match expected blood pressure
 #' systolic/diastolic reporting format.
+#'
+#' @description
+#' This function exclusively functions to emit formatted information
+#' in the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
 #'
 #' @details Many instances of non-compliant blood pressure reporting
 #' formats have been observed in various test datasets. This reporting
 #' information is intended both to record non-compliant data and to
 #' suggest new, "creative" formats that might be supported in patches
-#' to this package
+#' to this package.
 #'
-#' @param variable.entry list; entry in dataset yaml for this variable
-#' @param name character; harmonized name of variable in yaml
-#' @param suppress.reporting logical; whether variable report data
-#' should be suppressed
-#' @return formatted kable for rendering, or nothing if reporting suppressed
+#' @param variable.entry List entry in dataset yaml for this variable.
+#' @param name Character vector of harmonized name of variable in yaml.
+#' @param suppress.reporting Logical controlling whether variable report data
+#' should be suppressed.
+#' @return Formatted kable for rendering, or NULL if reporting suppressed.
+#' @usage NULL
 report.noncompliant.bp <- function(variable.entry,
                                    name,
                                    suppress.reporting) {
@@ -538,20 +705,35 @@ report.noncompliant.bp <- function(variable.entry,
   }
 }
 
+#' @title
 #' Helper function to report information about entries in
 #' expected-numeric variables that do not match supported
 #' numeric format.
 #'
-#' @details substantial processing is applied to string representations
-#' of input data before numeric conversion is attempted. this report
+#' @description
+#' This function exclusively functions to emit formatted information
+#' in the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
+#'
+#' @details
+#' Substantial processing is applied to string representations
+#' of input data before numeric conversion is attempted. This report
 #' covers entries that fail conversion after such string cleaning
 #' is attempted.
 #'
-#' @param variable.entry list; entry in dataset yaml for this variable
-#' @param name character; harmonized name of variable in yaml
-#' @param suppress.reporting logical; whether variable report data
-#' should be suppressed
-#' @return formatted kable for rendering, or nothing if reporting suppressed
+#' @param variable.entry List entry in dataset yaml for this variable.
+#' @param name Character vector of harmonized name of variable in yaml.
+#' @param suppress.reporting Logical controlling whether variable report data
+#' should be suppressed.
+#' @return Formatted kable for rendering, or NULL if reporting suppressed.
+#' @usage NULL
 report.noncompliant.numerics <- function(variable.entry,
                                          name,
                                          suppress.reporting) {
@@ -570,21 +752,36 @@ report.noncompliant.numerics <- function(variable.entry,
 }
 
 
+#' @title
 #' Helper function to report summary information about uncertain
 #' values in expected categorical variables.
 #'
-#' @details this function has hybrid functionality. it was originally
+#' @description
+#' This function exclusively functions to emit formatted information
+#' in the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
+#'
+#' @details
+#' This function has hybrid functionality. It was originally
 #' intended to report entries of factor variables that do not match
-#' defined levels/shared model data. later on, functionality was added
-#' to try to ad hoc harmonize self-reported ancestry labels, and at
+#' defined levels/shared model data. Later on, functionality was added
+#' to try to _ad hoc_ harmonize self-reported ancestry labels, and at
 #' that point this function was expanded to provide a detailed summary
 #' of resolution status for such ancestry variables as well.
 #'
-#' @param variable.entry list; entry in dataset yaml for this variable
-#' @param name character; harmonized name of variable in yaml
-#' @param suppress.reporting logical; whether variable report data
-#' should be suppressed
-#' @return formatted kable for rendering, or nothing if reporting suppressed
+#' @param variable.entry List entry in dataset yaml for this variable.
+#' @param name Character vector of harmonized name of variable in yaml.
+#' @param suppress.reporting Logical controlling whether variable report data
+#' should be suppressed.
+#' @return Formatted kable for rendering, or NULL if reporting suppressed.
+#' @usage NULL
 report.factor.summary <- function(variable.entry,
                                   name,
                                   suppress.reporting) {
@@ -643,21 +840,36 @@ report.factor.summary <- function(variable.entry,
   }
 }
 
+#' @title
 #' Helper function to report summary information about values
 #' in date variables that do not match expected date formats.
 #'
-#' @details free-text date variables typically contain a wide variety
-#' of input formats. the package heuristically supports a variety of
+#' @description
+#' This function exclusively functions to emit formatted information
+#' in the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
+#'
+#' @details
+#' Free-text date variables typically contain a wide variety
+#' of input formats. The package heuristically supports a variety of
 #' date formats, but still many observed values are ultimately not
-#' reasonably convertable to year specifications. this function reports
+#' reasonably convertable to year specifications. This function reports
 #' such values, both for reporting purposes and to suggest possible
 #' extensions to the supported date format regex (or not).
 #'
-#' @param variable.entry list; entry in dataset yaml for this variable
-#' @param name character; harmonized name of variable in yaml
-#' @param suppress.reporting logical; whether variable report data
-#' should be suppressed
-#' @return formatted kable for rendering, or nothing if reporting suppressed
+#' @param variable.entry List entry in dataset yaml for this variable.
+#' @param name Character vector of harmonized name of variable in yaml.
+#' @param suppress.reporting Logical controlling whether variable report data
+#' should be suppressed.
+#' @return Formatted kable for rendering, or NULL if reporting suppressed.
+#' @usage NULL
 report.noncompliant.dates <- function(variable.entry,
                                       name,
                                       suppress.reporting) {
@@ -675,20 +887,35 @@ report.noncompliant.dates <- function(variable.entry,
   }
 }
 
+#' @title
 #' Helper function to report summary information about Unicode
 #' characters that are not removed by upstream cleaning.
 #'
-#' @details Unicode characters often sneak by the ad hoc conversion
-#' logic used in this package. the linking between Unicode character
+#' @description
+#' This function exclusively functions to emit formatted information
+#' in the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
+#'
+#' @details
+#' Unicode characters often sneak by the _ad hoc_ conversion
+#' logic used in this package. The linking between Unicode character
 #' and desired ASCII representation has been exposed to config space.
-#' this reporting function includes tracking information about the
+#' This reporting function includes tracking information about the
 #' observed Unicode character, in the hopes that the user can expand
 #' the mapping table to convert such characters into compliant values.
 #'
-#' @param variable.entry list; entry in dataset yaml for this variable
-#' @param suppress.reporting logical; whether variable report data
-#' should be suppressed
-#' @return formatted kable for rendering, or nothing if reporting suppressed
+#' @param variable.entry List entry in dataset yaml for this variable.
+#' @param suppress.reporting Logical controlling whether variable report data
+#' should be suppressed.
+#' @return Formatted kable for rendering, or NULL if reporting suppressed.
+#' @usage NULL
 report.unicode.entries <- function(variable.entry,
                                    suppress.reporting) {
   if (!is.null(variable.entry$unicode.entries) && !suppress.reporting) {
@@ -703,24 +930,39 @@ report.unicode.entries <- function(variable.entry,
   }
 }
 
+#' @title
 #' Helper function to report summary information about encoded
 #' dependency relationships between variables.
 #'
-#' @details this function handles all reporting of variable dependencies
-#' from the input config yaml dependency blocks. currently, the report
+#' @description
+#' This function exclusively functions to emit formatted information
+#' in the phenotype Rmarkdown report. It has been
+#' parametrized out in order to:
+#'
+#'  - clean up the report proper;
+#'  - sanitize some of the required hybrid syntax from working with
+#'    R content in markdown; and
+#'  - expose the results of this function to testthat
+#'
+#' You should never need to call this function for any reason.
+#'
+#' @details
+#' This function handles all reporting of variable dependencies
+#' from the input config yaml dependency blocks. Currently, the report
 #' does not contain direct information about the downstream effects of
-#' exclude_on_error or exclude_all_on_error directives. this may
+#' `exclude_on_error` or `exclude_all_on_error` directives. This may
 #' be added in future iterations of the report.
 #'
-#' @param phenotype.data data.frame; full phenotype data for selection
-#' of linked variable contents
-#' @param variable.summary list; input dataset config yaml
-#' @param name character; harmonized name of variable in yaml
-#' @param suppress.reporting logical; whether variable report data
-#' should be suppressed
-#' @return list; entries 'contingency' and 'cross', for kables describing
-#' contingency table of results and cross-variable comparisons; or null,
-#' if reporting suppressed or the relevant features not configured
+#' @param phenotype.data Data frame with full phenotype data for selection
+#' of linked variable contents.
+#' @param variable.summary List input dataset config yaml.
+#' @param name Character vector of harmonized name of variable in yaml.
+#' @param suppress.reporting Logical controlling whether variable report data
+#' should be suppressed.
+#' @return List, with entries 'contingency' and 'cross', for kables describing
+#' contingency table of results and cross-variable comparisons; or NULL,
+#' if reporting suppressed or the relevant features not configured.
+#' @usage NULL
 report.dependencies <- function(phenotype.data,
                                 variable.summary,
                                 name,

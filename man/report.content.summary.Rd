@@ -3,40 +3,39 @@
 \name{report.content.summary}
 \alias{report.content.summary}
 \title{Helper function to report information about observed entries
-in text-like variables}
-\usage{
-report.content.summary(
-  phenotype.data,
-  var.summary,
-  unique.var.value.inc.prop,
-  name,
-  variable.pretty.name,
-  suppress.reporting
-)
-}
+in text-like variables.}
 \arguments{
-\item{phenotype.data}{data.frame; full phenotype data for variable
-selection}
+\item{phenotype.data}{Data frame of full phenotype data for variable
+selection.}
 
-\item{var.summary}{table; contingency data about observations
-of values in variable}
+\item{var.summary}{Table contingency data about observations
+of values in variable.}
 
-\item{unique.var.value.inc.prop}{numeric; the proportion threshold
+\item{unique.var.value.inc.prop}{Numeric representing the proportion threshold
 above which variables with too many unique values will not have
-their value contingency data reported}
+their value contingency data reported.}
 
-\item{name}{character; harmonized name of variable in yaml}
+\item{name}{Character vector of harmonized name of variable in yaml.}
 
-\item{variable.pretty.name}{character; human-legible name of
-variable with more helpful description}
+\item{variable.pretty.name}{Character vector of human-legible name of
+variable with more helpful description.}
 
-\item{suppress.reporting}{logical; whether variable report data
-should be suppressed}
+\item{suppress.reporting}{Logical of whether variable report data
+should be suppressed.}
 }
 \value{
-formatted kable for rendering, or nothing if reporting suppressed
+Formatted kable for rendering, or NULL if reporting suppressed.
 }
 \description{
-Helper function to report information about observed entries
-in text-like variables
+This function exclusively functions to emit formatted information
+in the phenotype Rmarkdown report. It has been
+parametrized out in order to:
+\itemize{
+\item clean up the report proper;
+\item sanitize some of the required hybrid syntax from working with
+R content in markdown; and
+\item expose the results of this function to testthat
+}
+
+You should never need to call this function for any reason.
 }

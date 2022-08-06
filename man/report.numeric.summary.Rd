@@ -3,43 +3,41 @@
 \name{report.numeric.summary}
 \alias{report.numeric.summary}
 \title{Helper function to report summary information about numeric
-variables' distributions}
-\usage{
-report.numeric.summary(
-  data.vec,
-  phenotype.data,
-  variable.entry,
-  name,
-  variable.pretty.name,
-  my.theme,
-  suppress.reporting
-)
-}
+variables' distributions.}
 \arguments{
-\item{data.vec}{numeric vector; column from phenotype dataframe
-for this variable}
+\item{data.vec}{Numeric vector of column from phenotype dataframe
+for this variable.}
 
-\item{phenotype.data}{data.frame; full phenotype data for selection
-of linked variable contents}
+\item{phenotype.data}{Data frame of full phenotype data for selection
+of linked variable contents.}
 
-\item{variable.entry}{list; entry in dataset yaml for this variable}
+\item{variable.entry}{List entry in dataset yaml for this variable.}
 
-\item{name}{character; harmonized name of variable in yaml}
+\item{name}{Character vector of harmonized name of variable in yaml.}
 
-\item{variable.pretty.name}{character; human-legible name of
-variable with more helpful description}
+\item{variable.pretty.name}{Character vector of human-legible name of
+variable with more helpful description.}
 
-\item{my.theme}{ggplot2 accumulated theme settings}
+\item{my.theme}{ggplot2 accumulated theme settings.}
 
-\item{suppress.reporting}{logical; whether variable report data
-should be suppressed}
+\item{suppress.reporting}{Logical controlling whether variable report data
+should be suppressed.}
 }
 \value{
-list; 'hist.plot' distribution plot, 'tab.summary'
-distribution table. either entry can be null based on conditional
-logic
+List; first entry 'hist.plot' is the variable distribution plot,
+second entry 'tab.summary' distribution table. Either entry can be null
+based on conditional .logic
 }
 \description{
-Helper function to report summary information about numeric
-variables' distributions
+This function exclusively functions to emit formatted information
+in the phenotype Rmarkdown report. It has been
+parametrized out in order to:
+\itemize{
+\item clean up the report proper;
+\item sanitize some of the required hybrid syntax from working with
+R content in markdown; and
+\item expose the results of this function to testthat
+}
+
+You should never need to call this function for any reason.
 }
