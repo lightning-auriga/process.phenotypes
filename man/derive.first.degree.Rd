@@ -2,16 +2,17 @@
 % Please edit documentation in R/derived_variable_helpers.R
 \name{derive.first.degree}
 \alias{derive.first.degree}
-\title{Derive binary yes/no first-degree relatives from family member data}
+\title{Derive binary yes/no first-degree relatives from family member data.}
 \usage{
 derive.first.degree(variable.name)
 }
 \arguments{
-\item{variable.name}{string, name of existing variable to operate on}
+\item{variable.name}{Character vector name of existing variable to operate on
+within the package's representation of the input phenotype data.}
 }
 \value{
-a vector of length nrow(phenotype.data) representing the
-derived variable
+Character vector of yes/no responses indicating whether the
+input vector implicated a first degree relationship.
 }
 \description{
 This helper function allows one to convert variables that are
@@ -23,9 +24,27 @@ along the lines of whether or not first-degree relations are
 affected.
 }
 \details{
-Logic to convert family member lists to binary variable indicating
-whether or not first degree relatives are affected.  Handled through
-rlang::eval_tidy, which provides an environment and data mask to
-prevent overwriting of data in memory (see functions in
-derived_variables.R).
+This logic converts family member lists to a binary variable indicating
+whether or not first degree relatives are affected.
+
+Note that the input vectors are specified as \emph{names of variables}
+within the input phenotype dataset. At the time the dependencies
+are evaluated, the phenotype dataset has had the user-configured
+variable names applied as its column headers, and as such the
+variables should be referred to by those labels directly.
+}
+\examples{
+data <- c("mother", "grandfather", "child", "stepbrother", NA)
+phenotype.data <- data.frame(HW00001 = data)
+## this function is designed as a utility to be
+## deployed in the dependency block of a user configuration
+## file. it requires the bindings of the phenotype data
+## matrix to be available in the current context
+\dontrun{
+derive.first.degree(HW00001)
+}
+## expected: TRUE FALSE TRUE FALSE FALSE
+}
+\seealso{
+create.derived.variables
 }
