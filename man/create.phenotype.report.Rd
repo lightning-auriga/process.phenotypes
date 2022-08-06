@@ -20,7 +20,7 @@ create.phenotype.report(
 )
 }
 \arguments{
-\item{in.filename}{Character vector fileaname of input phenotype data.}
+\item{in.filename}{Character vector filename of input phenotype data.}
 
 \item{dataset.yaml}{character vector filename of the yaml-format configuration
 data for the dataset.}
@@ -35,7 +35,7 @@ and passed to read.table. Defaults to NULL. This parameter is exposed for
 greater compability with unpredictable input formats (see Details).}
 
 \item{sep}{Character vector used to delimit input fields in input phenotypes,
-and passed to read.table. Defaults to tab (\t). This parameter is exposed for
+and passed to read.table. Defaults to tab (\\t). This parameter is exposed for
 greater compatibility with unpredictable input formats (see Details).}
 
 \item{uniq.var.inclusion.prop}{Numeric proportion of total values of a string
@@ -168,6 +168,7 @@ pheno.data <- data.frame(
   var3 = sample(c("yes", "no"), 5, replace = TRUE)
 )
 var.summary <- list(
+  tag = "HW",
   globals = list(
     consent_inclusion_file = NULL,
     consent_exclusion_file = NULL,

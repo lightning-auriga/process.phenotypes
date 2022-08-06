@@ -46,7 +46,7 @@ check in the cleaning report.
 \examples{
 dep.results <- list("1" = c("A", "B"), "2" = c("C", "D"))
 var.sum <- list(variables = list(HW00001 = list(dependency.results = dep.results)))
-dep.failures <- aggregate.subject.dep.failures(var.sum)
+dep.failures <- process.phenotypes:::aggregate.subject.dep.failures(var.sum)
 }
 \seealso{
 check.variable.dependencies

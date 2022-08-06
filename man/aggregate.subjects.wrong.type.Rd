@@ -33,7 +33,7 @@ var.sum <- list(variables = list(
   HW00001 = list(subjects.wrong.type = c("A")),
   HW00002 = list(subjects.wrong.type = c("A", "B"))
 ))
-all.bad.subjects <- aggregate.subjects.wrong.type(var.sum)
+all.bad.subjects <- process.phenotypes:::aggregate.subjects.wrong.type(var.sum)
 }
 \seealso{
 apply.type.conversions

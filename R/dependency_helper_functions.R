@@ -441,7 +441,7 @@ response.is.computed.bmi <- function(bmi, weight, height, tolerance) {
 #' phenotype.data <- data.frame(
 #'   HW00001 = reported.year,
 #'   HW00002 = reported.age,
-#'   HW00003 = reference.age
+#'   HW00003 = reference.year
 #' )
 #' ## this function is designed as a utility to be
 #' ## deployed in the dependency block of a user configuration

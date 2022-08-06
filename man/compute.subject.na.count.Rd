@@ -33,18 +33,26 @@ pheno.data <- data.frame(
   HW00001 = c("A", "B", "C", "D"),
   HW00002 = c(1, 2, NA, 3)
 )
+## note that by this stage of the process.phenotypes logic
+## chain, the user-specified configuration entries from the
+## input yaml have been sequestered in a block `params`
+## for each variable.
 var.sum <- list(variables = list(
   HW00001 = list(
-    name = "name1",
-    type = "string",
-    subject_id = TRUE
+    params = list(
+      name = "name1",
+      type = "string",
+      subject_id = TRUE
+    )
   ),
   HW00002 = list(
-    name = "name2",
-    type = "string"
+    params = list(
+      name = "name2",
+      type = "string"
+    )
   )
 ))
-subject.na.counts <- compute.subject.na.count(pheno.data, var.sum)
+subject.na.counts <- process.phenotypes:::compute.subject.na.count(pheno.data, var.sum)
 }
 \seealso{
 apply.type.conversions

@@ -73,7 +73,7 @@
 #' configuration options for the input data are available at
 #' \url{http://54gene-processphenotypes-docs.s3-website.us-east-2.amazonaws.com/index.html}
 #'
-#' @param in.filename Character vector fileaname of input phenotype data.
+#' @param in.filename Character vector filename of input phenotype data.
 #' @param dataset.yaml character vector filename of the yaml-format configuration
 #' data for the dataset.
 #' @param shared.model.yaml Character vector filename of the yaml configuration
@@ -83,7 +83,7 @@
 #' and passed to read.table. Defaults to NULL. This parameter is exposed for
 #' greater compability with unpredictable input formats (see Details).
 #' @param sep Character vector used to delimit input fields in input phenotypes,
-#' and passed to read.table. Defaults to tab (\t). This parameter is exposed for
+#' and passed to read.table. Defaults to tab (\\t). This parameter is exposed for
 #' greater compatibility with unpredictable input formats (see Details).
 #' @param uniq.var.inclusion.prop Numeric proportion of total values of a string
 #' variable that can be unique before tabular output is automatically suppressed
@@ -125,6 +125,7 @@
 #'   var3 = sample(c("yes", "no"), 5, replace = TRUE)
 #' )
 #' var.summary <- list(
+#'   tag = "HW",
 #'   globals = list(
 #'     consent_inclusion_file = NULL,
 #'     consent_exclusion_file = NULL,

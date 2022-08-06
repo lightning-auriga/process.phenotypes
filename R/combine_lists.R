@@ -44,7 +44,7 @@
 #'     "2" = list(name = "no")
 #'   )
 #' )
-#' resolved.config <- combine.lists(var.specific, shared.model)
+#' resolved.config <- process.phenotypes:::combine.lists(var.specific, shared.model)
 combine.lists <- function(list1, list2) {
   ## note that this will need to be recursively called
   if (is.null(names(list1)) ||

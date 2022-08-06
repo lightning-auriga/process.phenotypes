@@ -62,6 +62,10 @@ pheno.data <- data.frame(
   HW00001 = c("A", "B", "C", "D", "E"),
   HW00002 = 1:5
 )
+## note that by this stage of the process.phenotypes logic
+## chain, the user-specified configuration entries from the
+## input yaml have been sequestered in a block `params`
+## for each variable.
 var.sum <- list(
   globals = list(
     consent.inclusion.file = input.consent.inc.file,
@@ -69,15 +73,19 @@ var.sum <- list(
   ),
   variables = list(
     HW00001 = list(
-      name = "subjid",
-      type = "string",
-      subject_id = TRUE
+      params = list(
+        name = "subjid",
+        type = "string",
+        subject_id = TRUE
+      )
     ),
     HW00002 = list(
-      name = "measure",
-      type = "numeric"
+      params = list(
+        name = "measure",
+        type = "numeric"
+      )
     )
   )
 )
-res <- apply.consent.exclusion(pheno.data, var.sum)
+res <- process.phenotypes:::apply.consent.exclusion(pheno.data, var.sum)
 }

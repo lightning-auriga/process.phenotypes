@@ -25,7 +25,7 @@
 #'   HW00001 = list(subjects.wrong.type = c("A")),
 #'   HW00002 = list(subjects.wrong.type = c("A", "B"))
 #' ))
-#' all.bad.subjects <- aggregate.subjects.wrong.type(var.sum)
+#' all.bad.subjects <- process.phenotypes:::aggregate.subjects.wrong.type(var.sum)
 aggregate.subjects.wrong.type <- function(variable.summary) {
   all.instances <- unlist(lapply(variable.summary$variables, function(i) {
     i$subjects.wrong.type
@@ -64,7 +64,7 @@ aggregate.subjects.wrong.type <- function(variable.summary) {
 #'   HW00001 = list(subjects.wrong.type = c("A", "B")),
 #'   HW00002 = list(subjects.wrong.type = character())
 #' ))
-#' wrong.type.counts <- aggregate.variables.wrong.type(var.sum)
+#' wrong.type.counts <- process.phenotypes:::aggregate.variables.wrong.type(var.sum)
 aggregate.variables.wrong.type <- function(variable.summary) {
   counts <- sapply(variable.summary$variables, function(i) {
     length(i$subjects.wrong.type)
@@ -99,18 +99,26 @@ aggregate.variables.wrong.type <- function(variable.summary) {
 #'   HW00001 = c("A", "B", "C", "D"),
 #'   HW00002 = c(1, 2, NA, 3)
 #' )
+#' ## note that by this stage of the process.phenotypes logic
+#' ## chain, the user-specified configuration entries from the
+#' ## input yaml have been sequestered in a block `params`
+#' ## for each variable.
 #' var.sum <- list(variables = list(
 #'   HW00001 = list(
-#'     name = "name1",
-#'     type = "string",
-#'     subject_id = TRUE
+#'     params = list(
+#'       name = "name1",
+#'       type = "string",
+#'       subject_id = TRUE
+#'     )
 #'   ),
 #'   HW00002 = list(
-#'     name = "name2",
-#'     type = "string"
+#'     params = list(
+#'       name = "name2",
+#'       type = "string"
+#'     )
 #'   )
 #' ))
-#' subject.na.counts <- compute.subject.na.count(pheno.data, var.sum)
+#' subject.na.counts <- process.phenotypes:::compute.subject.na.count(pheno.data, var.sum)
 compute.subject.na.count <- function(phenotype.data, variable.summary) {
   res <- apply(phenotype.data, 1, function(i) {
     length(which(is.na(i)))
@@ -158,7 +166,7 @@ compute.subject.na.count <- function(phenotype.data, variable.summary) {
 #' @examples
 #' dep.results <- list("1" = c("A", "B"), "2" = c("C", "D"))
 #' var.sum <- list(variables = list(HW00001 = list(dependency.results = dep.results)))
-#' dep.failures <- aggregate.subject.dep.failures(var.sum)
+#' dep.failures <- process.phenotypes:::aggregate.subject.dep.failures(var.sum)
 aggregate.subject.dep.failures <- function(variable.summary) {
   all.instances <- unlist(lapply(variable.summary$variables, function(i) {
     unique(unlist(i$dependency.results))

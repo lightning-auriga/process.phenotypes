@@ -54,5 +54,5 @@ shared.model <- list(
     "2" = list(name = "no")
   )
 )
-resolved.config <- combine.lists(var.specific, shared.model)
+resolved.config <- process.phenotypes:::combine.lists(var.specific, shared.model)
 }
