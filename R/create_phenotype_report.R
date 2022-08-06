@@ -165,6 +165,8 @@
 #' yaml::write_yaml(shared.models, input.shared.models)
 #' ## output datasets take their output prefix from the filename provided for the html report,
 #' ## so for example purposes the other output formats are suppressed.
+#'
+#' \dontrun{
 #' create.phenotype.report(input.phenotypes,
 #'   input.dataset.yaml,
 #'   input.shared.models,
@@ -173,6 +175,7 @@
 #'   quote = "\"",
 #'   write.tsv = FALSE
 #' )
+#' }
 #' @importFrom stats qnorm quantile sd
 #' @importFrom utils read.table type.convert write.table
 #' @importFrom magrittr `%>%`

@@ -208,6 +208,8 @@ yaml::write_yaml(var.summary, input.dataset.yaml)
 yaml::write_yaml(shared.models, input.shared.models)
 ## output datasets take their output prefix from the filename provided for the html report,
 ## so for example purposes the other output formats are suppressed.
+
+\dontrun{
 create.phenotype.report(input.phenotypes,
   input.dataset.yaml,
   input.shared.models,
@@ -216,4 +218,5 @@ create.phenotype.report(input.phenotypes,
   quote = "\"",
   write.tsv = FALSE
 )
+}
 }
