@@ -2,20 +2,44 @@
 % Please edit documentation in R/parse_surveycto.R
 \name{flag.required.variables}
 \alias{flag.required.variables}
-\title{Add flags for subject ID and age variables}
+\title{Add flags for subject ID and age variables.}
 \usage{
 flag.required.variables(out.yaml, subject.id.name, age.name)
 }
 \arguments{
-\item{out.yaml}{list; constructed variable configuration data}
+\item{out.yaml}{List containing constructed variable configuration data.}
 
-\item{subject.id.name}{character vector; expected name of subject ID variable}
+\item{subject.id.name}{Character vector of expected name of subject ID variable.}
 
-\item{age.name}{character vector; expected name of age variable}
+\item{age.name}{Character vector of expected name of age variable.}
 }
 \value{
-list; input yaml with flags added to appropriate variables
+List of input configuration data with flags added to appropriate variables.
 }
 \description{
-Add flags for subject ID and age variables
+process.phenotypes dataset configuration files are required to contain
+a variable flagged as containing subject IDs, and a variable containing
+subject age at consent. This function attempts to automatically tag
+the required variables based on user-specified expected name patterns.
+}
+\details{
+Ideally, input form data would contain regularly named variables, in such
+a way that you could pretty easily predict the variable names involved in the
+subject ID and age. However, this has rarely panned out well in our experience.
+Additional specification of aliases has been required with every additional
+dataset we've processed.
+
+This logic could be made substantially more complex, and if there's need that
+will be patched later.
+}
+\examples{
+config.data <- list(variables = list(
+  HW00001 = list(name = "subject_id"),
+  HW00002 = list(name = "subject_age")
+))
+result <- process.phenotypes:::flag.required.variables(
+  config.data,
+  "subject_id",
+  "subject_age"
+)
 }
