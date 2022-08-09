@@ -2,7 +2,7 @@
 % Please edit documentation in R/parse_surveycto.R
 \name{flag.required.variables}
 \alias{flag.required.variables}
-\title{Add flags for subject ID and age variables.}
+\title{Add flags for subject ID and age variables}
 \usage{
 flag.required.variables(out.yaml, subject.id.name, age.name)
 }

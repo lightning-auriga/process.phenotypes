@@ -741,9 +741,7 @@ handle.repeat.variables <- function(out.yaml, cur.varname, name.value,
     )
     if (is.null(query.varname)) {
       query.varname <- name.value
-    } # else if () {
-
-    # }
+    }
     variable.data <- build.variable.data(type.value, name.value, label.value, choice.list, cur.varname)
     for (variable in names(variable.data$variables)) {
       repeat.variables$variables[[variable]] <- variable.data$variables[[variable]]
@@ -783,7 +781,7 @@ handle.repeat.variables <- function(out.yaml, cur.varname, name.value,
 }
 
 #' @title
-#' Add flags for subject ID and age variables.
+#' Add flags for subject ID and age variables
 #'
 #' @description
 #' process.phenotypes dataset configuration files are required to contain
@@ -839,22 +837,122 @@ flag.required.variables <- function(out.yaml, subject.id.name, age.name) {
   out.yaml
 }
 
-#' Convert SurveyCTO configuration data into yaml configuration for this package
+#' @title
+#' Convert SurveyCTO configuration form into yaml configuration for
+#' use with process.phenotypes
 #'
-#' @param in.form.filename character vector; name of xlsx survey
-#' configuration file from SurveyCTO
-#' @param in.response.filename character vector; name of csv
-#' response data from SurveyCTO in wide format
-#' @param dataset.tag character vector; tag for this dataset,
-#' which is used as prefix for synthetic variable names
-#' @param out.yaml.filename character vector; destination filename
-#' for variable configuration data
-#' @param out.shared.models character vector; destination filename
-#' for shared categorical model data for this questionnaire
-#' @param subject.id.name character vector; name of variable containing subject ID
-#' @param age.name character vector; name of variable containing subject age
-#' @param na.values character vector; factor levels that should be treated as NA
+#' @description
+#' SurveyCTO configuration forms are approximately equivalent to
+#' the configuration data used by process.phenotypes::create.phenotype.report.
+#' However, the process.phenotypes configuration accepts a wide array
+#' of cleaning and derivation options that need to be separately configured.
+#' The process of converting SurveyCTO form data to process.phenotypes
+#' configuration files is tedious and error-prone, so this utility function
+#' attempts to create a baseline configuration set from a form file,
+#' with reasonable default settings based on set conversions from
+#' SurveyCTO variable types.
+#'
+#' @details
+#' process.phenotypes was initially developed to support truly unstructured
+#' data sources, in which there were no guarantees whatsoever about data
+#' consistency in any dimension. Managed questionnaire data from a system
+#' like SurveyCTO are much preferable, but many of the features of
+#' process.phenotypes are still desirable: reproducible and transparent
+#' data processing, derived variable calculation, etc. This function is
+#' designed to facilitate the process of generating configuration files
+#' for process.phenotypes from SurveyCTO form specifications.
+#'
+#' process.phenotypes does not directly accept SurveyCTO forms.
+#' This library is designed for quality control and derived variable
+#' generation, and furthermore emphasizes transparency and reproducibility,
+#' and in order to achieve these things, a record of data configuration
+#' that reflects the current status of the data is required.
+#' Additionally, SurveyCTO supports kinds of variables that expand in size
+#' depending on the number of responses observed in the data. That's
+#' not necessarily a problem _per se_, but after a certain number
+#' of responses to a given question, we find that the behavior of
+#' actual observed responses tends to change, such that the desired
+#' treatment of such variables differs spending on which repeat observation
+#' is being considered. As such, we keep configuration separate for
+#' each variable, and furthermore provide a utility function
+#' `expand.surveycto.config` that makes the process of expanding an
+#' existing configuration file to adapt to new repeat blocks much
+#' more straightforward.
+#'
+#' For context, this package is an important aspect of our reproducible
+#' data flow, but it does not operate in isolation. We have developed
+#' this package in parallel with a Snakemake workflow for handling
+#' our data streams. In that workflow, multiple calls to various functions
+#' in this package are automated in such a way that the functions communicate
+#' seamlessly with one another, and so that upstream changes in the various
+#' data sources used by process.phenotypes reliably trigger the correct
+#' downstream updates. We highly recommend this kind of process to other
+#' interested users, as a way of further streamlining the very
+#' finicky process of iterative data cleaning.
+#'
+#' The development of this function has been fairly organic, as we've
+#' expanded its supported featureset based on what we've observed
+#' in live form definitions. In light of this fact, we expect that there
+#' are additional form features that this conversion function does
+#' not yet support. The function is capable of detecting most errors
+#' in its own process by comparing its predicted variable set against
+#' the headers of the provided wide format csv data. It will report out
+#' as an error if it finds headers that are any of:
+#'
+#' - predicted by this function but absent in the csv;
+#' - present in the csv but not predicted by this function; or
+#' - both predicted and observed but out of order.
+#'
+#' In any of those situations, it abstains from emitting an output
+#' configuration fileset. The two most likely causes of these errors are:
+#'
+#' - as mentioned above, this function may not support a configured
+#' feature; or
+#' - the csv file provided to the function does not match the form version
+#' provided to the function.
+#'
+#' If you're quite certain that the form and csv file match each other,
+#' then please consider posting an issue describing the observed error
+#' and ideally providing an example of the offending form definition.
+#'
+#' @param in.form.filename Character vector of name of SurveyCTO Excel xlsx
+#' form definition corresponding to the current csv data export.
+#' @param in.response.filename Character vector of name of wide format
+#' csv data export from SurveyCTO.
+#' @param dataset.tag Character vector of tag (e.g. 'HW') for this dataset,
+#' which is used as prefix for automated variable names.
+#' @param out.yaml.filename Character vector of destination filename
+#' for dataset-specific variable configuration file.
+#' @param out.shared.models Character vector of destination filename
+#' for shared categorical model configuration file for this questionnaire.
+#' @param subject.id.name Character vector of name of variable containing
+#' subject ID for each row of the input wide format csv data.
+#' @param age.name Character vector of name of variable containing subject age
+#' for each row of the input wide format csv data.
+#' @param na.values Character vector of factor levels that should be
+#' treated as NA when creating configuration data. This can be empty if desired.
+#' @return NULL
 #' @export
+#' @seealso expand.surveycto.config
+#' @examples
+#' csv.filename <- system.file("examples", "parse_surveycto_example.csv",
+#'   package = "process.phenotypes"
+#' )
+#' xlsx.filename <- system.file("examples", "parse_surveycto_example.xlsx",
+#'   package = "process.phenotypes"
+#' )
+#' dataset.tag <- "HW"
+#' out.dataset.filename <- tempfile("psc_out_dataset", fileext = ".yaml")
+#' out.shared.filename <- tempfile("psc_out_shared", fileext = ".yaml")
+#' parse.surveycto(
+#'   xlsx.filename,
+#'   csv.filename,
+#'   dataset.tag,
+#'   out.dataset.filename,
+#'   out.shared.filename,
+#'   "subjectid_1",
+#'   "subjectage"
+#' )
 parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag, out.yaml.filename, out.shared.models,
                             subject.id.name = "pid", age.name = "age",
                             na.values = c("I don't know/not sure", "Prefer not to answer")) {
@@ -959,26 +1057,43 @@ parse.surveycto <- function(in.form.filename, in.response.filename, dataset.tag,
 
 
 
-#' For repeat expansion, handle the situation where there
-#' is a repeat variable that was not present in any form
-#' in the original configuration file.
+#' @title
+#' Generate configuration blocks for newly appeared SurveyCTO repeat variables
 #'
-#' @param varname string; formatted variable name for predicted
-#' insertion point
-#' @param regenerated.yaml list; loaded dataset yaml corresponding
+#' @description
+#' SurveyCTO repeat variables have a variety of idiosyncratic behaviors
+#' that complicate their compatibility with process.phenotypes. Repeat
+#' variables that have no observed responses will in some cases be entirely
+#' suppressed from the exported wide format csv data. That's fine, until
+#' a later data export features responses to those questions, and the remaining
+#' variables are shifted. This function attempts to inject configuration
+#' blocks for newly observed repeat variables into an existing variable
+#' configuration.
+#'
+#' @details
+#' This function is an internal function called within expand.surveycto.config.
+#' This function should not be directly called by the user.
+#'
+#' @param varname Character vector of formatted variable name for predicted
+#' variable insertion point in existing configuration.
+#' @param regenerated.yaml List of loaded dataset yaml corresponding
 #' to current actual wide csv export from SurveyCTO. Expected to
-#' be the loaded output of parse.surveycto
-#' @param max.existing.number numeric; maximum variable number,
-#' expecting variable names of the format "HW#####"
-#' @param res.variables list; accumulator of output variable
-#' configuration with repeats added or extended as needed
-#' @param missing.colname character; encountered column name
+#' be the loaded output of parse.surveycto.
+#' @param max.existing.number Numeric representing maximum variable number
+#' in an existing variable configuration, expecting variable names of the
+#' format "HW#####".
+#' @param res.variables List of accumulated output variable
+#' configuration with repeats added or extended as needed.
+#' @param missing.colname Character vector encountered column name
 #' that is missing from current configuration. Expected to be
 #' correctly predicted and present in parse.surveycto configuration
-#' based on the current form definition and csv export
-#' @return list; res.variables, updated version of input parameter
-#' with the new resolved variable configuration entry added; max.existing.number,
-#' updated version of input parameter incremented to reflect variable addition
+#' based on the current form definition and csv export.
+#' @return List; first entry `res.variables` an updated version of input parameter
+#' with the new resolved variable configuration entry added; second entry
+#' `max.existing.number` updated version of input parameter incremented
+#' to reflect variable addition.
+#' @usage NULL
+#' @seealso expand.surveycto.config
 handle.missing.block <- function(varname,
                                  regenerated.yaml,
                                  max.existing.number,
@@ -1010,25 +1125,40 @@ handle.missing.block <- function(varname,
 }
 
 
-#' For repeat expansion, handle the situation where there
-#' is a repeat variable that was present
-#' in the original configuration file, but that has a higher
-#' number repeat present in the current SurveyCTO export
+#' @title
+#' Generate configuration blocks for extensions of existing SurveyCTO
+#' repeat variables.
 #'
-#' @param var.prefix character; shared common prefix of the dataset
+#' @description
+#' SurveyCTO repeat variables have a variety of idiosyncratic behaviors
+#' that complicate their compatibility with process.phenotypes. Repeat
+#' variables that have observed responses in a particular wide format csv
+#' export may gain additional repeat observations if recently collected
+#' responses contain more than the maximum number of existing repeats.
+#' This function attempts to extend an existing repeat block to match
+#' the observed maximum number of repeat instances in a new wide format
+#' csv export.
+#'
+#' @details
+#' This function is an internal function called within expand.surveycto.config.
+#' This function should not be directly called by the user.
+#'
+#' @param var.prefix Character vector shared common prefix of the dataset
 #' yaml configuration for this repeat variable. So for example,
 #' if the existing repeat block was "HW00001_1", "HW00001_2", "HW00001_3",
-#' this would be "HW00001_"
-#' @param trailing.num numeric; instance of the repeat observed
-#' in the new dataset but absent from original configuration
-#' @param res.variables list; accumulator of output variable
-#' configuration with repeats added or extended as needed
-#' @param missing.colname character; encountered column name
+#' this would be "HW00001_".
+#' @param trailing.num Numeric indicating instance of the repeat observed
+#' in the new dataset but absent from original configuration.
+#' @param res.variables List of accumulated output variable
+#' configuration with repeats added or extended as needed.
+#' @param missing.colname Character vector encountered column name
 #' that is missing from current configuration. Expected to be
 #' correctly predicted and present in parse.surveycto configuration
-#' based on the current form definition and csv export
-#' @return list; updated version of input parameter 'res.variables'
-#' with the new resolved variable configuration entry added
+#' based on the current form definition and csv export.
+#' @return List representing updated version of input parameter 'res.variables'
+#' with the new resolved variable configuration entry added.
+#' @usage NULL
+#' @seealso expand.surveycto.config
 handle.existing.block <- function(var.prefix,
                                   trailing.num,
                                   res.variables,
@@ -1056,25 +1186,38 @@ handle.existing.block <- function(var.prefix,
 }
 
 
-#' For repeat expansion: run an internal pass
-#' of parse.surveycto to reuse the logic for
-#' generating configuration blocks in case new
-#' blocks have magically appeared in new SurveyCTO
-#' exports
+#' @title
+#' Wrap a call to parse.surveycto and return its loaded dataset configuration.
 #'
-#' @param existing.yaml list; existing dataset configuration
+#' @description
+#' Repeat expansion of SurveyCTO configuration data needs to generate
+#' variable configuration blocks. That logic is already handled by
+#' `parse.surveycto`. To avoid duplicating code, this function
+#' wraps a call to `parse.surveycto` and returns that predicted
+#' dataset yaml configuration as a list, such that the general
+#' settings for variables can be used and the IDs can just be updated.
+#'
+#' @details
+#' This function is an internal function called within expand.surveycto.config.
+#' This function should not be directly called by the user.
+#'
+#' @param existing.yaml List of existing dataset configuration
 #' loaded with read_yaml. Note that the entire configuration
 #' need not be correctly specified, but the variables containing
 #' the mandatory 'subject_id' and 'subject_age' tags should
-#' be correctly specified and ordered
-#' @param form.definition.filename character; name of
-#' SurveyCTO xlsx form definition
-#' @param new.data.filename character; name of wide csv
-#' export from SurveyCTO
-#' @param intermediate.dataset.yaml character; name of
-#' output dataset yaml from parse.surveycto
-#' @param intermediate.shared.models character; name
-#' of output shared models yaml from parse.surveycto
+#' be correctly specified and ordered.
+#' @param form.definition.filename Character vector of name of
+#' SurveyCTO xlsx form definition.
+#' @param new.data.filename Character vetor of name of wide csv
+#' export from SurveyCTO.
+#' @param intermediate.dataset.yaml Character vector of name of
+#' output dataset yaml from parse.surveycto.
+#' @param intermediate.shared.models Character vector of name
+#' of output shared models yaml from parse.surveycto.
+#' @return Dataset configuration output of `parse.surveycto`,
+#' loaded and returned as a list.
+#' @usage NULL
+#' @seealso expand.surveycto.config
 generate.predicted.yaml <- function(existing.yaml,
                                     form.definition.filename,
                                     new.data.filename,
@@ -1105,10 +1248,12 @@ generate.predicted.yaml <- function(existing.yaml,
   yaml::read_yaml(intermediate.dataset.yaml)
 }
 
+#' @title
 #' Utility function to update an existing configuration
 #' file from parse.surveycto, given new SurveyCTO export data
 #'
-#' @details Certain types of output columns in exported SurveyCTO
+#' @description
+#' Certain types of output columns in exported SurveyCTO
 #' datasets are unpredictable, in the sense that, with a constant
 #' form definition, the columns may or may not be present, and can
 #' only be predicted with access to the export itself. This creates
@@ -1117,6 +1262,7 @@ generate.predicted.yaml <- function(existing.yaml,
 #' references, for example with the creation of derived variables,
 #' or in order to generate consensus variables between datasets.
 #'
+#' @details
 #' This function is designed to attempt to address the most
 #' straightforward and yet fiddly versions of these kinds of
 #' unpredictable variables. Repeat variables in SurveyCTO
@@ -1183,32 +1329,88 @@ generate.predicted.yaml <- function(existing.yaml,
 #' include these non-repeat variables, however, this function might
 #' be called again to handle the repeat variables exclusively.
 #'
-#' @param existing.yaml.filename character; name of dataset yaml
-#' (potentially with custom configuration data) from a run of
-#' parse.surveycto
-#' @param new.yaml.filename character; name of output dataset yaml
-#' @param new.cto.export.filename character; name of most recent
-#' wide-format csv output from SurveyCTO; tested with API output,
-#' though it should work with web-based export as well
-#' @param form.definition.filename character; name of SurveyCTO
-#' form xlsx file that governs the format of the current csv export
-#' @param new.processed.export.filename character; name of csv
-#' output from SurveyCTO with any postprocessed modifications
-#' (see Details)
-#' @param intermediate.dataset.yaml character; name of dataset yaml
-#' the function generates from parse.surveycto for comparison
-#' purposes; if not specified, a generic tempfile
-#' @param intermediate.shared.models character; name of
+#' @param existing.yaml.filename Character vector of name of
+#' dataset yaml (potentially with custom configuration data)
+#' from a run of parse.surveycto.
+#' @param new.yaml.filename Character vector of name of output
+#' dataset yaml.
+#' @param new.cto.export.filename Character vector of name of
+#' most recent wide-format csv output from SurveyCTO. This
+#' iput has been tested with API output, though it should
+#' work with web-based export as well.
+#' @param form.definition.filename Character vector of name of
+#' SurveyCTO form xlsx file that governs the format of the
+#' current csv export.
+#' @param new.processed.export.filename Character vector of
+#' name of csv output from SurveyCTO with any postprocessed
+#' modifications (see Details).
+#' @param intermediate.dataset.yaml Character vector of name
+#' of dataset yaml the function generates from parse.surveycto
+#' for comparison purposes; if not specified, a generic tempfile.
+#' @param intermediate.shared.models Character vector of name of
 #' shared models yaml the file generates from parse.surveycto for
-#' comparison purposes; if not specified, a generic tempfile
+#' comparison purposes; if not specified, a generic tempfile.
+#' @param quote Character vector used to quote string tokens in expanded SurveyCTO export
+#' and passed to read.table. Defaults to NULL. This parameter is exposed for
+#' greater compability with unpredictable input formats.
+#' @param sep Character vector used to delimit input fields in expanded SurveyCTO export
+#' and passed to read.table. Defaults to tab (\\t). This parameter is exposed for
+#' greater compatibility with unpredictable input formats.
+#' @return NULL
 #' @export
+#' @examples
+#' existing.form <- system.file("examples", "parse_surveycto_example.xlsx",
+#'   package = "process.phenotypes"
+#' )
+#' existing.csv <- system.file("examples", "parse_surveycto_example.csv",
+#'   package = "process.phenotypes"
+#' )
+#' ## first, use parse.surveycto to emit a configuration file set for the initial csv export
+#' initial.dataset.yaml <- tempfile("esc_dataset", fileext = ".yaml")
+#' initial.shared.models <- tempfile("esc_shared_models", fileext = ".yaml")
+#' parse.surveycto(existing.form, existing.csv,
+#'   "HW",
+#'   initial.dataset.yaml, initial.shared.models,
+#'   subject.id.name = "subjectid_1",
+#'   age.name = "subjectage",
+#' )
+#'
+#' ## after some time, you end up with a csv with a new repeat entry
+#' expanded.csv <- tempfile("esc_expanded_csv", fileext = ".csv")
+#' data <- read.table(existing.csv,
+#'   header = TRUE, sep = ",",
+#'   quote = "\"", comment.char = "", stringsAsFactors = FALSE
+#' )
+#' data <- cbind(
+#'   data[, 1:11],
+#'   sample(letters, nrow(data), replace = TRUE),
+#'   data[, seq(12, ncol(data))]
+#' )
+#' colnames(data)[12] <- "subjectid_2"
+#' write.table(data, expanded.csv,
+#'   row.names = FALSE,
+#'   col.names = TRUE, quote = TRUE, sep = ","
+#' )
+#'
+#' ## expand the dataset configuration file to handle this new repeat entry
+#' expanded.yaml <- tempfile("esc_expanded_yaml", fileext = ".yaml")
+#' expand.surveycto.config(
+#'   initial.dataset.yaml,
+#'   expanded.yaml,
+#'   expanded.csv,
+#'   existing.form,
+#'   quote = "\"",
+#'   sep = ","
+#' )
 expand.surveycto.config <- function(existing.yaml.filename,
                                     new.yaml.filename,
                                     new.cto.export.filename,
                                     form.definition.filename,
                                     new.processed.export.filename = new.cto.export.filename,
                                     intermediate.dataset.yaml = tempfile("expand.surveycto.dataset"),
-                                    intermediate.shared.models = tempfile("expand.surveycto.shared_models")) {
+                                    intermediate.shared.models = tempfile("expand.surveycto.shared_models"),
+                                    quote = "\"",
+                                    sep = "\t") {
   stopifnot(
     !is.null(existing.yaml.filename),
     !is.null(new.cto.export.filename),
@@ -1246,8 +1448,8 @@ expand.surveycto.config <- function(existing.yaml.filename,
   existing.yaml <- yaml::read_yaml(existing.yaml.filename)
   new.data <- read.table(new.processed.export.filename,
     header = TRUE,
-    stringsAsFactors = FALSE, sep = "\t",
-    comment.char = "", quote = "\"",
+    stringsAsFactors = FALSE, sep = sep,
+    comment.char = "", quote = quote,
     check.names = FALSE
   )
 

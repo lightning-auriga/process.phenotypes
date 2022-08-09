@@ -2,43 +2,42 @@
 % Please edit documentation in R/parse_surveycto.R
 \name{generate.predicted.yaml}
 \alias{generate.predicted.yaml}
-\title{For repeat expansion: run an internal pass
-of parse.surveycto to reuse the logic for
-generating configuration blocks in case new
-blocks have magically appeared in new SurveyCTO
-exports}
-\usage{
-generate.predicted.yaml(
-  existing.yaml,
-  form.definition.filename,
-  new.data.filename,
-  intermediate.dataset.yaml,
-  intermediate.shared.models
-)
-}
+\title{Wrap a call to parse.surveycto and return its loaded dataset configuration.}
 \arguments{
-\item{existing.yaml}{list; existing dataset configuration
+\item{existing.yaml}{List of existing dataset configuration
 loaded with read_yaml. Note that the entire configuration
 need not be correctly specified, but the variables containing
 the mandatory 'subject_id' and 'subject_age' tags should
-be correctly specified and ordered}
+be correctly specified and ordered.}
 
-\item{form.definition.filename}{character; name of
-SurveyCTO xlsx form definition}
+\item{form.definition.filename}{Character vector of name of
+SurveyCTO xlsx form definition.}
 
-\item{new.data.filename}{character; name of wide csv
-export from SurveyCTO}
+\item{new.data.filename}{Character vetor of name of wide csv
+export from SurveyCTO.}
 
-\item{intermediate.dataset.yaml}{character; name of
-output dataset yaml from parse.surveycto}
+\item{intermediate.dataset.yaml}{Character vector of name of
+output dataset yaml from parse.surveycto.}
 
-\item{intermediate.shared.models}{character; name
-of output shared models yaml from parse.surveycto}
+\item{intermediate.shared.models}{Character vector of name
+of output shared models yaml from parse.surveycto.}
+}
+\value{
+Dataset configuration output of \code{parse.surveycto},
+loaded and returned as a list.
 }
 \description{
-For repeat expansion: run an internal pass
-of parse.surveycto to reuse the logic for
-generating configuration blocks in case new
-blocks have magically appeared in new SurveyCTO
-exports
+Repeat expansion of SurveyCTO configuration data needs to generate
+variable configuration blocks. That logic is already handled by
+\code{parse.surveycto}. To avoid duplicating code, this function
+wraps a call to \code{parse.surveycto} and returns that predicted
+dataset yaml configuration as a list, such that the general
+settings for variables can be used and the IDs can just be updated.
+}
+\details{
+This function is an internal function called within expand.surveycto.config.
+This function should not be directly called by the user.
+}
+\seealso{
+expand.surveycto.config
 }

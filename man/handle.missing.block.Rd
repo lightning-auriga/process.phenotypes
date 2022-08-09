@@ -2,44 +2,47 @@
 % Please edit documentation in R/parse_surveycto.R
 \name{handle.missing.block}
 \alias{handle.missing.block}
-\title{For repeat expansion, handle the situation where there
-is a repeat variable that was not present in any form
-in the original configuration file.}
-\usage{
-handle.missing.block(
-  varname,
-  regenerated.yaml,
-  max.existing.number,
-  res.variables,
-  missing.colname
-)
-}
+\title{Generate configuration blocks for newly appeared SurveyCTO repeat variables}
 \arguments{
-\item{varname}{string; formatted variable name for predicted
-insertion point}
+\item{varname}{Character vector of formatted variable name for predicted
+variable insertion point in existing configuration.}
 
-\item{regenerated.yaml}{list; loaded dataset yaml corresponding
+\item{regenerated.yaml}{List of loaded dataset yaml corresponding
 to current actual wide csv export from SurveyCTO. Expected to
-be the loaded output of parse.surveycto}
+be the loaded output of parse.surveycto.}
 
-\item{max.existing.number}{numeric; maximum variable number,
-expecting variable names of the format "HW#####"}
+\item{max.existing.number}{Numeric representing maximum variable number
+in an existing variable configuration, expecting variable names of the
+format "HW#####".}
 
-\item{res.variables}{list; accumulator of output variable
-configuration with repeats added or extended as needed}
+\item{res.variables}{List of accumulated output variable
+configuration with repeats added or extended as needed.}
 
-\item{missing.colname}{character; encountered column name
+\item{missing.colname}{Character vector encountered column name
 that is missing from current configuration. Expected to be
 correctly predicted and present in parse.surveycto configuration
-based on the current form definition and csv export}
+based on the current form definition and csv export.}
 }
 \value{
-list; res.variables, updated version of input parameter
-with the new resolved variable configuration entry added; max.existing.number,
-updated version of input parameter incremented to reflect variable addition
+List; first entry \code{res.variables} an updated version of input parameter
+with the new resolved variable configuration entry added; second entry
+\code{max.existing.number} updated version of input parameter incremented
+to reflect variable addition.
 }
 \description{
-For repeat expansion, handle the situation where there
-is a repeat variable that was not present in any form
-in the original configuration file.
+SurveyCTO repeat variables have a variety of idiosyncratic behaviors
+that complicate their compatibility with process.phenotypes. Repeat
+variables that have no observed responses will in some cases be entirely
+suppressed from the exported wide format csv data. That's fine, until
+a later data export features responses to those questions, and the remaining
+variables are shifted. This function attempts to inject configuration
+blocks for newly observed repeat variables into an existing variable
+configuration.
+}
+\details{
+This function is an internal function called within expand.surveycto.config.
+This function should not be directly called by the user.
+}
+\seealso{
+expand.surveycto.config
 }
