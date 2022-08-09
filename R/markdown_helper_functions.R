@@ -303,7 +303,7 @@ report.excel.problems <- function(variable.entry, suppress.reporting) {
 #' should be suppressed.
 #' @return List; first entry 'hist.plot' is the variable distribution plot,
 #' second entry 'tab.summary' distribution table. Either entry can be null
-#' based on conditional .logic
+#' based on conditional logic.
 #' @importFrom graphics hist
 #' @usage NULL
 report.numeric.summary <- function(data.vec,
