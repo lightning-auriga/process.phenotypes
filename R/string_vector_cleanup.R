@@ -196,11 +196,11 @@ is.blood.pressure <- function(vec, allow.trailing = FALSE, allow.undelimited = F
 reformat.numerics <- function(vec, var.summary) {
   ## treat this as arbitrary numeric data
   ## if the prefix of a value looks like a numeric, strip its suffix
-  possible.numeric <- stringr::str_detect(vec, "^-?\\d+\\.?\\d*($| *[^ \\d/].*$)") & !is.na(vec)
+  possible.numeric <- stringr::str_detect(vec, "^-?\\d+[\\.,]?\\d*($| *[^ \\d/].*$)") & !is.na(vec)
   res <- rep(NA, length(vec))
   res[possible.numeric] <- stringr::str_replace(
     vec[possible.numeric],
-    "^(-?\\d+\\.?\\d*)($| *[^ \\d/].*$)", "\\1"
+    "^(-?\\d+[\\.,]?\\d*)($| *[^ \\d/].*$)", "\\1"
   )
   res <- as.numeric(res)
   var.summary$invalid.numeric.entries <- vec[!possible.numeric & !is.na(vec)]
