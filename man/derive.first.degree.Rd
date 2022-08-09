@@ -2,7 +2,7 @@
 % Please edit documentation in R/derived_variable_helpers.R
 \name{derive.first.degree}
 \alias{derive.first.degree}
-\title{Derive binary yes/no first-degree relatives from family member data.}
+\title{Derive binary yes/no first-degree relatives from family member data}
 \usage{
 derive.first.degree(variable.name)
 }

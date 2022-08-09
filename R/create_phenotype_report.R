@@ -1,5 +1,5 @@
 #' @title
-#' Create markdown report summarizing phenotype data and cleaning process.
+#' Create markdown report summarizing phenotype data and cleaning process
 #'
 #' @description
 #' Given phenotype information in a text file and configuration information
@@ -109,6 +109,7 @@
 #' configuration data in YAML format. In addition to general recordkeeping, the
 #' goal of this output is to provide a configuration file that can be used to
 #' reload the output tsv back into process.phenotypes.
+#' @return NULL
 #' @export create.phenotype.report
 #' @examples
 #' ## create.phenotype.report operates on input files, which can be constructed

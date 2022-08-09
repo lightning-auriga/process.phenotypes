@@ -4,7 +4,7 @@
 \alias{report.noncompliant.bp}
 \title{Helper function to report information about blood pressure
 variable entries that do not match expected blood pressure
-systolic/diastolic reporting format.}
+systolic/diastolic reporting format}
 \arguments{
 \item{variable.entry}{List entry in dataset yaml for this variable.}
 

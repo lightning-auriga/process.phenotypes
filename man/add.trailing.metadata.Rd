@@ -7,24 +7,53 @@
 add.trailing.metadata(out.yaml, dataset.tag, responses)
 }
 \arguments{
-\item{out.yaml}{list; partially constructed variable summary
-information for questionnaire}
+\item{out.yaml}{List containing partially constructed variable summary
+information for questionnaire.}
 
-\item{dataset.tag}{character vector; tag for this dataset}
+\item{dataset.tag}{Character vector of tag for this dataset}
 
-\item{responses}{character vector; column names from actual
-completed survey data}
+\item{responses}{Character vector of column names from actual
+exported wide format csv survey data.}
 }
 \value{
-list; input yaml configuration with additional
-variable information appended
+List of input yaml configuration with additional
+variable information appended.
 }
 \description{
-Add fixed trailing annotations to questionnaire configuration
+Analogous to the "SubmissionDate" starting variable, survey
+responses have fixed output metadata columns
+appended. This function scans the observed csv data and
+injects variable configuration data for whichever of the metadata
+columns happens to be present in the SurveyCTO export.
 }
 \details{
-Survey responses have fixed output metadata columns
-appended. The actual columns included seem to be pulled from
-a somewhat amorpheous pool of options; more may need to be
-added to the pool.
+The inclusion of these columns seems to be based on interactions
+with the SurveyCTO system that are not reflected in the form
+configuration. For example, SurveyCTO supports a review process
+that can inject review quality annotations into the export,
+and this system exists entirely in parallel to the actual form
+definition.
+
+The actual metadata columns included seem to be pulled from
+a somewhat amorpheous pool of options, and we almost certainly
+have not encountered all possible values. More may need to be
+added to the pool at some time; if you encounter any, which
+will be noted as extra data columns at the very end of the export
+that parse.surveycto seems unable to resolve and that were not
+present in the input form spreadsheet, please consider posting
+an issue describing the name and contents of the offending
+column(s).
+}
+\examples{
+out.yaml <- list(variables = list(HW00001 = list(
+  name = "SubmissionDate",
+  type = "string"
+)))
+dataset.tag <- "HW"
+responses <- c("SubmissionDate", "instanceID", "instanceName")
+extended.yaml <- process.phenotypes:::add.trailing.metadata(
+  out.yaml,
+  dataset.tag,
+  responses
+)
 }

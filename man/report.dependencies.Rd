@@ -3,7 +3,7 @@
 \name{report.dependencies}
 \alias{report.dependencies}
 \title{Helper function to report summary information about encoded
-dependency relationships between variables.}
+dependency relationships between variables}
 \arguments{
 \item{phenotype.data}{Data frame with full phenotype data for selection
 of linked variable contents.}

@@ -3,18 +3,44 @@
 \name{get.last.variable.number}
 \alias{get.last.variable.number}
 \title{Determine from a set of variables what the last
-variable number was and return as integer}
+variable number was and return as integer.}
 \usage{
 get.last.variable.number(variables)
 }
 \arguments{
-\item{variables}{list of previously added variables,
+\item{variables}{List of previously added variables,
 with names of the format "TAG#####.*"}
 }
 \value{
-numeric part of final named entry as integer
+Numeric part of final named entry as integer.
 }
 \description{
-Determine from a set of variables what the last
-variable number was and return as integer
+As part of the parse.surveycto processing chain,
+a new variable identifier must be selected to
+add to an existing set of configured variables.
+This function takes the current set of variable
+names and returns the maximum integer component
+of the tag, such that a new variable name can
+be constructed.
+}
+\details{
+The entire parse.surveycto processing chain assumes
+that the configuration files use our standard
+naming convention of "^[A-Za-z]+[0-9]{5}" (followed
+by possible annotations for repeat variables). There
+is no reason in the processing of create.phenotype.report
+that such a convention be required, but since parse.surveycto
+is constructing variable names automatically, a convention
+is required. If a different convention is required, that's
+totally ok, but the parse.surveycto helper function set
+may not be suitable for your application.
+}
+\examples{
+var.data <- list(
+  HW00001 = list(),
+  HW00002 = list(),
+  HW00003 = list(),
+  HW00004_1 = list()
+)
+res <- process.phenotypes:::get.last.variable.number(var.data)
 }

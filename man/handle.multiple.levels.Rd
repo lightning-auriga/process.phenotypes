@@ -2,7 +2,7 @@
 % Please edit documentation in R/parse_surveycto.R
 \name{handle.multiple.levels}
 \alias{handle.multiple.levels}
-\title{Populate variables list with multiple response onehot variables}
+\title{Populate variables list with multiple response one-hot variables.}
 \usage{
 handle.multiple.levels(
   choice.list,
@@ -14,21 +14,63 @@ handle.multiple.levels(
 )
 }
 \arguments{
-\item{choice.list}{data.frame; xlsx choices tab}
+\item{choice.list}{Data frame of SurveyCTO form definition choices tab.}
 
-\item{shared.model}{character; name of categorical model from xlsx choices tab}
+\item{shared.model}{Character vector name of categorical model from xlsx
+choices tab; corresponds to "list_name" column.}
 
-\item{varname}{character; harmonized variable name for multiple response group}
+\item{varname}{Character vector of harmonized variable name for
+multiple response group.}
 
-\item{name.value}{character; name entry for variable from xlsx survey tab}
+\item{name.value}{Character vector of name entry for multiple response
+variable from SurveyCTO form definition survey tab.}
 
-\item{label.value}{character; label entry for variable from xlsx survey tab}
+\item{label.value}{Character vector of label entry for multiple response
+variable from SurveyCTO form definition survey tab.}
 
-\item{res}{list; output yaml list in progress of being built}
+\item{res}{List containing partially constructed output yaml configuration,
+with variables up to this multiple response variable already added.}
 }
 \value{
-list; input res variable with variables extended with new entries
+List of input configuration data, with variables extended with new
+entries for the multiple response one-hots.
 }
 \description{
-Populate variables list with multiple response onehot variables
+SurveyCTO multiple response variables are represented in wide csv
+export files as a single column containing a whitespace-delimited
+list of selected responses, followed by indicator variables,
+one for each possible response level, in the order encountered
+in the form choices tab, indicating whether the subject selected
+that response level.
+}
+\examples{
+choice.data <- data.frame(models = list(model1 = list(
+  type = "categorical",
+  levels = list(
+    "1" = list(
+      name = "answer 1",
+      alternate_patterns = c("1")
+    ),
+    "2" = list(
+      name = "answer 2",
+      alternate_patterns = c("2")
+    )
+  )
+)))
+shared.model <- "model1"
+varname <- "HW00002"
+name.value <- "var50"
+label.value <- "Description of var50"
+res <- list(variables = list(
+  HW00001 = list(),
+  HW00002 = list()
+))
+output.config <- process.phenotypes:::handle.multiple.levels(
+  choice.data,
+  shared.model,
+  varname,
+  name.value,
+  label.value,
+  res
+)
 }

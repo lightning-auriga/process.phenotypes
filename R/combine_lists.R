@@ -1,6 +1,6 @@
 #' @title
 #' Combine lists (or other named structure)
-#' by overwriting specific entries in substructures.
+#' by overwriting specific entries in substructures
 #'
 #' @description
 #' Configuration lists from yaml format should ideally

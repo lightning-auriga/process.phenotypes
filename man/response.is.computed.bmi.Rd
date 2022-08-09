@@ -2,7 +2,7 @@
 % Please edit documentation in R/dependency_helper_functions.R
 \name{response.is.computed.bmi}
 \alias{response.is.computed.bmi}
-\title{Test consistency of BMI with height and weight.}
+\title{Test consistency of BMI with height and weight}
 \usage{
 response.is.computed.bmi(bmi, weight, height, tolerance)
 }

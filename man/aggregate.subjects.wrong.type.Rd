@@ -3,7 +3,7 @@
 \name{aggregate.subjects.wrong.type}
 \alias{aggregate.subjects.wrong.type}
 \title{Find, for each subject, the number of variables for
-which that subject has data of the wrong type.}
+which that subject has data of the wrong type}
 \usage{
 \method{aggregate}{subjects.wrong.type}(variable.summary)
 }

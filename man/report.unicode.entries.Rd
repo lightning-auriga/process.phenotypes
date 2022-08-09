@@ -3,7 +3,7 @@
 \name{report.unicode.entries}
 \alias{report.unicode.entries}
 \title{Helper function to report summary information about Unicode
-characters that are not removed by upstream cleaning.}
+characters that are not removed by upstream cleaning}
 \arguments{
 \item{variable.entry}{List entry in dataset yaml for this variable.}
 

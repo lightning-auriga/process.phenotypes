@@ -3,7 +3,7 @@
 \name{combine.lists}
 \alias{combine.lists}
 \title{Combine lists (or other named structure)
-by overwriting specific entries in substructures.}
+by overwriting specific entries in substructures}
 \usage{
 combine.lists(list1, list2)
 }

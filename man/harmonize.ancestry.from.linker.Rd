@@ -3,7 +3,7 @@
 \name{harmonize.ancestry.from.linker}
 \alias{harmonize.ancestry.from.linker}
 \title{Update ancestry variable with harmonized ancestry names,
-and report how well you did.}
+and report how well you did}
 \usage{
 harmonize.ancestry.from.linker(
   phenotype,

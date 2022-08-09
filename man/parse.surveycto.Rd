@@ -2,7 +2,8 @@
 % Please edit documentation in R/parse_surveycto.R
 \name{parse.surveycto}
 \alias{parse.surveycto}
-\title{Convert SurveyCTO configuration data into yaml configuration for this package}
+\title{Convert SurveyCTO configuration form into yaml configuration for
+use with process.phenotypes}
 \usage{
 parse.surveycto(
   in.form.filename,
@@ -16,27 +17,126 @@ parse.surveycto(
 )
 }
 \arguments{
-\item{in.form.filename}{character vector; name of xlsx survey
-configuration file from SurveyCTO}
+\item{in.form.filename}{Character vector of name of SurveyCTO Excel xlsx
+form definition corresponding to the current csv data export.}
 
-\item{in.response.filename}{character vector; name of csv
-response data from SurveyCTO in wide format}
+\item{in.response.filename}{Character vector of name of wide format
+csv data export from SurveyCTO.}
 
-\item{dataset.tag}{character vector; tag for this dataset,
-which is used as prefix for synthetic variable names}
+\item{dataset.tag}{Character vector of tag (e.g. 'HW') for this dataset,
+which is used as prefix for automated variable names.}
 
-\item{out.yaml.filename}{character vector; destination filename
-for variable configuration data}
+\item{out.yaml.filename}{Character vector of destination filename
+for dataset-specific variable configuration file.}
 
-\item{out.shared.models}{character vector; destination filename
-for shared categorical model data for this questionnaire}
+\item{out.shared.models}{Character vector of destination filename
+for shared categorical model configuration file for this questionnaire.}
 
-\item{subject.id.name}{character vector; name of variable containing subject ID}
+\item{subject.id.name}{Character vector of name of variable containing
+subject ID for each row of the input wide format csv data.}
 
-\item{age.name}{character vector; name of variable containing subject age}
+\item{age.name}{Character vector of name of variable containing subject age
+for each row of the input wide format csv data.}
 
-\item{na.values}{character vector; factor levels that should be treated as NA}
+\item{na.values}{Character vector of factor levels that should be
+treated as NA when creating configuration data. This can be empty if desired.}
 }
 \description{
-Convert SurveyCTO configuration data into yaml configuration for this package
+SurveyCTO configuration forms are approximately equivalent to
+the configuration data used by process.phenotypes::create.phenotype.report.
+However, the process.phenotypes configuration accepts a wide array
+of cleaning and derivation options that need to be separately configured.
+The process of converting SurveyCTO form data to process.phenotypes
+configuration files is tedious and error-prone, so this utility function
+attempts to create a baseline configuration set from a form file,
+with reasonable default settings based on set conversions from
+SurveyCTO variable types.
+}
+\details{
+process.phenotypes was initially developed to support truly unstructured
+data sources, in which there were no guarantees whatsoever about data
+consistency in any dimension. Managed questionnaire data from a system
+like SurveyCTO are much preferable, but many of the features of
+process.phenotypes are still desirable: reproducible and transparent
+data processing, derived variable calculation, etc. This function is
+designed to facilitate the process of generating configuration files
+for process.phenotypes from SurveyCTO form specifications.
+
+process.phenotypes does not directly accept SurveyCTO forms.
+This library is designed for quality control and derived variable
+generation, and furthermore emphasizes transparency and reproducibility,
+and in order to achieve these things, a record of data configuration
+that reflects the current status of the data is required.
+Additionally, SurveyCTO supports kinds of variables that expand in size
+depending on the number of responses observed in the data. That's
+not necessarily a problem \emph{per se}, but after a certain number
+of responses to a given question, we find that the behavior of
+actual observed responses tends to change, such that the desired
+treatment of such variables differs spending on which repeat observation
+is being considered. As such, we keep configuration separate for
+each variable, and furthermore provide a utility function
+\code{expand.surveycto.config} that makes the process of expanding an
+existing configuration file to adapt to new repeat blocks much
+more straightforward.
+
+For context, this package is an important aspect of our reproducible
+data flow, but it does not operate in isolation. We have developed
+this package in parallel with a Snakemake workflow for handling
+our data streams. In that workflow, multiple calls to various functions
+in this package are automated in such a way that the functions communicate
+seamlessly with one another, and so that upstream changes in the various
+data sources used by process.phenotypes reliably trigger the correct
+downstream updates. We highly recommend this kind of process to other
+interested users, as a way of further streamlining the very
+finicky process of iterative data cleaning.
+
+The development of this function has been fairly organic, as we've
+expanded its supported featureset based on what we've observed
+in live form definitions. In light of this fact, we expect that there
+are additional form features that this conversion function does
+not yet support. The function is capable of detecting most errors
+in its own process by comparing its predicted variable set against
+the headers of the provided wide format csv data. It will report out
+as an error if it finds headers that are any of:
+\itemize{
+\item predicted by this function but absent in the csv;
+\item present in the csv but not predicted by this function; or
+\item both predicted and observed but out of order.
+}
+
+In any of those situations, it abstains from emitting an output
+configuration fileset. The two most likely causes of these errors are:
+\itemize{
+\item as mentioned above, this function may not support a configured
+feature; or
+\item the csv file provided to the function does not match the form version
+provided to the function.
+}
+
+If you're quite certain that the form and csv file match each other,
+then please consider posting an issue describing the observed error
+and ideally providing an example of the offending form definition.
+}
+\examples{
+csv.filename <- system.file("examples", "parse_surveycto_example.csv",
+  package = "process.phenotypes"
+)
+xlsx.filename <- system.file("examples", "parse_surveycto_example.xlsx",
+  package = "process.phenotypes"
+)
+dataset.tag <- "HW"
+out.dataset.filename <- tempfile("psc_out_dataset", fileext = ".yaml")
+out.shared.filename <- tempfile("psc_out_shared", fileext = ".yaml")
+parse.surveycto(
+  xlsx.filename,
+  csv.filename,
+  dataset.tag,
+  out.dataset.filename,
+  out.shared.filename,
+  "subjectid_1",
+  "subjectage"
+)
+}
+\seealso{
+expand.surveycto.config
 }
