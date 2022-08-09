@@ -3,7 +3,7 @@
 \name{weak.ancestry.match}
 \alias{weak.ancestry.match}
 \title{Attempt to use string similarity to guess what people
-meant by their self-reported ancestry.}
+meant by their self-reported ancestry}
 \usage{
 weak.ancestry.match(
   phenotype,

@@ -3,7 +3,7 @@
 \name{report.name.and.code}
 \alias{report.name.and.code}
 \title{Helper function to report tracking information about variable
-name and, for derived variables, code creating the variable.}
+name and, for derived variables, code creating the variable}
 \arguments{
 \item{variable.entry}{List entry in dataset yaml for this variable.}
 }

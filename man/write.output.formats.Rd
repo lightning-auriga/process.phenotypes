@@ -2,7 +2,7 @@
 % Please edit documentation in R/output_formats.R
 \name{write.output.formats}
 \alias{write.output.formats}
-\title{Report final phenotype dataset to file after processing.}
+\title{Report final phenotype dataset to file after processing}
 \usage{
 write.output.formats(
   phenotype.data,

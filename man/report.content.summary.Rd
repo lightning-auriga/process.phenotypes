@@ -3,7 +3,7 @@
 \name{report.content.summary}
 \alias{report.content.summary}
 \title{Helper function to report information about observed entries
-in text-like variables.}
+in text-like variables}
 \arguments{
 \item{phenotype.data}{Data frame of full phenotype data for variable
 selection.}

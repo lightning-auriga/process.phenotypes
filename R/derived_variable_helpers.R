@@ -1,5 +1,5 @@
 #' @title
-#' Derive binary yes/no first-degree relatives from family member data.
+#' Derive binary yes/no first-degree relatives from family member data
 #'
 #' @description
 #' This logic converts family member lists to a binary variable indicating
@@ -59,7 +59,7 @@ derive.first.degree <- function(variable.name) {
 }
 
 #' @title
-#' Apply inverse/rank normal transformation to numeric variable.
+#' Apply inverse/rank normal transformation to numeric variable
 #'
 #' @description
 #' Transforms a numeric vector to a normally distributed variable

@@ -3,7 +3,7 @@
 \name{report.numeric.summary}
 \alias{report.numeric.summary}
 \title{Helper function to report summary information about numeric
-variables' distributions.}
+variables' distributions}
 \arguments{
 \item{data.vec}{Numeric vector of column from phenotype dataframe
 for this variable.}

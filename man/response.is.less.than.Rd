@@ -2,7 +2,7 @@
 % Please edit documentation in R/dependency_helper_functions.R
 \name{response.is.less.than}
 \alias{response.is.less.than}
-\title{Test that one variable is less than the other.}
+\title{Test that one variable is less than the other}
 \usage{
 response.is.less.than(dependent.variable, independent.variable)
 }

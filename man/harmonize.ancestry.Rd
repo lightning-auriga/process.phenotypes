@@ -3,7 +3,7 @@
 \name{harmonize.ancestry}
 \alias{harmonize.ancestry}
 \title{Use external label dictionary to harmonize free-text
-ancestry labels.}
+ancestry labels}
 \usage{
 harmonize.ancestry(
   phenotype.data,

@@ -3,7 +3,7 @@
 \name{report.noncompliant.dates}
 \alias{report.noncompliant.dates}
 \title{Helper function to report summary information about values
-in date variables that do not match expected date formats.}
+in date variables that do not match expected date formats}
 \arguments{
 \item{variable.entry}{List entry in dataset yaml for this variable.}
 

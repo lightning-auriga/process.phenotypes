@@ -96,7 +96,7 @@ response.depends.on.yes <- function(dependent.variable, independent.variable,
     (!is.na(independent.variable) & independent.variable %in% yes.aliases)
 }
 
-#' Test dependency of one variable on non-NA response of another.
+#' Test dependency of one variable on non-NA response of another
 #'
 #' @description
 #' This is a function designed for use within the user configuration
@@ -188,7 +188,7 @@ response.depends.on.not.na <- function(dependent.variable, independent.variable,
       independent.variable %in% independent.na.aliases)
 }
 
-#' Test that one variable is less than the other.
+#' Test that one variable is less than the other
 #'
 #' @description
 #' This is a function designed for use within the user configuration
@@ -266,7 +266,7 @@ response.is.less.than <- function(dependent.variable, independent.variable) {
 }
 
 #' @title
-#' Test concordance of duplicate variables.
+#' Test concordance of duplicate variables
 #'
 #' @description
 #' This is a function designed for use within the user configuration
@@ -339,7 +339,7 @@ response.is.duplicate.of <- function(dependent.variable, independent.variable) {
 }
 
 #' @title
-#' Test consistency of BMI with height and weight.
+#' Test consistency of BMI with height and weight
 #'
 #' @description
 #' This is a function designed for use within the user configuration
@@ -438,7 +438,7 @@ response.is.computed.bmi <- function(bmi, weight, height, tolerance) {
 }
 
 #' @title
-#' Test consistency of age and year of birth.
+#' Test consistency of age and year of birth
 #'
 #' @description
 #' This is a function designed for use within the user configuration
@@ -573,7 +573,7 @@ year.is.consistent.with.age <- function(reported.year, reported.age,
       reported.age < (reference.year - reported.year + acceptable.tolerance))
 }
 
-#' Test that one variable is greater than, or possibly equal to, the other.
+#' Test that one variable is greater than, or possibly equal to, the other
 #'
 #' @description
 #' This is a function designed for use within the user configuration

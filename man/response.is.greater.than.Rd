@@ -2,7 +2,7 @@
 % Please edit documentation in R/dependency_helper_functions.R
 \name{response.is.greater.than}
 \alias{response.is.greater.than}
-\title{Test that one variable is greater than, or possibly equal to, the other.}
+\title{Test that one variable is greater than, or possibly equal to, the other}
 \usage{
 response.is.greater.than(
   dependent.variable,

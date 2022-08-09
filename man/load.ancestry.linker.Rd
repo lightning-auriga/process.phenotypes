@@ -3,7 +3,7 @@
 \name{load.ancestry.linker}
 \alias{load.ancestry.linker}
 \title{Read ancestry linker data and format it for use in heuristic
-ancestry mapping.}
+ancestry mapping}
 \usage{
 load.ancestry.linker(filename)
 }

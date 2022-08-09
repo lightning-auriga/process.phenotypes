@@ -3,7 +3,7 @@
 \name{emit.markdown.header}
 \alias{emit.markdown.header}
 \title{Helper function to emit formatted markdown header summarizing
-data cleaning process.}
+data cleaning process}
 \arguments{
 \item{dataset.yaml}{Character vector name of input dataset yaml file.}
 

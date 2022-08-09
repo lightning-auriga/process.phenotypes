@@ -3,7 +3,7 @@
 \name{get.bins}
 \alias{get.bins}
 \title{Try to ensure that the number of bins in a histogram isn't too close to the
-number of unique values.}
+number of unique values}
 \usage{
 get.bins(vec)
 }

@@ -4,7 +4,7 @@
 \alias{report.noncompliant.numerics}
 \title{Helper function to report information about entries in
 expected-numeric variables that do not match supported
-numeric format.}
+numeric format}
 \arguments{
 \item{variable.entry}{List entry in dataset yaml for this variable.}
 

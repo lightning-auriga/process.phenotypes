@@ -1,5 +1,5 @@
 #' @title
-#' Report final phenotype dataset to file after processing.
+#' Report final phenotype dataset to file after processing
 #'
 #' @description
 #' This function contains handlers for the primary supported output formats
