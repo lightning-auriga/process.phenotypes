@@ -7,16 +7,16 @@
 parse.date(vec, var.summary)
 }
 \arguments{
-\item{vec}{character vector, input phenotype content}
+\item{vec}{Character vector of input phenotype content.}
 
-\item{var.summary}{list, variable summary entry for this particular variable}
+\item{var.summary}{List of variable summary entry for this particular variable.}
 }
 \value{
-modified version of input with values cleaned as described above
+Modified version of input vector with values cleaned as described above.
 }
 \description{
 Given string vector with malformed date entries, attempt
-to force conversion to YYYY
+to force conversion to YYYY.
 }
 \details{
 Extracts two or four digit year values from dates of several formats,
@@ -28,5 +28,12 @@ With new data, new support for the following data formats:
 \itemize{
 \item YYYY
 \item YYYY-##-##
+\item any amount of text; a space, -, or /; and year as YY or YYYY
+\item any of the 12 Gregorian calendar months without typos, an optional comma, and then YYYY
 }
+}
+\examples{
+data <- c("1987", "1999-12-11")
+var.summary <- list()
+result <- process.phenotypes:::parse.date(data, var.summary)
 }
