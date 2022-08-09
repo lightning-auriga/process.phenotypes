@@ -2,7 +2,7 @@
 % Please edit documentation in R/dependency_helper_functions.R
 \name{response.is.duplicate.of}
 \alias{response.is.duplicate.of}
-\title{Test concordance of duplicate variables.}
+\title{Test concordance of duplicate variables}
 \usage{
 response.is.duplicate.of(dependent.variable, independent.variable)
 }

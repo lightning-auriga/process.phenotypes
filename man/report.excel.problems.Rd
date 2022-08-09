@@ -2,7 +2,7 @@
 % Please edit documentation in R/markdown_helper_functions.R
 \name{report.excel.problems}
 \alias{report.excel.problems}
-\title{Helper function to report detected Excel problems in variable contents.}
+\title{Helper function to report detected Excel problems in variable contents}
 \arguments{
 \item{variable.entry}{List entry in dataset yaml for this variable.}
 

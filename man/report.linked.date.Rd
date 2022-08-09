@@ -3,7 +3,7 @@
 \name{report.linked.date}
 \alias{report.linked.date}
 \title{Helper function to report relationship between an age variable
-and its corresponding date.}
+and its corresponding date}
 \arguments{
 \item{data.vec}{Numeric vector of column from phenotype data frame
 for this age variable.}

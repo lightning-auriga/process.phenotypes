@@ -3,26 +3,72 @@
 \name{populate.choices}
 \alias{populate.choices}
 \title{Render SurveyCTO configuration "choices" tab
-as a shared_models style yaml list}
+as a shared_models style yaml list.}
 \usage{
 populate.choices(df, survey.type, na.values)
 }
 \arguments{
-\item{df}{data.frame, input choices tab from SurveyCTO spreadsheet
-with column headers "list_name", "value", and "label"
-at least present}
+\item{df}{Data frame of input choices tab from SurveyCTO spreadsheet
+minimally with column headers "list_name", "value", and "label"
+present.}
 
-\item{survey.type}{character vector; type column entries
-from "survey" tab of CTO form configuration}
+\item{survey.type}{Character vector of type column entries
+from "survey" tab of CTO form configuration.}
 
-\item{na.values}{character vector; factor levels that should
-be treated as NA}
+\item{na.values}{Character vector of factor levels that should
+be treated as NA.}
 }
 \value{
-list of choice information as shared_models
-yaml list, with all variables configured as categoricals
+List of choice information as shared_models
+yaml list, with all variables configured as categoricals.
 }
 \description{
-Render SurveyCTO configuration "choices" tab
-as a shared_models style yaml list
+The SurveyCTO "choices" tab represents shared categorical
+variable data for defined variables in the current form.
+This corresponds to the process.phenotypes shared models,
+concept. For compatibility with create.phenotype.report,
+the "choices" tab is extracted from the form and converted
+into unordered categorical models.
+}
+\details{
+SurveyCTO does not seem to enforce much in the way
+of consistency in the three required columns in the
+choices tab: "list_name", "value", and "label". We
+have observed, among other things, instances of value
+encodings for the same model mixing integers, floats,
+and strings; multiple values corresponding to an
+identical user-facing label; and all sorts of strange
+issues with Excel numeric formatting of cells causing
+various types of conversion issues. We probably
+have not encountered or handled all possible idiosyncratic
+behaviors in the form choice data, and will try to add support
+as we run into those issues.
+
+SurveyCTO encodes multiple response variables as
+one-hot style binary indicator variables. Due to
+the kinds of level redundancy that the choices tab permits,
+there are theoretically certain combinations of model
+and multiple choice variable that could lead to ambiguous
+output column names. We have not actually observed this
+behavior in practice, and don't know what the output
+csv result information would be in that situation.
+}
+\examples{
+## choices data require list_name, value, and label
+choice.data <- data.frame(
+  list_name = c("model1", "model1"),
+  value = c("1", "2"),
+  label = c("answer 1", "answer 2")
+)
+## actual form variable specification is exclusively
+## required due to possible chaos in multiple responses
+survey.type <- c("select_one model1")
+## allow user to inject NA encodings
+na.values <- c("none", "absent", "did not respond")
+
+shared.models <- process.phenotypes:::populate.choices(
+  choice.data,
+  survey.type,
+  na.values
+)
 }

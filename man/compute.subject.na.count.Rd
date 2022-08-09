@@ -2,7 +2,7 @@
 % Please edit documentation in R/aggregate_summary_metrics.R
 \name{compute.subject.na.count}
 \alias{compute.subject.na.count}
-\title{Compute per-subject NA count across all variables.}
+\title{Compute per-subject NA count across all variables}
 \usage{
 compute.subject.na.count(phenotype.data, variable.summary)
 }

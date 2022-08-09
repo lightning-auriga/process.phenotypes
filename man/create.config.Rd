@@ -3,19 +3,47 @@
 \name{create.config}
 \alias{create.config}
 \title{Initialize dataset yaml configuration
-with basic default entries}
+with basic default entries.}
 \usage{
 create.config(dataset.tag)
 }
 \arguments{
-\item{dataset.tag}{character vector; tag
-for dataset}
+\item{dataset.tag}{Character vector tag
+for dataset.}
 }
 \value{
-list representing dataset yaml
-with a single placeholder variable
+List representing dataset yaml
+with a single placeholder variable.
 }
 \description{
-Initialize dataset yaml configuration
-with basic default entries
+process.phenotypes dataset configuration
+files have a minimum required set of entries
+for compliance with schema validation, regardless
+of the actual variables in the dataset. This
+populates a skeleton config with those entries
+and sensible default values.
+}
+\details{
+This function is an internal component of
+the parse.surveycto processing chain. The
+default values populated by this function
+are sensible, but each individual project
+will have its own requirements, so these
+entries in particular will likely require
+manual modification after parse.surveycto
+has been successfully run.
+
+The variable "SubmissionDate" has been observed
+in all SurveyCTO exports to date, and appears
+to be required infrastructure regardless
+of the actual study configuration. As such,
+it is unconditionally injected into the
+default configuration. If you end up
+with an exported wide csv without a
+"SubmissionDate" variable in the first
+column, please post an issue about it.
+}
+\examples{
+tag <- "HW"
+dataset.yaml <- process.phenotypes:::create.config(tag)
 }

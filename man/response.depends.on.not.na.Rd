@@ -2,7 +2,7 @@
 % Please edit documentation in R/dependency_helper_functions.R
 \name{response.depends.on.not.na}
 \alias{response.depends.on.not.na}
-\title{Test dependency of one variable on non-NA response of another.}
+\title{Test dependency of one variable on non-NA response of another}
 \usage{
 response.depends.on.not.na(
   dependent.variable,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/derived_variables.R
 \name{evaluate.derived.expressions}
 \alias{evaluate.derived.expressions}
-\title{Evaluate user expressions for computing a derived variable.}
+\title{Evaluate user expressions for computing a derived variable}
 \arguments{
 \item{phenotype.data}{Data frame of loaded phenotypes.}
 

@@ -1,6 +1,6 @@
 #' @title
 #' Use external label dictionary to harmonize free-text
-#' ancestry labels.
+#' ancestry labels
 #'
 #' @description
 #' Ancestry information is often collected as free-text entries
@@ -150,7 +150,7 @@ harmonize.ancestry <- function(phenotype.data,
 
 #' @title
 #' Read ancestry linker data and format it for use in heuristic
-#' ancestry mapping.
+#' ancestry mapping
 #'
 #' @description
 #' Free-text self-reported ancestry is expected to be heterogeneous
@@ -214,7 +214,7 @@ load.ancestry.linker <- function(filename) {
 
 #' @title
 #' Update ancestry variable with harmonized ancestry names,
-#' and report how well you did.
+#' and report how well you did
 #'
 #' @description
 #' This function attempts to map free-text ancestry data
@@ -339,7 +339,7 @@ harmonize.ancestry.from.linker <- function(phenotype,
 
 #' @title
 #' Attempt to use string similarity to guess what people
-#' meant by their self-reported ancestry.
+#' meant by their self-reported ancestry
 #'
 #' @description
 #' Self-reported free-text ancestry is messy. If it perfectly

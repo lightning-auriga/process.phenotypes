@@ -2,7 +2,7 @@
 % Please edit documentation in R/derived_variable_helpers.R
 \name{derive.rank.normal.transform}
 \alias{derive.rank.normal.transform}
-\title{Apply inverse/rank normal transformation to numeric variable.}
+\title{Apply inverse/rank normal transformation to numeric variable}
 \usage{
 derive.rank.normal.transform(
   variable,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/markdown_helper_functions.R
 \name{print.conditionally}
 \alias{print.conditionally}
-\title{Helper function to conditionally print output content.}
+\title{Helper function to conditionally print output content}
 \usage{
 \method{print}{conditionally}(val)
 }
