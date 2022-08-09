@@ -1,6 +1,6 @@
 #' @title
 #' Find, for each subject, the number of variables for
-#' which that subject has data of the wrong type.
+#' which that subject has data of the wrong type
 #'
 #' @description
 #' This aggregates non-compliant subject ID information from
@@ -39,7 +39,7 @@ aggregate.subjects.wrong.type <- function(variable.summary) {
 
 #' @title
 #' Find, for each variable, the number of subjects with entries
-#' not matching the specified type.
+#' not matching the specified type
 #'
 #' @description
 #' This aggregates counts of non-compliant subjects per variable,
@@ -74,7 +74,7 @@ aggregate.variables.wrong.type <- function(variable.summary) {
 }
 
 #' @title
-#' Compute per-subject NA count across all variables.
+#' Compute per-subject NA count across all variables
 #'
 #' @description
 #' Computes a count for each subject of all NAs across

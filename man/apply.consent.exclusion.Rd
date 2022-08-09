@@ -2,7 +2,7 @@
 % Please edit documentation in R/consent_exclusion.R
 \name{apply.consent.exclusion}
 \alias{apply.consent.exclusion}
-\title{Apply consent exclusion to data.}
+\title{Apply consent exclusion to data}
 \usage{
 apply.consent.exclusion(phenotype.data, variable.summary)
 }

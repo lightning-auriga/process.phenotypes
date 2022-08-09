@@ -1,4 +1,4 @@
-#' Helper function to create highest/lowest ten tables in markdown report.
+#' Helper function to create highest/lowest ten tables in markdown report
 #'
 #' @description
 #' Takes a named vector containing values (e.g. subjects) and counts,
@@ -36,7 +36,7 @@ get.top.ten <- function(decreasing, vec, column.label) {
 
 #' @title
 #' Try to ensure that the number of bins in a histogram isn't too close to the
-#' number of unique values.
+#' number of unique values
 #'
 #' @description
 #' The phenotype report features general purpose histograms that are
@@ -62,7 +62,7 @@ get.bins <- function(vec) {
 
 
 #' @title
-#' Helper function to conditionally print output content.
+#' Helper function to conditionally print output content
 #'
 #' @description
 #' If the passed value is null, no action is taken; otherwise,
@@ -96,7 +96,7 @@ print.conditionally <- function(val) {
 
 #' @title
 #' Helper function to emit formatted markdown header summarizing
-#' data cleaning process.
+#' data cleaning process
 #'
 #' @description
 #' This function exclusively functions to emit formatted information
@@ -207,7 +207,7 @@ emit.markdown.header <- function(dataset.yaml,
 
 #' @title
 #' Helper function to report tracking information about variable
-#' name and, for derived variables, code creating the variable.
+#' name and, for derived variables, code creating the variable
 #'
 #' @description
 #' This function exclusively functions to emit formatted information
@@ -242,7 +242,7 @@ report.name.and.code <- function(variable.entry) {
 }
 
 #' @title
-#' Helper function to report detected Excel problems in variable contents.
+#' Helper function to report detected Excel problems in variable contents
 #'
 #' @description
 #' This function exclusively functions to emit formatted information
@@ -276,7 +276,7 @@ report.excel.problems <- function(variable.entry, suppress.reporting) {
 
 #' @title
 #' Helper function to report summary information about numeric
-#' variables' distributions.
+#' variables' distributions
 #'
 #' @description
 #' This function exclusively functions to emit formatted information
@@ -431,7 +431,7 @@ report.numeric.summary <- function(data.vec,
 
 #' @title
 #' Helper function to report relationship between an age variable
-#' and its corresponding date.
+#' and its corresponding date
 #'
 #' @description
 #' This function exclusively functions to emit formatted information
@@ -493,7 +493,7 @@ report.linked.date <- function(data.vec,
 }
 
 #' Helper function to report summary information about reported BMI
-#' and computed BMI directly from weight and height data.
+#' and computed BMI directly from weight and height data
 #'
 #' @description
 #' This function exclusively functions to emit formatted information
@@ -600,7 +600,7 @@ report.bp.ratio <- function(phenotype.data,
 
 #' @title
 #' Helper function to report information about observed entries
-#' in text-like variables.
+#' in text-like variables
 #'
 #' @description
 #' This function exclusively functions to emit formatted information
@@ -662,7 +662,7 @@ report.content.summary <- function(phenotype.data,
 #' @title
 #' Helper function to report information about blood pressure
 #' variable entries that do not match expected blood pressure
-#' systolic/diastolic reporting format.
+#' systolic/diastolic reporting format
 #'
 #' @description
 #' This function exclusively functions to emit formatted information
@@ -676,7 +676,8 @@ report.content.summary <- function(phenotype.data,
 #'
 #' You should never need to call this function for any reason.
 #'
-#' @details Many instances of non-compliant blood pressure reporting
+#' @details
+#' Many instances of non-compliant blood pressure reporting
 #' formats have been observed in various test datasets. This reporting
 #' information is intended both to record non-compliant data and to
 #' suggest new, "creative" formats that might be supported in patches
@@ -708,7 +709,7 @@ report.noncompliant.bp <- function(variable.entry,
 #' @title
 #' Helper function to report information about entries in
 #' expected-numeric variables that do not match supported
-#' numeric format.
+#' numeric format
 #'
 #' @description
 #' This function exclusively functions to emit formatted information
@@ -754,7 +755,7 @@ report.noncompliant.numerics <- function(variable.entry,
 
 #' @title
 #' Helper function to report summary information about uncertain
-#' values in expected categorical variables.
+#' values in expected categorical variables
 #'
 #' @description
 #' This function exclusively functions to emit formatted information
@@ -842,7 +843,7 @@ report.factor.summary <- function(variable.entry,
 
 #' @title
 #' Helper function to report summary information about values
-#' in date variables that do not match expected date formats.
+#' in date variables that do not match expected date formats
 #'
 #' @description
 #' This function exclusively functions to emit formatted information
@@ -889,7 +890,7 @@ report.noncompliant.dates <- function(variable.entry,
 
 #' @title
 #' Helper function to report summary information about Unicode
-#' characters that are not removed by upstream cleaning.
+#' characters that are not removed by upstream cleaning
 #'
 #' @description
 #' This function exclusively functions to emit formatted information
@@ -932,7 +933,7 @@ report.unicode.entries <- function(variable.entry,
 
 #' @title
 #' Helper function to report summary information about encoded
-#' dependency relationships between variables.
+#' dependency relationships between variables
 #'
 #' @description
 #' This function exclusively functions to emit formatted information

@@ -2,7 +2,7 @@
 % Please edit documentation in R/dependency_helper_functions.R
 \name{year.is.consistent.with.age}
 \alias{year.is.consistent.with.age}
-\title{Test consistency of age and year of birth.}
+\title{Test consistency of age and year of birth}
 \usage{
 year.is.consistent.with.age(
   reported.year,

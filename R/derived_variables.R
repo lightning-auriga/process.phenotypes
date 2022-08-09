@@ -111,7 +111,7 @@ create.derived.variables <- function(phenotype.data, variable.summary) {
   )
 }
 
-#' Evaluate user expressions for computing a derived variable.
+#' Evaluate user expressions for computing a derived variable
 #'
 #' @description
 #' An environment and data mask providing access to the phenotype

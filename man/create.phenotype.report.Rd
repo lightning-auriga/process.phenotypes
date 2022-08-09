@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_phenotype_report.R
 \name{create.phenotype.report}
 \alias{create.phenotype.report}
-\title{Create markdown report summarizing phenotype data and cleaning process.}
+\title{Create markdown report summarizing phenotype data and cleaning process}
 \usage{
 create.phenotype.report(
   in.filename,

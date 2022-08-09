@@ -2,7 +2,7 @@
 % Please edit documentation in R/markdown_helper_functions.R
 \name{get.top.ten}
 \alias{get.top.ten}
-\title{Helper function to create highest/lowest ten tables in markdown report.}
+\title{Helper function to create highest/lowest ten tables in markdown report}
 \usage{
 get.top.ten(decreasing, vec, column.label)
 }

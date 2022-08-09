@@ -12,40 +12,49 @@ expand.surveycto.config(
   form.definition.filename,
   new.processed.export.filename = new.cto.export.filename,
   intermediate.dataset.yaml = tempfile("expand.surveycto.dataset"),
-  intermediate.shared.models = tempfile("expand.surveycto.shared_models")
+  intermediate.shared.models = tempfile("expand.surveycto.shared_models"),
+  quote = "\\"",
+  sep = "\\t"
 )
 }
 \arguments{
-\item{existing.yaml.filename}{character; name of dataset yaml
-(potentially with custom configuration data) from a run of
-parse.surveycto}
+\item{existing.yaml.filename}{Character vector of name of
+dataset yaml (potentially with custom configuration data)
+from a run of parse.surveycto.}
 
-\item{new.yaml.filename}{character; name of output dataset yaml}
+\item{new.yaml.filename}{Character vector of name of output
+dataset yaml.}
 
-\item{new.cto.export.filename}{character; name of most recent
-wide-format csv output from SurveyCTO; tested with API output,
-though it should work with web-based export as well}
+\item{new.cto.export.filename}{Character vector of name of
+most recent wide-format csv output from SurveyCTO. This
+iput has been tested with API output, though it should
+work with web-based export as well.}
 
-\item{form.definition.filename}{character; name of SurveyCTO
-form xlsx file that governs the format of the current csv export}
+\item{form.definition.filename}{Character vector of name of
+SurveyCTO form xlsx file that governs the format of the
+current csv export.}
 
-\item{new.processed.export.filename}{character; name of csv
-output from SurveyCTO with any postprocessed modifications
-(see Details)}
+\item{new.processed.export.filename}{Character vector of
+name of csv output from SurveyCTO with any postprocessed
+modifications (see Details).}
 
-\item{intermediate.dataset.yaml}{character; name of dataset yaml
-the function generates from parse.surveycto for comparison
-purposes; if not specified, a generic tempfile}
+\item{intermediate.dataset.yaml}{Character vector of name
+of dataset yaml the function generates from parse.surveycto
+for comparison purposes; if not specified, a generic tempfile.}
 
-\item{intermediate.shared.models}{character; name of
+\item{intermediate.shared.models}{Character vector of name of
 shared models yaml the file generates from parse.surveycto for
-comparison purposes; if not specified, a generic tempfile}
+comparison purposes; if not specified, a generic tempfile.}
+
+\item{quote}{Character vector used to quote string tokens in expanded SurveyCTO export
+and passed to read.table. Defaults to NULL. This parameter is exposed for
+greater compability with unpredictable input formats.}
+
+\item{sep}{Character vector used to delimit input fields in expanded SurveyCTO export
+and passed to read.table. Defaults to tab (\\t). This parameter is exposed for
+greater compatibility with unpredictable input formats.}
 }
 \description{
-Utility function to update an existing configuration
-file from parse.surveycto, given new SurveyCTO export data
-}
-\details{
 Certain types of output columns in exported SurveyCTO
 datasets are unpredictable, in the sense that, with a constant
 form definition, the columns may or may not be present, and can
@@ -54,7 +63,8 @@ challenges when trying to generate a variable specification for
 this package from which one can predictably use variable
 references, for example with the creation of derived variables,
 or in order to generate consensus variables between datasets.
-
+}
+\details{
 This function is designed to attempt to address the most
 straightforward and yet fiddly versions of these kinds of
 unpredictable variables. Repeat variables in SurveyCTO
@@ -120,4 +130,49 @@ with informative complaint, and the configuration will have
 to be updated manually. Once the configuration is adjusted to
 include these non-repeat variables, however, this function might
 be called again to handle the repeat variables exclusively.
+}
+\examples{
+existing.form <- system.file("examples", "parse_surveycto_example.xlsx",
+  package = "process.phenotypes"
+)
+existing.csv <- system.file("examples", "parse_surveycto_example.csv",
+  package = "process.phenotypes"
+)
+## first, use parse.surveycto to emit a configuration file set for the initial csv export
+initial.dataset.yaml <- tempfile("esc_dataset", fileext = ".yaml")
+initial.shared.models <- tempfile("esc_shared_models", fileext = ".yaml")
+parse.surveycto(existing.form, existing.csv,
+  "HW",
+  initial.dataset.yaml, initial.shared.models,
+  subject.id.name = "subjectid_1",
+  age.name = "subjectage",
+)
+
+## after some time, you end up with a csv with a new repeat entry
+expanded.csv <- tempfile("esc_expanded_csv", fileext = ".csv")
+data <- read.table(existing.csv,
+  header = TRUE, sep = ",",
+  quote = "\"", comment.char = "", stringsAsFactors = FALSE
+)
+data <- cbind(
+  data[, 1:11],
+  sample(letters, nrow(data), replace = TRUE),
+  data[, seq(12, ncol(data))]
+)
+colnames(data)[12] <- "subjectid_2"
+write.table(data, expanded.csv,
+  row.names = FALSE,
+  col.names = TRUE, quote = TRUE, sep = ","
+)
+
+## expand the dataset configuration file to handle this new repeat entry
+expanded.yaml <- tempfile("esc_expanded_yaml", fileext = ".yaml")
+expand.surveycto.config(
+  initial.dataset.yaml,
+  expanded.yaml,
+  expanded.csv,
+  existing.form,
+  quote = "\"",
+  sep = ","
+)
 }

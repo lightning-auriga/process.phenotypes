@@ -3,7 +3,7 @@
 \name{report.bmi.comparison}
 \alias{report.bmi.comparison}
 \title{Helper function to report summary information about reported BMI
-and computed BMI directly from weight and height data.}
+and computed BMI directly from weight and height data}
 \arguments{
 \item{phenotype.data}{Data frame of full phenotype data for variable
 selection.}

@@ -2,37 +2,43 @@
 % Please edit documentation in R/parse_surveycto.R
 \name{handle.existing.block}
 \alias{handle.existing.block}
-\title{For repeat expansion, handle the situation where there
-is a repeat variable that was present
-in the original configuration file, but that has a higher
-number repeat present in the current SurveyCTO export}
-\usage{
-handle.existing.block(var.prefix, trailing.num, res.variables, missing.colname)
-}
+\title{Generate configuration blocks for extensions of existing SurveyCTO
+repeat variables.}
 \arguments{
-\item{var.prefix}{character; shared common prefix of the dataset
+\item{var.prefix}{Character vector shared common prefix of the dataset
 yaml configuration for this repeat variable. So for example,
 if the existing repeat block was "HW00001_1", "HW00001_2", "HW00001_3",
-this would be "HW00001_"}
+this would be "HW00001_".}
 
-\item{trailing.num}{numeric; instance of the repeat observed
-in the new dataset but absent from original configuration}
+\item{trailing.num}{Numeric indicating instance of the repeat observed
+in the new dataset but absent from original configuration.}
 
-\item{res.variables}{list; accumulator of output variable
-configuration with repeats added or extended as needed}
+\item{res.variables}{List of accumulated output variable
+configuration with repeats added or extended as needed.}
 
-\item{missing.colname}{character; encountered column name
+\item{missing.colname}{Character vector encountered column name
 that is missing from current configuration. Expected to be
 correctly predicted and present in parse.surveycto configuration
-based on the current form definition and csv export}
+based on the current form definition and csv export.}
 }
 \value{
-list; updated version of input parameter 'res.variables'
-with the new resolved variable configuration entry added
+List representing updated version of input parameter 'res.variables'
+with the new resolved variable configuration entry added.
 }
 \description{
-For repeat expansion, handle the situation where there
-is a repeat variable that was present
-in the original configuration file, but that has a higher
-number repeat present in the current SurveyCTO export
+SurveyCTO repeat variables have a variety of idiosyncratic behaviors
+that complicate their compatibility with process.phenotypes. Repeat
+variables that have observed responses in a particular wide format csv
+export may gain additional repeat observations if recently collected
+responses contain more than the maximum number of existing repeats.
+This function attempts to extend an existing repeat block to match
+the observed maximum number of repeat instances in a new wide format
+csv export.
+}
+\details{
+This function is an internal function called within expand.surveycto.config.
+This function should not be directly called by the user.
+}
+\seealso{
+expand.surveycto.config
 }

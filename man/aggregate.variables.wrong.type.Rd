@@ -3,7 +3,7 @@
 \name{aggregate.variables.wrong.type}
 \alias{aggregate.variables.wrong.type}
 \title{Find, for each variable, the number of subjects with entries
-not matching the specified type.}
+not matching the specified type}
 \usage{
 \method{aggregate}{variables.wrong.type}(variable.summary)
 }

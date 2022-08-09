@@ -1,5 +1,5 @@
 #' @title
-#' Apply consent exclusion to data.
+#' Apply consent exclusion to data
 #'
 #' @description
 #' Load subject list(s) specifying inclusion and exclusion of

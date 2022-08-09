@@ -3,7 +3,7 @@
 \name{report.factor.summary}
 \alias{report.factor.summary}
 \title{Helper function to report summary information about uncertain
-values in expected categorical variables.}
+values in expected categorical variables}
 \arguments{
 \item{variable.entry}{List entry in dataset yaml for this variable.}
 
