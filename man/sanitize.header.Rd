@@ -3,30 +3,30 @@
 \name{sanitize.header}
 \alias{sanitize.header}
 \title{Apply transformed variable names to data frame}
-\usage{
-sanitize.header(df, var.map)
-}
 \arguments{
-\item{df}{data frame, phenotype dataframe with untransformed headers}
+\item{df}{Data frame containing phenotype data with untransformed headers.}
 
-\item{var.map}{output of \code{map.header} for df}
+\item{var.map}{List output of \code{map.header}, containing input dataset configuration
+but with user settings per variable in params sublists.}
 }
 \value{
-input data frame with variable name transformation applied
+Data frame containing input phenotype data with variable name transformation applied.
 }
 \description{
-Apply mapped header values to data frame to address issues like non-standard
-characters, repeat values, etc.
+Header remapping is designed to clean up input format discrepancies such as
+non-standard characters, repeat values, etc. The worst we have seen is header emoji;
+every time you don't have header emoji, take some time to feel grateful for that.
+
+As with \code{map.header}, this functionality is some of the oldest in the package.
+It should not be called outside of the \code{create.phenotype.report} processing chain.
 }
 \details{
 This function takes a data frame and the output of \code{map.header}, and applies
-the variable name transformation to the data frame.
-
-Note that this must be run after \code{map.header}, and without any column ordering
+the variable name transformation to the data frame. Note that this must be run
+after \code{map.header}, and without any column ordering
 changes on the input phenotype data. If the order is changed, this sanitization
 will fail silently.
 }
 \seealso{
 map.header
 }
-\keyword{phenotypes}
