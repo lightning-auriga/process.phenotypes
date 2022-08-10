@@ -7,18 +7,37 @@
 load.configuration(dataset.parameter.filename, global.parameter.filename)
 }
 \arguments{
-\item{dataset.parameter.filename}{character vector, filename
-of dataset-specific variable parameters}
+\item{dataset.parameter.filename}{Character vector filename
+of dataset-specific variable parameters.}
 
-\item{global.parameter.filename}{character vector, filename
-of global shared model specifications}
+\item{global.parameter.filename}{Character vector filename
+of global shared model specifications.}
 }
 \value{
-list of lists, containing parsed yaml configuration
-information
+List representation of input dataset yaml configuration,
+with shared models resolved from the separate configuration file.
 }
 \description{
-Load cleaning configurations from yaml file and apply
-shared models.
+This function loads user-specified yaml-format cleaning configurations
+and resolves shared models for each variable. The resolution process
+is somewhat finicky, but tries to provide the shared model as the basic
+infrastructure with any variable-specific idiosyncrasies applied on top.
+}
+\details{
+The shared model system is potentially very powerful, but at the
+moment has not been particularly well used due to the manner in which
+upstream variable definitions are shifting. Ultimately, some of the
+cross-dataset harmony that was envisioned for shared models has moved
+down into derived variable generation, where the discrepancies of
+upstream modeling can be quite flexibly ironed out.
+}
+\examples{
+dataset.yaml <- system.file("examples", "example.dataset.yaml",
+  package = "process.phenotypes"
+)
+shared.models <- system.file("examples", "example.shared_models.yaml",
+  package = "process.phenotypes"
+)
+result <- process.phenotypes:::load.configuration(dataset.yaml, shared.models)
 }
 \keyword{yaml}

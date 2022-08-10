@@ -1,16 +1,35 @@
+#' @title
 #' Load yaml configuration from file, integrating global models
 #'
 #' @description
-#' Load cleaning configurations from yaml file and apply
-#' shared models.
+#' This function loads user-specified yaml-format cleaning configurations
+#' and resolves shared models for each variable. The resolution process
+#' is somewhat finicky, but tries to provide the shared model as the basic
+#' infrastructure with any variable-specific idiosyncrasies applied on top.
 #'
-#' @param dataset.parameter.filename character vector, filename
-#' of dataset-specific variable parameters
-#' @param global.parameter.filename character vector, filename
-#' of global shared model specifications
-#' @return list of lists, containing parsed yaml configuration
-#' information
+#' @details
+#' The shared model system is potentially very powerful, but at the
+#' moment has not been particularly well used due to the manner in which
+#' upstream variable definitions are shifting. Ultimately, some of the
+#' cross-dataset harmony that was envisioned for shared models has moved
+#' down into derived variable generation, where the discrepancies of
+#' upstream modeling can be quite flexibly ironed out.
+#'
+#' @param dataset.parameter.filename Character vector filename
+#' of dataset-specific variable parameters.
+#' @param global.parameter.filename Character vector filename
+#' of global shared model specifications.
+#' @return List representation of input dataset yaml configuration,
+#' with shared models resolved from the separate configuration file.
 #' @keywords yaml
+#' @examples
+#' dataset.yaml <- system.file("examples", "example.dataset.yaml",
+#'   package = "process.phenotypes"
+#' )
+#' shared.models <- system.file("examples", "example.shared_models.yaml",
+#'   package = "process.phenotypes"
+#' )
+#' result <- process.phenotypes:::load.configuration(dataset.yaml, shared.models)
 load.configuration <- function(dataset.parameter.filename,
                                global.parameter.filename) {
   ## input parameter testing
@@ -79,18 +98,57 @@ load.configuration <- function(dataset.parameter.filename,
   dataset.parameters
 }
 
+#' @title
 #' Report final configuration data to file
 #'
 #' @description
-#' Configuration data from input config.yaml are modified on load,
+#' Configuration data from the input configuratin files are modified on load,
 #' and some information is lost. Before reporting, the variable
 #' summary information from the run needs to be somewhat reformatted
-#' into a version that is compatible with the input format.
+#' into a version that is compatible with the input format. Additionally,
+#' since derived variables are computed and added to the phenotype dataset,
+#' the resolved (and appropriately ordered) entries from the derived variable
+#' block need to be migrated into the primary variable configuration content.
 #'
-#' @param variable.summary list, configuration data from
-#' create.phenotype.report run
-#' @param out.filename character vector, name of file
-#' to which to write yaml-format configuration data
+#' @details
+#' At one time, this output file was intended to provide a way of reloading
+#' the output phenotype data into process.phenotypes. That has proven somewhat
+#' inconvenient, and we have moved in favor of rerunning `create.phenotype.report`
+#' from scratch when any changes to the input configuration are required.
+#' Nevertheless, there are potential applications for this file, and furthermore
+#' it is appropriate to provide as detailed records of the processing chain
+#' as possible, so this write operation remains available with the
+#' `create.phenotype.report` `write.yaml` parameter.
+#'
+#' @param variable.summary List of configuration data from
+#' create.phenotype.report run.
+#' @param out.filename Character vector name of file
+#' to which to write yaml-format configuration data.
+#' @return NULL
+#' @examples
+#' variable.summary <- list(
+#'   tag = "HW",
+#'   globals = list(
+#'     min_age_for_inclusion = 18,
+#'     max_invalid_datatypes_per_subject = 10,
+#'     consent_inclusion_file = NULL,
+#'     consent_exclusion_file = NULL
+#'   ),
+#'   variables = list(
+#'     HW00001 = list(params = list(
+#'       name = "subjid",
+#'       type = "string",
+#'       subject_id = TRUE
+#'     )),
+#'     HW00002 = list(params = list(
+#'       name = "subjage",
+#'       type = "numeric",
+#'       subject_age = TRUE
+#'     ))
+#'   )
+#' )
+#' out.filename <- tempfile("wc_output", fileext = ".yaml")
+#' process.phenotypes:::write.configuration(variable.summary, out.filename)
 write.configuration <- function(variable.summary, out.filename) {
   stopifnot(is.list(variable.summary))
   stopifnot(is.vector(out.filename, mode = "character"))
