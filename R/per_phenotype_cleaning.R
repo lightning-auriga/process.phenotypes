@@ -442,6 +442,7 @@ exclude.by.age <- function(phenotype.data, variable.summary) {
   )
 }
 
+#' @title
 #' Convert values that should be dates to year
 #'
 #' @description
