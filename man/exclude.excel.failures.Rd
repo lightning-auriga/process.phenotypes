@@ -7,22 +7,45 @@
 exclude.excel.failures(phenotype.data, variable.summary)
 }
 \arguments{
-\item{phenotype.data}{data.frame, input phenotype data}
+\item{phenotype.data}{Data frame of input phenotype data as character vectors.}
 
-\item{variable.summary}{list, per-variable summary information and configuration data}
+\item{variable.summary}{List of dataset-specific summary information and configuration data.}
 }
 \value{
-list, first entry the input phenotype data with Excel error codes set to NA;
-second entry the variable summary list with injected reporting information about
-any Excel errors found for each variable
+List, with first entry \code{phenotype.data} the input phenotype data with Excel
+error codes set to NA, and second entry \code{variable.summary} the input variable configuration list
+with injected reporting information about any Excel errors found for each variable.
 }
 \description{
+This function removes "#error!" and "#value!" Excel error codes and reports
+the count of any such removals to a per-variable summary list, for inclusion
+in the downstream report.
+}
+\details{
+This processing step will be specifically reported in the output report from \code{create.phenotype.report}
+as a possible indicator of data malformation. Excel (Calc, Sheets, etc.) should generally not
+be used to process biological data at any step. for more information on why,
+please see \url{https://www.nature.com/articles/d41586-021-02211-4}.
+
 The function \code{remove.nonword.chars} will remove the leading and trailing characters
 from default Excel error codes, so for the least ambiguity, it should be called
 after Excel errors are already removed.
 }
-\details{
-This function removes "#error!" and "#value!" Excel error codes and reports
-the count of any such removals to the per-variable summary list, for inclusion
-in the downstream report.
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = c("10.2", "12.2", "14.4", "=#ERROR!")
+)
+variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "subjid",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(params = list(
+    name = "computedvar",
+    type = "numeric"
+  ))
+))
+result <- process.phenotypes:::exclude.excel.failures(phenotype.data, variable.summary)
 }

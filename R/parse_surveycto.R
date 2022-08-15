@@ -30,7 +30,7 @@ apply.replacements <- function(vec) {
 
 #' @title
 #' Determine from a set of variables what the last
-#' variable number was and return as integer.
+#' variable number was and return as integer
 #'
 #' @description
 #' As part of the parse.surveycto processing chain,
@@ -72,7 +72,7 @@ get.last.variable.number <- function(variables) {
 
 #' @title
 #' Render SurveyCTO configuration "choices" tab
-#' as a shared_models style yaml list.
+#' as a shared_models style yaml list
 #'
 #' @description
 #' The SurveyCTO "choices" tab represents shared categorical
@@ -237,7 +237,7 @@ populate.choices <- function(df, survey.type, na.values) {
 
 #' @title
 #' Initialize dataset yaml configuration
-#' with basic default entries.
+#' with basic default entries
 #'
 #' @description
 #' process.phenotypes dataset configuration
@@ -297,7 +297,7 @@ create.config <- function(dataset.tag) {
 }
 
 #' @title
-#' Populate variables list with multiple response one-hot variables.
+#' Populate variables list with multiple response one-hot variables
 #'
 #' @description
 #' SurveyCTO multiple response variables are represented in wide csv
@@ -380,7 +380,7 @@ handle.multiple.levels <- function(choice.list, shared.model, varname, name.valu
 
 #' @title
 #' Construct variable annotation according to type information
-#' from a SurveyCTO configuration row.
+#' from a SurveyCTO configuration row
 #'
 #' @description
 #' Given a variable configuration entry from a SurveyCTO form
@@ -1127,7 +1127,7 @@ handle.missing.block <- function(varname,
 
 #' @title
 #' Generate configuration blocks for extensions of existing SurveyCTO
-#' repeat variables.
+#' repeat variables
 #'
 #' @description
 #' SurveyCTO repeat variables have a variety of idiosyncratic behaviors
@@ -1187,7 +1187,7 @@ handle.existing.block <- function(var.prefix,
 
 
 #' @title
-#' Wrap a call to parse.surveycto and return its loaded dataset configuration.
+#' Wrap a call to parse.surveycto and return its loaded dataset configuration
 #'
 #' @description
 #' Repeat expansion of SurveyCTO configuration data needs to generate

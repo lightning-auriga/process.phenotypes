@@ -2,7 +2,8 @@
 % Please edit documentation in R/string_vector_cleanup.R
 \name{collapse.repeats}
 \alias{collapse.repeats}
-\title{Basic global cleanup of entries in a phenotype data frame}
+\title{Collapse multiple consecutive instances of specified characters
+to a single instance}
 \usage{
 collapse.repeats(
   df,
@@ -11,22 +12,28 @@ collapse.repeats(
 )
 }
 \arguments{
-\item{df}{data frame, input phenotype content}
+\item{df}{Data frame of input phenotype data as character vectors.}
 
-\item{targets}{character vector, input character(s) to replace duplicates of}
+\item{targets}{Character vector of targets to collapse into single instances.}
 
-\item{replacements}{character vector, character to replace target duplicates with}
+\item{replacements}{Character vector of what the repeats should be collapsed to.}
 }
 \value{
-modified version of input with values cleaned as described
+Data frame containing input entries with specified repeat characters
+collapsed into single instances.
 }
 \description{
-Collapses multiple consecutive instances of specificed character;
-defaults to operating on slashes and periods
+Repeated instances of certain types of characters generally indicate
+manual input errors, and prevent harmonization of repeated entries.
+This function collapses specified characters into single instances of
+a corresponding replacement character. In the case of the \code{create.phenotype.report}
+processing chain, multiple '.' are collapsed into a single '.', and multiple
+entries of any combination of '/' and '\\' are collapsed into a single '/'.
 }
-\details{
-Performs the following data modifications to non-numeric values:
-\itemize{
-\item collapses multiple instances of specified character to a single replacement
-}
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = c("//", "\\\\\\\\//", "..", "1..1")
+)
+result <- process.phenotypes:::collapse.repeats(phenotype.data)
 }

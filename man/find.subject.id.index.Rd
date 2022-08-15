@@ -7,18 +7,32 @@
 find.subject.id.index(variable.summary)
 }
 \arguments{
-\item{variable.summary}{list, input configuration data}
+\item{variable.summary}{List of input configuration data.}
 }
 \value{
-integer, index of subject ID column in input data
+Integer index of subject ID column in input data.
 }
 \description{
-the input yaml specification allows a single variable
+The input yaml specification allows a single variable
 to be flagged as "subject_id: true" for context-specific
-behaviors.
+behaviors. This function scans the configuration data and
+returns the location of that variable.
 }
 \details{
-if this column is not located, stop() is called. in the
-future, this column's presence and uniqueness will be
-enforced upstream with yaml consistency checking.
+If this column is not located, stop() is called. The handling
+of this tag, and the \code{subject_age} tag, could be improved.
+}
+\examples{
+variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "subjid",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(params = list(
+    name = "subjage",
+    type = "string"
+  ))
+))
+subj.id.index <- process.phenotypes:::find.subject.id.index(variable.summary)
 }

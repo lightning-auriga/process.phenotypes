@@ -2,27 +2,49 @@
 % Please edit documentation in R/string_vector_cleanup.R
 \name{detect.unicode.characters}
 \alias{detect.unicode.characters}
-\title{Detects and reports residual Unicode characters}
+\title{Detect and report residual Unicode characters remaining after recognized patterns are handled}
 \usage{
 detect.unicode.characters(phenotype.data, variable.summary)
 }
 \arguments{
-\item{phenotype.data}{data.frame, input phenotype data}
+\item{phenotype.data}{Data frame of input phenotype data as character vectors.}
 
-\item{variable.summary}{list, per-variable summary information and config data}
+\item{variable.summary}{List of dataset-specific summary information and configuration data.}
 }
 \value{
-list, input variable summary with updated logging information
+List of input variable summary data with updated logging information
 if any residual Unicode characters are detected.
 }
 \description{
-Flag any unicode characters not already handled
-}
-\details{
 Unicode characters should be removed when detected, as they are typically
 only sporadically injected by upstream text processors and will interfere
 with any downstream attempts at standardization. \code{process.unicode.characters}
 attempts to replace an existing set of these nefarious characters with their
 ASCII-style equivalents, but others may be introduced later, and can
 be flagged here.
+}
+\details{
+The reporting output of this function is the primary source of information
+for adding additional pattern replacements to the package linker file
+in system.files("unicode_pattern_replacements.tsv", package = "process.phenotypes").
+This function would be more helpful if it directly ejected the Unicode hex encoding
+along with the rendered Unicode character itself.
+}
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = c("1.01", "2.02", "3.03", "\u0433")
+)
+variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "subjid",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(params = list(
+    name = "var",
+    type = "numeric"
+  ))
+))
+result <- process.phenotypes:::detect.unicode.characters(phenotype.data, variable.summary)
 }

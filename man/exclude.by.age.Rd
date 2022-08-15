@@ -7,19 +7,43 @@
 exclude.by.age(phenotype.data, variable.summary)
 }
 \arguments{
-\item{phenotype.data}{data frame, loaded phenotype data with
-standardized headers; all columns should be character vectors}
+\item{phenotype.data}{Data frame of loaded phenotype data with
+standardized headers. All columns should be character vectors.}
 
-\item{variable.summary}{list, per-column summary information
-and parameters from yaml input}
+\item{variable.summary}{List of per-column summary information
+and parameters from dataset configuration.}
 }
 \value{
-list, 'phenotype.data' contains phenotype information with
-subjects below the age threshold excluded, 'variable.summary' contains
-input variable summary with information about excluded subjects.
+List, with first entry 'phenotype.data' data frame containing input phenotype
+information with subjects below the age threshold excluded; and second
+entry 'variable.summary' containing input configuration and information about excluded subjects.
 }
 \description{
 This function will exclude subjects whose age, as defined with the
 \code{subject_age: true} flag in the config, falls below the threshold.
-This is useful for excluding minors, for example.
+This is most useful for excluding minors, for example, and may
+additionally flag datasets that contain unexpected sets of subjects,
+potentially indicating issues with corruption or provenance.
+}
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = 18:21
+)
+variable.summary <- list(
+  globals = list(min_age_for_inclusion = 20),
+  variables = list(
+    HW00001 = list(params = list(
+      name = "subjid",
+      type = "string",
+      subject_id = TRUE
+    )),
+    HW00002 = list(params = list(
+      name = "subjage",
+      type = "numeric",
+      subject_age = TRUE
+    ))
+  )
+)
+result <- process.phenotypes:::exclude.by.age(phenotype.data, variable.summary)
 }

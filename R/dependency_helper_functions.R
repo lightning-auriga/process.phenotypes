@@ -1,3 +1,4 @@
+#' @title
 #' Test dependency of one variable on "yes" response of another
 #'
 #' @description
@@ -96,6 +97,7 @@ response.depends.on.yes <- function(dependent.variable, independent.variable,
     (!is.na(independent.variable) & independent.variable %in% yes.aliases)
 }
 
+#' @title
 #' Test dependency of one variable on non-NA response of another
 #'
 #' @description
@@ -188,6 +190,7 @@ response.depends.on.not.na <- function(dependent.variable, independent.variable,
       independent.variable %in% independent.na.aliases)
 }
 
+#' @title
 #' Test that one variable is less than the other
 #'
 #' @description
@@ -573,6 +576,7 @@ year.is.consistent.with.age <- function(reported.year, reported.age,
       reported.age < (reference.year - reported.year + acceptable.tolerance))
 }
 
+#' @title
 #' Test that one variable is greater than, or possibly equal to, the other
 #'
 #' @description

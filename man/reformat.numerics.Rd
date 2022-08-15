@@ -2,22 +2,34 @@
 % Please edit documentation in R/string_vector_cleanup.R
 \name{reformat.numerics}
 \alias{reformat.numerics}
-\title{Aggressively convert malformed numeric vector}
+\title{Attempt to convert somewhat malformed numeric vectors to actual numerics}
 \usage{
 reformat.numerics(vec, var.summary)
 }
 \arguments{
-\item{vec}{character vector, input phenotype content}
+\item{vec}{Character vector of input candidate numeric data.}
 
-\item{var.summary}{list, variable summary entry for this particular variable}
+\item{var.summary}{List of input variable configuration data for this data vector.}
 }
 \value{
-modified version of input with values cleaned as described above
+List, with first entry \code{phenotype.data} modified input data vector with
+numeric conversion applied, and second entry \code{variable.summary} the input
+configuration data with invalid numeric entries annotated for later reporting.
 }
 \description{
-Remove trailing non-numerics to allow conversion to numeric
+Given a string vector with malformed numeric entries, this function attempt
+to force conversion to numerics by stripping common problems.
 }
 \details{
-Given string vector with malformed numeric entries, attempt
-to force conversion to numerics by stripping common problems.
+This conversion is potentially \emph{very} aggressive for certain types of inputs.
+As such, anything that fails conversion is recorded and reported out as
+a table in the \code{create.phenotype.report} cleaning report. Each time there's
+anything in such a table for any variable, the values should be evaluated
+and inspected for possible issues, or potentially any requirements for
+updating the accepted numeric format definition.
+}
+\examples{
+data <- c("100", "120.1", "1.5 meters")
+var.summary <- list()
+results <- process.phenotypes:::reformat.numerics(data, var.summary)
 }

@@ -2,23 +2,37 @@
 % Please edit documentation in R/string_vector_cleanup.R
 \name{make.lowercase}
 \alias{make.lowercase}
-\title{Basic global cleanup of entries in a phenotype data frame}
+\title{Harmonize all input phenotype entries to lowercase}
 \usage{
 make.lowercase(df)
 }
 \arguments{
-\item{df}{data frame, input phenotype content}
+\item{df}{Data frame of input phenotype data as character vectors.}
 }
 \value{
-modified version of input with values cleaned as described
-above
+Data frame containing input entries with all alphabetical
+values set to their lowercase versions.
 }
 \description{
-Converts all characters to lower case
+To facilitate downstream operations comparing values
+to configuration data and each other, all string input
+values are set to lowercase. This is primarily to
+address issues with files that have been constructed
+via manual entry.
 }
 \details{
-Performs the following data modifications to non-numeric values:
-\itemize{
-\item convert all characters to lower case
+The output data frame will have all string values in lowercase.
+This is usually fine, but can cause some issues when input
+subject IDs contain uppercase letters. This package assumes
+that subject IDs are not ultimately case sensitive. If this causes
+substantial problems for users, we could potentially patch this
+to restore ID case in the output data; post an issue if you are
+interested in this functionality.
 }
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = c("1.03mL", "2.33", "2.22 L", "4")
+)
+result <- process.phenotypes:::make.lowercase(phenotype.data)
 }

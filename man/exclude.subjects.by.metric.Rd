@@ -3,7 +3,7 @@
 \name{exclude.subjects.by.metric}
 \alias{exclude.subjects.by.metric}
 \title{Remove subjects from a data frame based on a pre-computed
-metric and a bound on that metric.}
+metric and a bound on that metric}
 \usage{
 exclude.subjects.by.metric(
   phenotype.data,
@@ -13,19 +13,71 @@ exclude.subjects.by.metric(
 )
 }
 \arguments{
-\item{phenotype.data}{data.frame, input phenotype data}
+\item{phenotype.data}{Data frame of input phenotype data.}
 
-\item{variable.summary}{list, variable configuration data}
+\item{variable.summary}{List of dataset configuration.}
 
-\item{metric.vec}{integer vector, pre-computed values,
+\item{metric.vec}{Integer vector of pre-computed values,
 with corresponding subject IDs as names, to be used for
-determining exclusion}
+determining exclusion.}
 
-\item{upper.limit}{numeric, bound on computed metric
-above which corresponding subjects will be removed}
+\item{upper.limit}{Numeric bound on computed metric
+above which corresponding subjects will be removed.}
+}
+\value{
+Data frame, a modified version of the input phenotype
+data with any subjects (rows) failing the exclusion criteria
+entirely removed.
 }
 \description{
 Assuming metrics like per-subject type conversion failure
 counts have been computed elsewhere, this function removes
-rows exceeding some bound on that value.
+rows exceeding some bound on that value. This functionality
+was added when the package was being used on particularly
+malformed data, and certain subjects evidently contained
+large numbers of entries that did not conform to the
+corresponding variables' expected types. Better behaved
+datasets should effectively never lose subjects to
+these filters.
+}
+\details{
+process.phenotypes tends to try to avoid removing subjects
+entirely unless the subject is exceptionally toxic. The instances
+when this happens are:
+\itemize{
+\item consent failures
+\item age exclusions
+\item subjects with invalid subject ID
+\item subjects failing these metric exclusions
+}
+
+Such is the severity we ascribe to failures of data type
+conformance metrics. Information about subjects removed
+by this function is reported in the cleaning report.
+If subjects are ever excluded from your dataset for
+these metrics, you should inspect every single one
+of them to diagnose what particularly led to the exclusion.
+}
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = 18:21
+)
+variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "subjid",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(params = list(
+    name = "subjage",
+    type = "numeric"
+  ))
+))
+metric.vec <- 1:4
+names(metric.vec) <- phenotype.data[, 1]
+result <- process.phenotypes:::exclude.subjects.by.metric(
+  phenotype.data, variable.summary,
+  metric.vec, as.integer(2)
+)
 }
