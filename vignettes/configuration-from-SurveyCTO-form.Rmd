@@ -17,3 +17,12 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(process.phenotypes)
 ```
+
+If you are using [SurveyCTO](https://www.surveycto.com/) for your phenotype data collection,
+we recommend generating configuration files from the form definition file used to configure
+the SurveyCTO questionnaire. This can be accomplished within `process.phenotypes` by using the
+function `parse.surveycto`.
+
+## Parse SurveyCTO overview
+
+

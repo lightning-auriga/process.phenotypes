@@ -5,6 +5,8 @@ output:
     highlight: pygments
     toc: true
     fig_width: 5
+    fig.align: "center"
+    df_print: !expr function(df) {print(df, row.names = FALSE, max = 20 * ncol(df))}
 vignette: >
   %\VignetteIndexEntry{Manually Configuring a Dataset for process.phenotypes}
   %\VignetteEngine{knitr::rmarkdown}
@@ -21,7 +23,18 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(process.phenotypes)
+library(process.phenotypes, quietly = TRUE)
+library(knitr, quietly = TRUE)
+library(kableExtra, quietly = TRUE)
+library(ggplot2, quietly = TRUE)
+```
+
+```{r ggplot.theme}
+my.theme <- ggplot2::theme_light() + ggplot2::theme(
+  plot.title = ggplot2::element_text(hjust = 0.5, size = 16),
+  axis.title = ggplot2::element_text(size = 14),
+  axis.text = ggplot2::element_text(size = 12)
+)
 ```
 
 # Manual Dataset Configuration
@@ -96,7 +109,7 @@ header for the variable in the input data matrix. The name is required for two r
   - it is important for transparent recordkeeping: this is how you know that `garbled_input1` corresponds
   to `pretty_header_1` in the output
   - it provides a really important sanity check for the package during input, when it confirms that
-  the input data conform to the structure of the specified dataset yaml
+  the input data conform to the structure of the specified dataset yaml/
   
 ### Variable `canonical_name:` key/value pair
 
@@ -182,13 +195,28 @@ VAR00003:
 
 ```{r show.date.conversion}
 
-res <- process.phenotypes:::parse.date(phenotype.data$dob, list())
-df <- data.frame(before = phenotype.data$dob, after = res$phenotype.data$dob)
-head(df)
+## Note that the tolower function is used to emulate the behavior of upstream steps in the package
+res <- process.phenotypes:::parse.date(tolower(phenotype.data$dob), list())
+df <- data.frame(before = phenotype.data$dob, after = res$phenotype.data)
+```
 
+```{r display.date.conversion.table, echo=FALSE}
+
+cat("## Dates in a variety of formats before and after cleaning has been applied\n\n")
+df
 ```
 
 ### Numeric Variables
+
+Suitable for numeric values, both float and integer.  Any characters after the first detected
+number are removed (e.g. 100.2and200 becomes 100.2).  This is especially helpful for numeric
+variables that are followed by units, possibly inconsistently.  You should note that if values
+are reported in different units, e.g. cm vs. m, this may obfuscate that difference; however,
+you may be able to detect and correct bimodal variables (see below).  Instances of different
+units in a unimodal distribution are more likely errors in the unit designation, in which
+case stripping them via this function is helpful.
+
+To configure a numeric variable, you would start with something like this:
 
 ```{yaml}
 
@@ -199,7 +227,106 @@ VAR00004:
 
 ```
 
+The function to clean numeric variables is internal, but this is an example of usage with
+test height data.  See below for a comparison of input and output of the numeric cleaning
+process.
+
+```{r run.numeric.cleaning}
+
+res <- process.phenotypes:::reformat.numerics(phenotype.data$height, list())
+df <- data.frame(before = phenotype.data$height, after = res$phenotype.data)
+```
+
+#### Numeric variables before and after cleaning has been applied
+
+```{r display.numeric.cleaning.table, echo=FALSE}
+
+df
+```
+
+Once your data is cleaned, you will find a histogram in the report, like this one:
+
+```{r plot.height.distribution, echo=FALSE, comment="", results="asis"}
+
+process.phenotypes:::report.numeric.summary(
+  res$phenotype.data,
+  phenotype.data,
+  list(params = list(
+    name = "height",
+    type = "numeric"
+  )),
+  "VAR00004",
+  "Standing Height (meters)",
+  my.theme,
+  FALSE
+)$hist.plot
+```
+
+### Setting Bounds
+
+Upon first evaluation of numeric variable distributions, you may find that you want
+to assert min and/or max bounds to remove outliers.  This can be done in the config
+as follows:
+
+```{yaml}
+
+VAR00004:
+  name: "height"
+  type: "numeric"
+  canonical_name: "Standing Height (meters)"
+  bounds:
+    min: 1.0
+    max: 2.2
+
+```
+
+You can then re-run `create.phenotype.report` and re-assess the histogram in the HTML report.
+You should see that the bounds have been applied.
+
+
+
+```{r apply.bounds, echo=FALSE, results="asis"}
+
+variable.summary <- list(variables = list(HW0001 = list(params = list(
+  name = "height",
+  type = "numeric",
+  bounds = list(
+    min = 1.0,
+    max = 2.2
+  )
+))))
+bounds.applied <- process.phenotypes:::apply.bounds(
+  data.frame(HW0001 = res$phenotype.data),
+  variable.summary
+)
+res.bounds <- process.phenotypes:::report.numeric.summary(
+  bounds.applied$phenotype.data[, 1],
+  phenotype.data,
+  bounds.applied$variable.summary$variables$HW0001,
+  "VAR00004",
+  "Standing Height (meters)",
+  my.theme,
+  FALSE
+)
+res.bounds$hist.plot
+```
+
+A table will also be emitted that tells you how many values are excluded by the bounds, as
+shown here:
+
+```{r apply.bounds.table, echo=FALSE, results="asis"}
+
+res.bounds$tab.summary
+```
+
 ### Bimodal Numerics
+
+Sometimes we have seen a bimodal distribution in some numeric variables.  This
+may be expected, for example in some anthropometric measurements amongst male/female
+subjects.  However, this can also be indicative of different collection centers or
+research associates collecting data in different units.  This will often be evident
+in the HTML report generated by `create.phenotype.report` when looking at the
+histogram.
 
 ```{yaml}
 
@@ -210,52 +337,406 @@ VAR00005:
 
 ```
 
+```{r plot.bimodal, echo=FALSE, comment="", results="asis"}
+
+res <- process.phenotypes:::reformat.numerics(phenotype.data$waist_circumference, list())
+process.phenotypes:::report.numeric.summary(
+  res$phenotype.data,
+  phenotype.data,
+  list(params = list(
+    name = "waist_circumference",
+    type = "numeric"
+  )),
+  "VAR00005",
+  "Waist Circumference (centimeters)",
+  my.theme,
+  FALSE
+)$hist.plot
+```
+
+In this case, perhaps a subset of research associates or sites collected this data in inches
+instead of centimeters.  You can address this in one of several ways, including 1) setting an upper
+or lower bound, or 2) creating a derived variable with a more sophisticated operation to attempt
+to perform a unit conversion.  We explored setting bounds above, so here is an example of
+creating a derived variable for this scenario:
+
+
+```{r, echo=FALSE}
+# nolint start
+```
+
+```{yaml}
+
+derived:
+  VAR00005_corrected:
+    name: "Waist circumference with units harmonized"
+    type: "numeric"
+    code: |
+      res <- VAR00005
+      res[res < 50] <- res[res < 50] * 2.54
+      res
+
+```
+
+```{r, echo=FALSE}
+# nolint end
+```
+
+In the configuration above, we have created a new derived variable based on the original
+waist circumference stored in VAR00005.  The text in the `code` block is executed in an
+isolated environment and does not affect the underlying original data.  You have access to
+all of the variables in the dataset as vectors, labeled as their user-defined names (e.g.
+"VAR00005").  Note the pipe symbol following `code:` in the example above.  The YAML
+specification defines a variety of symbols to allow interpretation of multiline strings/
+string literals; please see the [YAML multiline documentation](https://yaml-multiline.info/) for
+more information.
+
+```{r plot.bimodal.derived, echo=FALSE, comment="", results="asis"}
+
+res <- process.phenotypes:::reformat.numerics(phenotype.data$waist_circumference, list())
+res$phenotype.data[res$phenotype.data < 50] <- res$phenotype.data[res$phenotype.data < 50] * 2.54
+process.phenotypes:::report.numeric.summary(
+  res$phenotype.data,
+  phenotype.data, list(params = list(
+    name = "Waist circumference with units harmonized",
+    type = "numeric"
+  )),
+  "VAR00005_corrected",
+  "Waist circumference with units harmonized",
+  my.theme,
+  FALSE
+)$hist.plot
+```
+
 ### Categorical Variables
+
+Categorical variables are useful when you have a variable with a relatively small
+set of possible response values.  One example could be sex, as shown below.  Sometimes
+categorical variables are well-structured and conform easily to specific levels; other times
+you may find a wide variety of values that could be sorted into categorical levels.  You
+can use alternate patterns, which are treated as 
+[regular expressions](https://r4ds.had.co.nz/strings.html#matching-patterns-with-regular-expressions),
+to set definitions for levels.  
 
 ```{yaml}
 
 VAR00006:
   name: "sex"
+  canonical_name: "Sex"
   type: "categorical"
   levels:
     "1":
-      name: ""
+      name: "Male"
+      alternate_patterns:
+        - "^male$"
+        - "^[Mm]$"
     "2":
-      name: ""
+      name: "Female"
+      alternate_patterns:
+        - "^female$"
+        - "^[Ff]$"
 
 ```
+The `name` for each level will be shown in a table in the HTML report,
+along with counts for each value matching that level (or an alternate pattern for that
+level).  Values that do not match the expected level names or patterns will be listed
+in an additional table, and you might want to revisit the configuration to add them
+as alternate patterns if appropriate.  Otherwise, they will be treated as NA values.
 
-### Specifying Alternate Patterns as `NA`
+```{r categorical.table, echo=FALSE, comment="", results="asis"}
+
+variable.summary <- list(params = list(
+  name = "sex",
+  type = "categorical",
+  levels = list(
+    "1" = list(
+      name = "Male",
+      alternate_patterns = c("^male$", "^[Mm]$")
+    ),
+    "2" = list(
+      name = "Female",
+      alternate_patterns = c("^female$", "^[Ff]$")
+    )
+  )
+))
+res <- process.phenotypes:::reformat.factor(phenotype.data$sex, variable.summary)
+process.phenotypes:::report.content.summary(
+  data.frame(VAR00006 = res$phenotype.data),
+  table(res$phenotype.data,
+    useNA = "ifany"
+  ),
+  1,
+  "VAR00006",
+  "Sex",
+  FALSE
+)
+process.phenotypes:::report.factor.summary(res$variable.summary, "VAR00006", FALSE)
+```
+
+### Adding Variable-Specific Aliases for `NA`
+
+Some variables may contain values that are not recognized as global `NA` aliases
+within the package.  You might see things like "not measured", "cannot remember",
+and other creative responses that can safely be mapped to `NA`.  You can specify
+aliases for those values in the YAML config as follows:
 
 ```{yaml}
 
 VAR00007:
   name: "fruit"
+  canonical_name: "Do you eat fruit?"
   type: "categorical"
   levels:
     "1":
-      name: ""
+      name: "yes"
     "2":
-      name: ""
+      name: "no"
+  na-values:
+    - "not answered"
 
 ```
 
+Some common `NA` values are ambiguous.  For example, "none" can be an `NA` value,
+or it can be meaningful, depending on the question asked and the expected responses.
+This is why we allow `NA` configuration on a per-variable basis, and not on a global
+basis.
+
 ### Reporting and Enforcing Dependencies
+
+You can use dependencies in the YAML configuration file to check for consistency across
+related variables.  We have two related example variables here, one about whether a subject
+eats fruit, and another about which fruit is preferred.
+
+```{r show.fruit.columns, echo=FALSE}
+
+phenotype.data[, c("fruit", "preferred fruit")]
+```
+
+You might expect that subjects who list a preferred fruit should have also answered "yes"
+to the question of whether they eat fruit.  You can check this by creating a dependency in
+the configuration:
 
 ```{yaml}
 
 VAR00008:
-  name: "preferred.fruit"
+  name: "preferred fruit"
+  canonical_name: "What is your preferred fruit?"
   type: "categorical"
   levels:
     "1":
-      name: ""
+      name: "apple"
     "2":
-      name: ""
+      name: "pear"
     "3":
-      name: ""
-    "4":
-      name: ""
+      name: "strawberry"
+  dependencies:
+    "1":
+      name: "must eat fruit to have a preferred fruit"
+      condition: |
+        is.na(VAR00008) |
+        (!is.na(VAR00007) & VAR00007 == "yes")
+
+```
+
+Let's take a look at the summary tables for each of the two variables that we've defined
+as having a dependency relationship.  You can find tables like the ones excerpted here
+in the HTML report output after running the package.
+
+
+```{r fruit.dependency, results="asis", echo=FALSE, comment=""}
+
+variable.summary <- list(variables = list(
+  VAR00001 = list(params = list(
+    name = "subjid",
+    subject_id = TRUE
+  )),
+  VAR00007 = list(params = list(
+    name = "fruit",
+    type = "categorical",
+    levels = list(
+      "1" = list(name = "yes"),
+      "2" = list(name = "no")
+    ),
+    "na-values" = c("not answered")
+  )),
+  VAR00008 = list(params = list(
+    name = "preferred fruit",
+    type = "categorical",
+    levels = list(
+      "1" = list(name = "apple"),
+      "2" = list(name = "pear"),
+      "3" = list(name = "strawberry")
+    ),
+    dependencies = list("1" = list(
+      name = "must eat fruit to have a preferred fruit",
+      condition = "is.na(VAR00008) | (!is.na(VAR00007) & VAR00007 == \"yes\")"
+    ))
+  ))
+))
+res.fruit <- process.phenotypes:::reformat.factor(phenotype.data$fruit, variable.summary$variables$VAR00007)
+variable.summary$variables$VAR00007 <- res.fruit$variable.summary
+res.preferred.fruit <- process.phenotypes:::reformat.factor(
+  phenotype.data$"preferred fruit",
+  variable.summary$variables$VAR00008
+)
+variable.summary$variables$VAR00008 <- res.preferred.fruit$variable.summary
+process.phenotypes:::report.content.summary(
+  data.frame(VAR00007 = res.fruit$phenotype.data),
+  table(res.fruit$phenotype.data,
+    useNA = "ifany"
+  ),
+  1,
+  "VAR00007",
+  "Do you eat fruit?",
+  FALSE
+)
+process.phenotypes:::report.content.summary(
+  data.frame(VAR00008 = res.preferred.fruit$phenotype.data),
+  table(res.preferred.fruit$phenotype.data,
+    useNA = "ifany"
+  ),
+  1,
+  "VAR00008",
+  "What is your preferred fruit?",
+  FALSE
+)
+```
+
+What if some subjects have violated the assumption we made earlier, that you must eat fruit
+in order to have a preferred fruit?  The dependency written above in the configuration file
+will report out the number and ID of subjects who violate the `condition` defined.  In this
+case, we are looking for subjects who either have an `NA` response for VAR00008, or who have
+a non-`NA` response to VAR00008 and an affirmative response to VAR00007.  That is, we are
+confirming that subjects who listed a preferred fruit have replied "yes" to whether they eat
+fruit.  Subjects who violate this condition will be listed out, both in the form of a count
+and a list of subject IDs, in the HTML report, and as shown below.
+
+```{r fruit.dependency.table, results="asis", echo=FALSE, comment=""}
+
+variable.summary <- process.phenotypes:::check.variable.dependencies(
+  data.frame(
+    VAR00001 = phenotype.data$subjid,
+    VAR00007 = res.fruit$phenotype.data,
+    VAR00008 = res.preferred.fruit$phenotype.data
+  ),
+  variable.summary
+)
+deps <- process.phenotypes:::report.dependencies(
+  data.frame(
+    VAR00007 = res.fruit$phenotype.data,
+    VAR00008 = res.preferred.fruit$phenotype.data
+  ),
+  variable.summary,
+  "VAR00008",
+  FALSE
+)
+
+deps$cross
+```
+
+The logic for these dependency conditions can be a bit tricky, so we have provided a small set
+of convenience functions that you can use in the `condition` block.  They are listed below, with
+descriptions.
+
+- `response.depends.on.yes`: This function allows you to test dependent relationships between two variables
+  where one variable should be "yes" if the other variable is non-NA.  For instance, the code in our fruit
+  example could have used this function as follows: `response.depends.on.yes(VAR00008, VAR00007)`.  The precise
+  values that map to "yes" and `NA` can be configured as needed; please see the function documentation for
+  more details.
+- `response.depends.on.not.na`: This function can be applied when the independent variable can be any non-NA
+  value, rather than just "yes", in order to have a valid non-NA response to the dependent variable.  The same
+  configurability applies to values of `NA` for this function as for above.  For example, if a question asks
+  how many days per week you exercise, and a second question asks how much time you spend exercising per day,
+  you could use this function to require that the first question be non-NA in order to have a valid response
+  for the second question.
+- `response.is.less.than`: This function tests that the dependent variable is less than the independent variable.
+  For example, you may want to ensure that a date of diagnosis is less than the reported date of birth.
+- `response.is.duplicate.of`: This is especially helpful when dealing with data that has been merged from multiple
+  sources and has variables that are expected to be identical, to verify their status.  For example, if two
+  input datasets were merged upstream of `process.phenotypes`, you might have two columns representing subject age,
+  and you could use this function to confirm that the two reported subjects ages are identical, thereby increasing
+  your confidence in data fidelity.
+- `response.is.computed.bmi`: Sometimes it is unclear whether reported BMI is computed from height and weight, or
+  is self-reported or determined in some other way.  This function will take the reported BMI, weight, height,
+  and a numeric tolerance, and make a determination as to whether the reported BMI is consistent with computed BMI.
+- `year.is.consistent.with.age`: This function takes in the reported year of birth, the reported subject age, a
+  reference year (e.g. the year the questionnaire was deployed), and a tolerance, and determines whether the reported
+  date of birth is consistent with the reported subject age.
+- `response.is.greater.than`: Use this to test whether the dependent variable is greater than (or equal to; see function
+  documentation) the independent variable.  For instance, systolic blood pressure should be greater than diastolic; this
+  can be verified by using this function.
+
+table_comparisons - takes a yaml sequence of additional variable names and makes contingency tables vs current variable
+linked_date
+  reported_year
+  reference_year
+
+
+If you've detected dependency failures, what are the next steps?
+You might want to filter out these noisy, potentially erroneous responses.  Depending on
+the upstream data processing stream, this might be indicative of a variety of issues: differences
+in the way a question was posed to subjects by different research associates, transposition in
+column or row values, inaccurate transcription, etc.  You can tell `process.phenotypes` how to
+handle dependency failures by setting additional yaml flags in the dependency block.  In the example
+below, we have added a flag that will, for any subject that fails the dependency condition, set the value
+in the listed variables to `NA`.  Note that this does not happen automatically, even for the variable
+block you're within in the config.
+
+```{yaml}
+
+VAR00008:
+  name: "preferred fruit"
+  canonical_name: "What is your preferred fruit?"
+  type: "categorical"
+  levels:
+    "1":
+      name: "apple"
+    "2":
+      name: "pear"
+    "3":
+      name: "strawberry"
+  dependencies:
+    "1":
+      name: "must eat fruit to have a preferred fruit"
+      condition: |
+        is.na(VAR00008) |
+        (!is.na(VAR00007) & VAR00007 == "yes")
+      exclude_on_failure:
+        - VAR00007
+        - VAR00008
+        - VAR_other_fruit
+        - VAR_other_relevant_variable
+
+```
+
+Alternatively, for particularly toxic dependency failures, you may want to set all variables
+to `NA` for a subject that fails the dependency check.  For example, if you find that
+date of birth and reported age of subject are wildly discrepant, and you suspect that this
+is indicative of a loss of dataset integrity, you might want to exclude all subjects that
+fail a dependency check of similarity between reported age and age calculated from date of birth.
+The flag shown below will, for all subjects failing the check, set all values to `NA` for every
+variable except the one flagged in the yaml configuration as the subject ID.
+
+```{yaml}
+
+VAR00008:
+  name: "preferred fruit"
+  canonical_name: "What is your preferred fruit?"
+  type: "categorical"
+  levels:
+    "1":
+      name: "apple"
+    "2":
+      name: "pear"
+    "3":
+      name: "strawberry"
+  dependencies:
+    "1":
+      name: "must eat fruit to have a preferred fruit"
+      condition: |
+        is.na(VAR00008) |
+        (!is.na(VAR00007) & VAR00007 == "yes")
+      exclude_all_on_failure: yes
 
 ```
 
