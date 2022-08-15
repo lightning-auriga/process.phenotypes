@@ -161,6 +161,7 @@ remove.nonword.chars <- function(df, variable.summary) {
   df
 }
 
+#' @title
 #' Replace a variety of freetext aliases for NA with actual NA
 #'
 #' @description

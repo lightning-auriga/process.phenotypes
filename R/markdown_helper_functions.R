@@ -1,3 +1,4 @@
+#' @title
 #' Helper function to create highest/lowest ten tables in markdown report
 #'
 #' @description
@@ -492,6 +493,7 @@ report.linked.date <- function(data.vec,
   }
 }
 
+#' @title
 #' Helper function to report summary information about reported BMI
 #' and computed BMI directly from weight and height data
 #'

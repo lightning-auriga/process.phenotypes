@@ -2,7 +2,7 @@
 % Please edit documentation in R/parse_surveycto.R
 \name{generate.predicted.yaml}
 \alias{generate.predicted.yaml}
-\title{Wrap a call to parse.surveycto and return its loaded dataset configuration.}
+\title{Wrap a call to parse.surveycto and return its loaded dataset configuration}
 \arguments{
 \item{existing.yaml}{List of existing dataset configuration
 loaded with read_yaml. Note that the entire configuration

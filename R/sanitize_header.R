@@ -103,14 +103,14 @@ map.header <- function(df, dataset.tag, config.data,
 #' @title
 #' Apply transformed variable names to data frame
 #'
-#' @details
+#' @description
 #' This function takes a data frame and the output of `map.header`, and applies
 #' the variable name transformation to the data frame. Note that this must be run
 #' after `map.header`, and without any column ordering
 #' changes on the input phenotype data. If the order is changed, this sanitization
 #' will fail silently.
 #'
-#' @description
+#' @details
 #' Header remapping is designed to clean up input format discrepancies such as
 #' non-standard characters, repeat values, etc. The worst we have seen is header emoji;
 #' every time you don't have header emoji, take some time to feel grateful for that.

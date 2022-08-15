@@ -3,7 +3,7 @@
 \name{create.config}
 \alias{create.config}
 \title{Initialize dataset yaml configuration
-with basic default entries.}
+with basic default entries}
 \usage{
 create.config(dataset.tag)
 }
