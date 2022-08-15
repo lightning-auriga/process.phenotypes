@@ -145,7 +145,7 @@ test_that("rank normal transform stratifies by two variables", {
   set3 <- -1 * set1[2:1]
   targets <- list(set1, set3, set2, set2, set1, set3)
   n.random.mismatch <- 0
-  n.total <- 100
+  n.total <- 1000
   hit.first.entry.counts <- rep(0, 6)
   hit.any.entry.counts <- rep(0, 6)
   for (i in seq_len(n.total)) {

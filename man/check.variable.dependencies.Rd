@@ -7,17 +7,71 @@
 check.variable.dependencies(phenotype.data, variable.summary)
 }
 \arguments{
-\item{phenotype.data}{data.frame, input phenotype data}
+\item{phenotype.data}{Data frame containing input phenotype data.}
 
-\item{variable.summary}{list, configuration data per variable}
+\item{variable.summary}{List containing input dataset configuration.}
 }
 \value{
-list, modified version of input variable.summary argument
-with some reporting information about dependency check success/failure
+List containing modified version of input dataset configuration,
+with some reporting information about dependency check success/failure that
+is intended for use with the cleaning report Rmd.
 }
 \description{
 Certain variables in an input dataset should have defined relationships
 between one another. This function will evaluate, in a hopefully safe manner,
 R syntax expressions from the config yaml files and report their results
 to the per-variable summary data, for reporting in the output html.
+}
+\details{
+Dependencies are a very convenient way to put guardrails on your dataset,
+such that as the dataset expands or provenance is called into question,
+you can have some degree of surety (or not) that the dataset has maintained
+some minimum amount of integrity.
+
+Questionnaire management systems like SurveyCTO encode certain types
+of dependencies internally, leading to situations where variables have enforced
+relationships before they ever reach this package. However, the SurveyCTO
+form configuration still needs to actually have the dependencies encoded in it
+for that to be so, and that depends on how thorough the questionnaire designer
+was being. Furthermore, we have observed instances in which the deployed
+form for a questionnaire changed mid-deployment, leading to SurveyCTO collapsing
+responses to fundamentally different questions into the same variable.
+All this is to say that: even when upstream seems to be handling dependencies,
+it's good to keep an eye on things in the actual dataset you're working with,
+just in case.
+
+The package's behavior when a subject fails a dependency relationship
+is also user configurable, and generally involves setting either a specific
+list of variable responses for the subject, or potentially \emph{all} variable
+responses for the subject if the dependency is fundamental enough, to NA.
+}
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = 1:4,
+  HW00003 = 4:1
+)
+variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "subjid",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(params = list(
+    name = "count1",
+    type = "numeric"
+  )),
+  HW00003 = list(params = list(
+    name = "count2",
+    type = "numeric",
+    dependencies = list("1" = list(
+      name = "dep1",
+      condition = "HW00003 < HW00002"
+    ))
+  ))
+))
+result <- process.phenotypes:::check.variable.dependencies(phenotype.data, variable.summary)
+}
+\seealso{
+dependency.failure.handling
 }

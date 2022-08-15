@@ -7,19 +7,45 @@
 exclude.by.missing.subject.id(phenotype.data, variable.summary)
 }
 \arguments{
-\item{phenotype.data}{data frame, loaded phenotype data with
-standardized headers; all columns should be character vectors}
+\item{phenotype.data}{Data frame of loaded phenotype data with
+standardized headers. All columns should be character vectors.}
 
-\item{variable.summary}{list, per-column summary information
-and parameters from yaml input}
+\item{variable.summary}{List of per-column summary information
+and parameters from dataset configuration.}
 }
 \value{
-list, 'phenotype.data' contains phenotype information with
-subjects without a subject ID excluded, 'variable.summary' contains
-input variable summary with information about excluded subjects.
+List, with first entry 'phenotype.data' data frame of input
+phenotypes with subjects without a subject ID excluded; and second
+entry 'variable.summary' input configuration with information about
+excluded subjects.
 }
 \description{
 This function excludes subjects where their ID is NA, as
-we can't really do anything with the phenotype data without
-being able to link it to genotypes via IDs.
+such subjects cannot be meaningfully linked to relevant external
+data sources, most notably consent calls.
+}
+\details{
+This function was added during the original set of dataset processing
+that led to the development of this package. More recent input datasets
+have almost completely lacked this particular discrepancy. If any
+subjects whatsoever are flagged as removed by this function, something
+is likely seriously malformed in the input data.
+}
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", NA, "D"),
+  HW00002 = 1:4
+)
+variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "subjid",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(params = list(
+    name = "count",
+    type = "numeric"
+  ))
+))
+result <- process.phenotypes:::exclude.by.missing.subject.id(phenotype.data, variable.summary)
 }

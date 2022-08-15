@@ -2,23 +2,35 @@
 % Please edit documentation in R/string_vector_cleanup.R
 \name{reformat.blood.pressure}
 \alias{reformat.blood.pressure}
-\title{Detect and reformat blood pressure measures}
+\title{Reformat blood pressure measures to standardized format}
 \usage{
 reformat.blood.pressure(vec, var.summary)
 }
 \arguments{
-\item{vec}{character vector, input phenotype content}
+\item{vec}{Character vector of input blood pressure measurements.}
 
-\item{var.summary}{list, variable summary information for this particular variable}
+\item{var.summary}{List of input configuration data for this particular variable.}
 }
 \value{
-modified version of input with values cleaned as described above
+List, with first entry \code{phenotype.data} containing input data
+reformatted into standard \code{SBP/DBP} format or NA, and second entry \code{variable.summary}
+containing input configuration data with additional annotation for values that
+failed format recognition and conversion.
 }
 \description{
-Removed unexpected values from probable blood pressure entries
-}
-\details{
 Given string vector with potentially malformed blood pressure
 entries, attempt to standardize to SBP/DBP by stripping
-common problems.
+common problems and reporting as a standard string. The process
+of converting these blood pressure data to numeric representations
+of systolic and diastolic blood pressure data separately is expected
+to be conducted in derived variables.
+}
+\details{
+Please see the Details of \code{is.blood.pressure} for a discussion of
+accepted blood pressure formats for this function.
+}
+\examples{
+phenotype.data <- c("120/80", "120 / 80", "120/80mmhg", "12080")
+var.summary <- list(params = list(name = "variable", type = "bp"))
+results <- process.phenotypes:::reformat.blood.pressure(phenotype.data, var.summary)
 }

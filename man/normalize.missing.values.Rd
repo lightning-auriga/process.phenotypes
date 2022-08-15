@@ -2,23 +2,45 @@
 % Please edit documentation in R/string_vector_cleanup.R
 \name{normalize.missing.values}
 \alias{normalize.missing.values}
-\title{Basic global cleanup of entries in a phenotype data frame}
+\title{Replace a variety of freetext aliases for NA with actual NA}
 \usage{
 normalize.missing.values(df)
 }
 \arguments{
-\item{df}{data frame, input phenotype content}
+\item{df}{Data frame of input phenotype data as character vectors.}
 }
 \value{
-modified version of input with values cleaned as described
-above
+Data frame of input data with recognized patterns reset to NA.
 }
 \description{
-Assumes input content has already had \code{make.lowercase} applied.
+Freetext responses tend to involve various standard responses
+that effectively mean non-response. Since the responses are freetext,
+this will also include a complicated assortment of typos of these
+values. This function replaces these values with NA, to try
+to streamline the process of encoding missingness.
 }
 \details{
-Performs the following data modifications to non-numeric values:
-\itemize{
-\item harmonize na, nan, not applicable values (unknowns?  blanks?)
+This package does not make a distinction between different
+forms of missingness, as some statistical packages do. This
+is largely because the primary downstream applications of this
+package's results make no meaningful distinction, and only operate
+on complete-case data. If finer granularity is required, particularly
+for phenotype multiple imputation, this package may not be entirely
+appropriate for the application. Alternatively, you can post
+an issue and propose how we might go about handling this distinction.
+
+This mapping attempts to avoid automatically aliasing certain
+types of responses that are ambiguously NA. The most common example
+is the response 'none', which can either indicate missingness or
+a valid response to some sort of ordinal response. If a response
+that isn't listed here truly does indicate NA for a particular
+variable, it is appropriate to add that value to \code{na-values}
+for that particular variable's configuration.
 }
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = c("not sure", "hello", "not available", "none")
+)
+result <- process.phenotypes:::normalize.missing.values(phenotype.data)
 }
