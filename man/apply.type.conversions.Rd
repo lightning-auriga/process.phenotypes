@@ -3,31 +3,34 @@
 \name{apply.type.conversions}
 \alias{apply.type.conversions}
 \title{Apply type constraints to each variable from yaml config}
-\usage{
-apply.type.conversions(phenotype.data, variable.summary)
-}
 \arguments{
-\item{phenotype.data}{data frame, loaded phenotype data with
-standardized headers; all columns should be character vectors}
+\item{phenotype.data}{Data frame of loaded phenotype data with
+standardized headers. All columns should be character vectors in
+input, as this is the method that casts them out of character vectors.}
 
-\item{variable.summary}{list, per-column summary information
-and parameters from yaml input}
+\item{variable.summary}{List of per-column summary information
+and parameters from dataset configuration.}
 }
 \value{
-list, entry 'phenotype.data' is a data frame (modified
-version of phenotype input data with conversions applied as appropriate);
-entry 'variable.summary' is a list (modified version of input list
-with summary information injected from certain handlers)
+List, with first entry 'phenotype.data' a data frame of modified
+phenotype input data with conversions applied as appropriate;
+and second entry 'variable.summary' a list of modified input configuration
+with summary information injected from certain handlers.
 }
 \description{
-A short list of special handlers are implemented for particular
-data conversion problems (e.g. numerics with trailing unit suffixes,
-or blood pressure data)
+Each yaml configuration block should have a "type" entry
+denoting what data storage type is expected for this variable.
+This function dispatches the appropriate handlers for these
+methods, specifically triggering type-specific cleaning in some
+cases before casting the values.
+
+If for any reason you don't like the type conversion behaviors
+in this package, set the variable type to "string" and then
+implement the processing you desire as a derived variable.
 }
 \details{
-Each yaml configuration block should have a "type" entry
-(if not, will default to unmodified string) denoting what
-data storage type is expected for this variable.
+This function is a pure internal, and should never be
+called outside of the package.
 }
 \seealso{
 load.configuration

@@ -2,40 +2,60 @@
 % Please edit documentation in R/sanitize_header.R
 \name{map.header}
 \alias{map.header}
-\title{Create and map structured variable names to replace arbitrary input variable names}
-\usage{
-map.header(df, dataset.tag, config.data, force.header.mapping = FALSE)
-}
+\title{Restructure the input dataset configuration to prepare for modification,
+and sanity check variable name linking to data.}
 \arguments{
-\item{df}{data.frame, phenotype dataframe with untransformed headers}
+\item{df}{Data frame of input phenotype data with original column headers.}
 
-\item{dataset.tag}{character vector, unique string tag for this dataset}
+\item{dataset.tag}{Character vector of unique string tag for this dataset.
+In this case, this is only used for error reporting.}
 
-\item{config.data}{list, yaml configuration data per variable}
+\item{config.data}{List of loaded input dataset yaml configuration.}
 
-\item{force.header.mapping}{logical, whether you want to be kinda foolish
+\item{force.header.mapping}{Logical indicating whether you want to be somewhat foolish
 and allow desync between config variable names and dataset header data.
-this safety check was implemented in part due to the possible presence of duplicate
+This safety check was implemented in part due to the possible presence of duplicate
 column header names, and turning it off can potentially have catastrophically
 bad effects if your configuration file is malformed.}
 }
 \value{
-list, mapping new variable names to lists; eventually meant to have
-more entries but will for now just have a original.name entry for mapping back
-to the raw variable names
+List containing a modified version of the input dataset configuration,
+with input configuration data per variable partitioned into params blocks.
 }
 \description{
-Since the addition of yaml configuration, this function additionally grabs
-any available configuration information for each variable and stores it as
-a "params" list entry per variable.
+In order for the package to conduct cleaning, it needs a modified
+version of the input dataset configuration that partitions the input
+configuration from new values that are injected during processing.
+In the midst of creating the relevant data structure, the correspondence
+between input phenotype column headers and \code{name} entries of variable
+configuration blocks is tested, to provide a sanity check that configuration
+has been conducted appropriately.
 }
 \details{
-Input data frame may have any format variable names stored as column
-headers; this function maps those to standardized format "TAG#####" names.
-The new names are reported as names(result), and the old variable names
-corresponding to those names are reported as result${newname}$original.name.
+This is one of the oldest functions in the package, and most of its original
+functionality has been removed entirely or vastly restructured. This still
+provides a very important sanity check that the input configuration variables
+structure matches the expectation in the input data. The parameter \code{force.header.mapping}
+is present in the situation that the caller wishes to override the sanity check.
+While potentially appealing in some circumstances, this parameter is ultimately
+not exposed to the user of \code{create.phenotype.report}, and as such input configuration
+must exactly match the column headers of the phenotype data. We do not plan
+on changing this behavior.
+
+One very particular case worth noting here is the instance in which the input
+phenotype data have duplicated column headers, and as such the user must
+use the process.phenotypes configuration structure to unambiguously map
+those duplicates to unique aliases. In that very particular situation, the
+column ordering sanity check is particularly essential, and should not be overridden.
+
+Mapping the input configuration data into a \code{variables[[varname]]$params} list
+is designed to protect the user configuration settings from accidental modification
+during package processing. It does somewhat complicate the internal calls
+to the variable summary object.
+
+This function is so old and strange that it should never be called by anything
+outside of the standard \code{create.phenotype.report} processing chain.
 }
 \seealso{
 sanitize.header
 }
-\keyword{phenotypes}

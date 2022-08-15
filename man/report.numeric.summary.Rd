@@ -26,7 +26,7 @@ should be suppressed.}
 \value{
 List; first entry 'hist.plot' is the variable distribution plot,
 second entry 'tab.summary' distribution table. Either entry can be null
-based on conditional .logic
+based on conditional logic.
 }
 \description{
 This function exclusively functions to emit formatted information

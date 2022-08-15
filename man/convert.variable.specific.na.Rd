@@ -8,19 +8,53 @@ particular variables}
 convert.variable.specific.na(phenotype.data, variable.summary)
 }
 \arguments{
-\item{phenotype.data}{data frame, loaded phenotype data with
-standardized headers}
+\item{phenotype.data}{Data frame of loaded phenotype data with
+standardized headers.}
 
-\item{variable.summary}{list, per-column summary information
-and parameters from yaml input}
+\item{variable.summary}{List of per-column summary information
+and parameters from dataset configuration.}
 }
 \value{
-data frame containing phenotype information with
-subjects containing specified values set to NA
+Data frame containing input phenotype information, modified
+such that all NA aliased values are in fact encoded as R NA.
 }
 \description{
-User config can optionally contain an 'na-values' sequence
+User configuration can optionally contain an \code{na-values} sequence
 containing entries that should be mapped to NA. This functionality
 is only really reliable for factors and strings; numerics may
 not match exactly as desired in some cases.
+}
+\details{
+Well after \code{na-values} support was added to the package, there
+was additionally need for an overall logical flag \code{suppress_output},
+which would prevent a variable's contents from being reported
+in the output dataset(s). This function was coopted for this functionality;
+as such, any variable flagged with \code{suppress_output: yes} in configuration
+will have all of its values treated as NA aliases, and thus while the
+variable will have a column in the output data, all observations will be NA.
+}
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = c("apple", "apple", "banana", "chicken"),
+  HW00003 = 1:4
+)
+variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "subjid",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(params = list(
+    name = "fruit",
+    type = "string",
+    "na-values" = c("chicken")
+  )),
+  HW00003 = list(params = list(
+    name = "count",
+    type = "numeric",
+    suppress_output = TRUE
+  ))
+))
+result <- process.phenotypes:::convert.variable.specific.na(phenotype.data, variable.summary)
 }

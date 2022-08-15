@@ -2,7 +2,7 @@
 % Please edit documentation in R/parse_surveycto.R
 \name{handle.multiple.levels}
 \alias{handle.multiple.levels}
-\title{Populate variables list with multiple response one-hot variables.}
+\title{Populate variables list with multiple response one-hot variables}
 \usage{
 handle.multiple.levels(
   choice.list,

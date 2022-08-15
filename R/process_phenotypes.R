@@ -1,7 +1,7 @@
+#' @title
 #' process.phenotypes: automated phenotype standardization and reporting
 #'
 #' @description
-#'
 #' A package for reproducible phenotype data cleaning and quality control.
 #'
 #' @seealso

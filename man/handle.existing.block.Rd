@@ -3,7 +3,7 @@
 \name{handle.existing.block}
 \alias{handle.existing.block}
 \title{Generate configuration blocks for extensions of existing SurveyCTO
-repeat variables.}
+repeat variables}
 \arguments{
 \item{var.prefix}{Character vector shared common prefix of the dataset
 yaml configuration for this repeat variable. So for example,

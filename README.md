@@ -170,34 +170,22 @@ Derived variables are calculated from existing data, e.g. calculating BMI from r
 
 ### YAML validation
 
-Prior to running this tool, you should validate the yaml configurations you've set up as follows:
+Prior to running this tool, you can optionally validate the yaml configurations you've set up as follows:
 
-`./yaml_validator.py dataset_file.yaml shared_model_file.yaml`
+```{r}
+library(process.phenotypes)
+config.validation("your_dataset.yaml", "your_shared_models.yaml",
+                  system.file("validator", "schema.datasets.yaml", package = "process.phenotypes"),
+                  system.file("validator", "schema.shared-models.yaml", package = "process.phenotypes"))
+```
 
-If you are using pre-commit as described below, the yaml configurations will be validated automatically when you commit changes.
-
-## Future Development Targets
-
-### Imminent
-- [x] input YAML format checker
-- [x] derived variables, using format similar to dependency specification
-- [x] expanded README documentation
-- [x] improved report format, because whoa
-
-### Longer Term
-- [x] action to take upon dependency failure
-- [x] data export formats
-  - [x] plaintext/tsv
-  - [x] STATA (dta)
-  - [x] SAS (sas7bdat and auxiliary source file)
-  - [x] SPSS (zsav)
-
-### Open Proposals
-- [x] aliased variable transformations
-  - [x] alternatively, can use derived variables explicitly
+This will check your configuration settings versus an assortment of structural requirements that we've preconfigured.
+If everything is ok, you will get a message affirming that; if there are issues, R will report a tabular representation
+of detected issues that you can iteratively resolve.
 
 ## Version History
 See changelog for more information.
+ * 19 Aug 2022: public release; tagged version 1.4.0
  * 01 Aug 2022: complete unit test coverage; refactor report and assorted minor fixes
  * 24 May 2022: merge CTO dataset configuration files and corresponding added functionality
  * 21 Sep 2021: initial release v1.0.0
