@@ -23,13 +23,16 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(process.phenotypes, quietly = TRUE)
+library(process.phenotypes)
+```
+
+```{r more.setup, echo=FALSE}
 library(knitr, quietly = TRUE)
 library(kableExtra, quietly = TRUE)
 library(ggplot2, quietly = TRUE)
 ```
 
-```{r ggplot.theme}
+```{r ggplot.theme, echo=FALSE}
 my.theme <- ggplot2::theme_light() + ggplot2::theme(
   plot.title = ggplot2::element_text(hjust = 0.5, size = 16),
   axis.title = ggplot2::element_text(size = 14),
@@ -49,19 +52,15 @@ task of trying to create order from the chaos.
 In order to use `process.phenotypes` for dataset cleaning, you must generate
 a pair of [YAML](https://yaml.org/) configuration files:
 
-	- a dataset-specific configuration with information about consent and age restrictions,
-	summary characteristics of each contained variable, and optionally specifications
-	for new variables to be derived from existing variables after cleaning; and
-	- a (possibly empty) configuration file containing shared model information common
-	to multiple variables, to facilitate the creation of harmonized variables that
-	can later be seamlessly combined or compared.
+- a dataset-specific configuration with information about consent and age restrictions,
+summary characteristics of each contained variable, and optionally specifications
+for new variables to be derived from existing variables after cleaning; and
+- a (possibly empty) configuration file containing shared model information common
+to multiple variables, to facilitate the creation of harmonized variables that
+can later be seamlessly combined or compared.
 	
 This walkthrough will use a test dataset `raw_phenotypes.tsv` from `process.phenotypes`
 as an example, and provide guidance and suggestions for how to evaluate and configure variables from messy input.
-
-```{r example.data}
-example.data <- system.file("extdata", "raw_phenotypes.tsv", package = "process.phenotypes", mustWork = TRUE)
-```
 
 ## An Introduction to `process.phenotypes` Configuration Blocks
 
@@ -86,8 +85,8 @@ Each variable block (here,
 the units under `VAR00001`, `VAR00002`) corresponds to a column in the input data matrix. The tags
 `VAR00001`, `VAR00002`, etc., are arbitrarily specified with the following guidelines:
 
-	- they must be unique in each dataset
-	- they should only consist of characters [A-Za-z0-9_]
+- they must be unique in each dataset
+- they should only consist of characters [A-Za-z0-9_]
 
 These tags are injected into the output report and data tsv as column headers, in place of whatever
 is present in the input dataset (though note that if you really like the values in the input dataset,
@@ -106,10 +105,10 @@ tags that are never prefixes of one another: `VAR00001` and `VAR00011` are ok, b
 The `name:` key is required for each variable. The entry should be the (if necessary quoted) column
 header for the variable in the input data matrix. The name is required for two reasons:
 
-  - it is important for transparent recordkeeping: this is how you know that `garbled_input1` corresponds
-  to `pretty_header_1` in the output
-  - it provides a really important sanity check for the package during input, when it confirms that
-  the input data conform to the structure of the specified dataset yaml/
+- it is important for transparent recordkeeping: this is how you know that `garbled_input1` corresponds
+to `pretty_header_1` in the output
+- it provides a really important sanity check for the package during input, when it confirms that
+the input data conform to the structure of the specified dataset yaml/
   
 ### Variable `canonical_name:` key/value pair
 
@@ -128,14 +127,15 @@ that each variable must minimally contain either `type:` or `shared_model:`, as 
 
 ### Data Loading
 
-TODO: move?
-
-In order to use this package, the data must be capable of being loaded into a data frame with
-`read.table`. This is usually possible, but in certain instances (most commonly with inconsistent
-quoting in the source file), some additional steps must be conducted upstream before the file
-can be loaded in R. These steps are beyond the scope of this document.
+Load your dataframe into `R` for inspection.  The test example used in this vignette
+looks like this:
 
 ```{r load.input.data}
+example.data <- system.file("extdata",
+  "raw_phenotypes.tsv",
+  package = "process.phenotypes",
+  mustWork = TRUE
+)
 phenotype.data <- read.table(example.data,
   header = TRUE, stringsAsFactors = FALSE, sep = "\t",
   comment.char = "", quote = "\"", check.names = FALSE
@@ -501,7 +501,7 @@ or it can be meaningful, depending on the question asked and the expected respon
 This is why we allow `NA` configuration on a per-variable basis, and not on a global
 basis.
 
-### Reporting and Enforcing Dependencies
+### Reporting Dependencies
 
 You can use dependencies in the YAML configuration file to check for consistency across
 related variables.  We have two related example variables here, one about whether a subject
@@ -552,6 +552,7 @@ variable.summary <- list(variables = list(
   )),
   VAR00007 = list(params = list(
     name = "fruit",
+    canonical_name = "Do you eat fruit?",
     type = "categorical",
     levels = list(
       "1" = list(name = "yes"),
@@ -561,6 +562,7 @@ variable.summary <- list(variables = list(
   )),
   VAR00008 = list(params = list(
     name = "preferred fruit",
+    canonical_name = "What is your preferred fruit?",
     type = "categorical",
     levels = list(
       "1" = list(name = "apple"),
@@ -569,7 +571,8 @@ variable.summary <- list(variables = list(
     ),
     dependencies = list("1" = list(
       name = "must eat fruit to have a preferred fruit",
-      condition = "is.na(VAR00008) | (!is.na(VAR00007) & VAR00007 == \"yes\")"
+      condition = "is.na(VAR00008) | (!is.na(VAR00007) & VAR00007 == \"yes\")",
+      table_comparisons = c("VAR00007")
     ))
   ))
 ))
@@ -666,11 +669,43 @@ descriptions.
   documentation) the independent variable.  For instance, systolic blood pressure should be greater than diastolic; this
   can be verified by using this function.
 
-table_comparisons - takes a yaml sequence of additional variable names and makes contingency tables vs current variable
-linked_date
-  reported_year
-  reference_year
+To get an overview of the expected relationships between the levels of two variables, you may want to use the
+`table_comparisons` flag in the configuration file.  It takes a list of additional variable names and generates
+pairwise contingency tables and emits them into the HTML report.  For example, if you wanted to explore the
+relationships between the two fruit-related variables we've been using in this section, you would configure
+as follows:
 
+```{yaml}
+
+VAR00008:
+  name: "preferred fruit"
+  canonical_name: "What is your preferred fruit?"
+  type: "categorical"
+  levels:
+    "1":
+      name: "apple"
+    "2":
+      name: "pear"
+    "3":
+      name: "strawberry"
+  dependencies:
+    "1":
+      name: "must eat fruit to have a preferred fruit"
+      table_comparisons:
+        - VAR00007
+      condition: |
+        response.depends.on.yes(VAR00008, VAR00007)
+```
+
+```{r contingency.table, echo=FALSE, results="asis", comment=""}
+
+deps$contingency
+```
+
+Evaluation of the contingency table can help guide you as to whether responses to a dependent
+variable should depend on non-NA values, "yes" values, other aliases, etc.
+
+### Enforcing Dependencies
 
 If you've detected dependency failures, what are the next steps?
 You might want to filter out these noisy, potentially erroneous responses.  Depending on
@@ -699,8 +734,7 @@ VAR00008:
     "1":
       name: "must eat fruit to have a preferred fruit"
       condition: |
-        is.na(VAR00008) |
-        (!is.na(VAR00007) & VAR00007 == "yes")
+        response.depends.on.yes(VAR00008, VAR00007)
       exclude_on_failure:
         - VAR00007
         - VAR00008
@@ -734,13 +768,19 @@ VAR00008:
     "1":
       name: "must eat fruit to have a preferred fruit"
       condition: |
-        is.na(VAR00008) |
-        (!is.na(VAR00007) & VAR00007 == "yes")
+        response.depends.on.yes(VAR00008, VAR00007)
       exclude_all_on_failure: yes
 
 ```
 
-### Freetext Entries
+### Free Text Entries
+
+For variables where you're not sure what type they might be, or if you want extremely
+minimal cleaning/processing, you can set the type to `string`.  For example, free text
+entries containing physician notes can be set to type `string` and subsequently parsed
+as derived variables that indicate the presence of important keywords within the notes
+variable.
+
 
 ```{yaml}
 
@@ -752,30 +792,27 @@ VAR00009:
 
 ```
 
-### Converting Categorical Values to Numerics
+Note that by default, if the total number of unique entries in a variable exceeds 33%
+of the total number of subjects, reporting will be suppressed (so you don't end up with
+an HTML report that's miles long).  This can be configured via a parameter for 
+`create.phenotype.report`.
 
-```{yaml}
+Additionally, if your free text contains information that you'd rather not display in the report
+(e.g. phone numbers, etc.), you can suppress reporting using the `suppress_reporting`
+boolean shown in the config example above.  This will not alter the content of the variable.
 
-VAR00010:
-  name: "measure"
-  type: "categorical_to_numeric"
-  levels:
-    "1":
-      name: "1.2"
-      alternate_patterns:
-        - ""
-    "2":
-      name: "1.3"
-      alternate_patterns:
-        - ""
-    "3":
-      name: ""
-      alternate_patterns:
-        - ""
-
-```
+On the other hand, if you have variables that should not be included in the cleaned output
+phenotype matrix (e.g. first and last names, social security numbers, etc.), you can use the
+`suppress_output` flag in addition to `suppress_reporting`.  This will prevent both printing
+to the report, and it will cause the variable to be emitted with all values set to `NA`.
 
 ### Blood Pressure Measurements
+
+While blood pressure values are often recorded as systolic and diastolic separately, sometimes
+they are given as a single entry, e.g. "120/90 mm Hg".  If you have blood pressure measurements
+in this format, this variable type may be useful.  Variables of this type allow a wide range of
+potential format issues, and attempt to harmonize them to SBP/DBP.  Subsequently, derived variables
+can be created to isolate systolic and diastolic blood pressure values.
 
 ```{yaml}
 
@@ -785,22 +822,22 @@ VAR00011:
 
 ```
 
-### Ordinal Variables
+```{r show.bp, echo=FALSE}
 
-```{yaml}
-
-VAR00012:
-  name: "awesomeness"
-  type: "ordinal"
-  levels:
-    "1":
-      name: ""
-    "2":
-      name: ""
-    "3":
-      name: ""
-    "4":
-      name: ""
-    "5":
-      name: ""
+variable.summary <- list(variables = list(
+  VAR00001 = list(params = list(
+    name = "subjid",
+    subject_id = TRUE
+  )),
+  VAR00011 = list(params = list(
+    name = "bloodpressure",
+    canonical_name = "Blood pressure (SBP/DBP)",
+    type = "bp"
+  ))
+))
+res <- process.phenotypes:::reformat.blood.pressure(phenotype.data$bloodpressure, variable.summary)
+df <- data.frame(before = phenotype.data$bloodpressure, after = res$phenotype.data)
+df
 ```
+
+
