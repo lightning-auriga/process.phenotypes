@@ -17,3 +17,144 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(process.phenotypes)
 ```
+
+# Creation of Derived Variables
+
+## Overview
+
+Derived variables are any variables that were not included in the primary data
+collection from the subject, but are generated using that data.  Examples can include:
+
+- Splitting blood pressure from SBP/DBP to two new variables, one each for systolic and diastolic
+- Calculating BMI from height and weight
+- Performing unit conversion
+- Normalizing data, e.g. with an inverse normal transform
+- Creating binary encodings from free text entries, e.g. determining whether a patient has had
+  treatment with hydroxyurea by searching for a string match in a field containing treatment notes
+- Harmonizing variables for downstream merging across multiple datasets, e.g. creating a standardized
+  name "subject_age" to map the age variable in all datasets regardless of the original variable name
+
+## Example Use Cases
+
+Let's start with a baseline YAML configuration and add derived variables for a variety of use cases.
+
+```{yaml}
+
+variables:
+  VAR00001:
+    name: "SubjID"
+    canonical_name: "Subject ID"
+    type: "string"
+    subject_id: "yes"
+  VAR00002:
+    name: "BP"
+    canonical_name: "blood pressure (SBP/DBP)"
+    type: "bp"
+  VAR00003:
+    name: "What is your height?"
+    canonical_name: "patient's height in cm"
+    type: "numeric"
+  VAR00004:
+    name: "What is your weight?"
+    canonical_name: "patient's weight in kg"
+    type: "numeric"
+  VAR00005:
+    name: "treatment_notes"
+    canonical_name: "patient treatment notes from medical records"
+    type: "string"
+  VAR00006:
+    name: "patient age"
+    canonical_name: "age in years"
+    type: "numeric"
+
+```
+
+The derived variables, also mentioned [here](manual-configuration.html), are entered in their
+own yaml block at the same level as the `variables` section.  Derived variables are created after
+all the cleaning steps in `process.phenotypes` have been performed, and are subsequently also
+cleaned according to their declared type.  You can derive variables from other derived variables;
+the package will iterate until all variables have been accounted for.
+
+### Deriving SBP and DBP
+
+We can see that `VAR00002` is of type `bp`, which will result in values like `120/90` after
+cleaning (see the manual configuration [vignette](manual-configuration.html) for more details).
+You may want to separate these into two variables for downstream analysis.  This can be accomplished
+by adding derived variables as follows:
+
+```{yaml}
+
+derived:
+  VAR00002_SBP:
+    name: "derived_SBP"
+    type: "numeric"
+    code: as.numeric(stringr::str_replace(VAR00002, "/.*", ""))
+  VAR00002_DBP:
+    name: "derived_DBP"
+    type: "numeric"
+    code: as.numeric(stringr::str_replace(VAR00002, ".*/", ""))
+```
+
+Note that the text in the `code` block is executed in an
+isolated environment and does not affect the underlying original data.  You have access to
+all of the variables in the dataset as vectors, labeled as their user-defined names (e.g.
+"VAR00002").  The derived variables as written above will be emitted in the cleaned output
+phenotype matrix.
+
+### Unit Conversion
+
+```{yaml}
+
+derived:
+  height_in_meters:
+    name: "derived_height_in_meters"
+    type: "numeric"
+    code: VAR00003 / 100
+```
+
+### Calculate BMI
+
+```{yaml}
+
+derived:
+  calculated_bmi:
+    name: "derived_BMI"
+    type: "numeric"
+    code: VAR00004 / height_in_meters ^ 2
+```
+
+### Normalize Data
+
+```{yaml}
+
+derived:
+  VAR00003_INT:
+    name: "height, inverse normal transform"
+    type: "numeric"
+    code: derive.rank.normal.transform(VAR00003)
+
+```
+
+Note the use of a convenience function here, provided in `process.phenotypes`.
+
+### Binary Encodings from Free Text
+
+```{yaml}
+derived:
+  HU_use:
+    name: "Treatment with hydroxyurea"
+    shared_model: "yesno"
+    code: factor(ifelse(stringr::str_detect(VAR00005, "hydroxyurea"), "yes", "no"))
+
+```
+
+### Harmonizing Variable Names
+
+```{yaml}
+
+derived:
+  std_height:
+    name: "standardized_height"
+    type: "numeric"
+    code: VAR00003
+```

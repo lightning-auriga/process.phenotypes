@@ -356,7 +356,7 @@ process.phenotypes:::report.numeric.summary(
 
 In this case, perhaps a subset of research associates or sites collected this data in inches
 instead of centimeters.  You can address this in one of several ways, including 1) setting an upper
-or lower bound, or 2) creating a derived variable with a more sophisticated operation to attempt
+or lower bound, or 2) creating a [derived](derived-variables.html) variable with a more sophisticated operation to attempt
 to perform a unit conversion.  We explored setting bounds above, so here is an example of
 creating a derived variable for this scenario:
 
