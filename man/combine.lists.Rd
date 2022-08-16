@@ -9,12 +9,12 @@ combine.lists(list1, list2)
 }
 \arguments{
 \item{list1}{List or vector that will have
-entries added into it; intended to be a dataset-specific
-variable configuration block.}
+entries added into it; intended to be a shared
+model specification.}
 
 \item{list2}{List or vector that will have
-its entries added to the other; intended to be a shared
-model specification.}
+its entries added to the other; intended to be a dataset-specific
+variable configuration block.}
 }
 \value{
 List or vector representing combined version of
