@@ -331,7 +331,7 @@ surveycto.csv.expanded <- system.file("examples", "parse_surveycto_example_expan
 )
 ```
 
-```{r show.cto.expanded.contents, echo=FALSE, eval=TRUE, comment="", results="asis"}
+```{r show.cto.expanded.contents, echo=FALSE, eval=TRUE}
 
 surveycto.expanded.csv.data <- read.table(surveycto.csv.expanded, header = TRUE, stringsAsFactors = FALSE, sep = ",")
 
