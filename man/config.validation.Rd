@@ -21,7 +21,32 @@ config.validation(
 \item{shared.models.schema}{character; name of schema specification for shared models yaml}
 }
 \description{
+This function takes json schema files specifying the permitted formats
+of process.phenotypes dataset and shared model configuration files,
+and uses them to validate a provided pair of user configuration files.
+If the schema validation is successful, an acknowledgment message
+will be printed for each input; if not, the embedded validator will
+report a somewhat helpful summary of the issue to guide the process
+of fixing the configuration.
+}
+\details{
+This function replaces the old python validator that was inherited
+from a very old version of this package, and that was removed some
+time ago.
+
 The function returns NULL, and is run primarily for its side effect
 of emitting verbose logging data about the manner of validation
 error detected by the json_validate call.
+}
+\examples{
+dataset.yaml <- system.file("examples", "example.dataset.yaml", package = "process.phenotypes")
+shared.models.yaml <- system.file("examples", "example.shared_models.yaml", package = "process.phenotypes")
+dataset.schema <- system.file("validator", "schema.datasets.yaml", package = "process.phenotypes")
+shared.models.schema <- system.file("validator", "schema.shared-models.yaml", package = "process.phenotypes")
+process.phenotypes::config.validation(
+  dataset.yaml,
+  shared.models.yaml,
+  dataset.schema,
+  shared.models.schema
+)
 }
