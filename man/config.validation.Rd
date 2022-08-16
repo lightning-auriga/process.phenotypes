@@ -39,10 +39,18 @@ of emitting verbose logging data about the manner of validation
 error detected by the json_validate call.
 }
 \examples{
-dataset.yaml <- system.file("examples", "example.dataset.yaml", package = "process.phenotypes")
-shared.models.yaml <- system.file("examples", "example.shared_models.yaml", package = "process.phenotypes")
-dataset.schema <- system.file("validator", "schema.datasets.yaml", package = "process.phenotypes")
-shared.models.schema <- system.file("validator", "schema.shared-models.yaml", package = "process.phenotypes")
+dataset.yaml <- system.file("examples", "example.dataset.yaml",
+  package = "process.phenotypes"
+)
+shared.models.yaml <- system.file("examples", "example.shared_models.yaml",
+  package = "process.phenotypes"
+)
+dataset.schema <- system.file("validator", "schema.datasets.yaml",
+  package = "process.phenotypes"
+)
+shared.models.schema <- system.file("validator", "schema.shared-models.yaml",
+  package = "process.phenotypes"
+)
 process.phenotypes::config.validation(
   dataset.yaml,
   shared.models.yaml,
