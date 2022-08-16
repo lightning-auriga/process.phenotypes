@@ -23,7 +23,7 @@ curl -u "${EMAIL}:${PASSWORD}" https://${ORGANIZATION}.surveycto.com/api/v1/form
 - In the dropdown labeled "File format:", select ".csv (default)"
 - Click "Export files"
 
-### Export the Form Defition Spreadsheet from SurveyCTO
+### Export the Form Definition Spreadsheet from SurveyCTO
 
 - Navigate to the "Design" tab
 - Select "Download"
@@ -39,3 +39,15 @@ parse.surveycto("surveycto_form.xlsx", "responses_in_wide_form.csv", "HW", "data
 ```
 
 Inspect the output to confirm that it matches expectations and to make any required edits.  You will need to update fields for consent lists, minimum age threshold, etc.
+
+## Expand an Existing process.phenotypes Configuration File for New SurveyCTO Export
+
+One quirk of SurveyCTO datasets is that they can expand when new subject information is added, even if the questionnaire form definition has not changed. This is most commonly due to the presence of "repeat" variables, which will have columns corresponding to the _maximum_ number of repeat responses observed in any individual in the dataset. When this expansion occurs in a new data export, any existing process.phenotypes dataset configuration file will need to be expanded accordingly, and in a way that preserves any existing customization or variable aliases that may be referenced in derived variables or downstream applications.
+
+If you used `parse.surveycto` to create the original set of configuration files, and if the form definition has not otherwise changed in the interim, you can use the helper function `expand.surveycto.config` to automatically pad repeat blocks with additional configuration entries:
+
+```R
+expand.surveycto.config("dataset-specific-config.yaml", "expanded-config.yaml", "expanded_responses.csv", "surveycto_form.xlsx", sep = ",")
+```
+
+Note that the shared models specification is not impacted by repeat variable expansion, and so is not provided to this utility function.
