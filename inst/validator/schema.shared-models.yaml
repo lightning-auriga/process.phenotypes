@@ -1,0 +1,54 @@
+---
+$schema: "http://json-schema.org/draft-07/schema#"
+description: "configuration specification for per-dataset config yaml"
+type: object
+properties:
+  models:
+    type: object
+    patternProperties:
+      "^.*$":
+        type: object
+        properties:
+          type:
+            type: string
+            pattern: "^[sS][tT][rR][iI][nN][gG]$|^[cC][aA][tT][eE][gG][oO][rR][iI][cC][aA][lL]$|^[cC][aA][tT][eE][gG][oO][rR][iI][cC][aA][lL]_[tT][oO]_[nN][uU][mM][eE][rR][iI][cC]$|^[oO][rR][dD][iI][nN][aA][lL]$|^[nN][uU][mM][eE][rR][iI][cC]$|^[bB][lL][oO][oO][dD][ _]?[pP][rR][eE][sS][sS][uU][rR][eE]$|^[bB][pP]$|^[dD][aA][tT][eE]$|^[bB][iI][nN][aA][rR][yY]$"
+          na-values:
+            type: array
+            items:
+              type: string
+          bounds:
+            type: object
+            properties:
+              min:
+                type: number
+              max:
+                type: number
+          suppress_reporting:
+            type: boolean
+          suppress_output:
+            type: boolean
+          allow_undelimited_bp:
+            type: boolean
+          levels:
+            type: object
+            patternProperties:
+              "^.*$":
+                type: object
+                properties:
+                  name:
+                    type: string
+                  alternate_patterns:
+                    type: array
+                    items:
+                      type: string
+                required:
+                  - name
+                additionalProperties: false
+          subject_ancestry:
+            type: boolean
+        required:
+          - type
+        additionalProperties: false
+required:
+  - models
+additionalProperties: false

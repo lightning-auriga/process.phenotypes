@@ -187,7 +187,7 @@ dependency.failure.handling <- function(phenotype.data, variable.summary) {
     results <- variable.summary$variables[[i]]$dependency.results
     stopifnot(length(dependencies) == length(results))
     for (j in seq_len(length(dependencies))) {
-      exclude.on.failure <- dependencies[[j]]$exclude_on_failure
+      exclude.on.failure <- unlist(dependencies[[j]]$exclude_on_failure)
       exclude.all.on.failure <- dependencies[[j]]$exclude_all_on_failure
       if (!is.null(exclude.all.on.failure)) {
         if (exclude.all.on.failure) {
