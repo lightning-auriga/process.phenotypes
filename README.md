@@ -34,11 +34,11 @@ Please see any of the following documentation:
 - The package has several useful vignettes, specifically covering [manual dataset configuration](doc/manual-configuration.html),
   [configuration from SurveyCTO form definitions](configuration-from-SurveyCTO-form.Rmd),
   and the [creation of derived variables](doc/derived-variables.html), among other topics; see the `doc` directory of the GitLab
-  repo or `r vignette(package = "process.phenotypes")` for more.
+  repo or `vignette(package = "process.phenotypes")` in R for more.
 
 
 ## Version History
-See changelog for more information.
+See [changelog](CHANGELOG.md) for more information.
  * 19 Aug 2022: public release; tagged version 1.4.0
  * 01 Aug 2022: complete unit test coverage; refactor report and assorted minor fixes
  * 24 May 2022: merge CTO dataset configuration files and corresponding added functionality
