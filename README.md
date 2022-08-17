@@ -38,7 +38,7 @@ Please see any of the following documentation:
 
 
 ## Version History
-See changelog for more information.
+See [changelog](CHANGELOG.md) for more information.
  * 19 Aug 2022: public release; tagged version 1.4.0
  * 01 Aug 2022: complete unit test coverage; refactor report and assorted minor fixes
  * 24 May 2022: merge CTO dataset configuration files and corresponding added functionality
