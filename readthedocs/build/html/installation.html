@@ -45,14 +45,8 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#method-1-direct-installation-from-gitlab">Method 1: Direct Installation from GitLab</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#method-2-installation-from-local-copy">Method 2: Installation from Local Copy</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#with-a-tarball">With a Tarball</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#from-a-git-clone">From a Git Clone</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#method-3-installation-from-conda-osx-and-linux-only">Method 3: Installation from Conda (OSX and Linux only)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#method-4-installation-from-cran">Method 4: Installation from CRAN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#method-1-installation-from-conda-osx-and-linux-only">Method 1: Installation from Conda (OSX and Linux only)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#method-2-installation-from-cran">Method 2: Installation from CRAN</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
@@ -93,79 +87,19 @@
              
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
-<section id="method-1-direct-installation-from-gitlab">
-<h2>Method 1: Direct Installation from GitLab<a class="headerlink" href="#method-1-direct-installation-from-gitlab" title="Permalink to this headline"></a></h2>
-<p>R has the capacity to install packages directly from GitLab.</p>
-<p>Run the following in <a class="reference external" href="https://www.r-project.org/">R</a> or <a class="reference external" href="https://www.rstudio.com/">RStudio</a>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># the following step is only required if you don&#39;t have the &#39;devtools&#39; package installed yet</span>
-<span class="n">install</span><span class="o">.</span><span class="n">packages</span><span class="p">(</span><span class="s2">&quot;devtools&quot;</span><span class="p">)</span>
-<span class="c1"># the following steps are always required when launching R</span>
-<span class="n">library</span><span class="p">(</span><span class="n">devtools</span><span class="p">)</span>
-<span class="n">devtools</span><span class="p">::</span><span class="n">install_gitlab</span><span class="p">(</span><span class="s2">&quot;data-analysis5/phenotypes/process.phenotypes@default&quot;</span><span class="p">,</span> <span class="n">auth_token</span> <span class="o">=</span> <span class="n">devtools</span><span class="p">::</span><span class="n">github_pat</span><span class="p">(),</span> <span class="n">build_vignettes</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><strong>Note: Secured Access to GitLab</strong></p>
-<p>For security reasons, R must be permitted access to GitLab
-in order to allow remote installation. Please follow the instructions
-<a class="reference external" href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html">here</a>
-to generate an access token with at least <code class="docutils literal notranslate"><span class="pre">read_api</span></code> access.</p>
-<p>The convention in R is to set the access token to the <code class="docutils literal notranslate"><span class="pre">GITHUB_PAT</span></code> environment
-variable (note that this is <strong>GITHUB_PAT</strong> even though the access is via GitLab;
-this is a strange R quirk). You can do this by including the line</p>
-<p><code class="docutils literal notranslate"><span class="pre">GITHUB_PAT</span> <span class="pre">=</span> <span class="pre">YOURACCESSTOKEN</span></code></p>
-<p>in your R environment file <code class="docutils literal notranslate"><span class="pre">~/.Renviron</span></code>. Note that if you already have
-an <code class="docutils literal notranslate"><span class="pre">R</span></code> or <code class="docutils literal notranslate"><span class="pre">RStudio</span></code> instance running, you need to restart <code class="docutils literal notranslate"><span class="pre">R</span></code> for the
-<code class="docutils literal notranslate"><span class="pre">.Renviron</span></code> changes to be recognized.</p>
-</section>
-<hr class="docutils" />
-<section id="method-2-installation-from-local-copy">
-<h2>Method 2: Installation from Local Copy<a class="headerlink" href="#method-2-installation-from-local-copy" title="Permalink to this headline"></a></h2>
-<p>There are various ways to install an R package from a local copy of the project.</p>
-<section id="with-a-tarball">
-<h3>With a Tarball<a class="headerlink" href="#with-a-tarball" title="Permalink to this headline"></a></h3>
-<p>The easiest way to get a tarball (<code class="docutils literal notranslate"><span class="pre">.tar.gz</span></code>) compressed version of the package is
-to go to the <a class="reference external" href="https://gitlab.com/data-analysis5/phenotypes/process.phenotypes">project GitLab page</a>,
-click the download button (to the left of the <code class="docutils literal notranslate"><span class="pre">Clone</span></code> button), select <code class="docutils literal notranslate"><span class="pre">tar.gz</span></code> as
-output format, and save it somewhere on the local drive.</p>
-<p>Then, choose one of the following methods:</p>
-<ul class="simple">
-<li><p>on the command line: <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">CMD</span> <span class="pre">INSTALL</span> <span class="pre">/path/to/process.phenotypes-default.tar.gz</span></code>; or</p></li>
-<li><p>from RStudio: <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">-&gt;</span> <span class="pre">Install</span> <span class="pre">Packages</span> <span class="pre">-&gt;</span> <span class="pre">Install</span> <span class="pre">from:</span> <span class="pre">Package</span> <span class="pre">Archive</span> <span class="pre">File</span></code>,
-and select the tarball from your local drive.</p></li>
-</ul>
-</section>
-<section id="from-a-git-clone">
-<h3>From a Git Clone<a class="headerlink" href="#from-a-git-clone" title="Permalink to this headline"></a></h3>
-<p>With <code class="docutils literal notranslate"><span class="pre">git</span></code> from the command line, depending on whether ssh or https connection is configured
-for your system:</p>
-<p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">git&#64;gitlab.com:data-analysis5/phenotypes/process.phenotypes.git</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://gitlab.com/data-analysis5/phenotypes/process.phenotypes.git</span></code></p>
-<p>Then, launch <code class="docutils literal notranslate"><span class="pre">R</span></code>. Install and launch <code class="docutils literal notranslate"><span class="pre">devtools</span></code> as needed (see section
-“Direct Installation from GitLab” as necessary), and run the following commands:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">library</span><span class="p">(</span><span class="n">devtools</span><span class="p">)</span>
-<span class="n">devtools</span><span class="p">::</span><span class="n">install</span><span class="p">(</span><span class="s2">&quot;/path/to/process.phenotypes&quot;</span><span class="p">,</span> <span class="n">build_vignettes</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-<hr class="docutils" />
-<section id="method-3-installation-from-conda-osx-and-linux-only">
-<h2>Method 3: Installation from Conda (OSX and Linux only)<a class="headerlink" href="#method-3-installation-from-conda-osx-and-linux-only" title="Permalink to this headline"></a></h2>
-<p>Note: this option will only be available slightly after this README goes live, and at that
-time this message will be removed.</p>
+<section id="method-1-installation-from-conda-osx-and-linux-only">
+<h2>Method 1: Installation from Conda (OSX and Linux only)<a class="headerlink" href="#method-1-installation-from-conda-osx-and-linux-only" title="Permalink to this headline"></a></h2>
 <p>This package has been added to the 54gene <a class="reference external" href="https://docs.conda.io/en/latest/">Conda</a> channel.
-To install, first install and configure <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">miniconda</a>.
-Then add the following to your <code class="docutils literal notranslate"><span class="pre">~/.condarc</span></code> (creating the file if it does not already exist):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">channels</span><span class="p">:</span>
-  <span class="o">-</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">gitlab</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">data</span><span class="o">-</span><span class="n">analysis5</span><span class="o">/</span><span class="n">conda</span><span class="o">-</span><span class="mi">54</span><span class="n">gene</span><span class="o">/-/</span><span class="n">raw</span><span class="o">/</span><span class="n">default</span><span class="o">/</span><span class="n">conda</span><span class="o">-</span><span class="mi">54</span><span class="n">gene</span>
+To install, first install and configure <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">miniconda</a>.</p>
+<p>From the command line, execute the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="n">mamba</span>
+<span class="n">mamba</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;https://gitlab.com/data-analysis5/conda-54gene/-/raw/default/conda-54gene&quot;</span> <span class="n">r</span><span class="o">-</span><span class="n">process</span><span class="o">.</span><span class="n">phenotypes</span>
 </pre></div>
 </div>
-<p>From the command line, execute the following command:</p>
-<p><code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">r-process.phenotypes</span></code></p>
 </section>
 <hr class="docutils" />
-<section id="method-4-installation-from-cran">
-<h2>Method 4: Installation from CRAN<a class="headerlink" href="#method-4-installation-from-cran" title="Permalink to this headline"></a></h2>
+<section id="method-2-installation-from-cran">
+<h2>Method 2: Installation from CRAN<a class="headerlink" href="#method-2-installation-from-cran" title="Permalink to this headline"></a></h2>
 <p>We are in the process of submitting the <code class="docutils literal notranslate"><span class="pre">process.phenotypes</span></code> package to CRAN
 and will update this section when it is available.</p>
 </section>
