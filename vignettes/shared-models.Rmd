@@ -24,7 +24,7 @@ library(process.phenotypes)
 
 Variables scanned by `process.phenotypes` can be configured very flexibly, with
 a wide variety of configuration settings. However, there are pitfalls to certain
-paradigms of configuration. Most notably, it can be difficult to keep similar
+methods of configuration. Most notably, it can be difficult to keep similar
 variables in the same dataset or even across datasets configured in the same,
 or at least compatible, ways.
 
@@ -62,7 +62,7 @@ models:
 Please note the following important characteristics of the above configuration:
 
 - Every shared model is specified as a mapping under the top level `models` key.
-  `models` should be specified exactly once in a given shared models file.
+- `models` should be specified exactly once in a given shared models file.
 - The tag `yesno` is the name of one particular shared model. When using this shared
   model in a variable configuration (see below), this name is what is used to pull
   in this shared model. The names of models should be unique, but otherwise are
@@ -73,7 +73,7 @@ Please note the following important characteristics of the above configuration:
   configuration that uses this shared model.
 
 
-Shared models most naturally fit categorical models, but are not necessarily required
+Shared models most naturally fit categorical variables, but are not necessarily required
 to be categorical. Any accepted `process.phenotypes` variable configuration can be
 used in a shared model:
 
@@ -260,3 +260,11 @@ variables:
 
 
 ## Shared Models for SurveyCTO Data
+
+SurveyCTO form definitions by default come with a `choices` tab that specifies
+categorical models for use in the survey. The utility function `process.phenotypes::parse.surveycto`
+will automatically generate a shared model file based on the `choices` tab of a form.
+If desired, additional shared model data can be manually entered into the shared model
+configuration file after generation. Please see
+[Configuration from a SurveyCTO Form Definition](configuration-from-SurveyCTO-form.html)
+for more information.
