@@ -36,7 +36,7 @@ run_all:
     - apt-get install -y wget tar libxt-dev
     - Rscript -e 'install.packages(c("covr", "DT", "openxlsx", "kableExtra", "stringdist", "jsonvalidate", "rjson"), repos = "https://cran.seoul.go.kr/")'
     - Rscript -e 'devtools::build(binary = TRUE)'
-    - Rscript -e 'devtools::check(document = FALSE, args = "--no-tests", error_on = "note")'
+    - Rscript -e 'devtools::check(document = FALSE, vignettes = FALSE, args = "--no-tests", error_on = "note")'
     - Rscript -e 'if (any(as.data.frame(devtools::test())[["failed"]] > 0)) stop("Some tests failed.")'
     - Rscript -e 'covr::gitlab(quiet = FALSE) ; cat("total package coverage ", covr::coverage_to_list()$totalcoverage, "\n", sep = "")'
     - Rscript -e 'devtools::install()'
