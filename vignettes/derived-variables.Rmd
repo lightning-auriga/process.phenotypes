@@ -73,7 +73,7 @@ The derived variables, also mentioned [here](manual-configuration.html), are ent
 own yaml block at the same level as the `variables` section.  Derived variables are created after
 all the cleaning steps in `process.phenotypes` have been performed, and are subsequently also
 cleaned according to their declared type.  You can derive variables from other derived variables;
-the package will iterate until all variables have been accounted for.
+the package will iterate over the config until all variables have been accounted for.
 
 ### Deriving SBP and DBP
 
@@ -103,6 +103,11 @@ phenotype matrix.
 
 ### Unit Conversion
 
+Another common use of derived variables is in unit conversion.  In the example here,
+height was measured in centimeters.  Perhaps we need to have height in meters, for example,
+when calculating BMI.  We can create the derived variable here, and then have it to use in any
+other derived variables or downstream analysis.
+
 ```{yaml}
 
 derived:
@@ -112,7 +117,14 @@ derived:
     code: VAR00003 / 100
 ```
 
+More sophisticated unit conversions can be derived, based on scenarios like some study sites
+collecting in metric and others in standard units; see the [manual configuration vignette](manual-configuration.html)
+for an example.
+
 ### Calculate BMI
+
+In this derived variable, we are calculating BMI.  Note that we have referenced another
+derived variable, `height_in_meters`.
 
 ```{yaml}
 
@@ -125,6 +137,11 @@ derived:
 
 ### Normalize Data
 
+We often want to normalize the distrubution of our quantitative data, e.g. via the 
+inverse normal transform.  We have provided a helper function in the `process.phenotypes`
+package to facilitate this; see below for an example, and see `?process.phenotypes::derive.rank.normal.transform`
+for complete usage.
+
 ```{yaml}
 
 derived:
@@ -135,11 +152,16 @@ derived:
 
 ```
 
-Note the use of a convenience function here, provided in `process.phenotypes`.
-
 ### Binary Encodings from Free Text
 
+Sometimes, we collect free text responses to questions, or we are provided physician notes from
+medical record review.  This data is unstructured, but can be parsed into structured binary
+variables that can be used as covariates, outcomes, etc.  In this example, we are simulating
+collecting physician notes in a free text field, and then creating a binary variable using a
+[shared model](shared-models.html) called `yesno`.
+
 ```{yaml}
+
 derived:
   HU_use:
     name: "Treatment with hydroxyurea"
@@ -149,6 +171,13 @@ derived:
 ```
 
 ### Harmonizing Variable Names
+
+There are times when we have disparate studies, or a single study split over multiple
+phenotype datasets, etc., and we want to harmonize certain variables for ease of
+comparison, downstream merging, etc.  In this case, it can be helpful to assign variables
+that represent the same thing standardized variable labels.  If, for instance, age is labeled
+across multiple datasets as "Patient Age", "Age of Participant", and "Age", you might copy each
+variable to a standardized "standardized_height" in each individual config..
 
 ```{yaml}
 
