@@ -19,3 +19,8 @@ variables:
     "name": "var3"
     "shared_model": "yesno"
     "canonical_name": "variable 3"
+derived:
+  "harmonized_name":
+    "name": "aliased var3"
+    "shared_model": "yesno"
+    "code": "HW00003"
