@@ -1,8 +1,14 @@
 ---
-title: "create-phenotype-report"
-output: rmarkdown::html_vignette
+title: "Create a Report for a Phenotype Dataset"
+output:
+  rmarkdown::html_vignette:
+    highlight: pygments
+    toc: true
+    fig_width: 5
+    fig.align: "center"
+    df_print: !expr function(df) {print(df, row.names = FALSE, max = 20 * ncol(df))}
 vignette: >
-  %\VignetteIndexEntry{create-phenotype-report}
+  %\VignetteIndexEntry{Create a Report for a Phenotype Dataset}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -10,7 +16,9 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  cache = FALSE,
+  dev = "png"
 )
 ```
 
@@ -18,6 +26,182 @@ knitr::opts_chunk$set(
 library(process.phenotypes)
 ```
 
-This vignette walks through the process of generating a phenotype report for a dataset.
+## Overview
 
-## Stuff goes here
+The primary intended use of this package is to generate a cleaned, structured output dataset
+alongside an html report describing the contents of the input file and the results of
+the processing conducted by the package. This functionality is contained in the function
+`create.phenotype.report`. To use this function, the following things are required:
+
+- an input dataset
+  - this should be plaintext, tab- or comma-delimited. If it can be read by `read.table`,
+    it should be fine. If the input dataset is jagged in some way (for example, comma-delimited
+	input that also contains commas within individual fields, and the fields are not quoted),
+	some preprocessing outside of the package may be required.
+- a dataset configuration file
+  - this file is discussed at some length in [the manual configuration vignette](manual-configuration.html),
+    or for users with SurveyCTO datasets, in [the SurveyCTO conversion vignette](configuration-from-SurveyCTO-form.html).
+- a shared models configuration file
+  - this file is discussed both in the aforementioned vignettes and in [the dedicated vignette regarding shared models](shared-models.html).
+- an output filename for the resulting html report, with the required suffix `.html`
+
+## Usage
+
+Extensive documentation and discussion of the accepted options and cleaning steps of `create.phenotype.report` are provided
+in both [the readthedocs documentation](http://54gene-processphenotypes-docs.s3-website.us-east-2.amazonaws.com/index.html)
+and the internal R help documentation `?create.phenotype.report`.
+
+As a very brief example:
+
+```{r acquire.datasets, echo=TRUE, eval=TRUE}
+input.data <- system.file("examples", "example.data.tsv",
+  package = "process.phenotypes"
+)
+dataset.config <- system.file("examples", "example.dataset.yaml",
+  package = "process.phenotypes"
+)
+shared.models <- system.file("examples", "example.shared_models.yaml",
+  package = "process.phenotypes"
+)
+output.html <- tempfile("create_phenotype_report", fileext = "html")
+```
+
+These files contain the following:
+
+```{r show.input.data, eval=TRUE, echo=FALSE}
+cat("## example.data.tsv\n\n")
+read.table(input.data, sep = "\t", header = TRUE)
+```
+
+```{r, echo=FALSE}
+# nolint start
+```
+
+```{yaml}
+## example.dataset.yaml
+tag: HW
+globals:
+  min_age_for_inclusion: 18
+  max_invalid_datatypes_per_subject: 10
+  consent_inclusion_file: ~
+  consent_exclusion_file: ~
+variables:
+  HW0001:
+    name: "subject.ids"
+    canonical_name: "participant ID"
+    type: "string"
+    subject_id: yes
+  HW0002:
+    name: "age"
+    canonical_name: "participant age"
+    type: "numeric"
+    subject_age: yes
+  HW0003:
+    name: "date of birth"
+    canonical_name: "subject date of birth (year)"
+    type: "date"
+  HW0004:
+    name: "height"
+    canonical_name: "subject height (meters)"
+    type: "numeric"
+  HW0005:
+    name: "sex"
+    canonical_name: "subject self-reported sex"
+    shared_model: "sex"
+  HW0006:
+    name: "blood pressure"
+    canonical_name: "subject blood pressure"
+    type: "bp"
+  HW0007:
+    name: "satisfaction rating"
+    canonical_name: "how much does subject like a thing"
+    shared_model: "satis_rating"
+  HW0008:
+    name: "weight"
+    canonical_name: "subject weight (kg)"
+    type: "numeric"
+derived:
+  bmi_derived:
+    name: "bmi, computed from self-reported height and weight"
+    type: "numeric"
+    code: |
+      HW0008 / HW0004 ^ 2
+```
+
+```{yaml}
+## example.shared_models.yaml
+models:
+  sex:
+    type: "categorical"
+    levels:
+      "1":
+        name: "male"
+        alternate_patterns:
+          - "^[mM]$"
+          - "^Male$"
+      "2":
+        name: "female"
+        alternate_patterns:
+          - "^[fF]$"
+          - "^Female"
+  satis_rating:
+    type: "ordinal"
+    levels:
+      "1":
+        name: "dissatisfied"
+      "2":
+        name: "neutral"
+      "3":
+        name: "satisfied"
+```
+
+```{r, echo=FALSE}
+# nolint end
+```
+
+To generate your output report, and optionally the processed data in tsv or a variety of other
+accepted formats, run the following:
+
+```{r run.create.phenotype.report, echo=TRUE, eval=TRUE}
+create.phenotype.report(input.data,
+  dataset.config,
+  shared.models,
+  output.html,
+  sep = "\t",
+  quote = "",
+  write.tsv = TRUE
+)
+```
+
+## A General Workflow
+
+The process of dataset cleaning can be rather complicated, and is usually very iterative.
+Our usual workflow looks like this:
+
+- generate the above configuration files with placeholder entries for most variables
+  - this usually entails minimalist settings that preserve input data, as follows:
+  
+```{yaml}
+variables:
+  HW00001:
+    name: "varname1"
+    type: "string"
+    canonical_name: "my variable description 1"
+  HW00002:
+    name: "varname2"
+    type: "string"
+    canonical_name: "my variable description 2"
+```
+
+and so on.
+
+- optionally, validate the configuration data you've generated with the package's
+  [built-in validation utility](yaml-validation.html).
+- run `create.phenotype.report` with the simple configuration. This will generate basic data descriptions
+  that can inform your configuration refinement.
+  - the report will, by default, suppress tabular reporting information for variables with more unique
+    values than `{sample size} / 3`. If that affects your variables, you can consider either inspecting
+	the variables in R separately, or adjusting the cutoff factor with the corresponding parameter
+	in `create.phenotype.report` (see manual in `?create.phenotype.report` for all available settings)
+- update the configuration to reflect more refined settings.
+- and repeat the above as needed.

@@ -1,8 +1,8 @@
 ---
-title: "yaml-validation"
+title: "Validation of Dataset Configuration Files"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{yaml-validation}
+  %\VignetteIndexEntry{Validation of Dataset Configuration Files}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -78,6 +78,11 @@ variables:
     "name": "var3"
     "shared_model": "yesno"
     "canonical_name": "variable 3"
+derived:
+  "harmonized_name":
+    "name": "aliased var3"
+    "shared_model": "yesno"
+    "code": "HW00003"
 ```
 
 and a shared models configuration yaml named `shared-models.yaml`:
@@ -135,6 +140,11 @@ variables:
     "name": "var3"
     "shared-model": "yesno"
     "canonical_name": "variable 3"
+derived:
+  "harmonized_name":
+    "name": "aliased var3"
+    "shared_model": "yesno"
+    "code": "HW00003"
 ```
 
 The tag `shared-model` is incorrect; the schema expects `shared_model`. If we run
