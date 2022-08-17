@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Integration with SurveyCTO &mdash; process.phenotypes  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Description of Data Cleaning" href="description.html" />
+    <link rel="prev" title="YAML Configuration" href="yaml_config.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> process.phenotypes
+            <img src="_static/54gene_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yaml_config.html">YAML Configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Integration with SurveyCTO</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#retrieve-data-from-surveycto">Retrieve Data from SurveyCTO</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#export-response-data-from-surveycto">Export Response Data from SurveyCTO</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#api-call">API Call</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#web-interface">Web Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#export-the-form-definition-spreadsheet-from-surveycto">Export the Form Definition Spreadsheet from SurveyCTO</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#convert-forms-to-process-phenotypes-configurations">Convert Forms to process.phenotypes Configurations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#expand-an-existing-process-phenotypes-configuration-file-for-new-surveycto-export">Expand an Existing process.phenotypes Configuration File for New SurveyCTO Export</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="description.html">Description of Data Cleaning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable_types.html">Variable Types Available</a></li>
+<li class="toctree-l1"><a class="reference internal" href="derived_vars.html">Derived Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html">Helper Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="report.html">HTML Report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vignette.html">Vignettes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">How to Contribute to Development</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">process.phenotypes</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Integration with SurveyCTO</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/surveycto_integration.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="integration-with-surveycto">
+<h1>Integration with SurveyCTO<a class="headerlink" href="#integration-with-surveycto" title="Permalink to this headline"></a></h1>
+<p>If you are using SurveyCTO to collect phenotype data, you may be able to use functionality in process.phenotypes for automatically converting a SurveyCTO <a class="reference external" href="https://docs.surveycto.com/02-designing-forms/01-core-concepts/02.starting-a-new-form.html">form</a> to a set of configurations (dataset-specific and shared models) for use with this package.  We can not guarantee compatibility with all SurveyCTO features.</p>
+<section id="retrieve-data-from-surveycto">
+<h2>Retrieve Data from SurveyCTO<a class="headerlink" href="#retrieve-data-from-surveycto" title="Permalink to this headline"></a></h2>
+<p>First, you’ll need to export some data from SurveyCTO.  Both the form definition spreadsheet and the resulting collected phenotypes are required because in the case of repeat variables, you don’t know how many repeats occur for any given block until you’ve looked in the questionnaire responses.</p>
+<section id="export-response-data-from-surveycto">
+<h3>Export Response Data from SurveyCTO<a class="headerlink" href="#export-response-data-from-surveycto" title="Permalink to this headline"></a></h3>
+<section id="api-call">
+<h4>API Call<a class="headerlink" href="#api-call" title="Permalink to this headline"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl -u <span class="s2">&quot;</span><span class="si">${</span><span class="nv">EMAIL</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="nv">PASSWORD</span><span class="si">}</span><span class="s2">&quot;</span> https://<span class="si">${</span><span class="nv">ORGANIZATION</span><span class="si">}</span>.surveycto.com/api/v1/forms/data/wide/csv/<span class="si">${</span><span class="nv">DATASET</span><span class="si">}</span> -o <span class="s2">&quot;</span><span class="si">${</span><span class="nv">OUTFILE</span><span class="si">}</span><span class="s2">.csv&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="web-interface">
+<h4>Web Interface<a class="headerlink" href="#web-interface" title="Permalink to this headline"></a></h4>
+<ul class="simple">
+<li><p>Log in to SurveyCTO and navigate to the “Export” tab</p></li>
+<li><p>Select “Download form data” (or just “Download” depending on browser)</p></li>
+<li><p>In the dropdown labeled “Export repeat groups as:”, select “Wide format (default)”</p></li>
+<li><p>In the dropdown labeled “Submissions to include:”, select “All submissions (default)” (this may be slow)</p></li>
+<li><p>In the dropdown labeled “File format:”, select “.csv (default)”</p></li>
+<li><p>Click “Export files”</p></li>
+</ul>
+</section>
+</section>
+<section id="export-the-form-definition-spreadsheet-from-surveycto">
+<h3>Export the Form Definition Spreadsheet from SurveyCTO<a class="headerlink" href="#export-the-form-definition-spreadsheet-from-surveycto" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Navigate to the “Design” tab</p></li>
+<li><p>Select “Download”</p></li>
+<li><p>Select “Form files”</p></li>
+<li><p>Click on “Spreadsheet form definition”, which should be an xlsx file</p></li>
+</ul>
+</section>
+</section>
+<section id="convert-forms-to-process-phenotypes-configurations">
+<h2>Convert Forms to process.phenotypes Configurations<a class="headerlink" href="#convert-forms-to-process-phenotypes-configurations" title="Permalink to this headline"></a></h2>
+<p>Assuming you’ve loaded the package in R (see <a class="reference internal" href="execution.html"><span class="doc std std-doc">this page</span></a> for details), you can use the function <code class="docutils literal notranslate"><span class="pre">parse.surveycto</span></code> to convert a SurveyCTO form spreadsheet into a set of YAML config files.  For example:</p>
+<div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="nf">parse.surveycto</span><span class="p">(</span><span class="s">&quot;surveycto_form.xlsx&quot;</span><span class="p">,</span> <span class="s">&quot;responses_in_wide_form.csv&quot;</span><span class="p">,</span> <span class="s">&quot;HW&quot;</span><span class="p">,</span> <span class="s">&quot;dataset-specific-config.yaml&quot;</span><span class="p">,</span> <span class="s">&quot;shared-model-config.yaml&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Inspect the output to confirm that it matches expectations and to make any required edits.  You will need to update fields for consent lists, minimum age threshold, etc.</p>
+</section>
+<section id="expand-an-existing-process-phenotypes-configuration-file-for-new-surveycto-export">
+<h2>Expand an Existing process.phenotypes Configuration File for New SurveyCTO Export<a class="headerlink" href="#expand-an-existing-process-phenotypes-configuration-file-for-new-surveycto-export" title="Permalink to this headline"></a></h2>
+<p>One quirk of SurveyCTO datasets is that they can expand when new subject information is added, even if the questionnaire form definition has not changed. This is most commonly due to the presence of “repeat” variables, which will have columns corresponding to the <em>maximum</em> number of repeat responses observed in any individual in the dataset. When this expansion occurs in a new data export, any existing process.phenotypes dataset configuration file will need to be expanded accordingly, and in a way that preserves any existing customization or variable aliases that may be referenced in derived variables or downstream applications.</p>
+<p>If you used <code class="docutils literal notranslate"><span class="pre">parse.surveycto</span></code> to create the original set of configuration files, and if the form definition has not otherwise changed in the interim, you can use the helper function <code class="docutils literal notranslate"><span class="pre">expand.surveycto.config</span></code> to automatically pad repeat blocks with additional configuration entries:</p>
+<div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="nf">expand.surveycto.config</span><span class="p">(</span><span class="s">&quot;dataset-specific-config.yaml&quot;</span><span class="p">,</span> <span class="s">&quot;expanded-config.yaml&quot;</span><span class="p">,</span> <span class="s">&quot;expanded_responses.csv&quot;</span><span class="p">,</span> <span class="s">&quot;surveycto_form.xlsx&quot;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s">&quot;,&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that the shared models specification is not impacted by repeat variable expansion, and so is not provided to this utility function.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="yaml_config.html" class="btn btn-neutral float-left" title="YAML Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="description.html" class="btn btn-neutral float-right" title="Description of Data Cleaning" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, B. Ballew, C. Auriga, 54gene.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
+    
+   
+</footer>
+
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
