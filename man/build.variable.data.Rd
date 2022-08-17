@@ -3,7 +3,7 @@
 \name{build.variable.data}
 \alias{build.variable.data}
 \title{Construct variable annotation according to type information
-from a SurveyCTO configuration row.}
+from a SurveyCTO configuration row}
 \usage{
 build.variable.data(type.value, name.value, label.value, choice.list, varname)
 }

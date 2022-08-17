@@ -1,0 +1,8 @@
+models:
+  "yesno":
+    "type": "categorical"
+    "levels":
+      "1":
+        "name": "no"
+      "2":
+        "name": "yes"

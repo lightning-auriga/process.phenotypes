@@ -1,0 +1,270 @@
+---
+title: "Using shared models to harmonize variables"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using shared models to harmonize variables}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(process.phenotypes)
+```
+
+# Shared Model Configuration
+
+## Overview
+
+Variables scanned by `process.phenotypes` can be configured very flexibly, with
+a wide variety of configuration settings. However, there are pitfalls to certain
+methods of configuration. Most notably, it can be difficult to keep similar
+variables in the same dataset or even across datasets configured in the same,
+or at least compatible, ways.
+
+The package attempts to address this kind of desynchronization by the use of
+what we call "shared models": configuration data that is specified once and then
+referenced by a user-specified alias. These models are configured in a separate
+YAML configuration file that is then provided to `create.phenotype.report`.
+This vignette will discuss some of the approaches to shared model specification,
+and how they might be leveraged to facilitate downstream analysis.
+
+## General Structure of a Shared Model
+
+Shared model configuration is very similar to standard variable configuration.
+Consider the following example:
+
+```{yaml}
+models:
+  yesno:
+    type: "categorical"
+    levels:
+      "1":
+        name: "no"
+        alternate_patterns:
+          - "0"
+      "2":
+        name: "yes"
+        alternate_patterns:
+          - "1"
+    "na-values":
+      - "none"
+      - "unknown"
+      - "not available"
+```
+
+Please note the following important characteristics of the above configuration:
+
+- Every shared model is specified as a mapping under the top level `models` key.
+- `models` should be specified exactly once in a given shared models file.
+- The tag `yesno` is the name of one particular shared model. When using this shared
+  model in a variable configuration (see below), this name is what is used to pull
+  in this shared model. The names of models should be unique, but otherwise are
+  flexibly user-specified.
+- The configuration data under `yesno` corresponds to the usual variable configuration
+  settings, with one important exception: there should not be a `name` key/value pair
+  in any shared model. The name is meant to be inherited from each individual variable
+  configuration that uses this shared model.
+
+
+Shared models most naturally fit categorical variables, but are not necessarily required
+to be categorical. Any accepted `process.phenotypes` variable configuration can be
+used in a shared model:
+
+```{yaml}
+models:
+  height:
+    type: "numeric"
+    bounds:
+      min: 0.75
+      max: 2.25
+```
+
+Aliasing the statement `type: "numeric"` under a shared model is a bit excessive,
+but see that the `bounds` settings can also be inherited using shared models.
+In this way, if you have multiple variables that contain, for example, human 
+height in meters, you can set a single set of numeric limits on those variables,
+and then if you need to adjust them, you can adjust them exactly once and the
+change will be inherited by all relevant variables.
+
+## Using a Shared Model in a Dataset Configuration
+
+Once you have created some shared models, you can use them in a dataset
+configuration file as follows:
+
+```{yaml}
+tag: "HW"
+globals:
+  min_age_for_inclusion: 18
+  max_invalid_datatypes_per_subject: 10
+  consent_inclusion_file: ~
+  consent_exclusion_file: ~
+variables:
+  HW00001:
+    name: "subject_id"
+    type: "string"
+    suppress_reporting: yes
+    subject_id: yes
+  HW00002:
+    name: "subject_height"
+    shared_model: "height"
+  HW00003:
+    name: "subject_likes_cake"
+    shared_model: "yesno"
+```
+
+The above variables `HW00002` and `HW00003` are completely specified.
+The configuration is completely equivalent to the elaborated specification below:
+
+```{yaml}
+variables:
+  HW00002:
+    name: "subject_height"
+    type: "numeric"
+    bounds:
+      min: 0.75
+      max: 2.25
+  HW00003:
+    name: "subject_likes_cake"
+    type: "categorical"
+    levels:
+      "1":
+        name: "no"
+        alternate_patterns:
+          - "0"
+      "2":
+        name: "yes"
+        alternate_patterns:
+          - "1"
+    "na-values":
+      - "none"
+      - "unknown"
+      - "not available"
+```
+
+Though the above examples are used in the dataset configuration `variables` section,
+they are also valid to use in the `derived` variables section.
+
+```{yaml}
+derived:
+  cake_superfan:
+    name: "subject really likes cake a lot"
+    shared_model: "yesno"
+    code: "HW00003"
+```
+
+## Overriding Default Shared Model Settings
+
+Shared models are designed to allow individual variables that invoke the shared
+model to override their default settings with variable-specific values. Note that
+while this is supported, this isn't necessarily desirable if the goal is
+harmonization.
+
+### Use a model, but specify a custom set of `na-values`
+
+Consider the following shared model and variable specification:
+
+```{yaml}
+models:
+  testmodel:
+    type: "string"
+    "na-values":
+      - "general_value"
+```
+
+```{yaml}
+variables:
+  HW00001:
+    name: "testvar"
+    shared_model: "testmodel"
+    "na-values":
+      - "specific_value"
+```
+
+The resolution of this shared model would be:
+
+```{yaml}
+variables:
+  HW00001:
+    name: "testvar"
+    type: "string"
+    "na-values":
+      - "specific_value"
+```
+
+### Use a model, but partially modify the categorical levels
+
+Consider the following example:
+
+```{yaml}
+models:
+  testmodel:
+    type: "categorical"
+    levels:
+      "1":
+        name: "lvl1"
+        alternate_patterns:
+          - "pat1"
+      "2":
+        name: "lvl2"
+        alternate_patterns:
+          - "pat2"
+```
+
+```{yaml}
+variables:
+  HW00001:
+    name: "testvar"
+    shared_model: "testmodel"
+    levels:
+      "2":
+        alternate_patterns:
+          - "patoverride"
+      "3":
+        name: "lvl3"
+        alternate_patterns:
+          - "pat3"
+```
+
+This is a rather toxic example, as the resulting variable would
+have a hybrid categorical model that, when encoded as a factor, wouldn't
+be particularly compatible with other variables that use this model.
+However, in the interest of curiosity, the final variable configuration
+would be resolved as follows:
+
+```{yaml}
+variables:
+  HW00001:
+    name: "testvar"
+    type: "categorical"
+    levels:
+      "1":
+        name: "lvl1"
+        alternate_patterns:
+          - "pat1"
+      "2":
+        name: "lvl2"
+        alternate_patterns:
+          - "patoverride"
+      "3":
+        name: "lvl3"
+        alternate_patterns:
+          - "pat3"
+```
+
+
+## Shared Models for SurveyCTO Data
+
+SurveyCTO form definitions by default come with a `choices` tab that specifies
+categorical models for use in the survey. The utility function `process.phenotypes::parse.surveycto`
+will automatically generate a shared model file based on the `choices` tab of a form.
+If desired, additional shared model data can be manually entered into the shared model
+configuration file after generation. Please see
+[Configuration from a SurveyCTO Form Definition](configuration-from-SurveyCTO-form.html)
+for more information.

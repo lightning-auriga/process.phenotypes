@@ -7,15 +7,53 @@
 write.configuration(variable.summary, out.filename)
 }
 \arguments{
-\item{variable.summary}{list, configuration data from
-create.phenotype.report run}
+\item{variable.summary}{List of configuration data from
+create.phenotype.report run.}
 
-\item{out.filename}{character vector, name of file
-to which to write yaml-format configuration data}
+\item{out.filename}{Character vector name of file
+to which to write yaml-format configuration data.}
 }
 \description{
-Configuration data from input config.yaml are modified on load,
+Configuration data from the input configuratin files are modified on load,
 and some information is lost. Before reporting, the variable
 summary information from the run needs to be somewhat reformatted
-into a version that is compatible with the input format.
+into a version that is compatible with the input format. Additionally,
+since derived variables are computed and added to the phenotype dataset,
+the resolved (and appropriately ordered) entries from the derived variable
+block need to be migrated into the primary variable configuration content.
+}
+\details{
+At one time, this output file was intended to provide a way of reloading
+the output phenotype data into process.phenotypes. That has proven somewhat
+inconvenient, and we have moved in favor of rerunning \code{create.phenotype.report}
+from scratch when any changes to the input configuration are required.
+Nevertheless, there are potential applications for this file, and furthermore
+it is appropriate to provide as detailed records of the processing chain
+as possible, so this write operation remains available with the
+\code{create.phenotype.report} \code{write.yaml} parameter.
+}
+\examples{
+variable.summary <- list(
+  tag = "HW",
+  globals = list(
+    min_age_for_inclusion = 18,
+    max_invalid_datatypes_per_subject = 10,
+    consent_inclusion_file = NULL,
+    consent_exclusion_file = NULL
+  ),
+  variables = list(
+    HW00001 = list(params = list(
+      name = "subjid",
+      type = "string",
+      subject_id = TRUE
+    )),
+    HW00002 = list(params = list(
+      name = "subjage",
+      type = "numeric",
+      subject_age = TRUE
+    ))
+  )
+)
+out.filename <- tempfile("wc_output", fileext = ".yaml")
+process.phenotypes:::write.configuration(variable.summary, out.filename)
 }

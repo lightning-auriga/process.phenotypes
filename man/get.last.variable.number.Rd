@@ -3,7 +3,7 @@
 \name{get.last.variable.number}
 \alias{get.last.variable.number}
 \title{Determine from a set of variables what the last
-variable number was and return as integer.}
+variable number was and return as integer}
 \usage{
 get.last.variable.number(variables)
 }

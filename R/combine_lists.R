@@ -21,11 +21,11 @@
 #' in the shared model.
 #'
 #' @param list1 List or vector that will have
-#' entries added into it; intended to be a dataset-specific
-#' variable configuration block.
-#' @param list2 List or vector that will have
-#' its entries added to the other; intended to be a shared
+#' entries added into it; intended to be a shared
 #' model specification.
+#' @param list2 List or vector that will have
+#' its entries added to the other; intended to be a dataset-specific
+#' variable configuration block.
 #' @return List or vector representing combined version of
 #' input objects, with list1 default entries present unless they
 #' are overridden by identically named entries

@@ -2,23 +2,76 @@
 % Please edit documentation in R/variable_dependencies.R
 \name{dependency.failure.handling}
 \alias{dependency.failure.handling}
-\title{Apply config-specified R commands as variable sanity checks}
+\title{Take action to ameliorate subject observations failing encoded dependency relationships}
 \usage{
 dependency.failure.handling(phenotype.data, variable.summary)
 }
 \arguments{
-\item{phenotype.data}{data.frame, input phenotype data}
+\item{phenotype.data}{Data frame containing input phenotype data.}
 
-\item{variable.summary}{list, configuration data per variable}
+\item{variable.summary}{List containing input dataset configuration.}
 }
 \value{
-data frame, modified version of input phenotype.data argument
+Data frame containing modified version of input phenotype data
 with requested subject/variable entries replaced with NA on
-dependency failure
+dependency failure.
 }
 \description{
 Certain variables in an input dataset should have defined relationships
-between one another. This function will evaluate, in a hopefully safe manner,
-R syntax expressions from the config yaml files and report their results
-to the per-variable summary data, for reporting in the output html.
+between one another. \code{check.variable.dependencies} handles the process of
+evaluating user-specified dependency relationships. Once that evaluation
+is complete, and the results are recorded in the variable summary data,
+this function responds to user-configured requests for action on failure,
+which involves setting either some or all variables for the offending subject to NA.
+}
+\details{
+Ascribing severity to a dependency failure is very much situational. To some extent,
+it depends on the nature of the data as well. Perhaps one measure is supposed to be
+greater than another, but is that generally supposed to be so, or always? Dependency
+relationships are a reasonable way to evaluate either case, but the action on failure
+might vary. In general, one should hesitate to blank out data unless a preponderance
+of evidence suggests the data are actually toxic: they don't represent natural or technical
+variation, but in fact indicate that the respondent wasn't answering the apparent
+question, or that dataset integrity has been violated in some way.
+
+The most severe dependencies are generally when duplicate variables crop up in various
+places. This happens with surprising frequency. This is particularly noteworthy
+if the dataset in question is the byproduct of any sort of file join operation
+(e.g. join operations, Excel vlookup, etc.). Dependency violations around such
+joins may be your only way of retroactively determining that the upstream
+(and often manual) join process failed, and should be treated with appropriate seriousness.
+}
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = 1:4,
+  HW00003 = 4:1
+)
+variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "subjid",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(params = list(
+    name = "count1",
+    type = "numeric"
+  )),
+  HW00003 = list(params = list(
+    name = "count2",
+    type = "numeric",
+    dependencies = list("1" = list(
+      name = "dep1",
+      condition = "HW00003 < HW00002",
+      exclude_on_failure = c("HW00002")
+    ))
+  ))
+))
+## first, evaluate the dependencies and record any violations
+result.config <- process.phenotypes:::check.variable.dependencies(phenotype.data, variable.summary)
+## now, based on those results, take appropriate action
+result.data <- process.phenotypes:::dependency.failure.handling(phenotype.data, result.config)
+}
+\seealso{
+check.variable.dependencies
 }

@@ -19,3 +19,5 @@ dependencies:
   - jsonschema
   - argparse
   - r-kableextra
+  - r-rjson
+  - r-jsonvalidate

@@ -1,0 +1,163 @@
+---
+title: "Validation of Dataset Configuration Files"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Validation of Dataset Configuration Files}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(process.phenotypes)
+```
+
+To facilitate the process of creating configuration files for a phenotype dataset,
+`process.phenotypes` contains a utility function and script for config validation. This step
+is completely optional, but can help catch some of the most common discrepancies
+in manually configuration.
+
+## Validator overview
+
+The yaml validator will not catch all possible discrepancies in configuration
+files, but it will flag the following:
+
+- `tag`
+- missing required properties from globals
+- missing required properties from each variable definition in `variables` and `derived`
+- malformed types
+  - accepted types are: `string`, `binary`, `categorical`, `categorical_to_numeric`, `ordinal`,
+    `numeric`, `blood pressure` or `blood_pressure` or `bloodpressure` or `bp`, `date`
+  - any capitalization of any type name is accepted
+- invalid variable configuration with either `type` or `shared_model`
+
+The yaml validator will *not* catch instances of duplicate keys in yaml maps (e.g. names of entries
+in `variables`, `derived`, or `levels`). These will instead flag as an error when executing
+`process.phenotypes::create.phenotype.report`, and can be corrected at that time.
+
+## Install necessary packages
+
+The suggested packages `jsonvalidate` and `rjson` are required for this utility.
+They are available in conda as `r-jsonvalidate` and `r-rjson`.
+
+```{r load.input.libraries}
+library(jsonvalidate)
+library(rjson)
+library(yaml)
+```
+
+## Validator usage
+
+Assume that you have a dataset configuration yaml named `dataset.yaml`:
+
+```{yaml}
+tag: "HW"
+globals:
+  "min_age_for_inclusion": 16
+  "max_invalid_datatypes_per_subject": 10
+  "consent_inclusion_file": ~
+  "consent_exclusion_file": ~
+variables:
+  "HW00001":
+    "name": "var1"
+    "type": "string"
+    "canonical_name": "variable 1"
+    "subject_id": yes
+  "HW00002":
+    "name": "var2"
+    "type": "numeric"
+    "canonical_name": "variable 2"
+    "subject_age": yes
+  "HW00003":
+    "name": "var3"
+    "shared_model": "yesno"
+    "canonical_name": "variable 3"
+derived:
+  "harmonized_name":
+    "name": "aliased var3"
+    "shared_model": "yesno"
+    "code": "HW00003"
+```
+
+and a shared models configuration yaml named `shared-models.yaml`:
+
+```{yaml}
+models:
+  "yesno":
+    "type": "categorical"
+    "levels":
+      "1":
+        "name": "no"
+      "2":
+        "name": "yes"
+```
+
+Then schema validation can be run as follows:
+
+```{R run.good.validation, eval=TRUE, echo=TRUE}
+process.phenotypes::config.validation(
+  "dataset-valid.yaml", "shared-models-valid.yaml",
+  system.file("validator/schema.datasets.yaml", package = "process.phenotypes"),
+  system.file("validator/schema.shared-models.yaml", package = "process.phenotypes")
+)
+```
+
+### Interpretation of validation errors
+
+Validator errors tend to be rather verbose, and require some interpretation.
+If either of the above notifications is missing, then something about one of the configuration
+files does not match expectation. The informative message will be somewhere near the top of the
+error, likely accompanied by an assortment of tangentially related errors the validator
+encountered when attempting to resolve the configuration file.
+
+Consider the following malformed version of the above dataset yaml:
+
+```{yaml}
+tag: "HW"
+globals:
+  "min_age_for_inclusion": 16
+  "max_invalid_datatypes_per_subject": 10
+  "consent_inclusion_file": ~
+  "consent_exclusion_file": ~
+variables:
+  "HW00001":
+    "name": "var1"
+    "type": "string"
+    "canonical_name": "variable 1"
+    "subject_id": yes
+  "HW00002":
+    "name": "var2"
+    "type": "numeric"
+    "canonical_name": "variable 2"
+    "subject_age": yes
+  "HW00003":
+    "name": "var3"
+    "shared-model": "yesno"
+    "canonical_name": "variable 3"
+derived:
+  "harmonized_name":
+    "name": "aliased var3"
+    "shared_model": "yesno"
+    "code": "HW00003"
+```
+
+The tag `shared-model` is incorrect; the schema expects `shared_model`. If we run
+this configuration file through the validator:
+
+```{R run.bad.validation, eval=TRUE, echo=TRUE, error=TRUE}
+process.phenotypes::config.validation(
+  "dataset-invalid.yaml", "shared-models-valid.yaml",
+  system.file("validator/schema.datasets.yaml", package = "process.phenotypes"),
+  system.file("validator/schema.shared-models.yaml", package = "process.phenotypes")
+)
+```
+
+In this case, the error `... must have required property 'shared_model'` indicates
+that the configuration block was unable to match the `shared_model` block specification,
+since the critical tag was malformed.

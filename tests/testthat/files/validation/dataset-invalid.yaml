@@ -1,0 +1,21 @@
+tag: "HW"
+globals:
+  "min_age_for_inclusion": 16
+  "max_invalid_datatypes_per_subject": 10
+  "consent_inclusion_file": ~
+  "consent_exclusion_file": ~
+variables:
+  "HW00001":
+    "name": "var1"
+    "type": "string"
+    "canonical_name": "variable 1"
+    "subject_id": yes
+  "HW00002":
+    "name": "var2"
+    "type": "numeric"
+    "canonical_name": "variable 2"
+    "subject_age": yes
+  "HW00003":
+    "name": "var3"
+    "shared-model": "yesno"
+    "canonical_name": "variable 3"

@@ -3,7 +3,7 @@
 \name{populate.choices}
 \alias{populate.choices}
 \title{Render SurveyCTO configuration "choices" tab
-as a shared_models style yaml list.}
+as a shared_models style yaml list}
 \usage{
 populate.choices(df, survey.type, na.values)
 }

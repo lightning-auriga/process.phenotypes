@@ -7,23 +7,35 @@
 process.unicode.characters(phenotype.data)
 }
 \arguments{
-\item{phenotype.data}{data.frame, input phenotype data}
+\item{phenotype.data}{Data frame of input phenotype data as character vectors.}
 }
 \value{
-data.frame input data with Unicode characters converted
+Data frame, containing input data with recognized Unicode characters converted
 into more manageable equivalents.
 }
 \description{
-Note that there's something particularly strange going on with
-Excel's "=#ERROR!" code, as in one instance it's getting converted
-into, of all things, an emoji.
-
-The functionality of this method is now controlled by a plaintext
-configuration file located in inst/unicode_pattern_replacements.tsv.
+Sporadic Unicode characters can be inserted into datasets by
+upstream text editors. This function attempts to take them right
+back out again. Replacements are defined in a text linker function
+under system.file("unicode_pattern_replacements.tsv", package = "process.phenotypes").
 }
 \details{
-Sporadic Unicode characters are being inserted into the dataset by
-upstream text editors. This function attempts to take them right
-back out again. Note that the replacements should be lowercase
-to be consistent with other string processing functions.
+Via unknown reasons, something particularly strange can happen with
+Excel's "=#ERROR!" code, as in one instance it can be converted
+into, of all things, an emoji. The particular instance of this that we've
+encountered should be automatically handled, but every time we process
+a new dataset we find new, creative instances of things that were
+supposed to be other things.
+
+The text linker file does a much better job of transparently exposing
+the pattern conversions than previous implementations. However, there
+are supposedly, according to relevant documentation, certain issues
+that may be introduced when such pattern linking is attempted on Windows.
+We have yet to actually observe this phenomenon ourselves, but it
+is nevertheless theoretically possible. If anyone reading this ever
+observes any such issue, please post an issue about it to the repo.
+}
+\examples{
+phenotype.data <- data.frame(subjid = c("A", "B", "C", "\u2070"))
+result <- process.phenotypes:::process.unicode.characters(phenotype.data)
 }

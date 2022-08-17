@@ -2,25 +2,54 @@
 % Please edit documentation in R/string_vector_cleanup.R
 \name{remove.nonword.chars}
 \alias{remove.nonword.chars}
-\title{Basic global cleanup of entries in a phenotype data frame}
+\title{Apply custom handling to various kinds of unexpected characters}
 \usage{
 remove.nonword.chars(df, variable.summary)
 }
 \arguments{
-\item{df}{data frame, input phenotype content}
+\item{df}{Data frame of input phenotype data as character vectors.}
 
-\item{variable.summary}{list, variable-specific configuration data}
+\item{variable.summary}{List of variable-specific configuration data.}
 }
 \value{
-modified version of input with values cleaned as described
-above
+Data frame containing modified version of input with nonword characters
+modified as described in Details.
 }
 \description{
-Removes preceding and trailing non-alphanumeric characters
+Unstructured input datasets feature various kinds of systematic
+data entry deviations. Some of these are sufficiently unambiguously
+unintentional that they can be handled automatically with
+limited user intervention. Note that if any of these steps are considered
+too stringent, setting the configured variable type to "string" will disable
+this function entirely.
 }
 \details{
-Performs the following data modifications to non-numeric values:
+The following steps are applied by this function in particular contexts:
 \itemize{
-\item remove trailing and preceding non-alphanumerics
+\item for numerics only, pad a leading decimal point with a leading 0
+\item for non-strings, replace '>' or '<' with 'greater than' or 'less than'
+\item for non-strings, set anything that looks like a negative number to NA
+\itemize{
+\item this may be too stringent for some applications. if so, use \code{type="string"}
 }
+\item for non-strings, remove padding non-word characters
+}
+}
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B", "C", "D"),
+  HW00002 = c("1.0m", "-1.0", "{1.0}", "<1")
+)
+variable.summary <- list(variables = list(
+  HW00001 = list(params = list(
+    name = "subjid",
+    type = "string",
+    subject_id = TRUE
+  )),
+  HW00002 = list(params = list(
+    name = "metric",
+    type = "numeric"
+  ))
+))
+result <- process.phenotypes:::remove.nonword.chars(phenotype.data, variable.summary)
 }

@@ -7,27 +7,62 @@
 is.blood.pressure(vec, allow.trailing = FALSE, allow.undelimited = FALSE)
 }
 \arguments{
-\item{vec}{character vector, input candidate values}
+\item{vec}{Character vector of input data values.}
 
-\item{allow.trailing}{logical, whether a blood pressure-like
-entry with arbitrary trailing text should be considered possibly
-a good result}
+\item{allow.trailing}{Logical indicating whether a blood pressure-like
+entry with arbitrary trailing text (e.g. '120/80mmhg') should be considered possibly
+a valid blood pressure result.}
 
-\item{allow.undelimited}{logical, whether a 4-6 digit
+\item{allow.undelimited}{Logical indicating whether a 4-6 digit
 integer should be considered a two-part blood pressure measurement
-with no valid delimiter. format will be (S: systolic; D: diastolic):
-SSDD, SSSDD, SSSDDD. note that this is disabled by default and expected
-to be noisy, and should be avoided if possible}
+with no valid delimiter. See Details for description of the conversion heuristic.
+Note that this is disabled by default and expected
+to be noisy, and should be avoided if possible.}
 }
 \value{
-logical vector, one per input value, whether the input
-matches blood pressure format
+Logical vector of same length as input data, indicating whether the input
+matches blood pressure format.
 }
 \description{
-Attempts to identify blood pressure measurements in
-DBP/SBP format
-}
-\details{
 Blood pressure measurements may be reported as ###/###
 entries in a single vector, complicating numeric casts.
+As more datasets have been tested with this package,
+more creative BP reporting formats have been detected,
+and in some of those cases the recognized formats have been
+extended to adapt to these situations, so long as the
+values are reasonably unambiguous.
+}
+\details{
+The accepted format is, generally, any amount of numbers indicating
+systolic blood pressure; optionally whitespace; one of -/, delimiting
+the blood pressure values; optionally whitespace; and any amount of
+numbers indicating diastolic blood pressure.
+
+Optionally, this function will allow or forbid trailing meta-text,
+which generally is expected to involve some variant of 'mmhg'.
+Depending on whether you expect such a deviation in your input data,
+it may or may not be appropriate to relax this pattern and potentially
+permit more false positives.
+
+In extreme cases, no delimiter is present at all between systolic
+and diastolic blood pressure, and the values are reported as
+simply '#####'. Traditionally, we had strongly advocated for excluding
+these values. However, we ended up with a dataset that had a substantial
+preponderance of such values. There are situations in which the
+numbers may be intuitively partitioned based on number of digits.
+In that case, the resolution is as follows (S: assigned to systolic;
+D: assigned to diastolic):
+\itemize{
+\item six digits -> SSSDDD
+\item five digits -> SSSDD
+\item four digits -> SSDD
+}
+
+\code{allow_undelimited_bp} is exposed to user configuration, but disabled by
+default. Please only activate this behavior if you are absolutely
+certain that you can tolerate this aggressive data conversion behavior.
+}
+\examples{
+data <- c("120/80", "120/80mmhg", "120 / 80", "12080")
+results <- process.phenotypes:::is.blood.pressure(data)
 }

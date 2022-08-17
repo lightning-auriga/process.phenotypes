@@ -2,24 +2,49 @@
 % Please edit documentation in R/string_vector_cleanup.R
 \name{reformat.factor}
 \alias{reformat.factor}
-\title{Convert character vector to factor, collapsing certain levels}
+\title{Convert character vector to factor, respecting configuration aliases}
 \usage{
 reformat.factor(vec, variable.summary)
 }
 \arguments{
-\item{vec}{character vector, input string phenotype data}
+\item{vec}{Character vector of input phenotype data.}
 
-\item{variable.summary}{list, summary information for a given variable}
+\item{variable.summary}{List of input configuration data for the input variable.}
 }
 \value{
-list, 'phenotype.data' contains converted phenotype information,
-'variable.summary' contains input variable summary and possibly information
+List, with first entry 'phenotype.data' containing factor converted
+phenotype information, and second entry 'variable.summary' containing input
+configuration with possible additional information
 about invalid factor levels converted to NA.
 }
 \description{
-Reformats character vector to factor
+Categorical, ordinal, and binary type configured variables in the input
+dataset configuration are converted into factors. Factors are matched
+against each level's primary name. In situations
+where harmonization is required, for example to create compatible factor
+levels with other variables or rename factor levels, the \code{alternate_patterns}
+sequence of regular expressions is used to detect and alias responses to harmonized
+factor levels.
 }
 \details{
-Converts character vector to factor based on level specification in yaml config.
-This will report entries that are converted to NA without first being set to NA intentionally.
+Note that pattern matching is expected to be conducted versus data inputs
+that have already passed through upstream cleaning and have been made lowercase,
+had nonword characters removed, etc. If there are issues, these will be reported
+as invalid type conversions in the \code{create.phenotype.report} cleaning report,
+and the specified patterns can be updated accordingly.
+}
+\examples{
+data <- c("apple", "banana", "red apple")
+variable.summary <- list(params = list(
+  name = "fruit",
+  type = "categorical",
+  levels = list(
+    "1" = list(
+      name = "apple",
+      alternate_patterns = c("red apple")
+    ),
+    "2" = list(name = "banana")
+  )
+))
+results <- process.phenotypes:::reformat.factor(data, variable.summary)
 }

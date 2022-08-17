@@ -1,0 +1,391 @@
+---
+title: "Configuration from a SurveyCTO Form Definition"
+output:
+  rmarkdown::html_vignette:
+    highlight: pygments
+    toc: true
+    fig_width: 5
+    fig.align: "center"
+    df_print: !expr function(df) {print(df, row.names = FALSE, max = 20 * ncol(df))}
+vignette: >
+  %\VignetteIndexEntry{Configuration from a SurveyCTO Form Definition}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  cache = FALSE,
+  dev = "png"
+)
+```
+
+```{r setup}
+library(process.phenotypes)
+```
+
+## Overview
+
+The original use cases of this package involved manual configuration of unstructured datasets.
+This is still the most common use case, and we have provided [a vignette covering manual dataset configuration](manual-configuration.Rmd)
+for that situation. However, in many cases a dataset already has a data definition or dictionary,
+and the challenge is converting that configuration to a format compatible with `process.phenotypes`.
+
+If your dataset is derived from a [SurveyCTO](https://www.surveycto.com/) questionnaire,
+we have provided a utility function, `process.phenotypes::parse.surveycto`, to facilitate the conversion of the SurveyCTO
+form definition into a barebones `process.phenotypes` dataset configuration and shared models specification.
+This vignette will walk through the process of converting a form definition, and furthermore
+showcase the situation when an existing SurveyCTO-derived configuration file needs to be
+expanded to adapt to additional collected data.
+
+## `parse.surveycto`: semi-automated configuration of a SurveyCTO questionnaire
+
+### Requirements
+
+To use the automated SurveyCTO configuration tool, the following information is required:
+
+- A SurveyCTO form definition spreadsheet (as xlsx). The form definition format is beyond the scope
+  of this vignette; please see the [extensive SurveyCTO documentation](https://docs.surveycto.com/02-designing-forms/01-core-concepts/01.intro.html)
+  for further information. The conversion function requires:
+  - the form sheet `survey`, expecting the first three columns `type`, `name`, and `label`
+  - the form sheet `choices`, expecting the first three columns `list_name`, `value`, and `label`
+- A data export from SurveyCTO. This can come from a variety of sources, though the following are required or suggested:
+  - the data format should be **wide format** csv
+  - the data should _almost certainly_ have been exported while the corresponding form xlsx file was active
+    - this is not _technically_ required; but
+	- discrepancies between form variants will cause SurveyCTO to take aggressive means to harmonize data in a single output format. If form changes are substantial enough, there can be actual incompatibilities between the form definition and data export that will manifest mysteriously in downstream analysis. One example is if a form definition somehow loses a categorical variable level that was in use earlier in the same data collection. SurveyCTO preserves the old level, but as it's not present in the `choices` tab of the form definition, it will appear to be an unexpected categorical response.
+  - though data export from the SurveyCTO web interface is possible, it is generally much easier to use their API. API documentation is not publicly online at the time of this writing, but that information can be provided by your SurveyCTO representative.
+- A tag for the dataset
+  - this should be a short, alphabetical identifier for the dataset
+  - because `parse.surveycto` tries to streamline most of the configuration process, it automatically names variables `{tag}#####`, with potential trailing underscores denoting repeat or multiple response variables
+  - this variable format can be changed at will after the function is run, though note that the format should be preserved if you want to use the package's utility function for repeat block expansion
+- The desired name of the output dataset configuration file
+  - this approximately corresponds to the SurveyCTO form definition tab `survey`
+- The desired name of the output shared model configuration file
+  - this approximately corresponds to the SurveyCTO form definition tab `choices`
+- The name of the subject ID column in the SurveyCTO data export csv
+- The name of the subject age column in the SurveyCTO data export csv
+
+
+### Example
+
+Consider the following example SurveyCTO configuration:
+
+```{r load.cto.forms, echo=TRUE, eval=TRUE}
+surveycto.xlsx <- system.file("examples", "parse_surveycto_example.xlsx", package = "process.phenotypes")
+surveycto.csv <- system.file("examples", "parse_surveycto_example.csv", package = "process.phenotypes")
+```
+
+These input files contain tiny example information as follows:
+
+```{r show.cto.contents, echo=FALSE}
+surveycto.xlsx.survey <- openxlsx::read.xlsx(surveycto.xlsx, sheet = "survey")
+surveycto.xlsx.choices <- openxlsx::read.xlsx(surveycto.xlsx, sheet = "choices")
+surveycto.csv.data <- read.table(surveycto.csv, header = TRUE, stringsAsFactors = FALSE, sep = ",")
+
+cat("## SurveyCTO Survey Tab\n\n")
+surveycto.xlsx.survey[, 1:3]
+
+cat("\n\n## SurveyCTO Choices Tab\n\n")
+surveycto.xlsx.choices[, 1:3]
+
+cat("\n\n## SurveyCTO Export Data\n\n")
+surveycto.csv.data
+```
+
+To use the `parse.surveycto` helper function, provide this information, along with a user-specified
+character tag for use as a prefix in the output harmonized variable names; the desired name of the
+output dataset configuration file; and the desired name of the output shared models configuration file.
+You must also specify the column names corresponding to the subject ID and subject age variables
+in the dataset. These variables are not required for the helper function itself, but are required
+for the primary run of `process.phenotypes::create.phenotype.report`.
+
+```{r run.parse.surveycto, echo=TRUE, eval=TRUE}
+output.dataset.yaml <- tempfile("parse.surveycto.vignette.dataset", fileext = ".yaml")
+output.shared.models <- tempfile("parse.surveycto.vignette.shared.models", fileext = ".yaml")
+process.phenotypes::parse.surveycto(surveycto.xlsx,
+  surveycto.csv,
+  "HW",
+  output.dataset.yaml,
+  output.shared.models,
+  subject.id.name = "subjectid_1",
+  age.name = "subjectage"
+)
+```
+
+Please note the most important point of this helper function run: the output configuration files
+are considered a _starting point_ for your configuration, not the endpoint. The files will
+contain entries for each variable in the dataset, and all of the shared models specified
+in the form definition `choices` tab (regardless of whether they're actually envoked in the
+current survey). Each variable entry will have `type` or `shared_model` specifications according
+to sane defaults, along with certain additional settings (`subject_id: yes` and `subject_age: yes`
+set for the appropriate variables; reporting content from `create.phenotype.report` suppressed
+for freetext variables, etc.). However, no dependencies are encoded; obviously no derived variables
+are configured; and just in general, some of the baseline guesses may not be exactly suited to your needs.
+
+For the above example, the dataset configuration end up as follows:
+
+```{r, echo=FALSE, eval=FALSE}
+# nolint start
+```
+
+```{yaml}
+tag: HW
+globals:
+  min_age_for_inclusion: 18.0
+  max_invalid_datatypes_per_subject: 10.0
+  consent_inclusion_file: ~
+  consent_exclusion_file: ~
+variables:
+  HW00001:
+    name: SubmissionDate
+    type: string
+    suppress_reporting: yes
+    canonical_name: SubmissionDate
+  HW00002:
+    name: starttime
+    type: string
+    suppress_reporting: yes
+    canonical_name: .na
+  HW00003:
+    name: endtime
+    type: string
+    suppress_reporting: yes
+    canonical_name: .na
+  HW00004:
+    name: deviceid
+    type: string
+    suppress_reporting: yes
+    canonical_name: .na
+  HW00005:
+    name: subscriberid
+    type: string
+    suppress_reporting: yes
+    canonical_name: .na
+  HW00006:
+    name: simid
+    type: string
+    suppress_reporting: yes
+    canonical_name: .na
+  HW00007:
+    name: devicephonenum
+    type: string
+    suppress_reporting: yes
+    canonical_name: .na
+  HW00008:
+    name: username
+    type: string
+    suppress_reporting: yes
+    canonical_name: .na
+  HW00009:
+    name: caseid
+    type: string
+    suppress_reporting: yes
+    canonical_name: .na
+  HW00010:
+    name: option
+    shared_model: yesno
+    canonical_name: do you want the thing
+  HW00011_1:
+    name: subjectid_1
+    type: string
+    suppress_reporting: yes
+    canonical_name: enter subject id, repeat observation 1
+    subject_id: yes
+  HW00012:
+    name: subjectage
+    type: numeric
+    canonical_name: how old are you
+    subject_age: yes
+  HW00013:
+    name: formdef_version
+    type: string
+    suppress_reporting: yes
+    canonical_name: formdef_version
+```
+
+```{r, echo=FALSE, eval=FALSE}
+# nolint end
+```
+
+You'll note that this contains variables `SubmissionDate` and `formdef_version` that were not actually configured in the
+form definition. SurveyCTO injects an assortment of metadata variables into its output,
+sometimes rather unpredictably. `parse.surveycto` will intelligently configure just the 
+variables that are actually present in the current data export, setting them as 
+string variables with suppressed reporting.
+
+Once you have this barebones configuration file, you can either directly edit the configuration
+blocks if you know what kinds of changes you want (specifically, you should include consent
+inclusion and exclusion files as appropriate; null entries for those fields are accepted but
+not preferred). If you're not sure where to start, you can also consider running
+`create.phenotype.report` to emit a basic summary HTML report that can be used to
+determine what configuration refinements are needed.
+
+The shared models configuration file looks like this:
+
+```{yaml}
+models:
+  yesno:
+    type: categorical
+    levels:
+      lvl1:
+        name: 'Yes'
+        alternate_patterns:
+        - '1'
+      lvl2:
+        name: 'No'
+        alternate_patterns:
+        - '0'
+```
+
+All models from the form definition `choices` tab are included
+in the shared models file, regardless of whether they're invoked
+with `select_one` or `select_multiple` in the `survey` tab.
+If you have multiple questionnaires that use the same `choices`
+information, it is preferable to create a single shared models file to
+use with all datasets, such that the output processed variables are much
+more likely to be intrinsically comparable to one another.
+
+
+## `expand.surveycto.config`: adjust an existing dataset configuration based on newer data export
+
+### Use Case
+
+One of the strange idiosyncrasies of SurveyCTO datasets is that the output variable set
+can expand in later data exports. This is _almost_ always due to the use of variables
+tagged as part of a **repeat** block, annotated between `begin repeat` and `end repeat` statements.
+The following behaviors have been observed in datasets to date:
+
+- variables in an optional repeat block that have _no_ responses will be missing from the output data entirely
+- variables with `N` entries will have `N` structured output variables. Consider the following example
+  SurveyCTO form definition segment:
+  
+```{r, echo=FALSE, eval=TRUE}
+df <- data.frame(
+  type = c("begin repeat", "text", "decimal", "end repeat"),
+  name = c(NA, "var1", "var2", NA),
+  label = c(NA, "enter a word", "enter a number", NA)
+)
+df
+```
+
+The corresponding export data from SurveyCTO might look as follows:
+
+```{r, echo=FALSE, eval=TRUE}
+df <- data.frame(
+  "var1_1" = c("entry", "entry"), "var2_1" = c(1.1, 2.2),
+  "var1_2" = c("entry", "entry"), "var2_2" = c(3.3, 4.4),
+  "var1_3" = c("entry", "entry"), "var2_3" = c(5.5, 6.6)
+)
+df
+```
+
+- note that the blocks are repeated, in order, as:
+
+  - variable 1, repeat observation 1;
+  - variable 2, repeat observation 1;
+  - variable 1, repeat observation 2;
+  - variable 2, repeat observation 2;
+  - variable 1, repeat observation 3;
+  - variable 2, repeat observation 3
+
+- the above dataset will continue to expand as the _maximum number of responses per-subject_ expands
+  across the entire dataset. So perhaps the month after you've configured the dataset the first time,
+  you export the data again, and now you suddenly see an additional 6 repeat collections per variable.
+  This poses some challenges, because you could just run `parse.surveycto` again, but in that case
+  you'll lose any customization you've added to the original configuration file.
+
+### Requirements
+
+To use `expand.surveycto.config` to handle repeat blocks in your new data export, the following
+information is required:
+
+- the current dataset configuration file for your data
+- the desired name of the new output dataset yaml
+- the current (probably but not necessarily wider) csv data export from SurveyCTO
+- the current SurveyCTO form definition xlsx file; this can be same as before or updated, as appropriate
+
+### Limitations
+
+It is essential to note here: you cannot use this utility function if you alter the variable
+aliases (e.g. `HW00001`, `HW00002`, etc.) in the original dataset configuration. 
+That structured format is required for the function's ability to extend configured blocks.
+
+This function extends repeat blocks. It cannot introduce entirely new variables that are,
+for example, injected into new data exports based on modified form definitions. For that
+kind of variable, manual reconfiguration (or a rerun of `parse.surveycto` from scratch) is required.
+
+Note that the shared models configuration file is not touched by this process at all.
+
+### Example
+
+We'll use the same form definition as above. This time, we'll use an example dataset
+that happens to have additional repeat observations for the `subjectid` base variable.
+
+```{r load.expanded.cto.forms, echo=TRUE, eval=TRUE}
+surveycto.xlsx <- system.file("examples", "parse_surveycto_example.xlsx",
+  package = "process.phenotypes"
+)
+surveycto.csv.expanded <- system.file("examples", "parse_surveycto_example_expanded.csv",
+  package = "process.phenotypes"
+)
+```
+
+```{r show.cto.expanded.contents, echo=FALSE, eval=TRUE}
+
+surveycto.expanded.csv.data <- read.table(surveycto.csv.expanded, header = TRUE, stringsAsFactors = FALSE, sep = ",")
+
+cat("#### SurveyCTO Export Data (Expanded)\n\n")
+surveycto.expanded.csv.data
+```
+
+With this information, you can run `expand.surveycto.config` as follows:
+
+```{r run.expand.surveycto.config, echo=TRUE, eval=TRUE}
+## the input yaml for this run is the output from the prior run
+input.existing.dataset.yaml <- output.dataset.yaml
+output.dataset.expanded.yaml <- tempfile("parse.surveycto.expanded.dataset", fileext = ".yaml")
+## if you're providing csv input here, you need to override the delimiter in this function
+process.phenotypes::expand.surveycto.config(input.existing.dataset.yaml,
+  output.dataset.expanded.yaml,
+  surveycto.csv.expanded,
+  surveycto.xlsx,
+  sep = ","
+)
+```
+
+This expanded configuration looks as follows (just showing the relevant changed portion):
+
+```{yaml}
+  HW00010:
+    name: option
+    shared_model: yesno
+    canonical_name: do you want the thing
+  HW00011_1:
+    name: subjectid_1
+    type: string
+    suppress_reporting: yes
+    canonical_name: enter subject id, repeat observation 1
+    subject_id: yes
+  HW00011_2:
+    name: subjectid_2
+    type: string
+    suppress_reporting: yes
+    canonical_name: enter subject id, repeat observation 2
+    subject_id: yes
+  HW00012:
+    name: subjectage
+    type: numeric
+    canonical_name: how old are you
+    subject_age: yes
+  HW00013:
+    name: formdef_version
+    type: string
+    suppress_reporting: yes
+    canonical_name: formdef_version
+```
+
+In theory, this output dataset yaml can now be combined with the existing shared models yaml
+to run your dataset through `create.phenotype.report`.

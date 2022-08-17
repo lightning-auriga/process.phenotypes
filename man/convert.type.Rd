@@ -3,9 +3,6 @@
 \name{convert.type}
 \alias{convert.type}
 \title{Coordinate different function calls for type conversion}
-\usage{
-convert.type(vec, var.summary, target.type)
-}
 \arguments{
 \item{vec}{character vector, input phenotype content}
 
@@ -19,18 +16,22 @@ list, 'phenotype.data' contains converted phenotype information,
 'variable.summary' contains input variable summary.
 }
 \description{
-A short list of special handlers are implemented for particular
-data conversion problems (e.g. numerics with trailing unit suffixes,
-or blood pressure data).  This function dispatches the appropriate
-subroutine based on the detected data type.
+Each yaml configuration block should have a "type" entry
+denoting what data storage type is expected for this variable.
+This function dispatches the appropriate handlers for these
+methods, specifically triggering type-specific cleaning in some
+cases before casting the values.
+
+If for any reason you don't like the type conversion behaviors
+in this package, set the variable type to "string" and then
+implement the processing you desire as a derived variable.
 }
 \details{
-Each yaml configuration block should have a "type" entry
-(if not, will default to unmodified string) denoting what
-data storage type is expected for this variable.
+This function is a pure internal, and should never be
+called outside of the package.
 }
 \seealso{
-apply.type.conversion
+apply.type.conversions
 }
 \keyword{phenotypes}
 \keyword{yaml}

@@ -2,25 +2,31 @@
 % Please edit documentation in R/string_vector_cleanup.R
 \name{remove.whitespace}
 \alias{remove.whitespace}
-\title{Basic global cleanup of entries in a phenotype data frame}
+\title{Harmonize whitespace formatting in input data frame}
 \usage{
 remove.whitespace(df)
 }
 \arguments{
-\item{df}{data frame, input phenotype content}
+\item{df}{Data frame of input phenotype data as character vectors.}
 }
 \value{
-modified version of input with values cleaned as described
-above
+Data frame containing input entries with whitespace collapsed
+and padding whitespace removed.
 }
 \description{
-Removes all trailing and preceding whitespaces; collapses
-multiple consecutive whitespaces
+This function collapses consecutive whitespace into
+single whitespace, and removes padding whitespace
+at beginning or end of input strings. It furthermore
+sets assorted variants of {whitespace}-{whitespace}
+to be simply -, facilitating tabulation of repeated responses.
+This cleaning is basically mandatory on datasets
+that have been collected with manual entry, but is
+generally harmless with other types of input data.
 }
-\details{
-Performs the following data modifications to non-numeric values:
-\itemize{
-\item remove all trailing and preceding whitespaces and collapse
-consecutive whitespaces
-}
+\examples{
+phenotype.data <- data.frame(
+  HW00001 = c("A", "B ", " C", "  D"),
+  HW00002 = c("entry 1", "entry  2", "1- 2", "3 -4")
+)
+result <- process.phenotypes:::remove.whitespace(phenotype.data)
 }
