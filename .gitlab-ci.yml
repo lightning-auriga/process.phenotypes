@@ -30,11 +30,11 @@ variables:
 
 run_all:
   stage: check
-  image: rocker/tidyverse:4.1.2
+  image: rocker/tidyverse:latest
   script:
     - apt-get update
     - apt-get install -y wget tar libxt-dev
-    - Rscript -e 'install.packages(c("covr", "DT", "openxlsx", "kableExtra", "stringdist", "jsonvalidate", "rjson"), repos = "https://cran.seoul.go.kr/")'
+    - Rscript -e 'install.packages(c("covr", "DT", "openxlsx", "kableExtra", "stringdist", "jsonvalidate", "rjson"), repos = "https://cran.yu.ac.kr/")'
     - Rscript -e 'devtools::build(binary = TRUE)'
     - Rscript -e 'devtools::check(document = FALSE, vignettes = FALSE, args = "--no-tests", error_on = "note")'
     - Rscript -e 'if (any(as.data.frame(devtools::test())[["failed"]] > 0)) stop("Some tests failed.")'
