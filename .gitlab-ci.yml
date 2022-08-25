@@ -30,7 +30,7 @@ variables:
 
 run_all:
   stage: check
-  image: rocker/tidyverse:latest
+  image: rocker/tidyverse:4.1.2
   script:
     - apt-get update
     - apt-get install -y wget tar libxt-dev
