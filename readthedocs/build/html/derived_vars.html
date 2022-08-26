@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Derived Variables &mdash; process.phenotypes  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -28,12 +27,14 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> process.phenotypes
-            <img src="_static/54gene_logo.png" class="logo" alt="Logo"/>
-          </a>
-              <div class="version">
-                1.1.0
-              </div>
+
+<a href="index.html" class="icon icon-home"> process.phenotypes
+<a href="https://54gene.com">
+    <img src="_static/54gene_logo.png" class="logo" alt="Logo"/>
+</a>
+  <div class="version">
+    1.1.0
+  </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -81,33 +82,33 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="derived-variables">
+  <div class="section" id="derived-variables">
 <h1>Derived Variables<a class="headerlink" href="#derived-variables" title="Permalink to this headline"></a></h1>
 <p>Users can define variables that are derived from existing questionnaire responses in the dataset-specific config file, under a <code class="docutils literal notranslate"><span class="pre">derived</span></code> YAML block.  See the following example, and the explanation below:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">variables</span><span class="p">:</span>
-  <span class="nt">HW001</span><span class="p">:</span>
-     <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;example</span><span class="nv"> </span><span class="s">variable&quot;</span>
-     <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">categorical</span>
-     <span class="nt">levels</span><span class="p">:</span>
-       <span class="nt">lvl1</span><span class="p">:</span>
-         <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;male&quot;</span>
-         <span class="nt">alternate_patterns</span><span class="p">:</span>
-           <span class="p p-Indicator">-</span> <span class="s">&quot;m&quot;</span>
-       <span class="nt">lvl2</span><span class="p">:</span>
-         <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;female&quot;</span>
-       <span class="nt">lvl3</span><span class="p">:</span>
-         <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;prefer</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">answer&quot;</span>
-<span class="nt">derived</span><span class="p">:</span>
-  <span class="nt">HW001_derived</span><span class="p">:</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;sex</span><span class="nv"> </span><span class="s">binary</span><span class="nv"> </span><span class="s">encoding&quot;</span>
-    <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">numeric</span>
-    <span class="nt">code</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">binary.sex &lt;- rep(NA, length(HW001))</span>
-      <span class="no">is.male &lt;- HW001 == &quot;male&quot; &amp; !is.na(HW001)</span>
-      <span class="no">is.female &lt;- HW001 == &quot;female&quot; &amp; !is.na(HW001)</span>
-      <span class="no">binary.sex[is.male] &lt;- 0</span>
-      <span class="no">binary.sex[is.female] &lt;- 1</span>
-      <span class="no">binary.sex</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">variables</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">HW001</span><span class="p">:</span><span class="w"></span>
+<span class="w">     </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;example</span><span class="nv"> </span><span class="s">variable&quot;</span><span class="w"></span>
+<span class="w">     </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">categorical</span><span class="w"></span>
+<span class="w">     </span><span class="nt">levels</span><span class="p">:</span><span class="w"></span>
+<span class="w">       </span><span class="nt">lvl1</span><span class="p">:</span><span class="w"></span>
+<span class="w">         </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;male&quot;</span><span class="w"></span>
+<span class="w">         </span><span class="nt">alternate_patterns</span><span class="p">:</span><span class="w"></span>
+<span class="w">           </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;m&quot;</span><span class="w"></span>
+<span class="w">       </span><span class="nt">lvl2</span><span class="p">:</span><span class="w"></span>
+<span class="w">         </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;female&quot;</span><span class="w"></span>
+<span class="w">       </span><span class="nt">lvl3</span><span class="p">:</span><span class="w"></span>
+<span class="w">         </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prefer</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">answer&quot;</span><span class="w"></span>
+<span class="nt">derived</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">HW001_derived</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sex</span><span class="nv"> </span><span class="s">binary</span><span class="nv"> </span><span class="s">encoding&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">numeric</span><span class="w"></span>
+<span class="w">    </span><span class="nt">code</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">binary.sex &lt;- rep(NA, length(HW001))</span><span class="w"></span>
+<span class="w">      </span><span class="no">is.male &lt;- HW001 == &quot;male&quot; &amp; !is.na(HW001)</span><span class="w"></span>
+<span class="w">      </span><span class="no">is.female &lt;- HW001 == &quot;female&quot; &amp; !is.na(HW001)</span><span class="w"></span>
+<span class="w">      </span><span class="no">binary.sex[is.male] &lt;- 0</span><span class="w"></span>
+<span class="w">      </span><span class="no">binary.sex[is.female] &lt;- 1</span><span class="w"></span>
+<span class="w">      </span><span class="no">binary.sex</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Note that there are two main blocks in the config - <code class="docutils literal notranslate"><span class="pre">variables</span></code>, which contains the questionnaire response data, and <code class="docutils literal notranslate"><span class="pre">derived</span></code>, which contains new variables created from the questionnaire response data.  The <code class="docutils literal notranslate"><span class="pre">variables</span></code> section is explained in more detail <a class="reference internal" href="yaml_config.html"><span class="doc std std-doc">here</span></a>.  In the <code class="docutils literal notranslate"><span class="pre">derived</span></code> section, the one section that isn’t present in the <code class="docutils literal notranslate"><span class="pre">variables</span></code> block is the <code class="docutils literal notranslate"><span class="pre">code</span></code> section.</p>
@@ -116,7 +117,7 @@
 <li><p>The code block should return the value that should be stored as the derived variable (the vector <code class="docutils literal notranslate"><span class="pre">binary.sex</span></code> in the example above)</p></li>
 <li><p>The return value should be of length n.subjects or a single value, in which case it will be extended to be assigned to all subjects</p></li>
 </ul>
-</section>
+</div>
 
 
            </div>

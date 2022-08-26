@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YAML Configuration &mdash; process.phenotypes  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -28,12 +27,14 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> process.phenotypes
-            <img src="_static/54gene_logo.png" class="logo" alt="Logo"/>
-          </a>
-              <div class="version">
-                1.1.0
-              </div>
+
+<a href="index.html" class="icon icon-home"> process.phenotypes
+<a href="https://54gene.com">
+    <img src="_static/54gene_logo.png" class="logo" alt="Logo"/>
+</a>
+  <div class="version">
+    1.1.0
+  </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -87,13 +88,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="yaml-configuration">
+  <div class="section" id="yaml-configuration">
 <h1>YAML Configuration<a class="headerlink" href="#yaml-configuration" title="Permalink to this headline"></a></h1>
 <p>This section is continually being expanded as the configuration feature set is
 modified. For the time being, see existing dataset configuration files in
 <a class="reference external" href="https://gitlab.com/data-analysis5/phenotypes/process.phenotypes/-/tree/default/yaml-configuration">this directory</a>
 for examples.</p>
-<section id="top-level-yaml-sections">
+<div class="section" id="top-level-yaml-sections">
 <h2>Top-level YAML Sections<a class="headerlink" href="#top-level-yaml-sections" title="Permalink to this headline"></a></h2>
 <table class="colwidths-auto docutils align-default">
 <thead>
@@ -128,8 +129,8 @@ for examples.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="variables-yaml-section">
+</div>
+<div class="section" id="variables-yaml-section">
 <h2>Variables YAML Section<a class="headerlink" href="#variables-yaml-section" title="Permalink to this headline"></a></h2>
 <p>Each variable in the dataset is assigned a normalized encoded value (e.g. HW00001, HW00002, etc.).  Under each variable block, there are a variety of other possible configuration settings:</p>
 <table class="colwidths-auto docutils align-default">
@@ -180,21 +181,21 @@ for examples.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="derived-yaml-section">
+</div>
+<div class="section" id="derived-yaml-section">
 <h2>Derived YAML Section<a class="headerlink" href="#derived-yaml-section" title="Permalink to this headline"></a></h2>
 <p>Derived variables are calculated from existing data, e.g. calculating BMI from reported waist and height measurements.  This section allows the user to define arbitrary new variables to derive.</p>
 <ul class="simple">
 <li><p>Most sections here have been previously described, but <code class="docutils literal notranslate"><span class="pre">code</span></code> is where the logic is injected to create the derived variable, written in <code class="docutils literal notranslate"><span class="pre">R</span></code> syntax with access to the normalized variable names</p></li>
 </ul>
-</section>
-<section id="yaml-validation">
+</div>
+<div class="section" id="yaml-validation">
 <h2>YAML Validation<a class="headerlink" href="#yaml-validation" title="Permalink to this headline"></a></h2>
 <p>Prior to running this tool, you should validate the YAML configurations you’ve set up as follows:</p>
 <p><code class="docutils literal notranslate"><span class="pre">./yaml_validator.py</span> <span class="pre">dataset_file.yaml</span> <span class="pre">shared_model_file.yaml</span></code></p>
 <p>If you are using pre-commit as described below, the YAML configurations will be validated automatically when you commit changes.</p>
-</section>
-</section>
+</div>
+</div>
 
 
            </div>
