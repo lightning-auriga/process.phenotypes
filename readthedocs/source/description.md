@@ -88,7 +88,7 @@ Cleaning steps are generally performed in the order of the documentation here; t
 ## Apply Variable-specific NA Values
 
 - Takes NA values enumerated under `na-values` in the dataset-specific config file and substitutes them with NA for a given variable
-- If `suppress_output` is true in the dataset-specific config for a given variable, all entries for that variable are subtituted with NA in the output
+- If `suppress_output` is true in the dataset-specific config for a given variable, all entries for that variable are substituted with NA in the output
 
 ## Apply Type Conversions
 
