@@ -48,7 +48,7 @@ the processing conducted by the package. This functionality is contained in the 
 ## Usage
 
 Extensive documentation and discussion of the accepted options and cleaning steps of `create.phenotype.report` are provided
-in both [the readthedocs documentation](http://54gene-processphenotypes-docs.s3-website.us-east-2.amazonaws.com/index.html)
+in both [the readthedocs documentation](https://54geneprocessphenotypes.readthedocs.io/en/latest/)
 and the internal R help documentation `?create.phenotype.report`.
 
 As a very brief example:
