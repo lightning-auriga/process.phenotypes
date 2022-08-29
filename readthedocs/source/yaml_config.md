@@ -30,6 +30,7 @@ Each variable in the dataset is assigned a normalized encoded value (e.g. HW0000
 |`canonical_name`|If desired, a string with a more descriptive variable name than what's present in `name`|
 |`bounds`|Min, max, and/or sd (standard deviation) bounds for a numeric variable|
 |`suppress_reporting`|A boolean to turn off printing a table of unique values and counts in the<br>html report; useful for variables with PII or with many expected unique<br>values like phone numbers|
+|`suppress_output`|A boolean to override cleaned output for a variable: all values will be set<br>to `NA`. Should be used to remove the most problematic variables from results|
 |`linked_date`|For `age` variables, this optionally points to a corresponding date variable for<br>cross-comparison; should also include flags indicating whether the variable is<br>the `reported_year` (standardized name of variable containing corresponding<br>year variable) or the `reference_year` (which year the age was collected)|
 |`subject_age`|Boolean flag to mark which variable is the accepted age of the subjects|
 |`subject_id`|Boolean flag to mark which variable is the accepted unique subject ID|
