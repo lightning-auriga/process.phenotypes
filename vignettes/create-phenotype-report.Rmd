@@ -162,7 +162,7 @@ models:
 To generate your output report, and optionally the processed data in tsv or a variety of other
 accepted formats, run the following:
 
-```{r run.create.phenotype.report, echo=TRUE, eval=TRUE}
+```{r run.create.phenotype.report, echo=FALSE, eval=TRUE}
 create.phenotype.report(input.data,
   dataset.config,
   shared.models,
