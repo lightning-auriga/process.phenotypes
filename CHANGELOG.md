@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- nothing for the moment
+
+
+## [1.4.0] - 2022-08-29
+
 ### Added
 - yaml validation as built-in, exported package function
 - SurveyCTO repeat expansion utility function
@@ -14,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - unit test coverage now 100%
 - roxygen documentation revised for all functions
 - roxygen documentation CRAN style compliant
-### Deprecated
+- readthedocs and vignettes improved for style
 ### Removed
 - references to python-based yaml validation
   - this was long ago deprecated, but further references to it are removed
@@ -27,7 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - expect there are some hidden functionalities in the package that may yet break due to correction
 - `create.phenotype.report` optional output yaml should now be compatible with reloading output tsv into the package
 - added missing CI dependency
-### Security
 
 
 ## [1.3.0] - 2022-07-12
@@ -88,7 +92,7 @@ system.file("unicode_pattern_replacements.tsv", package = "process.phenotypes"`)
 ## [1.1.2] - 2022-06-09
 
 ### Added
-- entire code base? see [readthedocs](http://54gene-processphenotypes-docs.s3-website.us-east-2.amazonaws.com/index.html) for elaborated feature set
+- entire code base? see [readthedocs](https://54geneprocessphenotypes.readthedocs.io/en/latest/) for elaborated feature set
 
 ## [0.1.0] - 2021-07-12
 ### Added

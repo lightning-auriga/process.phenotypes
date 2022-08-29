@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HTML Report &mdash; process.phenotypes  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -99,64 +100,64 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="html-report">
+  <section id="html-report">
 <h1>HTML Report<a class="headerlink" href="#html-report" title="Permalink to this headline"></a></h1>
 <p>This software generates both a cleaned output matrix as well as a report indicating various cleaning behaviors and displaying, where relevant, distribution information and other summary data.</p>
-<div class="section" id="summary-and-overall-metrics">
+<section id="summary-and-overall-metrics">
 <h2>Summary and overall metrics<a class="headerlink" href="#summary-and-overall-metrics" title="Permalink to this headline"></a></h2>
 <p>The first part of the report describes overall counts (e.g. subjects in the input, subjects removed for consent status, subjects below the minimum permissible age, subjects removed for containing too many mismatching variable types, variables set to NA due to failed dependency checks, and final number of subjects remaining).  Note that most of these thresholds and inclusion/exclusion criteria are user-configurable in the YAML configuration; the report simply states the results of applying that config to the dataset.</p>
 <p>NA counts by subject and by variable are reported as distributions and as tables of the top ten highest NA counts.  This allows quick troubleshooting, e.g. identifying a variable that was misconfigured resulting in ~all NAs, or a subject that was a placeholder or test subject who does not have the expected data type entries.</p>
-</div>
-<div class="section" id="linker-table">
+</section>
+<section id="linker-table">
 <h2>Linker table<a class="headerlink" href="#linker-table" title="Permalink to this headline"></a></h2>
 <p>A table is emitted into the report that links the uniform code assigned by the process.phenotypes software with both the original variable name and the question description.  The use of uniform assigned codes permits processing of input datasets that may have inadvertently duplicated headers; being able to read in both apparent duplicate variables is important and can subsequently allow analysis via, for example, asserting a dependency between the two variables that values for each subject are equivalent.</p>
-</div>
-<div class="section" id="variable-summaries">
+</section>
+<section id="variable-summaries">
 <h2>Variable summaries<a class="headerlink" href="#variable-summaries" title="Permalink to this headline"></a></h2>
 <p>The remainder of the report provides summaries of each of the variables.  Report output changes based on variable <a class="reference internal" href="variable_types.html"><span class="doc std std-doc">type</span></a></p>
-<div class="section" id="numeric">
+<section id="numeric">
 <h3>Numeric<a class="headerlink" href="#numeric" title="Permalink to this headline"></a></h3>
 <p>Report contains a histogram of the data, with vertical dashed lines indicating +/- 3 standard deviations from the mean.  It also contains a table with the mean, min, max, deciles, and number of NAs.  If any values are not in numeric format after parsing, those are reported as well.</p>
-</div>
-<div class="section" id="date">
+</section>
+<section id="date">
 <h3>Date<a class="headerlink" href="#date" title="Permalink to this headline"></a></h3>
 <p>Same as numeric.</p>
-</div>
-<div class="section" id="string">
+</section>
+<section id="string">
 <h3>String<a class="headerlink" href="#string" title="Permalink to this headline"></a></h3>
 <p>Report contains a contingency table of listing the number of occurrences of each unique string, unless the number of unique strings are greater than the value set in <code class="docutils literal notranslate"><span class="pre">uniq.var.inclusion.prop</span></code>, which is a parameter of <code class="docutils literal notranslate"><span class="pre">create.phenotype.report</span></code>.</p>
-</div>
-<div class="section" id="categorical">
+</section>
+<section id="categorical">
 <h3>Categorical<a class="headerlink" href="#categorical" title="Permalink to this headline"></a></h3>
 <p>Report contains a table of the expected categories and the number of observations of each.  It also enumerates any values encountered that were not mapped to expected categories.</p>
-</div>
-<div class="section" id="ordinal">
+</section>
+<section id="ordinal">
 <h3>Ordinal<a class="headerlink" href="#ordinal" title="Permalink to this headline"></a></h3>
 <p>Same as categorical.</p>
-</div>
-<div class="section" id="blood-pressure">
+</section>
+<section id="blood-pressure">
 <h3>Blood Pressure<a class="headerlink" href="#blood-pressure" title="Permalink to this headline"></a></h3>
 <p>Same as string, except it will report any entry that does not match expected blood pressure format.  This variable type is intended to be further parsed into derived numeric variables representing SBP and DBP.</p>
-</div>
-<div class="section" id="binary">
+</section>
+<section id="binary">
 <h3>Binary<a class="headerlink" href="#binary" title="Permalink to this headline"></a></h3>
 <p>Same as categorical.</p>
-</div>
-<div class="section" id="categorical-to-numeric">
+</section>
+<section id="categorical-to-numeric">
 <h3>Categorical to Numeric<a class="headerlink" href="#categorical-to-numeric" title="Permalink to this headline"></a></h3>
 <p><em>Experimental</em></p>
 <p>Same as numeric.</p>
-</div>
-<div class="section" id="derived-variables">
+</section>
+<section id="derived-variables">
 <h3>Derived Variables<a class="headerlink" href="#derived-variables" title="Permalink to this headline"></a></h3>
 <p>Derived variables are reported in accordance to their assigned type, except that they also include the code snippet used to define the variable in the configuration.</p>
-</div>
-</div>
-<div class="section" id="configuration-of-report">
+</section>
+</section>
+<section id="configuration-of-report">
 <h2>Configuration of Report<a class="headerlink" href="#configuration-of-report" title="Permalink to this headline"></a></h2>
 <p>Configuration flags can be used to add or suppress report content, as described <a class="reference internal" href="yaml_config.html"><span class="doc std std-doc">here</span></a>.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

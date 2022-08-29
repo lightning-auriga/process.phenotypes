@@ -1,8 +1,8 @@
 ---
-title: "derived-variables"
+title: "Writing Derived Variables"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{derived-variables}
+  %\VignetteIndexEntry{Writing Derived Variables}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
