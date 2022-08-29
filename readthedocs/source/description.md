@@ -47,7 +47,8 @@ Cleaning steps are generally performed in the order of the documentation here; t
 ### Process Unicode Characters
 
 - Unicode characters are replaced with the most-likely matching non-Unicode intended character
-- Currently hard-coded; flagged for moving into a user-configurable file
+- The set of mappings is encoded in a `process.phenotypes` library file: `system.file("unicode_pattern_replacements", package = "process.phenotypes")`.
+- If you need different mappings, either edit the library file, or submit an issue or MR to the repo. We may eventually expose this mapping file as a user-configurable option.
 
 ### Remove Excel Error Codes
 
