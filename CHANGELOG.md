@@ -92,7 +92,7 @@ system.file("unicode_pattern_replacements.tsv", package = "process.phenotypes"`)
 ## [1.1.2] - 2022-06-09
 
 ### Added
-- entire code base? see [readthedocs](http://54gene-processphenotypes-docs.s3-website.us-east-2.amazonaws.com/index.html) for elaborated feature set
+- entire code base? see [readthedocs](https://54geneprocessphenotypes.readthedocs.io/en/latest/) for elaborated feature set
 
 ## [0.1.0] - 2021-07-12
 ### Added
