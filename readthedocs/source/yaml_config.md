@@ -47,7 +47,14 @@ Derived variables are calculated from existing data, e.g. calculating BMI from r
 
 Prior to running this tool, you should validate the YAML configurations you've set up as follows:
 
-`./yaml_validator.py dataset_file.yaml shared_model_file.yaml`
+```r
+dataset.schema <- system.file("validator", "schema.datasets.yaml", package = "process.phenotypes")
+shared.models.schema <- system.file("validator", "schema.shared-models.yaml", package = "process.phenotypes")
+process.phenotypes::config.validation("/path/to/your.dataset.yaml",
+                                      "/path/to/your.shared-models.yaml",
+                                      dataset.schema,
+                                      shared.models.schema)
 
-If you are using pre-commit as described below, the YAML configurations will be validated automatically when you commit changes.
+```
 
+This command will compare your configuration files to the set of guidelines and restrictions we've specified for the package. If your configuration settings are valid, you'll get a confirmation message to that effect; otherwise, the function will emit a summary of the restriction that wasn't met.
