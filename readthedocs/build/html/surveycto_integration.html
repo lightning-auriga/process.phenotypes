@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Integration with SurveyCTO &mdash; process.phenotypes  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -95,21 +96,21 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="integration-with-surveycto">
+  <section id="integration-with-surveycto">
 <h1>Integration with SurveyCTO<a class="headerlink" href="#integration-with-surveycto" title="Permalink to this headline"></a></h1>
 <p>If you are using SurveyCTO to collect phenotype data, you may be able to use functionality in process.phenotypes for automatically converting a SurveyCTO <a class="reference external" href="https://docs.surveycto.com/02-designing-forms/01-core-concepts/02.starting-a-new-form.html">form</a> to a set of configurations (dataset-specific and shared models) for use with this package.  We can not guarantee compatibility with all SurveyCTO features.</p>
-<div class="section" id="retrieve-data-from-surveycto">
+<section id="retrieve-data-from-surveycto">
 <h2>Retrieve Data from SurveyCTO<a class="headerlink" href="#retrieve-data-from-surveycto" title="Permalink to this headline"></a></h2>
 <p>First, you’ll need to export some data from SurveyCTO.  Both the form definition spreadsheet and the resulting collected phenotypes are required because in the case of repeat variables, you don’t know how many repeats occur for any given block until you’ve looked in the questionnaire responses.</p>
-<div class="section" id="export-response-data-from-surveycto">
+<section id="export-response-data-from-surveycto">
 <h3>Export Response Data from SurveyCTO<a class="headerlink" href="#export-response-data-from-surveycto" title="Permalink to this headline"></a></h3>
-<div class="section" id="api-call">
+<section id="api-call">
 <h4>API Call<a class="headerlink" href="#api-call" title="Permalink to this headline"></a></h4>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl -u <span class="s2">&quot;</span><span class="si">${</span><span class="nv">EMAIL</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="nv">PASSWORD</span><span class="si">}</span><span class="s2">&quot;</span> https://<span class="si">${</span><span class="nv">ORGANIZATION</span><span class="si">}</span>.surveycto.com/api/v1/forms/data/wide/csv/<span class="si">${</span><span class="nv">DATASET</span><span class="si">}</span> -o <span class="s2">&quot;</span><span class="si">${</span><span class="nv">OUTFILE</span><span class="si">}</span><span class="s2">.csv&quot;</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="web-interface">
+</section>
+<section id="web-interface">
 <h4>Web Interface<a class="headerlink" href="#web-interface" title="Permalink to this headline"></a></h4>
 <ul class="simple">
 <li><p>Log in to SurveyCTO and navigate to the “Export” tab</p></li>
@@ -119,9 +120,9 @@
 <li><p>In the dropdown labeled “File format:”, select “.csv (default)”</p></li>
 <li><p>Click “Export files”</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="export-the-form-definition-spreadsheet-from-surveycto">
+</section>
+</section>
+<section id="export-the-form-definition-spreadsheet-from-surveycto">
 <h3>Export the Form Definition Spreadsheet from SurveyCTO<a class="headerlink" href="#export-the-form-definition-spreadsheet-from-surveycto" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p>Navigate to the “Design” tab</p></li>
@@ -129,17 +130,17 @@
 <li><p>Select “Form files”</p></li>
 <li><p>Click on “Spreadsheet form definition”, which should be an xlsx file</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="convert-forms-to-process-phenotypes-configurations">
+</section>
+</section>
+<section id="convert-forms-to-process-phenotypes-configurations">
 <h2>Convert Forms to process.phenotypes Configurations<a class="headerlink" href="#convert-forms-to-process-phenotypes-configurations" title="Permalink to this headline"></a></h2>
 <p>Assuming you’ve loaded the package in R (see <a class="reference internal" href="execution.html"><span class="doc std std-doc">this page</span></a> for details), you can use the function <code class="docutils literal notranslate"><span class="pre">parse.surveycto</span></code> to convert a SurveyCTO form spreadsheet into a set of YAML config files.  For example:</p>
 <div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="nf">parse.surveycto</span><span class="p">(</span><span class="s">&quot;surveycto_form.xlsx&quot;</span><span class="p">,</span> <span class="s">&quot;responses_in_wide_form.csv&quot;</span><span class="p">,</span> <span class="s">&quot;HW&quot;</span><span class="p">,</span> <span class="s">&quot;dataset-specific-config.yaml&quot;</span><span class="p">,</span> <span class="s">&quot;shared-model-config.yaml&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Inspect the output to confirm that it matches expectations and to make any required edits.  You will need to update fields for consent lists, minimum age threshold, etc.</p>
-</div>
-<div class="section" id="expand-an-existing-process-phenotypes-configuration-file-for-new-surveycto-export">
+</section>
+<section id="expand-an-existing-process-phenotypes-configuration-file-for-new-surveycto-export">
 <h2>Expand an Existing process.phenotypes Configuration File for New SurveyCTO Export<a class="headerlink" href="#expand-an-existing-process-phenotypes-configuration-file-for-new-surveycto-export" title="Permalink to this headline"></a></h2>
 <p>One quirk of SurveyCTO datasets is that they can expand when new subject information is added, even if the questionnaire form definition has not changed. This is most commonly due to the presence of “repeat” variables, which will have columns corresponding to the <em>maximum</em> number of repeat responses observed in any individual in the dataset. When this expansion occurs in a new data export, any existing process.phenotypes dataset configuration file will need to be expanded accordingly, and in a way that preserves any existing customization or variable aliases that may be referenced in derived variables or downstream applications.</p>
 <p>If you used <code class="docutils literal notranslate"><span class="pre">parse.surveycto</span></code> to create the original set of configuration files, and if the form definition has not otherwise changed in the interim, you can use the helper function <code class="docutils literal notranslate"><span class="pre">expand.surveycto.config</span></code> to automatically pad repeat blocks with additional configuration entries:</p>
@@ -147,8 +148,8 @@
 </pre></div>
 </div>
 <p>Note that the shared models specification is not impacted by repeat variable expansion, and so is not provided to this utility function.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
