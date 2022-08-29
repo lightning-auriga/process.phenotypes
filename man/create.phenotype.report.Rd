@@ -151,7 +151,7 @@ based on this criterion
 The actual functionality and configuration in this package is extensive and frequently
 expanding. Full details on exactly what cleaning is performed and available
 configuration options for the input data are available at
-\url{http://54gene-processphenotypes-docs.s3-website.us-east-2.amazonaws.com/index.html}
+\url{https://54geneprocessphenotypes.readthedocs.io/en/latest/}
 }
 \examples{
 ## create.phenotype.report operates on input files, which can be constructed

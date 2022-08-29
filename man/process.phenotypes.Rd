@@ -9,7 +9,7 @@ A package for reproducible phenotype data cleaning and quality control.
 }
 \seealso{
 \itemize{
-\item \url{http://54gene-processphenotypes-docs.s3-website.us-east-2.amazonaws.com/index.html}
+\item \url{https://54geneprocessphenotypes.readthedocs.io/en/latest/}
 \item \url{https://gitlab.com/data-analysis5/phenotypes/process.phenotypes}
 }
 }

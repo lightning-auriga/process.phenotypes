@@ -71,7 +71,7 @@
 #' The actual functionality and configuration in this package is extensive and frequently
 #' expanding. Full details on exactly what cleaning is performed and available
 #' configuration options for the input data are available at
-#' \url{http://54gene-processphenotypes-docs.s3-website.us-east-2.amazonaws.com/index.html}
+#' \url{https://54geneprocessphenotypes.readthedocs.io/en/latest/}
 #'
 #' @param in.filename Character vector filename of input phenotype data.
 #' @param dataset.yaml character vector filename of the yaml-format configuration
