@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Description of Data Cleaning &mdash; process.phenotypes  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -28,12 +27,14 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> process.phenotypes
-            <img src="_static/54gene_logo.png" class="logo" alt="Logo"/>
-          </a>
-              <div class="version">
-                1.1.0
-              </div>
+
+<a href="index.html" class="icon icon-home"> process.phenotypes
+<a href="https://54gene.com">
+    <img src="_static/54gene_logo.png" class="logo" alt="Logo"/>
+</a>
+  <div class="version">
+    1.1.0
+  </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -113,11 +114,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="description-of-data-cleaning">
+  <div class="section" id="description-of-data-cleaning">
 <h1>Description of Data Cleaning<a class="headerlink" href="#description-of-data-cleaning" title="Permalink to this headline"></a></h1>
 <p>Cleaning is orchestrated predominantly through subroutines called by <code class="docutils literal notranslate"><span class="pre">create.phenotype.report</span></code>.</p>
 <p>Cleaning steps are generally performed in the order of the documentation here; this is important to consider for various cascading behaviors.</p>
-<section id="load-raw-input-phenotype-data">
+<div class="section" id="load-raw-input-phenotype-data">
 <h2>Load Raw Input Phenotype Data<a class="headerlink" href="#load-raw-input-phenotype-data" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>The package receives comma- or tab-delimited input data, with or without compression</p></li>
@@ -125,8 +126,8 @@
 <li><p>Comments are not respected</p></li>
 <li><p>Quote characters around fields and delimiters between columns are both configurable in the library call (see <code class="docutils literal notranslate"><span class="pre">?process.phenotypes::create.phenotype.report</span></code> for details)</p></li>
 </ul>
-</section>
-<section id="read-in-configuration-yaml">
+</div>
+<div class="section" id="read-in-configuration-yaml">
 <h2>Read in Configuration YAML<a class="headerlink" href="#read-in-configuration-yaml" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>The package expects a dataset-specific configuration file and a shared model configuration file</p></li>
@@ -134,51 +135,51 @@
 <li><p>Shared models are useful in cases where several questions have identically-structured answers (e.g. yes/no, high/medium/low, etc.), whereas dataset-specific configuration is done per-column of input phenotype data</p></li>
 <li><p>SurveyCTO form definitions can be automatically converted into shared model configurations, which can then be passed into the package</p></li>
 </ul>
-</section>
-<section id="drop-invalid-columns">
+</div>
+<div class="section" id="drop-invalid-columns">
 <h2>Drop Invalid Columns<a class="headerlink" href="#drop-invalid-columns" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>Removes columns that are missing column headers</p></li>
 <li><p>Removes columns for which the header is <code class="docutils literal notranslate"><span class="pre">NA</span></code> or equivalent in R</p></li>
 </ul>
-</section>
-<section id="sanitize-header-content-in-the-input-phenotype-data">
+</div>
+<div class="section" id="sanitize-header-content-in-the-input-phenotype-data">
 <h2>Sanitize Header Content in the Input Phenotype Data<a class="headerlink" href="#sanitize-header-content-in-the-input-phenotype-data" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>All remaining column headers are mapped to alphanumeric values based on the normalized encoded value provided in the dataset-specific config (e.g. <code class="docutils literal notranslate"><span class="pre">NN0001</span></code> in the example dataset-specific config)</p></li>
 </ul>
-</section>
-<section id="string-cleanup">
+</div>
+<div class="section" id="string-cleanup">
 <h2>String Cleanup<a class="headerlink" href="#string-cleanup" title="Permalink to this headline"></a></h2>
-<section id="convert-to-lowercase">
+<div class="section" id="convert-to-lowercase">
 <h3>Convert to Lowercase<a class="headerlink" href="#convert-to-lowercase" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p>Uniformly converts all alphabetical characters to lowercase</p></li>
 <li><p>This is to facilitate comparisons between values and accommodate data entry inconsistencies</p></li>
 </ul>
-</section>
-<section id="remove-whitespace">
+</div>
+<div class="section" id="remove-whitespace">
 <h3>Remove Whitespace<a class="headerlink" href="#remove-whitespace" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p>Collapses any repeated whitespace into a single instance of that whitespace</p></li>
 <li><p>Takes any amount of space surrounding a dash between characters and collapses it down to just the dash (e.g. <code class="docutils literal notranslate"><span class="pre">ABC</span>&#160; <span class="pre">-</span> <span class="pre">123</span></code> is converted to <code class="docutils literal notranslate"><span class="pre">ABC-123</span></code>)</p></li>
 </ul>
-</section>
-<section id="collapse-repeats">
+</div>
+<div class="section" id="collapse-repeats">
 <h3>Collapse Repeats<a class="headerlink" href="#collapse-repeats" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p>Specifically for back slashes, forward slashes, and periods, collapses repeating adjacent values to a single value</p></li>
 <li><p>Forward and back slashes are harmonized to forward slashes only</p></li>
 </ul>
-</section>
-<section id="process-unicode-characters">
+</div>
+<div class="section" id="process-unicode-characters">
 <h3>Process Unicode Characters<a class="headerlink" href="#process-unicode-characters" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p>Unicode characters are replaced with the most-likely matching non-Unicode intended character</p></li>
 <li><p>Currently hard-coded; flagged for moving into a user-configurable file</p></li>
 </ul>
-</section>
-<section id="remove-excel-error-codes">
+</div>
+<div class="section" id="remove-excel-error-codes">
 <h3>Remove Excel Error Codes<a class="headerlink" href="#remove-excel-error-codes" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p>Takes a series of recognized Excel error codes and converts them into NAs</p></li>
@@ -191,14 +192,14 @@
 </li>
 <li><p>Counts the detected instances of these errors and emits this information into the downstream report</p></li>
 </ul>
-</section>
-<section id="detect-remaining-unicode-characters">
+</div>
+<div class="section" id="detect-remaining-unicode-characters">
 <h3>Detect Remaining Unicode Characters<a class="headerlink" href="#detect-remaining-unicode-characters" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p>Searches for anything remaining in the Unicode range and adds it to the downstream report for manual follow-up</p></li>
 </ul>
-</section>
-<section id="remove-non-word-characters">
+</div>
+<div class="section" id="remove-non-word-characters">
 <h3>Remove Non-word Characters<a class="headerlink" href="#remove-non-word-characters" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p>For variables that are not designated <code class="docutils literal notranslate"><span class="pre">string</span></code> in the dataset-specific config, do the following:</p>
@@ -210,16 +211,16 @@
 </ul>
 </li>
 </ul>
-</section>
-<section id="normalize-missing-values">
+</div>
+<div class="section" id="normalize-missing-values">
 <h3>Normalize Missing Values<a class="headerlink" href="#normalize-missing-values" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p>Attempt to capture a wide array of missing value indications, inclusive of common mispellings, and set them to NA</p></li>
 <li><p>This will catch some but not all potential intended NA values; additional NA values can be configured in the relevant section in the dataset-specific config</p></li>
 </ul>
-</section>
-</section>
-<section id="apply-consent-exclusions">
+</div>
+</div>
+<div class="section" id="apply-consent-exclusions">
 <h2>Apply Consent Exclusions<a class="headerlink" href="#apply-consent-exclusions" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>Two optional consent lists can be provided:</p>
@@ -232,36 +233,36 @@
 <li><p>If both lists are provided and a subject is present on both lists, exclusion takes precedence</p></li>
 <li><p>If only one list is provided, subjects not on the list are either included or excluded, depending on whether an exclusion or inclusion list is used</p></li>
 </ul>
-</section>
-<section id="apply-variable-specific-na-values">
+</div>
+<div class="section" id="apply-variable-specific-na-values">
 <h2>Apply Variable-specific NA Values<a class="headerlink" href="#apply-variable-specific-na-values" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>Takes NA values enumerated under <code class="docutils literal notranslate"><span class="pre">na-values</span></code> in the dataset-specific config file and substitutes them with NA for a given variable</p></li>
 <li><p>If <code class="docutils literal notranslate"><span class="pre">suppress_output</span></code> is true in the dataset-specific config for a given variable, all entries for that variable are subtituted with NA in the output</p></li>
 </ul>
-</section>
-<section id="apply-type-conversions">
+</div>
+<div class="section" id="apply-type-conversions">
 <h2>Apply Type Conversions<a class="headerlink" href="#apply-type-conversions" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>Each variable has a “type” specified either in the dataset-specific config, or in the shared models config.  This step converts the values within a given variable to the type specified</p></li>
 <li><p>If by this point in the cleaning process there are still entries that cannot be successfully converted to the specified type, those values are set to NA, and a count of these instances is emitted in the report for each variable</p></li>
 <li><p>See <a class="reference internal" href="variable_types.html"><span class="doc std std-doc">this page</span></a> for details on available variable types</p></li>
 </ul>
-</section>
-<section id="exclude-subjects-by-age">
+</div>
+<div class="section" id="exclude-subjects-by-age">
 <h2>Exclude Subjects by Age<a class="headerlink" href="#exclude-subjects-by-age" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>In the dataset-specific config, there is a mandatory tag <code class="docutils literal notranslate"><span class="pre">min_age_for_inclusion</span></code>; there is also a tag <code class="docutils literal notranslate"><span class="pre">subject_age</span></code> used to define which variable contains age information</p></li>
 <li><p>The minimum permissible age, as defined above, is applied to the subject age values, and any subject with an age below the minimum is excluded from the output.  The number of subjects excluded here is emitted in the report</p></li>
 </ul>
-</section>
-<section id="exclude-subjects-missing-subject-ids">
+</div>
+<div class="section" id="exclude-subjects-missing-subject-ids">
 <h2>Exclude Subjects Missing Subject IDs<a class="headerlink" href="#exclude-subjects-missing-subject-ids" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>Excludes subjects from output if they have no value present in the variable marked in the config with the <code class="docutils literal notranslate"><span class="pre">subject_id</span></code> tag</p></li>
 </ul>
-</section>
-<section id="apply-bounds-on-numeric-data">
+</div>
+<div class="section" id="apply-bounds-on-numeric-data">
 <span id="bounds"></span><h2>Apply Bounds on Numeric Data<a class="headerlink" href="#apply-bounds-on-numeric-data" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>For numeric or date type variables, there can optionally be bounds applied (min, max, or standard deviation) per variable in the dataset-specific config</p></li>
@@ -271,8 +272,8 @@
 </ul>
 </li>
 </ul>
-</section>
-<section id="attempt-to-harmonize-self-reported-ancestry-labels">
+</div>
+<div class="section" id="attempt-to-harmonize-self-reported-ancestry-labels">
 <h2>Attempt to Harmonize Self-reported Ancestry Labels<a class="headerlink" href="#attempt-to-harmonize-self-reported-ancestry-labels" title="Permalink to this headline"></a></h2>
 <p><em>Experimental</em></p>
 <ul class="simple">
@@ -302,8 +303,8 @@
 </li>
 <li><p>Note that if you don’t want this behavior, or if the ancestry variable was specified versus a fixed set of categories (e.g. as a fixed response variable in SurveyCTO), do not use the <code class="docutils literal notranslate"><span class="pre">subject_ancestry</span></code> tag in the dataset-specific configuration file, and this logic will be skipped</p></li>
 </ul>
-</section>
-<section id="create-derived-variables">
+</div>
+<div class="section" id="create-derived-variables">
 <h2>Create Derived Variables<a class="headerlink" href="#create-derived-variables" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>In the dataset-specific config, there can optionally be a section <code class="docutils literal notranslate"><span class="pre">derived</span></code>, separate from the <code class="docutils literal notranslate"><span class="pre">variables</span></code> section of the config</p></li>
@@ -315,49 +316,49 @@
 </li>
 <li><p>For more details on creating derived variables, see <a class="reference internal" href="derived_vars.html"><span class="doc std std-doc">this page</span></a></p></li>
 </ul>
-</section>
-<section id="re-apply-bounds-on-derived-numeric-variables">
+</div>
+<div class="section" id="re-apply-bounds-on-derived-numeric-variables">
 <h2>Re-apply Bounds on Derived Numeric Variables<a class="headerlink" href="#re-apply-bounds-on-derived-numeric-variables" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>The cleaning described in the <a class="reference internal" href="#bounds"><span class="std std-ref">Applies bounds section</span></a> is applied to any derived variables</p></li>
 </ul>
-</section>
-<section id="check-cross-variable-dependencies">
+</div>
+<div class="section" id="check-cross-variable-dependencies">
 <span id="dependencies"></span><h2>Check Cross-variable Dependencies<a class="headerlink" href="#check-cross-variable-dependencies" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>In the dataset-specific config, there can optionally be dependencies derived per-variable.  These dependencies define expected relationships between it and other variables (e.g. to assert that year of birth as derived from age is within a certain window of self-reported year of birth, or that self-reported non-smokers do not also report number of packs per week smoked)</p></li>
 <li><p>Input from SurveyCTO (or other candidate survey systems) may have already had dependencies like this enforced</p></li>
 </ul>
-</section>
-<section id="handle-dependency-failures">
+</div>
+<div class="section" id="handle-dependency-failures">
 <h2>Handle Dependency Failures<a class="headerlink" href="#handle-dependency-failures" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>In the dataset-specific config, each dependency (described <a class="reference internal" href="#dependencies"><span class="std std-ref">here</span></a>) allows the option <code class="docutils literal notranslate"><span class="pre">exclude_on_failure</span></code> to set a value to NA if it has failed the dependency check (e.g. for subjects where they are self-reported non-smokers but they do list packs per week, you can set the packs per week value to NA for those subjects)</p></li>
 <li><p>Another option <code class="docutils literal notranslate"><span class="pre">exclude_all_on_failure</span></code> is available for when a dependency check failure necessitates setting all values for a certain subject to NA.  For example, if multiple input tables (e.g. output from SurveyCTO and an additional tsv with lab test results) were combined upstream, there may be duplicated columns that can be used to confirm correct linking between the two initial inputs.  Let’s say both files contained information on sex.  We could write a dependency to check that the sex column from each of the two input files is identical, and if not, set all values for that subject to NA.</p></li>
 <li><p>The number of values set to NA due to this option is emitted in the report</p></li>
 </ul>
-</section>
-<section id="compute-distribution-data-for-numeric-variables">
+</div>
+<div class="section" id="compute-distribution-data-for-numeric-variables">
 <h2>Compute Distribution Data for Numeric Variables<a class="headerlink" href="#compute-distribution-data-for-numeric-variables" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>For numeric variable types and dates, computes mean, min, max, deciles, and number of NA values, and adds to a table in the report</p></li>
 </ul>
-</section>
-<section id="remove-subjects-with-excess-invalid-entries-across-all-variables">
+</div>
+<div class="section" id="remove-subjects-with-excess-invalid-entries-across-all-variables">
 <h2>Remove Subjects with Excess Invalid Entries Across All Variables<a class="headerlink" href="#remove-subjects-with-excess-invalid-entries-across-all-variables" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>In the dataset-specific config, there is a threshold <code class="docutils literal notranslate"><span class="pre">max_invalid_datatypes_per_subjects</span></code>.  For any subjects who have more NA values than this threshold, they are excluded from the output</p></li>
 </ul>
-</section>
-<section id="emit-an-html-report">
+</div>
+<div class="section" id="emit-an-html-report">
 <h2>Emit an HTML Report<a class="headerlink" href="#emit-an-html-report" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>Based on the configurations and the data cleaning performed, a report is emitted that records relevant information</p></li>
 <li><p>The contents of the report are somewhat configurable via the dataset-specific config, and vary by variable type</p></li>
 <li><p>The report is described in more detail <a class="reference internal" href="report.html"><span class="doc std std-doc">here</span></a></p></li>
 </ul>
-</section>
-<section id="write-out-cleaned-phenotype-data-in-tsv-and-or-various-other-formats">
+</div>
+<div class="section" id="write-out-cleaned-phenotype-data-in-tsv-and-or-various-other-formats">
 <h2>Write Out Cleaned Phenotype Data in TSV and/or Various Other Formats<a class="headerlink" href="#write-out-cleaned-phenotype-data-in-tsv-and-or-various-other-formats" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>Primarily intended to output cleaned results in TSV format, but does support optional additional output formats, including:</p>
@@ -368,8 +369,8 @@
 </ul>
 </li>
 </ul>
-</section>
-</section>
+</div>
+</div>
 
 
            </div>
