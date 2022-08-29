@@ -6,7 +6,7 @@
 #'
 #' @seealso
 #'
-#' - \url{http://54gene-processphenotypes-docs.s3-website.us-east-2.amazonaws.com/index.html}
+#' - \url{https://54geneprocessphenotypes.readthedocs.io/en/latest/}
 #' - \url{https://gitlab.com/data-analysis5/phenotypes/process.phenotypes}
 #'
 #' @docType package

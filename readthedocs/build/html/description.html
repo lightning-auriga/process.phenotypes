@@ -28,12 +28,14 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> process.phenotypes
-            <img src="_static/54gene_logo.png" class="logo" alt="Logo"/>
-          </a>
-              <div class="version">
-                1.1.0
-              </div>
+
+<a href="index.html" class="icon icon-home"> process.phenotypes
+<a href="https://54gene.com">
+    <img src="_static/54gene_logo.png" class="logo" alt="Logo"/>
+</a>
+  <div class="version">
+    1.1.0
+  </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -175,7 +177,8 @@
 <h3>Process Unicode Characters<a class="headerlink" href="#process-unicode-characters" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p>Unicode characters are replaced with the most-likely matching non-Unicode intended character</p></li>
-<li><p>Currently hard-coded; flagged for moving into a user-configurable file</p></li>
+<li><p>The set of mappings is encoded in a <code class="docutils literal notranslate"><span class="pre">process.phenotypes</span></code> library file: <code class="docutils literal notranslate"><span class="pre">system.file(&quot;unicode_pattern_replacements&quot;,</span> <span class="pre">package</span> <span class="pre">=</span> <span class="pre">&quot;process.phenotypes&quot;)</span></code>.</p></li>
+<li><p>If you need different mappings, either edit the library file, or submit an issue or MR to the repo. We may eventually expose this mapping file as a user-configurable option.</p></li>
 </ul>
 </section>
 <section id="remove-excel-error-codes">
@@ -237,7 +240,7 @@
 <h2>Apply Variable-specific NA Values<a class="headerlink" href="#apply-variable-specific-na-values" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>Takes NA values enumerated under <code class="docutils literal notranslate"><span class="pre">na-values</span></code> in the dataset-specific config file and substitutes them with NA for a given variable</p></li>
-<li><p>If <code class="docutils literal notranslate"><span class="pre">suppress_output</span></code> is true in the dataset-specific config for a given variable, all entries for that variable are subtituted with NA in the output</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">suppress_output</span></code> is true in the dataset-specific config for a given variable, all entries for that variable are substituted with NA in the output</p></li>
 </ul>
 </section>
 <section id="apply-type-conversions">
