@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YAML Configuration &mdash; process.phenotypes  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -88,13 +89,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="yaml-configuration">
+  <section id="yaml-configuration">
 <h1>YAML Configuration<a class="headerlink" href="#yaml-configuration" title="Permalink to this headline"></a></h1>
 <p>This section is continually being expanded as the configuration feature set is
 modified. For the time being, see existing dataset configuration files in
 <a class="reference external" href="https://gitlab.com/data-analysis5/phenotypes/process.phenotypes/-/tree/default/yaml-configuration">this directory</a>
 for examples.</p>
-<div class="section" id="top-level-yaml-sections">
+<section id="top-level-yaml-sections">
 <h2>Top-level YAML Sections<a class="headerlink" href="#top-level-yaml-sections" title="Permalink to this headline"></a></h2>
 <table class="colwidths-auto docutils align-default">
 <thead>
@@ -107,19 +108,19 @@ for examples.</p>
 <td><p>Dataset tag name (e.g. “HW”); used minimally but not quite <br>deprecated to continue to support comparison between two <br>datasets</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">globals</span></code></p></td>
-<td><p>Contains two global settings that are applied across all variables</p></td>
+<td><p>Contains global settings that are applied across all variables</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">min_age_for_inclusion</span></code></p></td>
-<td><p><strong>Required</strong> Subjects will be excluded from all histograms etc. in<br>the report and from the cleaned output if their age falls below<br>this threshold</p></td>
+<td><p><strong>Required</strong> Under <code class="docutils literal notranslate"><span class="pre">global</span></code>; subjects will be excluded from all histograms etc. in<br>the report and from the cleaned output if their age falls below<br>this threshold</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_invalid_datatypes_per_subject</span></code></p></td>
-<td><p>Subjects will be excluded from the cleaned output if they have<br>more than this number of variables that can not be converted to<br>the expected datatypes</p></td>
+<td><p><strong>Required</strong> Under <code class="docutils literal notranslate"><span class="pre">global</span></code>; subjects will be excluded from the cleaned output if they have<br>more than this number of variables that can not be converted to<br>the expected datatypes</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">consent_inclusion_file</span></code></p></td>
-<td><p>Name of file containing subject IDs <a class="reference internal" href="description.html"><span class="doc std std-doc">with confirmed consent approval</span></a>.<br>Format is: plaintext file, no header, one ID per line</p></td>
+<td><p>Under <code class="docutils literal notranslate"><span class="pre">global</span></code>; name of file containing subject IDs <a class="reference internal" href="description.html"><span class="doc std std-doc">with confirmed consent approval</span></a>.<br>Format is: plaintext file, no header, one ID per line; can be null (<code class="docutils literal notranslate"><span class="pre">~</span></code>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">consent_exclusion_file</span></code></p></td>
-<td><p>Name of file containing subject IDs <a class="reference internal" href="description.html"><span class="doc std std-doc">without valid consent</span></a>. Format<br>is: plaintext file, no header, one ID per line</p></td>
+<td><p>Under <code class="docutils literal notranslate"><span class="pre">global</span></code>; name of file containing subject IDs <a class="reference internal" href="description.html"><span class="doc std std-doc">without valid consent</span></a>. Format<br>is: plaintext file, no header, one ID per line; can be null (<code class="docutils literal notranslate"><span class="pre">~</span></code>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">variables</span></code></p></td>
 <td><p>This section contains one block for each variable in the dataset,<br>with a variety of other configuration settings described in the next section</p></td>
@@ -129,8 +130,8 @@ for examples.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="variables-yaml-section">
+</section>
+<section id="variables-yaml-section">
 <h2>Variables YAML Section<a class="headerlink" href="#variables-yaml-section" title="Permalink to this headline"></a></h2>
 <p>Each variable in the dataset is assigned a normalized encoded value (e.g. HW00001, HW00002, etc.).  Under each variable block, there are a variety of other possible configuration settings:</p>
 <table class="colwidths-auto docutils align-default">
@@ -144,7 +145,7 @@ for examples.</p>
 <td><p>This is the header of the variable in the input dataset</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">type</span></code></p></td>
-<td><p><strong>Either this or shared_model are required</strong> Expected variable type; one of:<br>string, numeric, ordinal, categorical; the variable type dictates what kinds of<br>cleaning are applied to that variable</p></td>
+<td><p><strong>Either this or shared_model are required</strong> Expected variable type; one of:<br><code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">numeric</span></code>, <code class="docutils literal notranslate"><span class="pre">ordinal</span></code>, <code class="docutils literal notranslate"><span class="pre">categorical</span></code>, `blood_pressure</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">shared_model</span></code></p></td>
 <td><p><strong>Either this or type are required</strong> Expected variable type as defined<br>in <code class="docutils literal notranslate"><span class="pre">yaml-configuration/shared-models.yaml</span></code></p></td>
@@ -153,49 +154,66 @@ for examples.</p>
 <td><p>If desired, a string with a more descriptive variable name than what’s present in <code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bounds</span></code></p></td>
-<td><p>Min, max, and/or sd (standard deviation) bounds for a numeric variable</p></td>
+<td><p>Accepts numeric values for tags <code class="docutils literal notranslate"><span class="pre">min</span></code>, <code class="docutils literal notranslate"><span class="pre">max</span></code>, and/or <code class="docutils literal notranslate"><span class="pre">sd</span></code> (standard deviation) to apply bounds for a numeric variable</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">suppress_reporting</span></code></p></td>
 <td><p>A boolean to turn off printing a table of unique values and counts in the<br>html report; useful for variables with PII or with many expected unique<br>values like phone numbers</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">linked_date</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">suppress_output</span></code></p></td>
+<td><p>A boolean to override cleaned output for a variable: all values will be set<br>to <code class="docutils literal notranslate"><span class="pre">NA</span></code>. Should be used to remove the most problematic variables from results</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">linked_date</span></code></p></td>
 <td><p>For <code class="docutils literal notranslate"><span class="pre">age</span></code> variables, this optionally points to a corresponding date variable for<br>cross-comparison; should also include flags indicating whether the variable is<br>the <code class="docutils literal notranslate"><span class="pre">reported_year</span></code> (standardized name of variable containing corresponding<br>year variable) or the <code class="docutils literal notranslate"><span class="pre">reference_year</span></code> (which year the age was collected)</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">subject_age</span></code></p></td>
-<td><p>Boolean flag to mark which variable is the accepted age of the subjects</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">subject_age</span></code></p></td>
+<td><p><strong>Required once per dataset</strong> Boolean flag to mark which variable is the accepted age of the subjects</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">subject_id</span></code></p></td>
-<td><p>Boolean flag to mark which variable is the accepted unique subject ID</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">subject_id</span></code></p></td>
+<td><p><strong>Required once per dataset</strong> Boolean flag to mark which variable is the accepted unique subject ID</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">na-values</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">na-values</span></code></p></td>
 <td><p>Any non-canonical values to be treated as NA (e.g. nil, not specified, etc.)</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">multimodal</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">multimodal</span></code></p></td>
 <td><p>Used to define another variable for plotting overlayed histograms,<br>e.g. overlayed plots of BMI by sex</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">allow_undelimited_bp</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">allow_undelimited_bp</span></code></p></td>
 <td><p>Only for variables of type <code class="docutils literal notranslate"><span class="pre">bp</span></code> (blood pressure): enable<br>recognition of systolic and diastolic blood pressure specified<br>exactly as: <code class="docutils literal notranslate"><span class="pre">^\d{4}\d?\d?$</span></code>, where systolic will use three digits preferentially<br>if 5 or 6 digits are specified. this behavior is imperfect given the<br>lack of delimiter, and is not recommended in most circumstances.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dependencies</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dependencies</span></code></p></td>
 <td><p>Test for expected relationships between variables; can also include<br>contingency tables to compare two variables and instructions for setting values<br>to NA if certain dependency tests fail</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">levels</span></code></p></td>
+<td><p>For <code class="docutils literal notranslate"><span class="pre">categorical</span></code>, <code class="docutils literal notranslate"><span class="pre">ordinal</span></code>, and <code class="docutils literal notranslate"><span class="pre">binary</span></code> type variables, you will need to define levels under the <code class="docutils literal notranslate"><span class="pre">levels</span></code> tag.  See the vignettes for more details and examples.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="derived-yaml-section">
+</section>
+<section id="derived-yaml-section">
 <h2>Derived YAML Section<a class="headerlink" href="#derived-yaml-section" title="Permalink to this headline"></a></h2>
 <p>Derived variables are calculated from existing data, e.g. calculating BMI from reported waist and height measurements.  This section allows the user to define arbitrary new variables to derive.</p>
 <ul class="simple">
 <li><p>Most sections here have been previously described, but <code class="docutils literal notranslate"><span class="pre">code</span></code> is where the logic is injected to create the derived variable, written in <code class="docutils literal notranslate"><span class="pre">R</span></code> syntax with access to the normalized variable names</p></li>
 </ul>
-</div>
-<div class="section" id="yaml-validation">
+</section>
+<section id="yaml-validation">
 <h2>YAML Validation<a class="headerlink" href="#yaml-validation" title="Permalink to this headline"></a></h2>
 <p>Prior to running this tool, you should validate the YAML configurations you’ve set up as follows:</p>
-<p><code class="docutils literal notranslate"><span class="pre">./yaml_validator.py</span> <span class="pre">dataset_file.yaml</span> <span class="pre">shared_model_file.yaml</span></code></p>
-<p>If you are using pre-commit as described below, the YAML configurations will be validated automatically when you commit changes.</p>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">dataset.schema</span> <span class="o">&lt;-</span> <span class="nf">system.file</span><span class="p">(</span><span class="s">&quot;validator&quot;</span><span class="p">,</span> 
+                              <span class="s">&quot;schema.datasets.yaml&quot;</span><span class="p">,</span> 
+                              <span class="n">package</span> <span class="o">=</span> <span class="s">&quot;process.phenotypes&quot;</span><span class="p">)</span>
+<span class="n">shared.models.schema</span> <span class="o">&lt;-</span> <span class="nf">system.file</span><span class="p">(</span><span class="s">&quot;validator&quot;</span><span class="p">,</span> 
+                                    <span class="s">&quot;schema.shared-models.yaml&quot;</span><span class="p">,</span> 
+                                    <span class="n">package</span> <span class="o">=</span> <span class="s">&quot;process.phenotypes&quot;</span><span class="p">)</span>
+<span class="n">process.phenotypes</span><span class="o">::</span><span class="nf">config.validation</span><span class="p">(</span><span class="s">&quot;/path/to/your.dataset.yaml&quot;</span><span class="p">,</span>
+                                      <span class="s">&quot;/path/to/your.shared-models.yaml&quot;</span><span class="p">,</span>
+                                      <span class="n">dataset.schema</span><span class="p">,</span>
+                                      <span class="n">shared.models.schema</span><span class="p">)</span>
+</pre></div>
 </div>
-</div>
+<p>This command will compare your configuration files to the set of guidelines and restrictions we’ve specified for the package. If your configuration settings are valid, you’ll get a confirmation message to that effect; otherwise, the function will emit a summary of the restriction that wasn’t met.</p>
+</section>
+</section>
 
 
            </div>

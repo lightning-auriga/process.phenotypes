@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Variable Types Available &mdash; process.phenotypes  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -96,19 +97,19 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="variable-types-available">
+  <section id="variable-types-available">
 <h1>Variable Types Available<a class="headerlink" href="#variable-types-available" title="Permalink to this headline"></a></h1>
-<div class="section" id="about-variable-types">
+<section id="about-variable-types">
 <h2>About Variable Types<a class="headerlink" href="#about-variable-types" title="Permalink to this headline"></a></h2>
 <p>Variable types are assigned in the dataset-specific config or the shared models config.  The type of a variable will influence how it is handled in terms of cleaning and reporting.  For example, a numeric type variable will have leading non-numeric characters stripped, will be displayed in the HTML report with min/max/mean/deciles, number of NA values, and a histogram.</p>
-</div>
-<div class="section" id="enumerated-variable-types">
+</section>
+<section id="enumerated-variable-types">
 <h2>Enumerated Variable Types<a class="headerlink" href="#enumerated-variable-types" title="Permalink to this headline"></a></h2>
-<div class="section" id="numeric">
+<section id="numeric">
 <h3>Numeric<a class="headerlink" href="#numeric" title="Permalink to this headline"></a></h3>
 <p>Suitable for numeric values, both float and integer.  Configured by entering <code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">numeric</span></code> in the config.</p>
-</div>
-<div class="section" id="date">
+</section>
+<section id="date">
 <h3>Date<a class="headerlink" href="#date" title="Permalink to this headline"></a></h3>
 <p>Suitable for date representations in a variety of formats.  Configured by entering <code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">date</span></code> in the config.  Date formats are matched in hierarchical order as follows:</p>
 <ul class="simple">
@@ -123,50 +124,50 @@
 <li><p>If the captured year is two digits and less than 100, add 1900</p></li>
 <li><p>If the captured year is less than 1800, set to NA</p></li>
 </ul>
-</div>
-<div class="section" id="string">
+</section>
+<section id="string">
 <h3>String<a class="headerlink" href="#string" title="Permalink to this headline"></a></h3>
 <p>Suitable for any value that doesn’t easily fit into the other variables, e.g. free text responses, doctor’s notes, etc.  Configured by entering <code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">string</span></code> in the config.  The least modified of the data types, with the least summary data in the HTML report.  If there are fewer than a configurable number of unique values, a table will be included in the report that lists the number of occurrences of each value.</p>
-</div>
-<div class="section" id="categorical">
+</section>
+<section id="categorical">
 <span id="id1"></span><h3>Categorical<a class="headerlink" href="#categorical" title="Permalink to this headline"></a></h3>
 <p>Suitable for responses that fit in a small number of expected unordered categories.  Configured by entering <code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">categorical</span></code> in the config, and then by defining levels for the categories.  E.g.:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">variables</span><span class="p">:</span><span class="w"></span>
-<span class="w">   </span><span class="nt">HW001</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;example</span><span class="nv"> </span><span class="s">variable&quot;</span><span class="w"></span>
-<span class="w">     </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">categorical</span><span class="w"></span>
-<span class="w">     </span><span class="nt">levels</span><span class="p">:</span><span class="w"></span>
-<span class="w">       </span><span class="nt">lvl1</span><span class="p">:</span><span class="w"></span>
-<span class="w">         </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;male&quot;</span><span class="w"></span>
-<span class="w">         </span><span class="nt">alternate_patterns</span><span class="p">:</span><span class="w"></span>
-<span class="w">           </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;m&quot;</span><span class="w"></span>
-<span class="w">       </span><span class="nt">lvl2</span><span class="p">:</span><span class="w"></span>
-<span class="w">         </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;female&quot;</span><span class="w"></span>
-<span class="w">       </span><span class="nt">lvl3</span><span class="p">:</span><span class="w"></span>
-<span class="w">         </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prefer</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">answer&quot;</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">variables</span><span class="p">:</span>
+   <span class="nt">HW001</span><span class="p">:</span>
+     <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;example</span><span class="nv"> </span><span class="s">variable&quot;</span>
+     <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">categorical</span>
+     <span class="nt">levels</span><span class="p">:</span>
+       <span class="nt">lvl1</span><span class="p">:</span>
+         <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;male&quot;</span>
+         <span class="nt">alternate_patterns</span><span class="p">:</span>
+           <span class="p p-Indicator">-</span> <span class="s">&quot;m&quot;</span>
+       <span class="nt">lvl2</span><span class="p">:</span>
+         <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;female&quot;</span>
+       <span class="nt">lvl3</span><span class="p">:</span>
+         <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;prefer</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">answer&quot;</span>
 </pre></div>
 </div>
 <p>Entries in the variable will be matched to the levels defined in the config (see above) based on exact match to name or match to any provided alternate pattern as a regular expression.  Alternate pattern matches are re-mapped to the canonical name in the output.  The first values under <code class="docutils literal notranslate"><span class="pre">levels</span></code>, e.g. <code class="docutils literal notranslate"><span class="pre">lvl1</span></code> above, are arbitrary strings - you can call them whatever you like as long as it’s a unique string within the variable.  This was originally intended to hold the numeric encoding to be indicated for STATA, but this is not currently implemented.  The report will show a table of counts of observations of the harmonized level names.</p>
-</div>
-<div class="section" id="ordinal">
+</section>
+<section id="ordinal">
 <h3>Ordinal<a class="headerlink" href="#ordinal" title="Permalink to this headline"></a></h3>
 <p>Suitable for responses that fit in a small number of expected categories with intrinsic ordering.  Configured by entering <code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">ordinal</span></code> in the config, and then by defining levels as described <a class="reference internal" href="#categorical"><span class="std std-ref">here</span></a>.</p>
-</div>
-<div class="section" id="blood-pressure">
+</section>
+<section id="blood-pressure">
 <h3>Blood Pressure<a class="headerlink" href="#blood-pressure" title="Permalink to this headline"></a></h3>
 <p>Suitable for blood pressure entries in the format of SBP/DBP (specifically, <code class="docutils literal notranslate"><span class="pre">\d+</span> <span class="pre">*/</span> <span class="pre">*\d+.*</span></code>, to accommodate potential units being included in the entry, e.g. “110/70 mmhg”).  Configured by entering <code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">blood_pressure</span></code> or <code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">bp</span></code> in the config.  This is intended to then be used as input into two derived variables, one for systolic, the other for diastolic.</p>
-</div>
-<div class="section" id="binary">
+</section>
+<section id="binary">
 <h3>Binary<a class="headerlink" href="#binary" title="Permalink to this headline"></a></h3>
 <p>This is a convenience alias for <a class="reference internal" href="#categorical"><span class="std std-ref">categorical</span></a> variables with only two levels.</p>
-</div>
-<div class="section" id="categorical-to-numeric">
+</section>
+<section id="categorical-to-numeric">
 <h3>Categorical to Numeric<a class="headerlink" href="#categorical-to-numeric" title="Permalink to this headline"></a></h3>
 <p><em>Experimental</em></p>
 <p>Intended for use when something is received as a categorical encoding, but the levels are numeric values.  For example, if the input has levels 1 week, 2 weeks, and 3 weeks, the use of this type will enable automatic conversion to numerics 1, 2, and 3.  Configured by entering <code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">categorical_to_numeric</span></code> in the config.`</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>

@@ -12,7 +12,7 @@
 
 
 
-<title>yaml-validation</title>
+<title>Validation of Dataset Configuration Files</title>
 
 <script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
 
@@ -138,7 +138,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<h1 class="title toc-ignore">yaml-validation</h1>
+<h1 class="title toc-ignore">Validation of Dataset Configuration Files</h1>
 
 
 
@@ -192,7 +192,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">&quot;HW00003&quot;</span><span class="kw">:</span></span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;name&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;var3&quot;</span></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;shared_model&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;yesno&quot;</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;canonical_name&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;variable 3&quot;</span></span></code></pre></div>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;canonical_name&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;variable 3&quot;</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="fu">derived</span><span class="kw">:</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">&quot;harmonized_name&quot;</span><span class="kw">:</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;name&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;aliased var3&quot;</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;shared_model&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;yesno&quot;</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;code&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;HW00003&quot;</span></span></code></pre></div>
 <p>and a shared models configuration yaml named <code>shared-models.yaml</code>:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">models</span><span class="kw">:</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">&quot;yesno&quot;</span><span class="kw">:</span></span>
@@ -234,7 +239,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">&quot;HW00003&quot;</span><span class="kw">:</span></span>
 <span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;name&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;var3&quot;</span></span>
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;shared-model&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;yesno&quot;</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;canonical_name&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;variable 3&quot;</span></span></code></pre></div>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;canonical_name&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;variable 3&quot;</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="fu">derived</span><span class="kw">:</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">&quot;harmonized_name&quot;</span><span class="kw">:</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;name&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;aliased var3&quot;</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;shared_model&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;yesno&quot;</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&quot;code&quot;</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;HW00003&quot;</span></span></code></pre></div>
 <p>The tag <code>shared-model</code> is incorrect; the schema expects <code>shared_model</code>. If we run this configuration file through the validator:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>process.phenotypes<span class="sc">::</span><span class="fu">config.validation</span>(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dataset-invalid.yaml&quot;</span>, <span class="st">&quot;shared-models-valid.yaml&quot;</span>,</span>
