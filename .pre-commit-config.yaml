@@ -10,7 +10,6 @@ repos:
     verbose: true
 ## Note: the following three hooks apply only to R package development
   - id: roxygenize
-    additional_dependencies:
-      - git2r
   - id: deps-in-desc
+    args: ["--allow_private_imports"]
   - id: use-tidy-description
