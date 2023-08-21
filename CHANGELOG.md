@@ -6,8 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- nothing for the moment
+### Changed
+- updated linting settings
 
+### Fixed
+- report Rmd yaml header indentation fixed
 
 ## [1.4.0] - 2022-08-29
 
